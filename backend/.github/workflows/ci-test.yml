@@ -1,0 +1,29 @@
+name: CI - Test Branch
+
+on:
+  pull_request:
+    branches: [test]
+    paths: ["backend/**"]
+
+jobs:
+  integration:
+    name: Run integration tests (placeholder)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: ./backend
+
+      - name: Integration tests (placeholder)
+        run: |
+          echo "No integration tests configured yet. Add 'npm run test:integration' to package.json when ready."
+        working-directory: ./backend

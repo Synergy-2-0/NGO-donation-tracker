@@ -1,0 +1,62 @@
+name: Staging — Run checks and promote to main
+
+on:
+  push:
+    branches: [staging]
+    paths: ["backend/**"]
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-promote:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: ./backend
+
+      - name: Run checks (placeholder)
+        run: |
+          echo "Run linter / unit tests / integration tests here as needed"
+        working-directory: ./backend
+
+      - name: Create or find PR from staging -> main and auto-merge
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const head = 'staging';
+            const base = 'main';
+
+            // Look for an open PR from staging -> main
+            const { data: pulls } = await github.pulls.list({ owner, repo, head: `${owner}:${head}`, base, state: 'open' });
+            let prNumber = null;
+
+            if (pulls.length > 0) {
+              prNumber = pulls[0].number;
+              console.log(`Found existing PR #${prNumber}`);
+            } else {
+              const { data: pr } = await github.pulls.create({ owner, repo, title: `Promote ${head} to ${base}`, head, base, body: 'Automated promotion from staging to main' });
+              prNumber = pr.number;
+              console.log(`Created PR #${prNumber}`);
+            }
+
+            // Attempt merge
+            try {
+              await github.pulls.merge({ owner, repo, pull_number: prNumber, merge_method: 'merge' });
+              console.log(`Merged PR #${prNumber}`);
+            } catch (err) {
+              console.error(`Could not merge PR #${prNumber}: ${err.message}`);
+              throw err;
+            }

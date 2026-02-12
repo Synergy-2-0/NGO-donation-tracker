@@ -1,6 +1,6 @@
 import express from 'express';
-import './db.js';
-import partnershipRouter from './routes/Partnership.js';
+import './src/config/db.js';
+import partnershipRouter from './src/routes/Partnership.js';
 
 const app = express();
 const port = 3000;

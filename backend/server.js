@@ -1,12 +1,14 @@
-const express = require('express');
+import express from 'express';
+import './db.js';
+import partnershipRouter from './routes/Partnership.js';
+
 const app = express();
 const port = 3000;
-require("./db.js");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 //Setup routes
-app.use("/api", require("./routes/Customer"));
+app.use('/api/partners', partnershipRouter);
 
 app.listen(port, () => {
   console.log(`Server is listening on port ${port}`);

@@ -1,7 +1,7 @@
-const Customer = require("../model/Customer");
+import Customer from '../model/Partnership.js';
 
 // Controller function to register a new customer
-exports.registerCustomer = async (req, res) => {
+const registerCustomer = async (req, res) => {
     try {
         const { email, name, age } = req.body;
 
@@ -24,3 +24,5 @@ exports.registerCustomer = async (req, res) => {
         res.status(500).json({ message: "Internal server error" });
     }
 };
+
+export default { registerCustomer };

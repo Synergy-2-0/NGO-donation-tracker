@@ -35,4 +35,6 @@ class PartnerService {
   }
 }
 
+
+
 export default new PartnerService();

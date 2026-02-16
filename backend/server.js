@@ -49,18 +49,17 @@ const swaggerOptions = {
     ],
   },
   apis: [
-    './src/routes/*.js',          // JSDoc in routes files
-    './src/controllers/*.js',     // If you put some docs in controllers
-    './src/models/partner.model.js', // Optional: if you document model there
+    './src/routes/*.js',          
+    './src/controllers/*.js',    
+    './src/models/partner.model.js', 
   ],
 };
 
 const specs = swaggerJsdoc(swaggerOptions);
 
-// Serve Swagger UI at /api-docs
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(specs, {
   explorer: true,               // Enable search in UI
-  customCss: '.swagger-ui .topbar { background-color: #1a1a2e; }', // Optional styling
+  customCss: '.swagger-ui .topbar { background-color: #1a1a2e; }', 
   customSiteTitle: 'Partnerships API Docs',
 }));
 

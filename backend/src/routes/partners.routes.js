@@ -4,6 +4,7 @@ import { protect, restrictTo } from '../middleware/auth.middleware.js';
 
 const router = express.Router();
 
+
 /**
  * @swagger
  * tags:

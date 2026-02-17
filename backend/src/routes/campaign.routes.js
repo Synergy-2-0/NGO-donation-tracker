@@ -5,6 +5,7 @@ import {
     getCampaignById,
     updateCampaign,
     deleteCampaign,
+    publishCampaign
 } from "../controllers/campaign.controller.js";
 
 const router = express.Router();
@@ -81,6 +82,26 @@ router.put("/:id", updateCampaign);
  *     tags: [Campaign]
  */
 router.delete("/:id", deleteCampaign);
+
+
+
+/**
+ * @swagger
+ * /api/campaigns/{id}/publish:
+ *   put:
+ *     summary: Publish a draft campaign
+ *     tags: [Campaign]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Campaign status updated to active
+ */
+router.put("/:id/publish", publishCampaign);
 
 
 export default router;

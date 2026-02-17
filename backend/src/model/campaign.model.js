@@ -19,8 +19,8 @@ const campaignSchema = new mongoose.Schema(
         endDate: Date,
         status: {
             type: String,
-            enum: ["active", "completed", "archived"],
-            default: "active",
+            enum: ["draft", "active", "completed", "archived"],
+            default: "draft",
         },
         isDeleted: {
             type: Boolean,

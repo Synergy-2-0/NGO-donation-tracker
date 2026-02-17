@@ -29,3 +29,12 @@ export const updateCampaign = async (id, data) => {
 export const deleteCampaign = async (id) => {
     return await campaignRepository.softDelete(id);
 };
+
+export const publishCampaign = async (id) => {
+    const campaign = await campaignRepository.findById(id);
+    if (!campaign) throw new Error("Campaign not found");
+
+    if (campaign.status !== "draft") throw new Error("Only draft campaigns can be published");
+
+    return await campaignRepository.updateById(id, { status: "active" });
+};

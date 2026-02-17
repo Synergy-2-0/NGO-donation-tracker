@@ -52,3 +52,13 @@ export const deleteCampaign = async (req, res) => {
         res.status(400).json({ message: error.message });
     }
 };
+
+// publish campaign
+export const publishCampaign = async (req, res) => {
+    try {
+        const campaign = await campaignService.publishCampaign(req.params.id);
+        res.json(campaign);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};

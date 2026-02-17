@@ -1,6 +1,6 @@
 import express from 'express';
 import * as ctrl from '../controllers/partners.controller.js';
-import { protect, restrictTo } from '../middleware/auth.middleware.js';
+import { protect, restrictTo } from '../middlewares/auth.middleware.js';
 
 const router = express.Router();
 
@@ -43,7 +43,7 @@ router.post('/', protect, restrictTo('partner'), ctrl.createPartnership);
  * @swagger
  * /api/partners:
  *   get:
- *     summary: List partners (admin: all, others: public approved only)
+ *     summary: "List partners (admin: all, others: public approved only)"
  *     tags: [Partners]
  *     security:
  *       - bearerAuth: []

@@ -1,6 +1,7 @@
 import express from 'express';
 import * as ctrl from '../controllers/partners.controller.js';
-import { protect, restrictTo } from '../middlewares/auth.middleware.js';
+import { authenticate } from '../middlewares/auth.middleware.js';
+import { authorizeRoles } from '../middlewares/role.middleware.js';
 
 const router = express.Router();
 
@@ -37,7 +38,7 @@ const router = express.Router();
  *         description: Unauthorized
  */
 
-router.post('/', protect, restrictTo('partner'), ctrl.createPartnership);
+router.post('/', authenticate, authorizeRoles('partner'), ctrl.createPartnership);
 
 /**
  * @swagger
@@ -55,11 +56,11 @@ router.post('/', protect, restrictTo('partner'), ctrl.createPartnership);
  *       200:
  *         description: List of partners
  */
-router.get('/', protect, ctrl.getPartners);
+router.get('/', authenticate, ctrl.getPartners);
 
-router.get('/:id', protect, ctrl.getPartner);
-router.put('/:id', protect, ctrl.updatePartner); 
-router.patch('/:id/approve', protect, restrictTo('admin'), ctrl.approvePartner);
-router.delete('/:id', protect, restrictTo('admin'), ctrl.deletePartner);
+router.get('/:id', authenticate, ctrl.getPartner);
+router.put('/:id', authenticate, ctrl.updatePartner);
+router.patch('/:id/approve', authenticate, authorizeRoles('admin'), ctrl.approvePartner);
+router.delete('/:id', authenticate, authorizeRoles('admin'), ctrl.deletePartner);
 
 export default router;

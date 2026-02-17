@@ -5,6 +5,7 @@ import router from './src/routes/partners.routes.js';
 // import swaggerJsdoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 import campaignRoutes from "./src/routes/campaign.routes.js";
+import financeRoutes from "./src/routes/finance.routes.js";
 import swaggerSpec from "./src/config/swagger.js";
 
 dotenv.config();
@@ -21,6 +22,8 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use('/api/partners', router);
 
 app.use("/api/campaigns", campaignRoutes);
+
+app.use("/api/finance", financeRoutes);
 
 // const swaggerOptions = {
 //   definition: {

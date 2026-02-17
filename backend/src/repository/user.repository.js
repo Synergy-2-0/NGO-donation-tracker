@@ -10,5 +10,4 @@ export const updateUser = (id, data) => User.findByIdAndUpdate(id,data, {new: tr
 
 export const getAllUsers = (filters) => User.find(filters);
 
-export const deleteUser = (id) => User.findByIdAndUpdate(id, {status: 'inactive'}, {new: true});
-
+export const deactivateUser = (id) => User.findByIdAndUpdate(id, {status: 'inactive'}, {new: true});

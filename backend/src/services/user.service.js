@@ -23,12 +23,17 @@ export const loginUser = async (email, password) => {
         throw new Error('Invalid credentials');
     }
 
-    const token = jwt.sign({
-        id: user._id,role: user.role
-    },{
-        process.env.JWT_SECRET
-    },{expiresIn: '1d'});
+    const token = jwt.sign(
+        { id: user._id, role: user.role },
+        process.env.JWT_SECRET,
+        { expiresIn: '1d' }
+    );
 
-    return {user,token};
-}
+    return {user, token};
+};
 
+export const getUsers = (filters) => userRepo.getAllUsers(filters);
+
+export const updateUser = (id,data) => userRepo.updateUser(id,data);
+
+export const deactivateUser = (id) => userRepo.deactivateUser(id);

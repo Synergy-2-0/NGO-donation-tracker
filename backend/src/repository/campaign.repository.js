@@ -1,4 +1,4 @@
-import Campaign from "../model/campaign.model.js";
+import Campaign from "../models/campaign.model.js";
 
 export const create = async (data) => {
     return await Campaign.create(data);

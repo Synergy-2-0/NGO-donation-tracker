@@ -1,4 +1,4 @@
-import Partnership from "../model/partner.model.js";
+import Partnership from "../models/partner.model.js";
 
 class PartnerRepository {
     async create(data){

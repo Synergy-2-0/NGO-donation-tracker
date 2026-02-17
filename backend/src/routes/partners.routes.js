@@ -1,6 +1,6 @@
 import express from 'express';
 import * as ctrl from '../controllers/partners.controller.js';
-import { protect, restrictTo } from '../middleware/auth.middleware.js';
+import { protect, restrictTo } from '../middlewares/auth.middleware.js';
 
 const router = express.Router();
 

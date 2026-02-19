@@ -5,7 +5,8 @@ import {
     getCampaignById,
     updateCampaign,
     deleteCampaign,
-    publishCampaign
+    publishCampaign,
+    getCampaignMetrics
 } from "../controllers/campaign.controller.js";
 
 import {
@@ -14,6 +15,12 @@ import {
     updateProgress,
     deleteProgress
 } from "../controllers/progress.controller.js";
+
+import {
+    createReport,
+    getReportByCampaign,
+    getReportById
+} from "../controllers/campaignReport.controller.js";
 
 const router = express.Router();
 
@@ -239,5 +246,137 @@ router.put("/:id/progress/:progressId", updateProgress);
  */
 router.delete("/:id/progress/:progressId", deleteProgress);
 
+/** ----------------- report routes ----------------- */
 
+
+/**
+ * @swagger
+ * /api/campaigns/{id}/report:
+ *   post:
+ *     summary: Create a final report for a completed campaign
+ *     tags: [Campaign Report]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Campaign ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               summary:
+ *                 type: string
+ *                 description: Overview of campaign results
+ *               totalRaised:
+ *                 type: number
+ *                 description: Total amount raised by the campaign
+ *               beneficiaries:
+ *                 type: number
+ *                 description: Total number of beneficiaries reached
+ *               evidence:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 description: URLs or paths to evidence (images, documents)
+ *     responses:
+ *       201:
+ *         description: Report created successfully
+ *       400:
+ *         description: Bad request / validation error
+ *       404:
+ *         description: Campaign not found or not completed
+ */
+router.post("/:id/report", createReport);
+
+/**
+ * @swagger
+ * /api/campaigns/{id}/report:
+ *   get:
+ *     summary: Get the report for a specific campaign
+ *     tags: [Campaign Report]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Campaign ID
+ *     responses:
+ *       200:
+ *         description: Campaign report details
+ *       404:
+ *         description: Report not found
+ */
+router.get("/:id/report", getReportByCampaign);
+
+/**
+ * @swagger
+ * /api/campaigns/report/{reportId}:
+ *   get:
+ *     summary: Get a report by its ID
+ *     tags: [Campaign Report]
+ *     parameters:
+ *       - in: path
+ *         name: reportId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Report ID
+ *     responses:
+ *       200:
+ *         description: Report details
+ *       404:
+ *         description: Report not found
+ */
+router.get("/report/:reportId", getReportById);
+
+router.get("/:id/metrics", getCampaignMetrics);
+
+
+/** ----------------- metrics route ----------------- */
+
+/**
+ * @swagger
+ * /api/campaigns/{id}/metrics:
+ *   get:
+ *     summary: Get impact metrics for a specific campaign
+ *     tags: [Campaign Metrics]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Campaign ID
+ *     responses:
+ *       200:
+ *         description: Campaign metrics details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 totalRaised:
+ *                   type: number
+ *                   description: Total amount raised for the campaign
+ *                 goalAmount:
+ *                   type: number
+ *                   description: Campaign's goal amount
+ *                 totalBeneficiaries:
+ *                   type: number
+ *                   description: Total beneficiaries impacted
+ *                 progressCount:
+ *                   type: number
+ *                   description: Number of progress logs recorded
+ *                 completionRate:
+ *                   type: number
+ *                   description: Campaign completion rate as a percentage
+ *       400:
+ *         description: Bad request or campaign not found
+ */
 export default router;

@@ -8,7 +8,6 @@ import './src/config/db.js';
 import router from './src/routes/partners.routes.js';
 import swaggerUi from 'swagger-ui-express';
 import campaignRoutes from "./src/routes/campaign.routes.js";
-import financeRoutes from "./src/routes/finance.routes.js";
 import swaggerSpec from "./src/config/swagger.js";
 import userRoutes from "./src/routes/user.routes.js";
 
@@ -24,8 +23,6 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use('/api/partners', router);
 app.use("/api/users", userRoutes);
 app.use("/api/campaigns", campaignRoutes);
-
-app.use("/api/finance", financeRoutes);
 
 // const swaggerOptions = {
 //   definition: {

@@ -1,4 +1,5 @@
 import express from "express";
+import upload from "../middlewares/upload.middleware.js";
 import {
     createCampaign,
     getCampaigns,
@@ -24,6 +25,7 @@ import {
 
 const router = express.Router();
 
+
 /**
  * @swagger
  * tags:
@@ -31,6 +33,10 @@ const router = express.Router();
  *     description: Campaign management endpoints
  *   - name: Campaign progress log
  *     description: Campaign progress log management endpoints
+ *   - name: Campaign Report
+ *     description: Campaign final report endpoints
+ *   - name: Campaign Metrics
+ *     description: Campaign impact metrics endpoints
  */
 
 
@@ -93,8 +99,44 @@ router.get("/:id", getCampaignById);
  * @swagger
  * /api/campaigns/{id}:
  *   put:
- *     summary: Update campaign
+ *     summary: Update an existing campaign
  *     tags: [Campaign]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Campaign ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               goalAmount:
+ *                 type: number
+ *               raisedAmount:
+ *                 type: number
+ *               status:
+ *                 type: string
+ *                 enum: [draft, active, completed]
+ *     responses:
+ *       200:
+ *         description: Campaign updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Campaign'
+ *       400:
+ *         description: Validation error
+ *       404:
+ *         description: Campaign not found
  */
 router.put("/:id", updateCampaign);
 
@@ -134,7 +176,7 @@ router.put("/:id/publish", publishCampaign);
  * @swagger
  * /api/campaigns/{id}/progress:
  *   post:
- *     summary: Add progress log to campaign
+ *     summary: Add progress log to campaign with evidence upload
  *     tags: [Campaign progress log]
  *     parameters:
  *       - in: path
@@ -142,10 +184,11 @@ router.put("/:id/publish", publishCampaign);
  *         required: true
  *         schema:
  *           type: string
+ *         description: Campaign ID
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             type: object
  *             properties:
@@ -159,11 +202,14 @@ router.put("/:id/publish", publishCampaign);
  *                 type: array
  *                 items:
  *                   type: string
+ *                   format: binary
  *     responses:
  *       201:
  *         description: Progress log created successfully
+ *       400:
+ *         description: Validation error
  */
-router.post("/:id/progress", createProgress);
+router.post("/:id/progress", upload.array("evidence", 5), createProgress);
 
 /**
  * @swagger
@@ -203,7 +249,7 @@ router.get("/:id/progress", getCampaignProgress);
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             type: object
  *             properties:
@@ -217,11 +263,12 @@ router.get("/:id/progress", getCampaignProgress);
  *                 type: array
  *                 items:
  *                   type: string
+ *                   format: binary
  *     responses:
  *       200:
  *         description: Progress log updated successfully
  */
-router.put("/:id/progress/:progressId", updateProgress);
+router.put("/:id/progress/:progressId", upload.array("evidence", 5), updateProgress);
 
 /**
  * @swagger
@@ -265,7 +312,7 @@ router.delete("/:id/progress/:progressId", deleteProgress);
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             type: object
  *             properties:
@@ -282,6 +329,7 @@ router.delete("/:id/progress/:progressId", deleteProgress);
  *                 type: array
  *                 items:
  *                   type: string
+ *                   format: binary
  *                 description: URLs or paths to evidence (images, documents)
  *     responses:
  *       201:
@@ -291,7 +339,7 @@ router.delete("/:id/progress/:progressId", deleteProgress);
  *       404:
  *         description: Campaign not found or not completed
  */
-router.post("/:id/report", createReport);
+router.post("/:id/report", upload.array("evidence", 5), createReport);
 
 /**
  * @swagger
@@ -335,9 +383,6 @@ router.get("/:id/report", getReportByCampaign);
  */
 router.get("/report/:reportId", getReportById);
 
-router.get("/:id/metrics", getCampaignMetrics);
-
-
 /** ----------------- metrics route ----------------- */
 
 /**
@@ -379,4 +424,6 @@ router.get("/:id/metrics", getCampaignMetrics);
  *       400:
  *         description: Bad request or campaign not found
  */
+router.get("/:id/metrics", getCampaignMetrics);
+
 export default router;

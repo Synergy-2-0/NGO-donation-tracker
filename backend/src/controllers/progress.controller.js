@@ -3,10 +3,17 @@ import * as progressService from "../services/progress.service.js";
 // create progress
 export const createProgress = async (req, res) => {
     try {
-        const progress = await progressService.createProgress({
+        // map uploaded files to their Cloudinary URLs
+        const evidenceUrls = req.files ? req.files.map(file => file.path) : [];
+
+        const progressData = {
             ...req.body,
-            campaign: req.params.id
-        });
+            amountRaised: Number(req.body.amountRaised),
+            beneficiaries: Number(req.body.beneficiaries),
+            campaign: req.params.id,
+            evidence: evidenceUrls
+        };
+        const progress = await progressService.createProgress(progressData);
         res.status(201).json(progress);
     } catch (error) {
         res.status(400).json({ message: error.message });
@@ -26,9 +33,18 @@ export const getCampaignProgress = async (req, res) => {
 // update progress
 export const updateProgress = async (req, res) => {
     try {
+        const evidenceUrls = req.files ? req.files.map(file => file.path) : [];
+
+        const updateData = {
+            ...req.body,
+            amountRaised: req.body.amountRaised ? Number(req.body.amountRaised) : undefined,
+            beneficiaries: req.body.beneficiaries ? Number(req.body.beneficiaries) : undefined,
+            ...(evidenceUrls.length && { evidence: evidenceUrls })
+        };
+
         const progress = await progressService.updateProgress(
             req.params.progressId,
-            req.body
+            updateData
         );
 
         if (!progress) {
@@ -37,6 +53,7 @@ export const updateProgress = async (req, res) => {
 
         res.json(progress);
     } catch (error) {
+        console.error(error);
         res.status(400).json({ message: error.message });
     }
 };

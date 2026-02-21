@@ -124,13 +124,7 @@ const partnerSchema = new mongoose.Schema({
       },
       max: {
         type: Number,
-        required: true,
-        validate: {
-          validator: function(value) {
-            return value >= this.min;
-          },
-          message: 'Maximum budget must be greater than or equal to minimum budget'
-        }
+        required: true
       }
     },
     partnershipTypes: {

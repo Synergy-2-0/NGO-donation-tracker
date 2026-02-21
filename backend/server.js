@@ -1,26 +1,28 @@
 import express from 'express';
 import dotenv from "dotenv";
+
+// Load environment variables as early as possible so imported modules can use them
+dotenv.config();
+
 import './src/config/db.js';
 import router from './src/routes/partners.routes.js';
-// import swaggerJsdoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 import campaignRoutes from "./src/routes/campaign.routes.js";
 import financeRoutes from "./src/routes/finance.routes.js";
 import swaggerSpec from "./src/config/swagger.js";
-
-dotenv.config();
+import userRoutes from "./src/routes/user.routes.js";
 
 const app = express();
 const port = 3000;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-// swagger route
+
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 //Setup routes
 app.use('/api/partners', router);
-
+app.use("/api/users", userRoutes);
 app.use("/api/campaigns", campaignRoutes);
 
 app.use("/api/finance", financeRoutes);

@@ -45,6 +45,18 @@ const options = {
                 description: "Audit log management",
             },
         ],
+        components: {
+            securitySchemes: {
+                bearerAuth: {
+                    type: 'http',
+                    scheme: 'bearer',
+                    bearerFormat: 'JWT',
+                },
+            },
+        },
+        tags: [
+            { name: 'Users', description: 'User management endpoints' },
+        ],
     },
     apis: ["./src/routes/*.js"],
 };

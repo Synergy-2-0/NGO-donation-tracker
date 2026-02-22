@@ -23,6 +23,9 @@ import {
     getReportById
 } from "../controllers/campaignReport.controller.js";
 
+import { authenticate } from "../middlewares/auth.middleware.js";
+import { authorizeRoles } from "../middlewares/role.middleware.js";
+
 const router = express.Router();
 
 
@@ -46,6 +49,8 @@ const router = express.Router();
  *   post:
  *     summary: Create a new campaign
  *     tags: [Campaign]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -63,7 +68,7 @@ const router = express.Router();
  *       201:
  *         description: Campaign created successfully
  */
-router.post("/", createCampaign);
+router.post("/", authenticate, authorizeRoles("admin", "ngo-admin"), createCampaign);
 
 /**
  * @swagger
@@ -101,6 +106,8 @@ router.get("/:id", getCampaignById);
  *   put:
  *     summary: Update an existing campaign
  *     tags: [Campaign]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -138,7 +145,7 @@ router.get("/:id", getCampaignById);
  *       404:
  *         description: Campaign not found
  */
-router.put("/:id", updateCampaign);
+router.put("/:id", authenticate, authorizeRoles("admin", "ngo-admin"), updateCampaign);
 
 /**
  * @swagger
@@ -146,10 +153,10 @@ router.put("/:id", updateCampaign);
  *   delete:
  *     summary: Soft delete campaign
  *     tags: [Campaign]
+ *     security:
+ *       - bearerAuth: []
  */
-router.delete("/:id", deleteCampaign);
-
-
+router.delete("/:id", authenticate, authorizeRoles("admin", "ngo-admin"), deleteCampaign);
 
 /**
  * @swagger
@@ -157,6 +164,8 @@ router.delete("/:id", deleteCampaign);
  *   put:
  *     summary: Publish a draft campaign
  *     tags: [Campaign]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -167,8 +176,7 @@ router.delete("/:id", deleteCampaign);
  *       200:
  *         description: Campaign status updated to active
  */
-router.put("/:id/publish", publishCampaign);
-
+router.put("/:id/publish", authenticate, authorizeRoles("admin", "ngo-admin"), publishCampaign);
 
 /** ----------------- progress log  routes ----------------- */
 
@@ -178,6 +186,8 @@ router.put("/:id/publish", publishCampaign);
  *   post:
  *     summary: Add progress log to campaign with evidence upload
  *     tags: [Campaign progress log]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -209,7 +219,8 @@ router.put("/:id/publish", publishCampaign);
  *       400:
  *         description: Validation error
  */
-router.post("/:id/progress", upload.array("evidence", 5), createProgress);
+router.post("/:id/progress", authenticate, authorizeRoles("admin", "ngo-admin"), upload.array("evidence", 5), createProgress);
+
 
 /**
  * @swagger
@@ -235,6 +246,8 @@ router.get("/:id/progress", getCampaignProgress);
  *   put:
  *     summary: Update a progress log
  *     tags: [Campaign progress log]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -268,7 +281,7 @@ router.get("/:id/progress", getCampaignProgress);
  *       200:
  *         description: Progress log updated successfully
  */
-router.put("/:id/progress/:progressId", upload.array("evidence", 5), updateProgress);
+router.put("/:id/progress/:progressId", authenticate, authorizeRoles("admin", "ngo-admin"), upload.array("evidence", 5), updateProgress);
 
 /**
  * @swagger
@@ -276,6 +289,8 @@ router.put("/:id/progress/:progressId", upload.array("evidence", 5), updateProgr
  *   delete:
  *     summary: Delete a progress log
  *     tags: [Campaign progress log]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -291,7 +306,7 @@ router.put("/:id/progress/:progressId", upload.array("evidence", 5), updateProgr
  *       200:
  *         description: Progress log deleted successfully
  */
-router.delete("/:id/progress/:progressId", deleteProgress);
+router.delete("/:id/progress/:progressId", authenticate, authorizeRoles("admin", "ngo-admin"), deleteProgress);
 
 /** ----------------- report routes ----------------- */
 
@@ -302,6 +317,8 @@ router.delete("/:id/progress/:progressId", deleteProgress);
  *   post:
  *     summary: Create a final report for a completed campaign
  *     tags: [Campaign Report]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -339,7 +356,7 @@ router.delete("/:id/progress/:progressId", deleteProgress);
  *       404:
  *         description: Campaign not found or not completed
  */
-router.post("/:id/report", upload.array("evidence", 5), createReport);
+router.post("/:id/report", authenticate, authorizeRoles("admin", "ngo-admin"), upload.array("evidence", 5), createReport);
 
 /**
  * @swagger

@@ -10,6 +10,7 @@ import swaggerUi from 'swagger-ui-express';
 import campaignRoutes from "./src/routes/campaign.routes.js";
 import swaggerSpec from "./src/config/swagger.js";
 import userRoutes from "./src/routes/user.routes.js";
+import donorRoutes from './src/routes/donor.routes.js';
 
 const app = express();
 const port = 3000;
@@ -23,6 +24,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use('/api/partners', router);
 app.use("/api/users", userRoutes);
 app.use("/api/campaigns", campaignRoutes);
+app.use("/api/donors", donorRoutes);
 
 // const swaggerOptions = {
 //   definition: {

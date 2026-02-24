@@ -56,3 +56,12 @@ export const getPartnerAgreements = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+export const updateAgreementStatus = async (req, res) => {
+  try {
+    const agreement = await agreementService.updateStatus(req.params.id, req.body.status, req.user);
+    res.json(agreement);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};

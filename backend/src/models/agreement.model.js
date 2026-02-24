@@ -54,15 +54,6 @@ const agreementSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  deliverables: [{
-    description: String,
-    dueDate: Date,
-    status: {
-      type: String,
-      enum: ['pending', 'in-progress', 'completed'],
-      default: 'pending'
-    }
-  }],
   documents: [{
     name: String,
     url: String,

@@ -29,6 +29,7 @@ jobs:
             
             # Update backend
             cd backend
+            export PATH="$HOME/.nvm/versions/node/v24.14.0/bin:$PATH"
             npm install
             
             # Restart or Start if it's the first time

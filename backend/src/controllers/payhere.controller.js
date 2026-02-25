@@ -26,7 +26,7 @@ export const initPayment = async (req, res) => {
  */
 export const handleCallback = async (req, res) => {
     try {
-        const result = await payHereService.handlePayHereCallback(req.body);
+        const result = await payHereService.handlePayHereCallback(req.body ?? {});
         res.status(200).json({
             success: true,
             message: "Payment callback processed successfully",

@@ -39,7 +39,6 @@ class PartnerService {
     const partner = await partnerRepository.approve(id, adminId);
     if (!partner) throw new Error('Partner not found');
     
-    // Send approval email
     await emailService.sendPartnerApproval(partner, partner.contactPerson.email);
     
     return partner;

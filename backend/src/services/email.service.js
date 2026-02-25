@@ -1,68 +1,58 @@
-import { Resend } from 'resend';
+import SibApiV3Sdk from 'sib-api-v3-sdk';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const defaultClient = SibApiV3Sdk.ApiClient.instance;
+const apiKey = defaultClient.authentications['api-key'];
+apiKey.apiKey = process.env.BREVO_API_KEY;
 
 class EmailService {
   async sendPartnerApproval(partner, email) {
-    if (!process.env.RESEND_API_KEY) {
+    if (!process.env.BREVO_API_KEY) {
       console.log('[EMAIL MOCK] Partner approval sent to', email);
       return;
     }
 
     try {
-      await resend.emails.send({
-        from: 'onboarding@resend.dev',
-        to: email,
-        subject: 'Partnership Approved - Welcome!',
-        html: `
-          <h1>Congratulations, ${partner.organizationName}!</h1>
-          <p>Your partnership application has been approved.</p>
-          <p>You can now create agreements and start collaborating.</p>
-        `
-      });
+      const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
+      const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
+
+      sendSmtpEmail.subject = 'Partnership Approved - Welcome!';
+      sendSmtpEmail.htmlContent = `
+        <h1>Congratulations, ${partner.organizationName}!</h1>
+        <p>Your partnership application has been approved.</p>
+        <p>You can now create agreements and start collaborating.</p>
+      `;
+      sendSmtpEmail.sender = { name: 'NGO Tracker', email: 'luqmanbooso@gmail.com' };
+      sendSmtpEmail.to = [{ email: email }];
+
+      await apiInstance.sendTransacEmail(sendSmtpEmail);
+      console.log('[EMAIL] Partner approval sent to', email);
     } catch (error) {
-      console.error('Email error:', error);
+      console.error('Email error:', error.message);
     }
   }
 
   async sendAgreementStatusChange(agreement, email, status) {
-    if (!process.env.RESEND_API_KEY) {
+    if (!process.env.BREVO_API_KEY) {
       console.log('[EMAIL MOCK] Agreement status change sent to', email);
       return;
     }
 
     try {
-      await resend.emails.send({
-        from: 'onboarding@resend.dev',
-        to: email,
-        subject: `Agreement ${status}`,
-        html: `
-          <h3>Agreement Update</h3>
-          <p>Your agreement <strong>${agreement.title}</strong> is now <strong>${status}</strong>.</p>
-        `
-      });
-    } catch (error) {
-      console.error('Email error:', error);
-    }
-  }
+      const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
+      const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
 
-  async sendMilestoneReminder(milestone, email) {
-    if (!process.env.RESEND_API_KEY) {
-      console.log('[EMAIL MOCK] Milestone reminder sent to', email);
-      return;
-    }
+      sendSmtpEmail.subject = `Agreement ${status}`;
+      sendSmtpEmail.htmlContent = `
+        <h3>Agreement Update</h3>
+        <p>Your agreement <strong>${agreement.title}</strong> is now <strong>${status}</strong>.</p>
+      `;
+      sendSmtpEmail.sender = { name: 'NGO Tracker', email: 'luqmanbooso@gmail.com' };
+      sendSmtpEmail.to = [{ email: email }];
 
-    try {
-      await resend.emails.send({
-        from: 'onboarding@resend.dev',
-        to: email,
-        subject: 'Milestone Due Soon',
-        html: `
-          <p>Reminder: Milestone <strong>${milestone.title}</strong> is due on <strong>${milestone.dueDate}</strong>.</p>
-        `
-      });
+      await apiInstance.sendTransacEmail(sendSmtpEmail);
+      console.log('[EMAIL] Agreement status sent to', email);
     } catch (error) {
-      console.error('Email error:', error);
+      console.error('Email error:', error.message);
     }
   }
 }

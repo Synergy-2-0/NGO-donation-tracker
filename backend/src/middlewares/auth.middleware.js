@@ -1,28 +1,14 @@
-import jwt from 'jsonwebtoken';
-import {promisify} from 'util';
+import jwt from "jsonwebtoken";
 
-const verifyJwt = promisify(jwt.verify);
+export const authenticate = (req, res, next) => {
+    const token = req.headers.authorization?.split(" ")[1];
+    if (!token) return res.status(401).json({ message: "No token" });
 
-export const protect = async (req, res, next) => {
-    try{
-        let token; 
-        if(req.headers.authorization?.startsWith('Bearer ')){
-            token = req.headers.authorization.split(' ')[1];
-        }
-        if(!token) return res.status(401).json({message: 'Unauthorized'});
-
-        const decoded = await verifyJwt(token, process.env.JWT_SECRET);
-        req.user = decoded;
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        req.user = decoded; // {id, role}
         next();
-    }catch(err){
-        res.status(401).json({message: 'Invalid token', error: err.message});
+    } catch {
+        res.status(401).json({ message: "Invalid token" });
     }
 };
-
-    export const restrictTo = (...roles) => (req, res, next) => {
-        if(!roles.includes(req.user.role)){
-            return res.status(403).json({message: 'Forbidden: insufficient role'});
-        }
-    
-    next();
-    };

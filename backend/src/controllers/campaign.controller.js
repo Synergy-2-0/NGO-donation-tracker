@@ -62,3 +62,14 @@ export const publishCampaign = async (req, res) => {
         res.status(400).json({ message: error.message });
     }
 };
+
+export const getCampaignMetrics = async (req, res) => {
+    try {
+        const metrics = await campaignService.getCampaignMetrics(
+            req.params.id
+        );
+        res.json(metrics);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};

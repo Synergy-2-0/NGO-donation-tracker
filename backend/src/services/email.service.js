@@ -1,64 +1,68 @@
-import sgMail from '@sendgrid/mail';
+import { Resend } from 'resend';
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 class EmailService {
-  constructor() {
-    if (process.env.SENDGRID_API_KEY) {
-      sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-    }
-  }
-
   async sendPartnerApproval(partner, email) {
-    if (!process.env.SENDGRID_API_KEY) {
-      console.warn('SendGrid not configured');
+    if (!process.env.RESEND_API_KEY) {
+      console.log('[EMAIL MOCK] Partner approval sent to', email);
       return;
     }
 
-    const msg = {
-      to: email,
-      from: process.env.SENDGRID_FROM_EMAIL,
-      subject: 'Partnership Approved - Welcome!',
-      text: `Congratulations! Your partnership with ${partner.organizationName} has been approved.`,
-      html: `<strong>Congratulations!</strong><p>Your partnership has been approved.</p>`
-    };
-
     try {
-      await sgMail.send(msg);
+      await resend.emails.send({
+        from: 'onboarding@resend.dev',
+        to: email,
+        subject: 'Partnership Approved - Welcome!',
+        html: `
+          <h1>Congratulations, ${partner.organizationName}!</h1>
+          <p>Your partnership application has been approved.</p>
+          <p>You can now create agreements and start collaborating.</p>
+        `
+      });
     } catch (error) {
-      console.error('SendGrid error:', error.message);
+      console.error('Email error:', error);
     }
   }
 
   async sendAgreementStatusChange(agreement, email, status) {
-    if (!process.env.SENDGRID_API_KEY) return;
-
-    const msg = {
-      to: email,
-      from: process.env.SENDGRID_FROM_EMAIL,
-      subject: `Agreement ${status}`,
-      text: `Your agreement "${agreement.title}" is now ${status}.`
-    };
+    if (!process.env.RESEND_API_KEY) {
+      console.log('[EMAIL MOCK] Agreement status change sent to', email);
+      return;
+    }
 
     try {
-      await sgMail.send(msg);
+      await resend.emails.send({
+        from: 'onboarding@resend.dev',
+        to: email,
+        subject: `Agreement ${status}`,
+        html: `
+          <h3>Agreement Update</h3>
+          <p>Your agreement <strong>${agreement.title}</strong> is now <strong>${status}</strong>.</p>
+        `
+      });
     } catch (error) {
-      console.error('SendGrid error:', error.message);
+      console.error('Email error:', error);
     }
   }
 
   async sendMilestoneReminder(milestone, email) {
-    if (!process.env.SENDGRID_API_KEY) return;
-
-    const msg = {
-      to: email,
-      from: process.env.SENDGRID_FROM_EMAIL,
-      subject: 'Milestone Due Soon',
-      text: `Reminder: Milestone "${milestone.title}" is due on ${milestone.dueDate}.`
-    };
+    if (!process.env.RESEND_API_KEY) {
+      console.log('[EMAIL MOCK] Milestone reminder sent to', email);
+      return;
+    }
 
     try {
-      await sgMail.send(msg);
+      await resend.emails.send({
+        from: 'onboarding@resend.dev',
+        to: email,
+        subject: 'Milestone Due Soon',
+        html: `
+          <p>Reminder: Milestone <strong>${milestone.title}</strong> is due on <strong>${milestone.dueDate}</strong>.</p>
+        `
+      });
     } catch (error) {
-      console.error('SendGrid error:', error.message);
+      console.error('Email error:', error);
     }
   }
 }

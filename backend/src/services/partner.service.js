@@ -3,9 +3,6 @@ import emailService from "./email.service.js";
 
 class PartnerService {
   async createPartnership(data, userId) {
-    if (data.address && !data.address.coordinates) {
-      data.address.coordinates = await geocodingService.geocodeAddress(data.address);
-    }
     return await partnerRepository.create({ ...data, userId });
   }
 

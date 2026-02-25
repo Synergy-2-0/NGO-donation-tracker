@@ -113,6 +113,10 @@ const verifyPayHereSignature = (
  * Handle PayHere payment callback/webhook
  */
 export const handlePayHereCallback = async (callbackData) => {
+    if (!callbackData || typeof callbackData !== "object") {
+        throw new Error("Missing callback data");
+    }
+
     const {
         merchant_id,
         order_id,
@@ -124,6 +128,10 @@ export const handlePayHereCallback = async (callbackData) => {
         custom_1, // transaction ID
         custom_2, // ngo ID
     } = callbackData;
+
+    if (!merchant_id || !order_id || !payhere_amount || !payhere_currency || !status_code || !md5sig) {
+        throw new Error("Invalid callback data");
+    }
 
     const merchantSecret = process.env.PAYHERE_MERCHANT_SECRET;
 

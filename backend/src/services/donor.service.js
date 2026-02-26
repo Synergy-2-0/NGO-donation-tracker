@@ -1,13 +1,9 @@
 import * as donorRepo from '../repository/donor.repository.js';
-import * as userRepo from '../repository/user.repository.js';
 import { sendDonorEmail } from '../utils/email.util.js';
 
 //Donors
 
 export const createDonorProfile = async (data, userId) => {
-  const user = await userRepo.findUserById(userId);
-  if (!user) throw new Error('User not found');
-
   const existing = await donorRepo.findByUserId(userId);
   if (existing) throw new Error('Donor profile already exists for this user');
 

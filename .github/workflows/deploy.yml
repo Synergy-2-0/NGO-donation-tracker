@@ -1,0 +1,35 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4 # Updated to v4 for better performance
+
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1.0.3 # Using a specific version is safer than @master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            # Navigate to repo
+            cd ~/apps/NGO-donation-tracker
+            
+            # Ensure we are on main branch
+            git checkout main
+            git pull origin main
+            
+            # Update backend
+            cd backend
+            npm install
+            
+            # Restart or Start if it's the first time
+            pm2 restart ngo-app || pm2 start index.js --name "ngo-app"

@@ -44,7 +44,7 @@ router.post('/', authenticate, authorizeRoles('partner'), ctrl.createPartnership
  * @swagger
  * /api/partners:
  *   get:
- *     summary: List partners (admin: all, others: public approved only)
+ *     summary: "List partners (admin: all, others: public approved only)"
  *     tags: [Partners]
  *     security:
  *       - bearerAuth: []

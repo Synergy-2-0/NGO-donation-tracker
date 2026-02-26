@@ -1,10 +1,12 @@
 import Joi from "joi";
 
+const objectId = Joi.string().hex().length(24);
+
 // Transaction validators
 export const createTransactionSchema = Joi.object({
-    donorId: Joi.string().required(),
-    ngoId: Joi.string().required(),
-    campaignId: Joi.string().optional(),
+    donorId: objectId.required(),
+    ngoId: objectId.required(),
+    campaignId: objectId.optional(),
     amount: Joi.number().min(1).required(),
     currency: Joi.string().valid("LKR", "USD", "EUR").default("LKR"),
     paymentMethod: Joi.string().default("PayHere"),
@@ -19,8 +21,8 @@ export const updateTransactionSchema = Joi.object({
 
 // Fund allocation validators
 export const createAllocationSchema = Joi.object({
-    transactionId: Joi.string().required(),
-    ngoId: Joi.string().required(),
+    transactionId: objectId.required(),
+    ngoId: objectId.required(),
     category: Joi.string()
         .valid(
             "education",
@@ -56,9 +58,9 @@ export const updateAllocationSchema = Joi.object({
 
 // PayHere init validator
 export const payHereInitSchema = Joi.object({
-    donorId: Joi.string().required(),
-    ngoId: Joi.string().required(),
-    campaignId: Joi.string().optional(),
+    donorId: objectId.required(),
+    ngoId: objectId.required(),
+    campaignId: objectId.optional(),
     amount: Joi.number().min(1).required(),
     currency: Joi.string().valid("LKR", "USD", "EUR").default("LKR"),
     firstName: Joi.string().required(),
@@ -75,9 +77,9 @@ export const createAuditLogSchema = Joi.object({
     entityType: Joi.string()
         .valid("transaction", "fundAllocation", "campaign", "partner")
         .required(),
-    entityId: Joi.string().required(),
+    entityId: objectId.required(),
     action: Joi.string().valid("create", "update", "delete", "archive").required(),
-    changedBy: Joi.string().required(),
+    changedBy: objectId.required(),
     changedByRole: Joi.string().optional(),
     previousData: Joi.object().optional(),
     newData: Joi.object().optional(),

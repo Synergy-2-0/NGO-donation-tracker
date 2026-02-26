@@ -29,7 +29,8 @@ jobs:
             
             # Update backend
             cd backend
+            export PATH="$HOME/.nvm/versions/node/v24.14.0/bin:$PATH"
             npm install
             
             # Restart or Start if it's the first time
-            pm2 restart ngo-app || pm2 start index.js --name "ngo-app"
+            pm2 restart ngo-app || pm2 start server.js --name "ngo-app"

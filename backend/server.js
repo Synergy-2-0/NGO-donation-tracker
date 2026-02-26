@@ -2,11 +2,8 @@ import express from 'express';
 import dotenv from "dotenv";
 import './src/config/db.js';
 import router from './src/routes/partners.routes.js';
-// import swaggerJsdoc from 'swagger-jsdoc';
-import swaggerUi from 'swagger-ui-express';
 import campaignRoutes from "./src/routes/campaign.routes.js";
 import financeRoutes from "./src/routes/finance.routes.js";
-import swaggerSpec from "./src/config/swagger.js";
 
 dotenv.config();
 
@@ -15,8 +12,6 @@ const port = 3000;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-// swagger route
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 //Setup routes
 app.use('/api/partners', router);
@@ -24,7 +19,6 @@ app.use('/api/partners', router);
 app.use("/api/campaigns", campaignRoutes);
 
 app.use("/api/finance", financeRoutes);
-
 
 
 // const swaggerOptions = {

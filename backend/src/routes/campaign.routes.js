@@ -1,6 +1,5 @@
 import express from "express";
 import upload from "../middlewares/upload.middleware.js";
-
 import {
     createCampaign,
     getCampaigns,
@@ -29,89 +28,49 @@ import { authorizeRoles } from "../middlewares/role.middleware.js";
 
 const router = express.Router();
 
+/* --- campaign --- */
 // Create campaign (draft by default)
-router.post(
-    "/",
-    authenticate,
-    authorizeRoles("admin", "ngo-admin"),
-    createCampaign
-);
+router.post("/", authenticate, authorizeRoles("admin", "ngo-admin"), createCampaign);
 
 // Get all campaigns 
 router.get("/", getCampaigns);
 
-// Get single campaign
+// Get campaign by ID
 router.get("/:id", getCampaignById);
 
-// Update campaign
-router.put(
-    "/:id",
-    authenticate,
-    authorizeRoles("admin", "ngo-admin"),
-    updateCampaign
-);
+// Update campaign (only if it's a draft)
+router.put("/:id", authenticate, authorizeRoles("admin", "ngo-admin"), updateCampaign);
 
-// Soft delete (archive)
-router.delete(
-    "/:id",
-    authenticate,
-    authorizeRoles("admin", "ngo-admin"),
-    deleteCampaign
-);
+// Delete campaign 
+router.delete("/:id", authenticate, authorizeRoles("admin", "ngo-admin"), deleteCampaign);
 
 // Publish campaign 
-router.put(
-    "/:id/publish",
-    authenticate,
-    authorizeRoles("admin", "ngo-admin"),
-    publishCampaign
-);
+router.put("/:id/publish", authenticate, authorizeRoles("admin", "ngo-admin"), publishCampaign);
 
-// Add progress log with evidence images
-router.post(
-    "/:id/progress",
-    authenticate,
-    authorizeRoles("admin", "ngo-admin"),
-    upload.array("evidence", 5),
-    createProgress
-);
+/* --- progress log routes --- */
+// Create progress log for a campaign with evidence images
+router.post("/:id/progress", authenticate, authorizeRoles("admin", "ngo-admin"), upload.array("evidence", 5), createProgress);
 
-// Get all progress logs for campaign
+// Get all progress logs for a campaign
 router.get("/:id/progress", getCampaignProgress);
 
-// Update progress log
-router.put(
-    "/:id/progress/:progressId",
-    authenticate,
-    authorizeRoles("admin", "ngo-admin"),
-    upload.array("evidence", 5),
-    updateProgress
-);
+// Update progress log 
+router.put("/:id/progress/:progressId", authenticate, authorizeRoles("admin", "ngo-admin"), upload.array("evidence", 5), updateProgress);
 
 // Delete progress log
-router.delete(
-    "/:id/progress/:progressId",
-    authenticate,
-    authorizeRoles("admin", "ngo-admin"),
-    deleteProgress
-);
+router.delete("/:id/progress/:progressId", authenticate, authorizeRoles("admin", "ngo-admin"), deleteProgress);
 
-// Create final campaign report
-router.post(
-    "/:id/report",
-    authenticate,
-    authorizeRoles("admin", "ngo-admin"),
-    upload.array("evidence", 5),
-    createReport
-);
+/* --- report routes --- */
+// Create final campaign report 
+router.post("/:id/report", authenticate, authorizeRoles("admin", "ngo-admin"), upload.array("evidence", 5), createReport);
 
-// Get report by campaign ID
+// Get final report for a campaign
 router.get("/:id/report", getReportByCampaign);
 
-// Get report by report ID
+// Get report by ID
 router.get("/report/:reportId", getReportById);
 
-// Get impact metrics
+// metrics route
 router.get("/:id/metrics", getCampaignMetrics);
 
 export default router;

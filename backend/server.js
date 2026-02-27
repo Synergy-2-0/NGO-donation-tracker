@@ -21,12 +21,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/campaigns", campaignRoutes);
 app.use('/api/agreements', agreementRoutes);
 app.use('/api/milestones', milestoneRoutes);
-//Setup routes
-app.use('/api/partners', router);
-
-app.use("/api/campaigns", campaignRoutes);
 app.use("/api/donors", donorRoutes);
-
 app.use("/api/finance", financeRoutes);
 
 app.listen(port, () => {

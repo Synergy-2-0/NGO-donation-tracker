@@ -53,7 +53,10 @@ export const deleteCampaign = async (req, res) => {
     }
 };
 
-// publish campaign
+/**
+ * Publish a campaign.
+ * Business rule: Only draft campaigns can be published.
+ */
 export const publishCampaign = async (req, res) => {
     try {
         const campaign = await campaignService.publishCampaign(req.params.id);
@@ -63,6 +66,9 @@ export const publishCampaign = async (req, res) => {
     }
 };
 
+/**
+ * Get campaign metrics combining financials and progress logs.
+ */
 export const getCampaignMetrics = async (req, res) => {
     try {
         const metrics = await campaignService.getCampaignMetrics(

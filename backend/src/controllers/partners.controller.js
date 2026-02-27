@@ -1,5 +1,6 @@
 import partnerService from "../services/partner.service.js";
 
+// Create new partnership
 export const createPartnership = async (req, res) => {
   try {
     const partnership = await partnerService.createPartnership(req.body, req.user.id);
@@ -9,6 +10,7 @@ export const createPartnership = async (req, res) => {
   }
 };
 
+// Get all partners
 export const getPartners = async (req, res) => {
   try {
     const isAdmin = req.user?.role === 'admin';
@@ -19,6 +21,7 @@ export const getPartners = async (req, res) => {
   }
 };
 
+// Get single partner by ID
 export const getPartner = async (req, res) => {
   try {
     const partner = await partnerService.getPartnerById(req.params.id, req.user);
@@ -29,6 +32,7 @@ export const getPartner = async (req, res) => {
   }
 };
 
+// Update partner
 export const updatePartner = async (req, res) => {
   try {
     const partner = await partnerService.updatePartner(req.params.id, req.body, req.user);
@@ -39,6 +43,7 @@ export const updatePartner = async (req, res) => {
   }
 };
 
+// Approve partner (admin only)
 export const approvePartner = async (req, res) => {
   try {
     const partner = await partnerService.approvePartner(req.params.id, req.user.id);
@@ -49,6 +54,7 @@ export const approvePartner = async (req, res) => {
   }
 };
 
+// Delete partner
 export const deletePartner = async (req, res) => {
   try {
     await partnerService.deletePartner(req.params.id, req.user);

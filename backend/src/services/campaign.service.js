@@ -1,6 +1,9 @@
 import * as campaignRepository from "../repository/campaign.repository.js";
 import Progress from "../models/progressLog.model.js";
 
+/**
+ * Create a new campaign.
+ */
 export const createCampaign = async (data) => {
     if (!data.title || !data.goalAmount) {
         throw new Error("Title and goal amount are required");
@@ -9,10 +12,16 @@ export const createCampaign = async (data) => {
     return await campaignRepository.create(data);
 };
 
+/**
+ * Retrieve all campaigns.
+ */
 export const getAllCampaigns = async () => {
     return await campaignRepository.findAll();
 };
 
+/**
+ * Get a campaign by its ID.
+ */
 export const getCampaignById = async (id) => {
     const campaign = await campaignRepository.findById(id);
 
@@ -23,6 +32,9 @@ export const getCampaignById = async (id) => {
     return campaign;
 };
 
+/**
+ * Update campaign details.
+ */
 export const updateCampaign = async (id, data) => {
     return await campaignRepository.updateById(id, data);
 };
@@ -31,6 +43,12 @@ export const deleteCampaign = async (id) => {
     return await campaignRepository.softDelete(id);
 };
 
+/**
+ * Publish a campaign.
+ * Business rules:
+ *  - Only campaigns in "draft" status can be published.
+ *  - Publishing makes the campaign visible and active.
+ */
 export const publishCampaign = async (id) => {
     const campaign = await campaignRepository.findById(id);
     if (!campaign) throw new Error("Campaign not found");
@@ -40,7 +58,10 @@ export const publishCampaign = async (id) => {
     return await campaignRepository.updateById(id, { status: "active" });
 };
 
-
+/**
+ * Calculate campaign performance metrics.
+ * Combines campaign data with progress logs.
+ */
 export const getCampaignMetrics = async (campaignId) => {
     const campaign = await campaignRepository.findById(campaignId);
     if (!campaign) throw new Error("Campaign not found");
@@ -51,9 +72,12 @@ export const getCampaignMetrics = async (campaignId) => {
         (sum, log) => sum + (log.beneficiaries || 0),
         0
     );
-
+    // Total funds raised so far
     const totalRaised = campaign.raisedAmount;
 
+    /**
+ * Completion rate shows how close the campaign is to its goal.
+ */
     const completionRate =
         campaign.goalAmount > 0
             ? (totalRaised / campaign.goalAmount) * 100

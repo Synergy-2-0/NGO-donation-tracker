@@ -2,6 +2,9 @@ import * as donorService from '../services/donor.service.js';
 
 //Donor Profile
 
+/**
+ * Create a new donor profile for the authenticated user.
+ */
 export const createDonor = async (req, res) => {
   try {
     const donor = await donorService.createDonorProfile(req.body, req.user.id);
@@ -11,6 +14,9 @@ export const createDonor = async (req, res) => {
   }
 };
 
+/**
+ * Get all donor profiles.
+ */
 export const getAllDonors = async (req, res) => {
   try {
     const donors = await donorService.getAllDonors(req.query);
@@ -20,6 +26,9 @@ export const getAllDonors = async (req, res) => {
   }
 };
 
+/**
+ * Get a donor by ID.
+ */
 export const getDonorById = async (req, res) => {
   try {
     const donor = await donorService.getDonorById(req.params.id);
@@ -29,6 +38,9 @@ export const getDonorById = async (req, res) => {
   }
 };
 
+/**
+ * Get the donor profile for the authenticated user.
+ */
 export const getMyDonorProfile = async (req, res) => {
   try {
     const donor = await donorService.getDonorByUserId(req.user.id);
@@ -57,7 +69,9 @@ export const deleteDonor = async (req, res) => {
 };
 
 //Pledges
-
+/**
+ * Create a pledge for a donor.
+ */
 export const createPledge = async (req, res) => {
   try {
     const donor = await donorService.createPledge(req.params.id, req.body);
@@ -67,6 +81,9 @@ export const createPledge = async (req, res) => {
   }
 };
 
+/**
+ * Update a specific pledge by donor ID and pledge ID.
+ */
 export const updatePledge = async (req, res) => {
   try {
     const donor = await donorService.updatePledge(req.params.id, req.params.pledgeId, req.body);
@@ -86,7 +103,9 @@ export const deletePledge = async (req, res) => {
 };
 
 //Interactions
-
+/**
+ * Create an interaction (call, meeting, email) for a donor.
+ */
 export const createInteraction = async (req, res) => {
   try {
     const donor = await donorService.createInteraction(req.params.id, req.body, req.user.id);
@@ -125,6 +144,9 @@ export const getSegmentAnalytics = async (req, res) => {
   }
 };
 
+/**
+ * Recalculate donor analytics based on fulfilled pledges and interactions.
+ */
 export const recalculateAnalytics = async (req, res) => {
   try {
     const donor = await donorService.recalculateDonorAnalytics(req.params.id);

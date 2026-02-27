@@ -1,7 +1,6 @@
 import * as donorRepo from '../repository/donor.repository.js';
 import { sendDonorEmail } from '../utils/email.util.js';
-
-//Donors
+import Donor from '../models/donor.model.js';
 
 export const createDonorProfile = async (data, userId) => {
   const existing = await donorRepo.findByUserId(userId);
@@ -72,9 +71,17 @@ export const updatePledge = async (donorId, pledgeId, pledgeData) => {
 };
 
 export const deletePledge = async (donorId, pledgeId) => {
-  const donor = await donorRepo.findById(donorId);
+  const donor = await Donor.findById(donorId);
   if (!donor) throw new Error('Donor not found');
-  return await donorRepo.deletePledge(donorId, pledgeId);
+
+  const pledgeExists = donor.pledges.id(pledgeId);
+  if (!pledgeExists) throw new Error('Pledge not found');
+
+  // Filter out the pledge
+  donor.pledges = donor.pledges.filter(p => p._id.toString() !== pledgeId);
+  await donor.save();
+
+  return donor;
 };
 
 //Interactions

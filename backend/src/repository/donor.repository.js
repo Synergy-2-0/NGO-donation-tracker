@@ -43,11 +43,19 @@ export const addPledge = async (donorId, pledgeData) => {
 };
 
 export const updatePledge = async (donorId, pledgeId, pledgeData) => {
-  return await Donor.findOneAndUpdate(
-    { _id: donorId, 'pledges._id': pledgeId },
-    { $set: { 'pledges.$': { ...pledgeData, _id: pledgeId } } },
-    { new: true }
-  );
+  const donor = await Donor.findById(donorId);
+  if (!donor) throw new Error('Donor not found');
+
+  const pledge = donor.pledges.id(pledgeId);
+  if (!pledge) throw new Error('Pledge not found');
+
+  // Update only the fields provided in pledgeData
+  Object.keys(pledgeData).forEach(key => {
+    pledge[key] = pledgeData[key];
+  });
+
+  await donor.save();
+  return donor;
 };
 
 export const deletePledge = async (donorId, pledgeId) => {

@@ -78,8 +78,8 @@ export const updatePledge = async (req, res) => {
 
 export const deletePledge = async (req, res) => {
   try {
-    const donor = await donorService.deletePledge(req.params.id, req.params.pledgeId);
-    res.json(donor);
+    await donorService.deletePledge(req.params.id, req.params.pledgeId);
+    res.json({ message: 'Pledge deleted successfully' });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }

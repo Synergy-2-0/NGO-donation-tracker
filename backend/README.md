@@ -175,3 +175,5 @@ POST /api/finance/payhere/init
 ```
 http://44.192.7.89:3000/
 ```
+
+Current status: 80% completed

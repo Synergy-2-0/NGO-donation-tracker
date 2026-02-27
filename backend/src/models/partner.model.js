@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 
 const partnerSchema = new mongoose.Schema({
+  // Organization details
   organizationName: {
     type: String,
     required: [true, 'Organization name is required'],
@@ -10,6 +11,7 @@ const partnerSchema = new mongoose.Schema({
     index: true
   },
 
+  // Organization type with validation
   organizationType: {
     type: String,
     required: [true, 'Organization type is required'],
@@ -33,6 +35,7 @@ const partnerSchema = new mongoose.Schema({
     default: 'medium'
   },
 
+  // Contact person information
   contactPerson: {
     name: {
       type: String,
@@ -59,6 +62,7 @@ const partnerSchema = new mongoose.Schema({
     }
   },
 
+  // Address with geolocation support
   address: {
     street: { type: String, required: true },
     city: { type: String, required: true },
@@ -83,6 +87,7 @@ const partnerSchema = new mongoose.Schema({
     }
   },
 
+  // CSR focus areas
   csrFocus: {
     type: [String],
     required: [true, 'At least one CSR focus area is required'],
@@ -115,6 +120,7 @@ const partnerSchema = new mongoose.Schema({
     index: true
   },
 
+  // Partnership preferences and budget
   partnershipPreferences: {
     budgetRange: {
       min: {
@@ -124,13 +130,7 @@ const partnerSchema = new mongoose.Schema({
       },
       max: {
         type: Number,
-        required: true,
-        validate: {
-          validator: function(value) {
-            return value >= this.min;
-          },
-          message: 'Maximum budget must be greater than or equal to minimum budget'
-        }
+        required: true
       }
     },
     partnershipTypes: {
@@ -146,6 +146,7 @@ const partnerSchema = new mongoose.Schema({
     geographicFocus: [String]
   },
 
+  // Partner capabilities and resources
   capabilities: {
     financialCapacity: {
       type: Number,
@@ -170,6 +171,7 @@ const partnerSchema = new mongoose.Schema({
     volunteerHoursAvailable: Number
   },
 
+  // Verification status
   verificationStatus: {
     type: String,
     enum: ['pending', 'verified', 'rejected'],
@@ -205,6 +207,7 @@ const partnerSchema = new mongoose.Schema({
     ref: 'User'
   },
 
+  // Partnership history metrics
   partnershipHistory: {
     totalPartnerships: {
       type: Number,
@@ -228,6 +231,7 @@ const partnerSchema = new mongoose.Schema({
     }
   },
 
+  // Partner account status
   status: {
     type: String,
     enum: ['active', 'inactive', 'suspended'],
@@ -235,6 +239,7 @@ const partnerSchema = new mongoose.Schema({
     index: true
   },
 
+  // Reference to user account
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',

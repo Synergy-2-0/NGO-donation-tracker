@@ -1,0 +1,33 @@
+name: NGO Donation Tracker - Playwright Tests
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+jobs:
+  test:
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: lts/*
+    - name: Install dependencies
+      run: npm install
+      working-directory: ./backend
+    - name: Pre-install Playwright Browsers
+      run: npx playwright install --with-deps
+      working-directory: ./backend
+    - name: Start the backend server
+      run: npm start &
+      working-directory: ./backend
+    - name: Run Playwright tests
+      run: npx playwright test
+      working-directory: ./backend
+    - uses: actions/upload-artifact@v4
+      if: ${{ !cancelled() }}
+      with:
+        name: playwright-report
+        path: backend/playwright-report/
+        retention-days: 30

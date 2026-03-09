@@ -4,8 +4,8 @@ export default function Navbar() {
   const { user, logout } = useAuth();
 
   return (
-    <header className="bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between shrink-0">
-      <h1 className="text-lg font-semibold text-gray-800">NGO Donation Tracker</h1>
+    <header className="bg-[#FFF7ED] border-b border-orange-200 px-6 py-3 flex items-center justify-between shrink-0">
+      <h1 className="text-lg font-semibold text-[#7C2D12]">TrustFund</h1>
       <div className="flex items-center gap-4">
         <div className="text-right">
           <p className="text-sm font-medium text-gray-700">{user?.name}</p>

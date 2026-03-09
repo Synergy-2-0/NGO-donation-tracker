@@ -41,9 +41,12 @@ const navItems = [
 
 export default function Sidebar() {
   return (
-    <aside className="w-64 bg-blue-900 text-white flex flex-col shrink-0">
-      <div className="px-6 py-5 border-b border-blue-800">
-        <span className="text-xl font-bold tracking-wide">Donor Portal</span>
+    <aside className="w-64 text-white flex flex-col shrink-0" style={{ background: 'linear-gradient(180deg, #7C2D12 0%, #DC2626 100%)' }}>
+      <div className="px-6 py-5 border-b border-red-800/50 flex items-center gap-2">
+        <svg className="w-6 h-6 text-orange-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+        </svg>
+        <span className="text-xl font-extrabold tracking-tight">TrustFund</span>
       </div>
       <nav className="flex-1 px-3 py-4 space-y-1">
         {navItems.map((item) => (
@@ -53,8 +56,8 @@ export default function Sidebar() {
             className={({ isActive }) =>
               `flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                 isActive
-                  ? 'bg-blue-700 text-white'
-                  : 'text-blue-100 hover:bg-blue-800'
+                  ? 'bg-white/20 text-white'
+                  : 'text-red-100 hover:bg-white/10'
               }`
             }
           >
@@ -63,8 +66,8 @@ export default function Sidebar() {
           </NavLink>
         ))}
       </nav>
-      <div className="px-6 py-4 border-t border-blue-800 text-xs text-blue-400">
-        NGO Donation Tracker &copy; {new Date().getFullYear()}
+      <div className="px-6 py-4 border-t border-red-800/40 text-xs text-red-200">
+        TrustFund &copy; {new Date().getFullYear()}
       </div>
     </aside>
   );

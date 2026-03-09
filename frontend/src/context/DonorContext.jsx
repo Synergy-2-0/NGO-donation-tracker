@@ -20,6 +20,11 @@ export function DonorProvider({ children }) {
       setDonorProfile(data);
       return data;
     } catch (err) {
+      // 404 means the user simply has no donor profile yet — not an error
+      if (err.response?.status === 404) {
+        setDonorProfile(null);
+        return null;
+      }
       const message = err.response?.data?.message || err.message || 'Failed to load profile.';
       setError(message);
       throw err;

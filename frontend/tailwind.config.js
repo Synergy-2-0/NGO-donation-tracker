@@ -4,13 +4,12 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: {
-          50: '#eff6ff',
-          100: '#dbeafe',
-          500: '#3b82f6',
-          600: '#2563eb',
-          700: '#1d4ed8',
-          900: '#1e3a8a',
+        brand: {
+          red:    '#DC2626',
+          orange: '#FB923C',
+          cream:  '#FFF7ED',
+          brown:  '#7C2D12',
+          dark:   '#1F2937',
         },
       },
     },

@@ -32,7 +32,7 @@ function Field({ label, name, value, onChange, type = 'text', placeholder, hint,
 
 export default function ProfilePage() {
   const { user } = useAuth();
-  const { donorProfile, loading, error, fetchProfile, createProfile, updateProfile, deleteProfile } =
+  const { donorProfile, loading, error, fetchProfile, updateProfile, deleteProfile } =
     useDonor();
   const [form, setForm] = useState(defaultForm);
   const [editing, setEditing] = useState(false);
@@ -86,14 +86,9 @@ export default function ProfilePage() {
         .filter(Boolean),
     };
     try {
-      if (donorProfile) {
-        await updateProfile(donorProfile._id, payload);
-        setSuccess('Profile updated successfully.');
-        setEditing(false);
-      } else {
-        await createProfile(payload);
-        setSuccess('Donor profile created successfully.');
-      }
+      await updateProfile(donorProfile._id, payload);
+      setSuccess('Profile updated successfully.');
+      setEditing(false);
     } catch (err) {
       setLocalError(err.response?.data?.message || err.message || 'Failed to save profile.');
     }
@@ -117,14 +112,10 @@ export default function ProfilePage() {
     <div className="max-w-2xl space-y-6">
       <div>
         <h2 className="text-2xl font-bold text-gray-800">Donor Profile</h2>
-        <p className="text-sm text-gray-500 mt-1">
-          {donorProfile
-            ? 'View and manage your donor information.'
-            : 'Create your donor profile to start pledging and tracking donations.'}
-        </p>
+        <p className="text-sm text-gray-500 mt-1">View and manage your donor information.</p>
       </div>
 
-      {(localError || (!donorProfile && error)) && (
+      {(localError || error) && (
         <ErrorAlert
           message={localError || error}
           onDismiss={() => setLocalError('')}
@@ -213,14 +204,13 @@ export default function ProfilePage() {
           </div>
         </div>
       ) : (
-        /* Create / Edit Form */
+        /* Edit Form — only shown when editing an existing profile */
+        donorProfile ? (
         <form
           onSubmit={handleSubmit}
           className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 space-y-5"
         >
-          <h3 className="text-base font-semibold text-gray-700">
-            {donorProfile ? 'Edit Profile' : 'Create Profile'}
-          </h3>
+          <h3 className="text-base font-semibold text-gray-700">Edit Profile</h3>
 
           <Field
             label="Phone"
@@ -290,19 +280,20 @@ export default function ProfilePage() {
               disabled={loading}
               className="px-5 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white text-sm font-semibold rounded-lg transition-colors"
             >
-              {loading ? 'Saving...' : donorProfile ? 'Save Changes' : 'Create Profile'}
+              {loading ? 'Saving...' : 'Save Changes'}
             </button>
-            {donorProfile && (
-              <button
-                type="button"
-                onClick={() => setEditing(false)}
-                className="px-5 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium rounded-lg transition-colors"
-              >
-                Cancel
-              </button>
-            )}
+            <button
+              type="button"
+              onClick={() => setEditing(false)}
+              className="px-5 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium rounded-lg transition-colors"
+            >
+              Cancel
+            </button>
           </div>
         </form>
+        ) : (
+          <LoadingSpinner message="Setting up your profile..." />
+        )
       )}
 
       {/* Delete Confirmation Modal */}

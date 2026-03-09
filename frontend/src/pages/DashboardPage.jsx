@@ -59,17 +59,6 @@ export default function DashboardPage() {
         </p>
       </div>
 
-      {/* No profile banner */}
-      {!donorProfile && !loading && (
-        <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 text-sm px-4 py-3 rounded-lg">
-          You don&apos;t have a donor profile yet.{' '}
-          <Link to="/profile" className="font-semibold underline">
-            Create your profile
-          </Link>{' '}
-          to start pledging.
-        </div>
-      )}
-
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard

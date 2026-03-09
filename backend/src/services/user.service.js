@@ -1,6 +1,7 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import * as userRepo from '../repository/user.repository.js';
+import * as donorRepo from '../repository/donor.repository.js';
 
 const JWT_EXPIRES = process.env.JWT_EXPIRES_IN || '1d';
 
@@ -21,7 +22,14 @@ export const registerUser = async (data) => {
 
   const hashed = await bcrypt.hash(password, 10);
   const user = await userRepo.createUser({ name, email, password: hashed, role });
-  return user; // controller already returns 201 with user
+
+  // Auto-provision a donor profile so the user can start immediately
+  if (role === 'donor') {
+    await donorRepo.create({ userId: user._id });
+  }
+
+  const token = signToken(user);
+  return { token, user };
 };
 
 export const loginUser = async (email, password) => {
@@ -36,7 +44,7 @@ export const loginUser = async (email, password) => {
   }
 
   const token = signToken(user);
-  return { message: 'Login successful', token };
+  return { token, user };
 };
 
 export const getUsers = async (filters = {}) => {

@@ -29,12 +29,18 @@ export default function AdminDonorAnalyticsPage() {
     ? donors.reduce((s, d) => s + (d.analytics?.averageDonation || 0), 0) / totalDonors
     : 0;
 
-  // Segment breakdown from donors if segments API not available
-  const segmentCounts = segments || donors.reduce((acc, d) => {
-    const seg = d.segment || 'new';
-    acc[seg] = (acc[seg] || 0) + 1;
-    return acc;
-  }, {});
+  // Normalise segments: API returns [{_id, count, totalDonated}] or a plain object
+  const segmentCounts = (() => {
+    if (Array.isArray(segments)) {
+      return segments.reduce((acc, s) => { acc[s._id] = s.count; return acc; }, {});
+    }
+    if (segments && typeof segments === 'object') return segments;
+    return donors.reduce((acc, d) => {
+      const seg = d.segment || 'new';
+      acc[seg] = (acc[seg] || 0) + 1;
+      return acc;
+    }, {});
+  })();
 
   const segmentEntries = Object.entries(segmentCounts).sort((a, b) => b[1] - a[1]);
   const maxCount = segmentEntries.length > 0 ? Math.max(...segmentEntries.map(([, v]) => v)) : 1;

@@ -13,7 +13,14 @@ import AdminDonorListPage from './pages/admin/AdminDonorListPage';
 import AdminDonorProfilePage from './pages/admin/AdminDonorProfilePage';
 import AdminDonorPledgesPage from './pages/admin/AdminDonorPledgesPage';
 import AdminDonorAnalyticsPage from './pages/admin/AdminDonorAnalyticsPage';
+import AdminDashboardPage from './pages/admin/AdminDashboardPage';
 import { useAuth } from './context/AuthContext';
+
+function RoleBasedDashboard() {
+  const { user } = useAuth();
+  const isAdmin = user?.role === 'admin' || user?.role === 'ngo-admin';
+  return isAdmin ? <AdminDashboardPage /> : <DashboardPage />;
+}
 
 function AdminRoute({ children }) {
   const { user, isAuthenticated } = useAuth();
@@ -39,7 +46,7 @@ export default function App() {
                 }
               >
                 <Route index element={<Navigate to="/dashboard" replace />} />
-                <Route path="dashboard" element={<DashboardPage />} />
+                <Route path="dashboard" element={<RoleBasedDashboard />} />
                 <Route path="profile" element={<ProfilePage />} />
                 <Route path="pledges" element={<PledgesPage />} />
                 <Route path="donations" element={<DonationHistoryPage />} />

@@ -48,14 +48,8 @@ export default function AdminDonorProfilePage() {
 
   const load = useCallback(async () => {
     try {
-      const [d, p, a] = await Promise.all([
-        fetchDonorById(id),
-        fetchDonorPledges(id),
-        fetchDonorAnalytics(id),
-      ]);
+      const d = await fetchDonorById(id);
       setDonor(d);
-      setPledges(p || []);
-      setAnalytics(a);
       setForm({
         phone: d.phone || '',
         bio: d.bio || '',
@@ -67,8 +61,11 @@ export default function AdminDonorProfilePage() {
           postalCode: d.address?.postalCode || '',
         },
       });
+      // Pledges and analytics are non-fatal — missing data is fine
+      fetchDonorPledges(id).then((p) => setPledges(p || [])).catch(() => {});
+      fetchDonorAnalytics(id).then((a) => setAnalytics(a)).catch(() => {});
     } catch {
-      // error shown via context
+      // fetchDonorById failed — context error state already set
     }
   }, [id, fetchDonorById, fetchDonorPledges, fetchDonorAnalytics]);
 

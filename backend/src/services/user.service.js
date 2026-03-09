@@ -13,7 +13,7 @@ const signToken = (user) => {
 };
 
 export const registerUser = async (data) => {
-  const { name, email, password, role } = data;
+  const { name, email, password, role, phone, city, country, preferredCauses, bio } = data;
 
   const existing = await userRepo.findUserByEmail(email);
   if (existing) {
@@ -25,7 +25,18 @@ export const registerUser = async (data) => {
 
   // Auto-provision a donor profile so the user can start immediately
   if (role === 'donor') {
-    await donorRepo.create({ userId: user._id });
+    const profileData = { userId: user._id };
+    if (phone) profileData.phone = phone;
+    if (city || country) {
+      profileData.address = {};
+      if (city) profileData.address.city = city;
+      if (country) profileData.address.country = country;
+    }
+    if (Array.isArray(preferredCauses) && preferredCauses.length) {
+      profileData.preferredCauses = preferredCauses;
+    }
+    if (bio) profileData.bio = bio;
+    await donorRepo.create(profileData);
   }
 
   const token = signToken(user);

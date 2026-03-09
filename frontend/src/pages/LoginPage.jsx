@@ -16,7 +16,9 @@ const inputCls = (err) =>
 const FieldError = ({ msg }) =>
   msg ? <p className="mt-1 text-xs text-red-600">{msg}</p> : null;
 
-function validate(signUp) {
+const PHONE_RE = /^\+?[1-9]\d{1,14}$/;
+
+function validateAccount(signUp) {
   const errs = {};
   if (!NAME_RE.test(signUp.name.trim()))
     errs.name = 'Enter a valid full name (letters only, 2–50 chars).';
@@ -33,10 +35,18 @@ function validate(signUp) {
   return errs;
 }
 
+function validateProfile(signUp) {
+  const errs = {};
+  if (signUp.phone && !PHONE_RE.test(signUp.phone.trim()))
+    errs.phone = 'Enter a valid phone number (e.g. +94771234567).';
+  return errs;
+}
+
 export default function LoginPage() {
   const { login, register, loading } = useAuth();
   const navigate = useNavigate();
   const [tab, setTab] = useState('signin'); // 'signin' | 'signup'
+  const [step, setStep] = useState(1); // signup wizard step
   const [error, setError] = useState('');
 
   // Sign-in form
@@ -49,6 +59,12 @@ export default function LoginPage() {
     password: '',
     confirmPassword: '',
     role: 'donor',
+    // Donor profile fields (step 2)
+    phone: '',
+    city: '',
+    country: 'Sri Lanka',
+    preferredCauses: '',
+    bio: '',
   });
   const [fieldErrors, setFieldErrors] = useState({});
   const [touched, setTouched] = useState({});
@@ -59,7 +75,7 @@ export default function LoginPage() {
     const updated = { ...signUp, [field]: value };
     setSignUp(updated);
     if (touched[field]) {
-      const errs = validate(updated);
+      const errs = validateAccount(updated);
       setFieldErrors((prev) => ({ ...prev, [field]: errs[field] }));
       // also re-validate confirmPassword when password changes
       if (field === 'password' && touched.confirmPassword) {
@@ -79,24 +95,49 @@ export default function LoginPage() {
     }
   };
 
-  const handleSignUp = async (e) => {
-    e.preventDefault();
+  const submitSignUp = async () => {
     setError('');
-    const errs = validate(signUp);
-    setFieldErrors(errs);
-    setTouched({ name: true, email: true, password: true, confirmPassword: true });
-    if (Object.keys(errs).length > 0) return;
     try {
       await register({
         name: signUp.name.trim(),
         email: signUp.email,
         password: signUp.password,
         role: signUp.role,
+        phone: signUp.phone.trim() || undefined,
+        city: signUp.city.trim() || undefined,
+        country: signUp.country.trim() || undefined,
+        preferredCauses: signUp.preferredCauses
+          ? signUp.preferredCauses.split(',').map((s) => s.trim()).filter(Boolean)
+          : [],
+        bio: signUp.bio.trim() || undefined,
       });
       navigate('/dashboard');
     } catch (err) {
       setError(err.message);
+      setStep(1);
     }
+  };
+
+  const handleStep1 = (e) => {
+    e.preventDefault();
+    setError('');
+    const errs = validateAccount(signUp);
+    setFieldErrors(errs);
+    setTouched({ name: true, email: true, password: true, confirmPassword: true });
+    if (Object.keys(errs).length > 0) return;
+    if (signUp.role === 'donor') {
+      setStep(2);
+    } else {
+      submitSignUp();
+    }
+  };
+
+  const handleStep2 = (e) => {
+    e.preventDefault();
+    const errs = validateProfile(signUp);
+    setFieldErrors(errs);
+    if (Object.keys(errs).length > 0) return;
+    submitSignUp();
   };
 
   return (
@@ -146,7 +187,7 @@ export default function LoginPage() {
             {[['signin', 'Sign In'], ['signup', 'Sign Up']].map(([key, label]) => (
               <button
                 key={key}
-                onClick={() => { setTab(key); setError(''); }}
+                onClick={() => { setTab(key); setError(''); setStep(1); }}
                 className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all ${
                   tab === key
                     ? 'bg-[#DC2626] text-white shadow'
@@ -218,95 +259,207 @@ export default function LoginPage() {
 
           {/* ── Sign Up ── */}
           {tab === 'signup' && (
-            <form onSubmit={handleSignUp} className="space-y-4">
-              <div>
-                <label className="block text-xs font-semibold text-[#7C2D12] mb-1 uppercase tracking-wide">Full Name</label>
-                <input
-                  type="text"
-                  value={signUp.name}
-                  onChange={(e) => handleSignUpChange('name', e.target.value)}
-                  onBlur={() => touch('name')}
-                  required
-                  placeholder="John Doe"
-                  className={inputCls(fieldErrors.name)}
-                />
-                <FieldError msg={fieldErrors.name} />
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-[#7C2D12] mb-1 uppercase tracking-wide">Email</label>
-                <input
-                  type="email"
-                  value={signUp.email}
-                  onChange={(e) => handleSignUpChange('email', e.target.value)}
-                  onBlur={() => touch('email')}
-                  required
-                  placeholder="you@example.com"
-                  className={inputCls(fieldErrors.email)}
-                />
-                <FieldError msg={fieldErrors.email} />
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-[#7C2D12] mb-1 uppercase tracking-wide">Role</label>
-                <select
-                  value={signUp.role}
-                  onChange={(e) => handleSignUpChange('role', e.target.value)}
-                  className={inputCls(false)}
-                >
-                  {ROLES.map((r) => (
-                    <option key={r.value} value={r.value}>{r.label}</option>
+            <div className="space-y-4">
+              {/* Step indicator — donors only */}
+              {signUp.role === 'donor' && (
+                <div className="flex items-center gap-1 mb-1">
+                  {[1, 2].map((s) => (
+                    <div key={s} className="flex items-center gap-1">
+                      <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold transition-colors ${
+                        step >= s ? 'bg-[#DC2626] text-white' : 'bg-orange-100 text-[#7C2D12]'
+                      }`}>{s}</div>
+                      {s === 1 && <div className={`h-0.5 w-10 transition-colors ${step >= 2 ? 'bg-[#DC2626]' : 'bg-orange-200'}`} />}
+                    </div>
                   ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-[#7C2D12] mb-1 uppercase tracking-wide">Password</label>
-                <input
-                  type="password"
-                  value={signUp.password}
-                  onChange={(e) => handleSignUpChange('password', e.target.value)}
-                  onBlur={() => touch('password')}
-                  required
-                  placeholder="Min. 8 chars, 1 uppercase, 1 number"
-                  className={inputCls(fieldErrors.password)}
-                />
-                <FieldError msg={fieldErrors.password} />
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-[#7C2D12] mb-1 uppercase tracking-wide">Confirm Password</label>
-                <input
-                  type="password"
-                  value={signUp.confirmPassword}
-                  onChange={(e) => handleSignUpChange('confirmPassword', e.target.value)}
-                  onBlur={() => touch('confirmPassword')}
-                  required
-                  placeholder="Repeat password"
-                  className={inputCls(fieldErrors.confirmPassword)}
-                />
-                <FieldError msg={fieldErrors.confirmPassword} />
-              </div>
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-[#DC2626] hover:bg-red-700 disabled:opacity-60 text-white font-bold py-2.5 rounded-lg transition-colors text-sm mt-1"
-              >
-                {loading ? (
-                  <span className="flex items-center justify-center gap-2">
-                    <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
-                    </svg>
-                    Creating account...
-                  </span>
-                ) : (
-                  'Create Account'
-                )}
-              </button>
-              <p className="text-center text-xs text-gray-400 pt-1">
-                Already have an account?{' '}
-                <button type="button" onClick={() => setTab('signin')} className="text-[#DC2626] font-semibold hover:underline">
-                  Sign In
-                </button>
-              </p>
-            </form>
+                  <span className="text-xs text-gray-500 ml-1">{step === 1 ? 'Account Info' : 'Donor Profile'}</span>
+                </div>
+              )}
+
+              {/* Step 1 — Account fields */}
+              {step === 1 && (
+                <form onSubmit={handleStep1} className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-[#7C2D12] mb-1 uppercase tracking-wide">Full Name</label>
+                    <input
+                      type="text"
+                      value={signUp.name}
+                      onChange={(e) => handleSignUpChange('name', e.target.value)}
+                      onBlur={() => touch('name')}
+                      required
+                      placeholder="John Doe"
+                      className={inputCls(fieldErrors.name)}
+                    />
+                    <FieldError msg={fieldErrors.name} />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-[#7C2D12] mb-1 uppercase tracking-wide">Email</label>
+                    <input
+                      type="email"
+                      value={signUp.email}
+                      onChange={(e) => handleSignUpChange('email', e.target.value)}
+                      onBlur={() => touch('email')}
+                      required
+                      placeholder="you@example.com"
+                      className={inputCls(fieldErrors.email)}
+                    />
+                    <FieldError msg={fieldErrors.email} />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-[#7C2D12] mb-1 uppercase tracking-wide">Role</label>
+                    <select
+                      value={signUp.role}
+                      onChange={(e) => handleSignUpChange('role', e.target.value)}
+                      className={inputCls(false)}
+                    >
+                      {ROLES.map((r) => (
+                        <option key={r.value} value={r.value}>{r.label}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-[#7C2D12] mb-1 uppercase tracking-wide">Password</label>
+                    <input
+                      type="password"
+                      value={signUp.password}
+                      onChange={(e) => handleSignUpChange('password', e.target.value)}
+                      onBlur={() => touch('password')}
+                      required
+                      placeholder="Min. 8 chars, 1 uppercase, 1 number"
+                      className={inputCls(fieldErrors.password)}
+                    />
+                    <FieldError msg={fieldErrors.password} />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-[#7C2D12] mb-1 uppercase tracking-wide">Confirm Password</label>
+                    <input
+                      type="password"
+                      value={signUp.confirmPassword}
+                      onChange={(e) => handleSignUpChange('confirmPassword', e.target.value)}
+                      onBlur={() => touch('confirmPassword')}
+                      required
+                      placeholder="Repeat password"
+                      className={inputCls(fieldErrors.confirmPassword)}
+                    />
+                    <FieldError msg={fieldErrors.confirmPassword} />
+                  </div>
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full bg-[#DC2626] hover:bg-red-700 disabled:opacity-60 text-white font-bold py-2.5 rounded-lg transition-colors text-sm mt-1"
+                  >
+                    {loading ? (
+                      <span className="flex items-center justify-center gap-2">
+                        <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                        </svg>
+                        {signUp.role === 'donor' ? 'Continuing...' : 'Creating account...'}
+                      </span>
+                    ) : (
+                      signUp.role === 'donor' ? 'Next →' : 'Create Account'
+                    )}
+                  </button>
+                  <p className="text-center text-xs text-gray-400 pt-1">
+                    Already have an account?{' '}
+                    <button type="button" onClick={() => { setTab('signin'); setStep(1); }} className="text-[#DC2626] font-semibold hover:underline">
+                      Sign In
+                    </button>
+                  </p>
+                </form>
+              )}
+
+              {/* Step 2 — Donor profile setup */}
+              {step === 2 && (
+                <form onSubmit={handleStep2} className="space-y-4">
+                  <p className="text-xs text-gray-500 -mt-1">
+                    Optional — you can update these anytime from your profile.
+                  </p>
+                  <div>
+                    <label className="block text-xs font-semibold text-[#7C2D12] mb-1 uppercase tracking-wide">Phone</label>
+                    <input
+                      type="tel"
+                      value={signUp.phone}
+                      onChange={(e) => handleSignUpChange('phone', e.target.value)}
+                      onBlur={() => touch('phone')}
+                      placeholder="+94771234567"
+                      className={inputCls(fieldErrors.phone)}
+                    />
+                    <FieldError msg={fieldErrors.phone} />
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-semibold text-[#7C2D12] mb-1 uppercase tracking-wide">City</label>
+                      <input
+                        type="text"
+                        value={signUp.city}
+                        onChange={(e) => handleSignUpChange('city', e.target.value)}
+                        placeholder="Colombo"
+                        className={inputCls(false)}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-[#7C2D12] mb-1 uppercase tracking-wide">Country</label>
+                      <input
+                        type="text"
+                        value={signUp.country}
+                        onChange={(e) => handleSignUpChange('country', e.target.value)}
+                        placeholder="Sri Lanka"
+                        className={inputCls(false)}
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-[#7C2D12] mb-1 uppercase tracking-wide">Preferred Causes</label>
+                    <input
+                      type="text"
+                      value={signUp.preferredCauses}
+                      onChange={(e) => handleSignUpChange('preferredCauses', e.target.value)}
+                      placeholder="education, health, environment"
+                      className={inputCls(false)}
+                    />
+                    <p className="mt-1 text-xs text-gray-400">Comma-separated</p>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-[#7C2D12] mb-1 uppercase tracking-wide">
+                      Bio <span className="font-normal text-gray-400 normal-case">(optional)</span>
+                    </label>
+                    <textarea
+                      value={signUp.bio}
+                      onChange={(e) => handleSignUpChange('bio', e.target.value)}
+                      rows={2}
+                      placeholder="Tell us a bit about yourself..."
+                      className={`${inputCls(false)} resize-none`}
+                    />
+                  </div>
+                  <div className="flex gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setStep(1)}
+                      className="flex-1 border border-orange-200 text-[#7C2D12] font-semibold py-2.5 rounded-lg text-sm hover:bg-orange-50 transition-colors"
+                    >
+                      ← Back
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className="flex-1 bg-[#DC2626] hover:bg-red-700 disabled:opacity-60 text-white font-bold py-2.5 rounded-lg transition-colors text-sm"
+                    >
+                      {loading ? (
+                        <span className="flex items-center justify-center gap-2">
+                          <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                          </svg>
+                          Creating...
+                        </span>
+                      ) : (
+                        'Create Account'
+                      )}
+                    </button>
+                  </div>
+                </form>
+              )}
+            </div>
           )}
         </div>
       </div>

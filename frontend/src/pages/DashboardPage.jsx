@@ -15,7 +15,7 @@ function StatCard({ label, value, color, bg }) {
 
 const pledgeStatusColor = {
   active: 'bg-green-100 text-green-700',
-  fulfilled: 'bg-blue-100 text-blue-700',
+  fulfilled: 'bg-orange-100 text-orange-700',
   cancelled: 'bg-red-100 text-red-700',
   pending: 'bg-yellow-100 text-yellow-700',
 };
@@ -68,7 +68,7 @@ export default function DashboardPage() {
               ? `LKR ${Number(analytics.totalDonations).toLocaleString()}`
               : null
           }
-          color="text-blue-600"
+          color="text-[#DC2626]"
           bg="bg-white"
         />
         <StatCard
@@ -80,7 +80,7 @@ export default function DashboardPage() {
         <StatCard
           label="Active Pledges"
           value={pledges.length > 0 ? activePledges : null}
-          color="text-purple-600"
+          color="text-[#7C2D12]"
           bg="bg-white"
         />
         <StatCard
@@ -97,7 +97,7 @@ export default function DashboardPage() {
         <div className="flex flex-wrap gap-3">
           <Link
             to="/profile"
-            className="px-4 py-2 bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-lg text-sm font-medium transition-colors"
+            className="px-4 py-2 bg-red-50 text-[#DC2626] hover:bg-red-100 rounded-lg text-sm font-medium transition-colors"
           >
             Manage Profile
           </Link>
@@ -109,7 +109,7 @@ export default function DashboardPage() {
           </Link>
           <Link
             to="/donations"
-            className="px-4 py-2 bg-purple-50 text-purple-700 hover:bg-purple-100 rounded-lg text-sm font-medium transition-colors"
+            className="px-4 py-2 bg-orange-50 text-[#7C2D12] hover:bg-orange-100 rounded-lg text-sm font-medium transition-colors"
           >
             Donation History
           </Link>
@@ -121,7 +121,7 @@ export default function DashboardPage() {
         <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-base font-semibold text-gray-700">Recent Pledges</h3>
-            <Link to="/pledges" className="text-sm text-blue-600 hover:underline">
+            <Link to="/pledges" className="text-sm text-[#DC2626] hover:underline">
               View all →
             </Link>
           </div>

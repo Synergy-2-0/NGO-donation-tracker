@@ -43,11 +43,11 @@ export function AuthProvider({ children }) {
     }
   };
 
-  const register = async ({ name, email, password, role }) => {
+  const register = async ({ name, email, password, role, phone, city, country, preferredCauses, bio }) => {
     setLoading(true);
     setError(null);
     try {
-      const { data } = await api.post('/api/users/register', { name, email, password, role });
+      const { data } = await api.post('/api/users/register', { name, email, password, role, phone, city, country, preferredCauses, bio });
       const jwt = data.token || data.data?.token;
       const userData = data.user || data.data?.user || data.data;
       if (!jwt) throw new Error('Registration succeeded but no token returned.');

@@ -7,7 +7,7 @@ const FREQUENCIES = ['one-time', 'monthly', 'quarterly', 'annually'];
 
 const statusColor = {
   active: 'bg-green-100 text-green-700',
-  fulfilled: 'bg-blue-100 text-blue-700',
+  fulfilled: 'bg-orange-100 text-orange-700',
   cancelled: 'bg-red-100 text-red-700',
   pending: 'bg-yellow-100 text-yellow-700',
 };
@@ -59,7 +59,7 @@ function PledgeModal({ pledge, onClose, onSave, loading }) {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-xs font-semibold text-[#7C2D12] uppercase tracking-wide mb-1">
               Amount (LKR)
             </label>
             <input
@@ -69,19 +69,19 @@ function PledgeModal({ pledge, onClose, onSave, loading }) {
               onChange={handleChange}
               required
               min="1"
-              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-orange-200 bg-orange-50/40 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent transition"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-xs font-semibold text-[#7C2D12] uppercase tracking-wide mb-1">
               Frequency
             </label>
             <select
               name="frequency"
               value={form.frequency}
               onChange={handleChange}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-orange-200 bg-orange-50/40 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent transition"
             >
               {FREQUENCIES.map((f) => (
                 <option key={f} value={f}>
@@ -92,7 +92,7 @@ function PledgeModal({ pledge, onClose, onSave, loading }) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-xs font-semibold text-[#7C2D12] uppercase tracking-wide mb-1">
               Start Date
             </label>
             <input
@@ -100,32 +100,32 @@ function PledgeModal({ pledge, onClose, onSave, loading }) {
               name="startDate"
               value={form.startDate}
               onChange={handleChange}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-orange-200 bg-orange-50/40 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent transition"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-xs font-semibold text-[#7C2D12] uppercase tracking-wide mb-1">
               Campaign ID{' '}
-              <span className="text-gray-400 text-xs font-normal">(optional)</span>
+              <span className="text-gray-400 text-xs font-normal normal-case">(optional)</span>
             </label>
             <input
               name="campaignId"
               value={form.campaignId}
               onChange={handleChange}
               placeholder="Leave blank for general donation"
-              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-orange-200 bg-orange-50/40 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent transition"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+            <label className="block text-xs font-semibold text-[#7C2D12] uppercase tracking-wide mb-1">Notes</label>
             <textarea
               name="notes"
               value={form.notes}
               onChange={handleChange}
               rows={2}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+              className="w-full border border-orange-200 bg-orange-50/40 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent resize-none transition"
             />
           </div>
 
@@ -133,14 +133,14 @@ function PledgeModal({ pledge, onClose, onSave, loading }) {
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-sm text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg font-medium"
+              className="px-4 py-2 text-sm text-[#7C2D12] border border-orange-200 hover:bg-orange-50 rounded-lg font-medium transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="px-4 py-2 text-sm text-white bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 rounded-lg font-medium"
+              className="px-4 py-2 text-sm text-white bg-[#DC2626] hover:bg-red-700 disabled:opacity-60 rounded-lg font-medium transition-colors"
             >
               {loading ? 'Saving...' : 'Save Pledge'}
             </button>
@@ -230,7 +230,7 @@ export default function PledgesPage() {
         {donorProfile && (
           <button
             onClick={() => { setShowCreateModal(true); setSuccess(''); setLocalError(''); }}
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg transition-colors"
+            className="px-4 py-2 bg-[#DC2626] hover:bg-red-700 text-white text-sm font-semibold rounded-lg transition-colors"
           >
             + New Pledge
           </button>
@@ -261,7 +261,7 @@ export default function PledgesPage() {
           <p className="text-gray-400 text-sm mb-3">You haven&apos;t made any pledges yet.</p>
           <button
             onClick={() => setShowCreateModal(true)}
-            className="px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700"
+            className="px-4 py-2 bg-[#DC2626] text-white text-sm font-semibold rounded-lg hover:bg-red-700"
           >
             Create Your First Pledge
           </button>
@@ -307,7 +307,7 @@ export default function PledgesPage() {
                     <div className="flex gap-3">
                       <button
                         onClick={() => { setEditPledge(pledge); setSuccess(''); setLocalError(''); }}
-                        className="text-blue-600 hover:text-blue-800 text-xs font-medium"
+                        className="text-[#DC2626] hover:text-red-700 text-xs font-medium"
                       >
                         Edit
                       </button>

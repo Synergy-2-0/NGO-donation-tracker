@@ -8,6 +8,8 @@ import agreementRoutes from './src/routes/agreement.routes.js';
 import milestoneRoutes from './src/routes/milestone.routes.js';
 import financeRoutes from "./src/routes/finance.routes.js";
 import donorRoutes from './src/routes/donor.routes.js';
+import transparencyRoutes from './src/routes/transparency.routes.js';
+import geoRoutes from './src/routes/geo.routes.js';
 dotenv.config();
 
 const app = express();
@@ -23,6 +25,8 @@ app.use('/api/agreements', agreementRoutes);
 app.use('/api/milestones', milestoneRoutes);
 app.use("/api/donors", donorRoutes);
 app.use("/api/finance", financeRoutes);
+app.use('/api/public', transparencyRoutes);
+app.use('/api/geo', geoRoutes);
 
 app.listen(port, () => {
   console.log(`Server is listening on port ${port}`);

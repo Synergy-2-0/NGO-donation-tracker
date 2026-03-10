@@ -1,4 +1,5 @@
 import partnerRepository from "../repository/partner.repository.js";
+import agreementRepository from "../repository/agreement.repository.js";
 import emailService from "./email.service.js";
 
 class PartnerService {
@@ -58,6 +59,46 @@ class PartnerService {
       throw new Error('Unauthorized');
     }
     return await partnerRepository.softDelete(id);
+  }
+
+  // Recalculate and persist partnershipHistory metrics from actual agreements
+  async recalculateHistory(partnerId) {
+    const agreements = await agreementRepository.findByPartnerId(partnerId);
+    const active = agreements.filter(a => a.status === 'active').length;
+    const completed = agreements.filter(a => a.status === 'completed').length;
+    const totalContributed = agreements
+      .filter(a => ['active', 'completed'].includes(a.status))
+      .reduce((sum, a) => sum + (a.totalValue || 0), 0);
+
+    return await partnerRepository.update(partnerId, {
+      'partnershipHistory.totalPartnerships': agreements.length,
+      'partnershipHistory.activePartnerships': active,
+      'partnershipHistory.completedPartnerships': completed,
+      'partnershipHistory.totalContributed': totalContributed,
+    });
+  }
+
+  // Return sanitized public impact data for a verified partner
+  async getPartnerImpact(partnerId) {
+    const partner = await partnerRepository.findById(partnerId);
+    if (!partner) throw new Error('Partner not found');
+    if (partner.verificationStatus !== 'verified') throw new Error('Partner not found');
+
+    const agreements = await agreementRepository.findByPartnerId(partnerId);
+    const completed = agreements.filter(a => a.status === 'completed');
+    const totalValueDelivered = completed.reduce((s, a) => s + (a.totalValue || 0), 0);
+
+    return {
+      organizationName: partner.organizationName,
+      organizationType: partner.organizationType,
+      csrFocus: partner.csrFocus,
+      sdgGoals: partner.sdgGoals,
+      totalAgreements: partner.partnershipHistory.totalPartnerships,
+      activeAgreements: partner.partnershipHistory.activePartnerships,
+      completedAgreements: partner.partnershipHistory.completedPartnerships,
+      totalContributed: partner.partnershipHistory.totalContributed,
+      totalValueDelivered,
+    };
   }
 }
 

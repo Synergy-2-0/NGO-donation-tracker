@@ -11,5 +11,6 @@ router.get('/:id', authenticate, ctrl.getPartner);
 router.put('/:id', authenticate, ctrl.updatePartner);
 router.patch('/:id/approve', authenticate, authorizeRoles('admin'), ctrl.approvePartner);
 router.delete('/:id', authenticate, ctrl.deletePartner);
+router.get('/:id/impact', authenticate, ctrl.getPartnerImpact);
 
 export default router;

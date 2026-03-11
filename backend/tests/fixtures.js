@@ -10,7 +10,7 @@ export const test = base.extend({
         });
 
         // Use a unique email to avoid conflicts with existing users in the database
-        const uniqueEmail = `test-admin-${Date.now()}@example.com`;
+        const uniqueEmail = `test-admin-${Date.now()}-${Math.floor(Math.random() * 10000)}@example.com`;
 
         // 1. Register the unique test user first
         await requestContext.post('/api/users/register', {

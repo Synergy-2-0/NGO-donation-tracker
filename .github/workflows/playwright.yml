@@ -1,9 +1,9 @@
 name: NGO Donation Tracker - Playwright Tests
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main, develop, test ]
   pull_request:
-    branches: [ main, develop ]
+    branches: [ main, develop, test ]
 jobs:
   test:
     timeout-minutes: 10

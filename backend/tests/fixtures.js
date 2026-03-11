@@ -6,7 +6,7 @@ export const test = base.extend({
     authenticatedContext: async ({ playwright }, use) => {
         // This is a setup phase
         const requestContext = await playwright.request.newContext({
-            baseURL: 'http://localhost:3000',
+            baseURL: 'http://127.0.0.1:3000',
         });
 
         // Use a unique email to avoid conflicts with existing users in the database
@@ -41,7 +41,7 @@ export const test = base.extend({
 
         // Create a new context with the REAL Authorization header
         const authContext = await playwright.request.newContext({
-            baseURL: 'http://localhost:3000',
+            baseURL: 'http://127.0.0.1:3000',
             extraHTTPHeaders: {
                 'Authorization': `Bearer ${token}`,
             },

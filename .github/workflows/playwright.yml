@@ -19,10 +19,13 @@ jobs:
     - name: Pre-install Playwright Browsers
       run: npx playwright install --with-deps
       working-directory: ./backend
-    - name: Start the backend server
-      run: npm start &
-      working-directory: ./backend
     - name: Run Playwright tests
+      env:
+        PORT: 3000
+        MONGO_URI: "mongodb+srv://iamuser:negQ0aZtD6TIHkHN@donatetracker.hgb4008.mongodb.net/?appName=donateTracker"
+        JWT_SECRET: "9f3c8b1a7e2d4f6a9c0b8e5d7a2f1c4b6e9d0a3f5c7b8a2d4e6f1"
+        JWT_EXPIRES_IN: "1h"
+        NODE_ENV: test
       run: npx playwright test
       working-directory: ./backend
     - uses: actions/upload-artifact@v4

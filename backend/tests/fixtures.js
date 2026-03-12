@@ -1,18 +1,13 @@
 import { test as base } from '@playwright/test';
 
-// Define a custom fixture for a logged-in user
 export const test = base.extend({
-    // Fixture for an authenticated API request context
     authenticatedContext: async ({ playwright }, use) => {
-        // This is a setup phase
         const requestContext = await playwright.request.newContext({
             baseURL: 'http://localhost:3000',
         });
 
-        // Use a unique email to avoid conflicts with existing users in the database
         const uniqueEmail = `test-admin-${Date.now()}-${Math.floor(Math.random() * 10000)}@example.com`;
 
-        // 1. Register the unique test user first
         await requestContext.post('/api/users/register', {
             data: {
                 name: 'Playwright Test Admin',
@@ -22,7 +17,6 @@ export const test = base.extend({
             }
         });
 
-        // 2. Login to get a real JWT token
         const loginResponse = await requestContext.post('/api/users/login', {
             data: {
                 email: uniqueEmail,
@@ -39,7 +33,6 @@ export const test = base.extend({
             throw new Error(`Fixture Authentication Failed (${loginResponse.status()}): ${errorText}`);
         }
 
-        // Create a new context with the REAL Authorization header
         const authContext = await playwright.request.newContext({
             baseURL: 'http://localhost:3000',
             extraHTTPHeaders: {
@@ -47,24 +40,58 @@ export const test = base.extend({
             },
         });
 
-        // Pass the authenticated context to the test
         await use(authContext);
 
-        // Teardown phase
         await authContext.dispose();
         await requestContext.dispose();
     },
 
-    // Fixture for typical test data
     testCampaign: async ({ }, use) => {
         const campaign = {
-            title: 'Test Clean Water Initiative',
-            description: 'A test campaign for Playwright demonstration',
+            title: `Campaign ${Date.now()}`,
+            description: 'Demo campaign data',
             goalAmount: 10000,
             startDate: '2024-03-01',
             endDate: '2024-12-31'
         };
         await use(campaign);
+    },
+
+    navigation: async ({ page, baseURL }, use) => {
+        const target = baseURL || 'http://localhost:3000';
+        await page.goto(target);
+        await use(page);
+    },
+
+    randomUser: async ({ }, use) => {
+        const timestamp = Date.now();
+        const user = {
+            name: `User${timestamp}`,
+            email: `user${timestamp}@example.com`,
+            password: 'pass1234'
+        };
+        await use(user);
+    },
+
+    freshCampaign: async ({ authenticatedContext }, use) => {
+        const campaignData = {
+            title: `Campaign-${Math.floor(Math.random()*100000)}`,
+            description: 'Generated for test',
+            goalAmount: 5000,
+            startDate: '2024-01-01',
+            endDate: '2024-12-31'
+        };
+        const resp = await authenticatedContext.post('/api/campaigns', { data: campaignData });
+        if (!resp.ok()) {
+            const text = await resp.text();
+            throw new Error(`Failed to create campaign (${resp.status()}): ${text}`);
+        }
+        const body = await resp.json();
+        // normalize mongo's _id field for convenience
+        if (body && body._id) {
+            body.id = body._id;
+        }
+        await use(body);
     }
 });
 

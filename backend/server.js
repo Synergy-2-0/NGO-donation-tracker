@@ -24,6 +24,10 @@ app.use('/api/milestones', milestoneRoutes);
 app.use("/api/donors", donorRoutes);
 app.use("/api/finance", financeRoutes);
 
+app.get('/', (req, res) => {
+  res.status(200).send('NGO Donation Tracker API is running');
+});
+
 app.listen(port, () => {
   console.log(`Server is listening on port ${port}`);
 });

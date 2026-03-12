@@ -1,14 +1,15 @@
 import { test, expect } from '@playwright/test';
 
 /**
- * MEMBER 1: WEB-FIRST ASSERTIONS
+ * MEMBER 1: WEB-FIRST ASSERTIONS + Attachment
+ * Test GET /api/campaigns and ensure page/API loads correctly
  * Demonstrating Playwright's ability to "Auto-retry" and use resilient locators.
  */
-test.describe('Section 1: Web-First Verification', () => {
-    
+test.describe('Section 1: Web-First Verification with Attachment', () => {
+
     // HOOK: Runs before every test to initialize shared state
     test.beforeEach(async ({ page }) => {
-        console.log('--- ASSERTION SETUP: Navigating to target ---');
+        console.log('--- ASSERTION SETUP: Navigating to campaigns page ---');
         await page.goto('/api/campaigns');
     });
 
@@ -17,27 +18,26 @@ test.describe('Section 1: Web-First Verification', () => {
         console.log('--- ASSERTION TEARDOWN: Test complete ---');
     });
 
-    test('Validate Platform Visibility and Negative Assertions', async ({ page }) => {
-        // ARRANGE: Navigation is now handled in beforeEach
-
-        // ACT: (Passive in this case, waiting for load)
-
-        // ASSERT: Web-First Assertion (Auto-retries until visible)
-        // Using getByText which is more resilient than CSS selectors
+    test('Campaign Page Loads and No Error Messages', async ({ page }) => {
         const bodyContent = page.locator('body');
+
+        // Wait for page content to appear (Web-first assertion)
         await expect(bodyContent).toBeVisible({ timeout: 5000 });
 
-        // ATTACHMENT: Proof of Visibility
-        await test.info().attach('Platform Visibility Screenshot', {
+        // Take a screenshot of the page for evidence in the report
+        await test.info().attach('Campaign Page Screenshot', {
             body: await page.screenshot(),
             contentType: 'image/png'
         });
 
-        // ASSERT: Negative Assertion
-        // Ensuring that an error message is NOT present on a successful load
+        // NEGATIVE ASSERTION: Ensure error messages are NOT displayed
         const errorMessage = page.getByText('Error loading campaigns');
         await expect(errorMessage).toBeHidden();
-        
-        console.log('Web-First assertions passed: Content is visible, error is hidden.');
+
+        // ensure page content does not include server error
+        const content = await bodyContent.textContent();
+        expect(content).not.toContain('Internal Server Error');
+
+        console.log('Campaign page loaded successfully with no errors.');
     });
 });

@@ -3,7 +3,7 @@ import { test as base } from '@playwright/test';
 export const test = base.extend({
     authenticatedContext: async ({ playwright }, use) => {
         const requestContext = await playwright.request.newContext({
-            baseURL: 'http://localhost:3000',
+            baseURL: 'http://127.0.0.1:3000',
         });
 
         const uniqueEmail = `test-admin-${Date.now()}-${Math.floor(Math.random() * 10000)}@example.com`;
@@ -34,7 +34,7 @@ export const test = base.extend({
         }
 
         const authContext = await playwright.request.newContext({
-            baseURL: 'http://localhost:3000',
+            baseURL: 'http://127.0.0.1:3000',
             extraHTTPHeaders: {
                 'Authorization': `Bearer ${token}`,
             },

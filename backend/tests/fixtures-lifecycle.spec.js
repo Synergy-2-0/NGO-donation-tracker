@@ -8,7 +8,7 @@ test.describe('Section 2: Fixtures & State Management', () => {
     test('Validate Authenticated Session Persistence', async ({ authenticatedContext }) => {
         const response = await authenticatedContext.get('/api/users');
         const userData = await response.json();
-        
+
         await test.info().attach('Active Session Data', {
             body: JSON.stringify(userData, null, 2),
             contentType: 'application/json'
@@ -18,7 +18,7 @@ test.describe('Section 2: Fixtures & State Management', () => {
     });
 
     test('Navigation fixture lands at base URL', async ({ navigation }) => {
-        await expect(navigation).toHaveURL(/localhost/);
+        await expect(navigation).toHaveURL(/127.0.0.1/);
         await test.info().attach('Landing URL', {
             body: navigation.url(),
             contentType: 'text/plain'

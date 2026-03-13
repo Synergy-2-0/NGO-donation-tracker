@@ -1,24 +1,22 @@
 import { test, expect } from '@playwright/test';
 
 /**
- * MEMBER 1: WEB-FIRST ASSERTIONS + Attachment
+ * WEB-FIRST ASSERTIONS + Attachment
  * Test GET /api/campaigns and ensure page/API loads correctly
  * Demonstrating Playwright's ability to "Auto-retry" and use resilient locators.
  */
 test.describe('Section 1: Web-First Verification with Attachment', () => {
 
-    // HOOK: Runs before every test to initialize shared state
     test.beforeEach(async ({ page }) => {
-        console.log('--- ASSERTION SETUP: Navigating to campaigns page ---');
+        console.log('HOOK: Navigating to campaigns page');
         await page.goto('/api/campaigns');
     });
 
-    // HOOK: Runs after every test for cleanup
-    test.afterEach(async () => {
-        console.log('--- ASSERTION TEARDOWN: Test complete ---');
-    });
-
     test('Campaign Page Loads and No Error Messages', async ({ page }) => {
+        // Verify that the browser is on the correct route( URL assertion)
+        await expect(page).toHaveURL(/campaigns/);
+
+        // Get the body content
         const bodyContent = page.locator('body');
 
         // Wait for page content to appear (Web-first assertion)
@@ -30,7 +28,7 @@ test.describe('Section 1: Web-First Verification with Attachment', () => {
             contentType: 'image/png'
         });
 
-        // NEGATIVE ASSERTION: Ensure error messages are NOT displayed
+        // Ensure error messages are NOT displayed (negative assertion)
         const errorMessage = page.getByText('Error loading campaigns');
         await expect(errorMessage).toBeHidden();
 
@@ -40,4 +38,10 @@ test.describe('Section 1: Web-First Verification with Attachment', () => {
 
         console.log('Campaign page loaded successfully with no errors.');
     });
+
+
+    test.afterEach(async () => {
+        console.log('Test complete');
+    });
+
 });

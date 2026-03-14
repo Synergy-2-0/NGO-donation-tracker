@@ -1,14 +1,16 @@
 import { test as base } from '@playwright/test';
+import { randomUUID } from 'crypto';
 
 export const test = base.extend({
-    authenticatedContext: async ({ playwright }, use) => {
+    authenticatedContext: async ({ playwright, baseURL }, use) => {
+        const target = baseURL ?? 'http://127.0.0.1:3000';
         const requestContext = await playwright.request.newContext({
-            baseURL: 'http://127.0.0.1:3000',
+            baseURL: target,
         });
 
         const uniqueEmail = `test-admin-${Date.now()}-${Math.floor(Math.random() * 10000)}@example.com`;
 
-        await requestContext.post('/api/users/register', {
+        const registerResponse = await requestContext.post('/api/users/register', {
             data: {
                 name: 'Playwright Test Admin',
                 email: uniqueEmail,
@@ -16,6 +18,14 @@ export const test = base.extend({
                 role: 'admin'
             }
         });
+
+        if (!registerResponse.ok()) {
+            const text = await registerResponse.text();
+            throw new Error(`Failed to register admin (${registerResponse.status()}): ${text}`);
+        }
+
+        const createdAdmin = await registerResponse.json();
+        const adminId = createdAdmin._id ?? createdAdmin.id;
 
         const loginResponse = await requestContext.post('/api/users/login', {
             data: {
@@ -34,13 +44,18 @@ export const test = base.extend({
         }
 
         const authContext = await playwright.request.newContext({
-            baseURL: 'http://127.0.0.1:3000',
+            baseURL: target,
             extraHTTPHeaders: {
                 'Authorization': `Bearer ${token}`,
             },
         });
 
         await use(authContext);
+
+        // Clean up created admin user
+        if (adminId) {
+            await authContext.delete(`/api/users/${adminId}`);
+        }
 
         await authContext.dispose();
         await requestContext.dispose();
@@ -63,14 +78,30 @@ export const test = base.extend({
         await use(page);
     },
 
-    randomUser: async ({ }, use) => {
-        const timestamp = Date.now();
+    randomUser: async ({ authenticatedContext }, use) => {
+        const uuid = randomUUID();
         const user = {
-            name: `User${timestamp}`,
-            email: `user${timestamp}@example.com`,
-            password: 'pass1234'
+            name: `User-${uuid}`,
+            email: `user-${uuid}@test.com`,
+            password: 'pass1234',
+            role: 'donor' 
         };
-        await use(user);
+
+        const resp = await authenticatedContext.post('/api/users/register', { data: user });
+        if (!resp.ok()) {
+            const text = await resp.text();
+            throw new Error(`Failed to register random user (${resp.status()}): ${text}`);
+        }
+
+        const created = await resp.json();
+        const userId = created._id ?? created.id;
+
+        await use({ ...user, id: userId });
+
+        // Clean up the created user
+        if (userId) {
+            await authenticatedContext.delete(`/api/users/${userId}`);
+        }
     },
 
     freshCampaign: async ({ authenticatedContext }, use) => {
@@ -92,6 +123,9 @@ export const test = base.extend({
             body.id = body._id;
         }
         await use(body);
+        if (body && body.id) {
+            await authenticatedContext.delete(`/api/campaigns/${body.id}`);
+        }
     }
 });
 

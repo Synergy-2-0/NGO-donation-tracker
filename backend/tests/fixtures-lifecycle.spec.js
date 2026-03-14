@@ -1,8 +1,8 @@
 import { test, expect } from './fixtures.js';
 
-test.describe('Section 2: Fixtures & State Management', () => {
+test.describe('Fixtures & State Management', () => {
     test.beforeEach(async () => {
-        console.log('--- HOOK: Initializing Clean Browser Context ---');
+        console.log('initializing clean browser context');
     });
 
     test('Validate Authenticated Session Persistence', async ({ authenticatedContext }) => {
@@ -17,17 +17,17 @@ test.describe('Section 2: Fixtures & State Management', () => {
         expect(response.status()).toBe(200);
     });
 
-    test('Navigation fixture lands at base URL', async ({ navigation }) => {
-        await expect(navigation).toHaveURL(/127.0.0.1/);
+    test('Navigation fixture lands at base URL', async ({ navigation, baseURL }) => {
+        await expect(navigation).toHaveURL(new RegExp(baseURL.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&')));
         await test.info().attach('Landing URL', {
             body: navigation.url(),
             contentType: 'text/plain'
         });
     });
 
-    test('Random user fixture can be registered', async ({ request, randomUser }) => {
-        const response = await request.post('/api/users/register', { data: randomUser });
-        expect(response.status()).toBe(201);
+    test('Random user fixture creates a registered user', async ({ randomUser }) => {
+        expect(randomUser.id).toBeDefined();
+        expect(randomUser.email).toMatch(/@test\.com$/);
     });
 
     test('Create a campaign via freshCampaign fixture', async ({ freshCampaign }) => {
@@ -36,6 +36,6 @@ test.describe('Section 2: Fixtures & State Management', () => {
     });
 
     test.afterEach(async () => {
-        console.log('--- HOOK: Tearing down context ---');
+        console.log('cleaning up after test : hook');
     });
 });

@@ -1,9 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-/**
- * MEMBER 4: BDD STRUCTURE & NARRATIVE
- * Demonstrating the 'Arrange-Act-Assert' pattern in a user journey.
- */
+
 test.describe('Section 4: User Journey Narrative', () => {
 
     test('As a Donor, I should see the mission metrics', async ({ request }) => {

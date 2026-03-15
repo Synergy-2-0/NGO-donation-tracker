@@ -4,7 +4,6 @@
   "type": "module",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
     "dev": "nodemon server.js"
   },
@@ -28,6 +27,8 @@
     "sib-api-v3-sdk": "^8.5.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.58.2",
+    "@types/node": "^25.3.5",
     "nodemon": "^3.1.11"
   }
 }

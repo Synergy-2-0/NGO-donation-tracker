@@ -1,0 +1,36 @@
+name: NGO Donation Tracker - Playwright Tests
+on:
+  push:
+    branches: [ main, develop, test ]
+  pull_request:
+    branches: [ main, develop, test ]
+jobs:
+  test:
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: lts/*
+    - name: Install dependencies
+      run: npm install
+      working-directory: ./backend
+    - name: Pre-install Playwright Browsers
+      run: npx playwright install --with-deps
+      working-directory: ./backend
+    - name: Run Playwright tests
+      env:
+        PORT: 3000
+        MONGO_URI: "mongodb+srv://iamuser:negQ0aZtD6TIHkHN@donatetracker.hgb4008.mongodb.net/?appName=donateTracker"
+        JWT_SECRET: "9f3c8b1a7e2d4f6a9c0b8e5d7a2f1c4b6e9d0a3f5c7b8a2d4e6f1"
+        JWT_EXPIRES_IN: "1h"
+        NODE_ENV: test
+      run: npx playwright test
+      working-directory: ./backend
+    - uses: actions/upload-artifact@v4
+      if: ${{ !cancelled() }}
+      with:
+        name: playwright-report
+        path: backend/playwright-report/
+        retention-days: 30

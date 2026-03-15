@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Section 4: User Journey Narrative', () => {
 
-    test('As a Donor, I should see the mission metrics', async ({ request }) => {
+    test('As a Donor, I should see the campaigns metrics', async ({ request }) => {
 
         // ARRANGE: Verify server is ready
         await test.step('GIVEN I navigate to the platform metrics', async () => {

@@ -1,6 +1,49 @@
 import { test as base } from '@playwright/test';
 import { randomUUID } from 'crypto';
 
+export const routes = {
+    login: '/login',
+    dashboard: '/dashboard',
+    profile: '/profile',
+    pledges: '/pledges',
+    donations: '/donations',
+};
+
+class AppNavigation {
+    /**
+     * @param {import('@playwright/test').Page} page
+     * @param {string} baseURL
+     */
+    constructor(page, baseURL) {
+        this.page = page;
+        this.baseURL = baseURL.replace(/\/$/, '');
+    }
+
+    async goto(path) {
+        await this.page.goto(`${this.baseURL}${path}`);
+    }
+
+    async gotoLogin() {
+        await this.goto(routes.login);
+    }
+
+    async gotoDashboard() {
+        await this.goto(routes.dashboard);
+    }
+
+    async gotoProfile() {
+        await this.goto(routes.profile);
+    }
+
+    async gotoPledges() {
+        await this.goto(routes.pledges);
+    }
+
+    async gotoDonations() {
+        await this.goto(routes.donations);
+    }
+}
+
 export const test = base.extend({
     authenticatedContext: async ({ playwright, baseURL }, use) => {
         const target = baseURL ?? 'http://127.0.0.1:3000';
@@ -73,9 +116,10 @@ export const test = base.extend({
     },
 
     navigation: async ({ page, baseURL }, use) => {
-        const target = baseURL || 'http://localhost:3000';
-        await page.goto(target);
-        await use(page);
+        const target = baseURL ?? 'http://127.0.0.1:3000';
+        const navigation = new AppNavigation(page, target);
+        await navigation.gotoLogin();
+        await use(navigation);
     },
 
     randomUser: async ({ authenticatedContext }, use) => {

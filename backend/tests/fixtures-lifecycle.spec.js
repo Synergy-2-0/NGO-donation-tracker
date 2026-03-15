@@ -1,4 +1,4 @@
-import { test, expect } from './fixtures.js';
+import { test, expect, routes } from './fixtures.js';
 
 test.describe('Fixtures & State Management', () => {
     test.beforeEach(async () => {
@@ -17,12 +17,20 @@ test.describe('Fixtures & State Management', () => {
         expect(response.status()).toBe(200);
     });
 
-    test('Navigation fixture lands at base URL', async ({ navigation, baseURL }) => {
-        await expect(navigation).toHaveURL(new RegExp(baseURL.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&')));
+    test('Navigation fixture lands on login page', async ({ navigation }) => {
+        await expect(navigation.page).toHaveURL(new RegExp(`${routes.login}$`));
         await test.info().attach('Landing URL', {
-            body: navigation.url(),
+            body: navigation.page.url(),
             contentType: 'text/plain'
         });
+    });
+
+    test('Navigation POM can reach key routes', async ({ navigation }) => {
+        await navigation.gotoDashboard();
+        await expect(navigation.page).toHaveURL(new RegExp(`${routes.dashboard}$`));
+
+        await navigation.gotoPledges();
+        await expect(navigation.page).toHaveURL(new RegExp(`${routes.pledges}$`));
     });
 
     test('Random user fixture creates a registered user', async ({ randomUser }) => {

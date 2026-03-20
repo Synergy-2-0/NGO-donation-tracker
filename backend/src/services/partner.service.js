@@ -1,10 +1,23 @@
 import partnerRepository from "../repository/partner.repository.js";
 import agreementRepository from "../repository/agreement.repository.js";
 import emailService from "./email.service.js";
+import geocodingService from './geocoding.service.js';
 
 class PartnerService {
+  _hasCoordinates(address) {
+    return Array.isArray(address?.coordinates?.coordinates) && address.coordinates.coordinates.length === 2;
+  }
+
   // Create new partnership
   async createPartnership(data, userId) {
+    if (data.address && !this._hasCoordinates(data.address)) {
+      const geocoded = await geocodingService.geocodeAddress(data.address);
+      if (!geocoded) {
+        throw new Error('Could not geocode partner address. Provide valid coordinates.');
+      }
+      data.address.coordinates = geocoded;
+    }
+
     return await partnerRepository.create({ ...data, userId });
   }
 
@@ -34,6 +47,21 @@ class PartnerService {
     
     if (user.role !== 'admin' && partner.userId.toString() !== user.id) {
       throw new Error('Unauthorized');
+    }
+
+    if (data.address && !this._hasCoordinates(data.address)) {
+      const mergedAddress = {
+        street: data.address.street || partner.address.street,
+        city: data.address.city || partner.address.city,
+        state: data.address.state || partner.address.state,
+        country: data.address.country || partner.address.country,
+        postalCode: data.address.postalCode || partner.address.postalCode,
+      };
+      const geocoded = await geocodingService.geocodeAddress(mergedAddress);
+      if (!geocoded) {
+        throw new Error('Could not geocode partner address. Provide valid coordinates.');
+      }
+      data.address.coordinates = geocoded;
     }
 
  

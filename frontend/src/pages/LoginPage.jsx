@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 export default function LoginPage() {
-  const { login, loading } = useAuth();
+  const { login, logout, loading } = useAuth();
   const navigate = useNavigate();
   const [form, setForm] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
@@ -17,6 +17,7 @@ export default function LoginPage() {
     try {
       const user = await login(form.email, form.password);
       if (user?.role !== 'donor') {
+        await logout();
         setError('This portal is for donors only. Please use the correct login page.');
         return;
       }

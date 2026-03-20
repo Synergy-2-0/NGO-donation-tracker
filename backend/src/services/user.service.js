@@ -36,7 +36,16 @@ export const loginUser = async (email, password) => {
   }
 
   const token = signToken(user);
-  return { message: 'Login successful', token };
+
+  const safeUser = {
+    id: user._id,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+    status: user.status,
+  };
+
+  return { message: 'Login successful', token, user: safeUser };
 };
 
 export const getUsers = async (filters = {}) => {

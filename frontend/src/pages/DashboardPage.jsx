@@ -112,6 +112,14 @@ export default function DashboardPage() {
           >
             Manage Profile
           </Link>
+          {(user?.role === 'partner' || user?.role === 'admin') && (
+            <Link
+              to="/partners"
+              className="px-4 py-2 bg-amber-50 text-amber-700 hover:bg-amber-100 rounded-lg text-sm font-medium transition-colors"
+            >
+              Manage Partners
+            </Link>
+          )}
           <Link
             to="/pledges"
             className="px-4 py-2 bg-green-50 text-green-700 hover:bg-green-100 rounded-lg text-sm font-medium transition-colors"

@@ -17,6 +17,8 @@ import PartnerImpactPage from './pages/PartnerImpactPage';
 import PartnerVerificationPage from './pages/PartnerVerificationPage';
 import FinanceDashboard from './pages/FinanceDashboard';
 import TransactionsPage from './pages/TransactionsPage';
+import HomePage from './pages/HomePage';
+
 
 export default function App() {
   return (
@@ -26,16 +28,19 @@ export default function App() {
           <DonorProvider>
             <PartnerProvider>
               <Routes>
+                {/* Public Routes */}
+                <Route path="/" element={<HomePage />} />
                 <Route path="/login" element={<LoginPage />} />
+
+                {/* Dashboard / Protected Routes */}
                 <Route
-                  path="/"
+                  path="/*"
                   element={
                     <ProtectedRoute>
                       <Layout />
                     </ProtectedRoute>
                   }
                 >
-                  <Route index element={<Navigate to="/dashboard" replace />} />
                   <Route path="dashboard" element={<DashboardPage />} />
                   <Route path="profile" element={<ProfilePage />} />
                   <Route path="pledges" element={<PledgesPage />} />
@@ -43,7 +48,7 @@ export default function App() {
                   <Route
                     path="partners"
                     element={
-                      <RoleProtectedRoute roles={['partner', 'admin']}>
+                      <RoleProtectedRoute roles={['partner', 'admin', 'donor']}>
                         <PartnersPage />
                       </RoleProtectedRoute>
                     }
@@ -59,7 +64,7 @@ export default function App() {
                   <Route
                     path="partners/:id"
                     element={
-                      <RoleProtectedRoute roles={['partner', 'admin']}>
+                      <RoleProtectedRoute roles={['partner', 'admin', 'donor']}>
                         <PartnerDetailsPage />
                       </RoleProtectedRoute>
                     }
@@ -67,7 +72,7 @@ export default function App() {
                   <Route
                     path="partners/:id/impact"
                     element={
-                      <RoleProtectedRoute roles={['partner', 'admin']}>
+                      <RoleProtectedRoute roles={['partner', 'admin', 'donor']}>
                         <PartnerImpactPage />
                       </RoleProtectedRoute>
                     }
@@ -89,8 +94,12 @@ export default function App() {
                       </RoleProtectedRoute>
                     }
                   />
+                  {/* Catch-all for subroutes */}
+                  <Route index element={<Navigate to="dashboard" replace />} />
                 </Route>
-                <Route path="*" element={<Navigate to="/dashboard" replace />} />
+                
+                {/* Final Catch-all */}
+                <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
             </PartnerProvider>
           </DonorProvider>

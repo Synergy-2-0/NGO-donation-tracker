@@ -3,6 +3,31 @@ import * as donorService from '../services/donor.service.js';
 //Donor Profile
 
 /**
+ * Get all pledges across all donors.
+ */
+export const getAllPledges = async (req, res) => {
+  try {
+    const pledges = await donorService.getAllPledges(req.query);
+    res.json(pledges);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+/**
+ * Get all pledgers (donors with at least one pledge).
+ * Supports optional query params: pledgeStatus, campaignId.
+ */
+export const getAllPledgers = async (req, res) => {
+  try {
+    const pledgers = await donorService.getAllPledgers(req.query);
+    res.json(pledgers);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+/**
  * Create a new donor profile for the authenticated user.
  */
 export const createDonor = async (req, res) => {
@@ -99,6 +124,30 @@ export const deletePledge = async (req, res) => {
     res.json({ message: 'Pledge deleted successfully' });
   } catch (err) {
     res.status(400).json({ message: err.message });
+  }
+};
+
+/**
+ * Get all pledges for a donor.
+ */
+export const getPledges = async (req, res) => {
+  try {
+    const pledges = await donorService.getDonorPledges(req.params.id);
+    res.json(pledges);
+  } catch (err) {
+    res.status(404).json({ message: err.message });
+  }
+};
+
+/**
+ * Get a single pledge by donor ID and pledge ID.
+ */
+export const getPledgeById = async (req, res) => {
+  try {
+    const pledge = await donorService.getDonorPledgeById(req.params.id, req.params.pledgeId);
+    res.json(pledge);
+  } catch (err) {
+    res.status(404).json({ message: err.message });
   }
 };
 

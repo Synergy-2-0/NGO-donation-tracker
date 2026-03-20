@@ -8,10 +8,12 @@ class AgreementService {
     if (!partner) throw new Error('Partner not found');
     if (partner.verificationStatus !== 'verified') throw new Error('Partner must be verified');
 
-    if (data.campaignId) {
-      const campaign = await Campaign.findById(data.campaignId);
-      if (!campaign || campaign.isDeleted) throw new Error('Campaign not found');
+    if (!data.campaignId) {
+      throw new Error('campaignId is required');
     }
+
+    const campaign = await Campaign.findById(data.campaignId);
+    if (!campaign || campaign.isDeleted) throw new Error('Campaign not found');
 
     const agreement = await agreementRepository.create({ ...data, createdBy: userId });
     await this._recalcPartnerHistory(data.partnerId);
@@ -50,7 +52,10 @@ class AgreementService {
       throw new Error('Unauthorized');
     }
 
-    if (data.campaignId) {
+    if (Object.prototype.hasOwnProperty.call(data, 'campaignId')) {
+      if (!data.campaignId) {
+        throw new Error('campaignId is required');
+      }
       const campaign = await Campaign.findById(data.campaignId);
       if (!campaign || campaign.isDeleted) throw new Error('Campaign not found');
     }

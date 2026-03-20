@@ -33,6 +33,36 @@ export const softDelete = async (id) => {
   );
 };
 
+export const findAllPledges = async (filters = {}) => {
+  const match = { status: { $ne: 'deleted' }, 'pledges.0': { $exists: true } };
+  if (filters.pledgeStatus) match['pledges.status'] = filters.pledgeStatus;
+  if (filters.campaignId) match['pledges.campaign'] = filters.campaignId;
+
+  const donors = await Donor.find(match)
+    .populate('userId', 'name email')
+    .populate('pledges.campaign', 'title')
+    .lean();
+
+  // Flatten all pledges with donor info attached
+  return donors.flatMap(donor =>
+    donor.pledges.map(pledge => ({
+      ...pledge,
+      donor: { _id: donor._id, user: donor.userId }
+    }))
+  );
+};
+
+export const findAllPledgers = async (filters = {}) => {
+  const match = { status: { $ne: 'deleted' }, 'pledges.0': { $exists: true } };
+  if (filters.pledgeStatus) match['pledges.status'] = filters.pledgeStatus;
+  if (filters.campaignId) match['pledges.campaign'] = filters.campaignId;
+
+  return await Donor.find(match)
+    .populate('userId', 'name email role')
+    .populate('pledges.campaign', 'title')
+    .sort({ createdAt: -1 });
+};
+
 // Pledges
 export const addPledge = async (donorId, pledgeData) => {
   return await Donor.findByIdAndUpdate(

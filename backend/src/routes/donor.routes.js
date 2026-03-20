@@ -8,6 +8,8 @@ const router = express.Router();
 // Donor Profile
 router.post('/', authenticate, authorizeRoles('donor'), ctrl.createDonor);
 router.get('/', authenticate, authorizeRoles('admin', 'ngo-admin'), ctrl.getAllDonors);
+router.get('/pledgers', authenticate, authorizeRoles('admin', 'ngo-admin'), ctrl.getAllPledgers);
+router.get('/pledges', authenticate, authorizeRoles('admin', 'ngo-admin'), ctrl.getAllPledges);
 router.get('/me', authenticate, authorizeRoles('donor'), ctrl.getMyDonorProfile);
 router.get('/analytics/segments', authenticate, authorizeRoles('admin', 'ngo-admin'), ctrl.getSegmentAnalytics);
 router.get('/:id', authenticate, ctrl.getDonorById);
@@ -15,6 +17,8 @@ router.put('/:id', authenticate, ctrl.updateDonor);
 router.delete('/:id', authenticate, authorizeRoles('admin'), ctrl.deleteDonor);
 
 // Pledges
+router.get('/:id/pledges', authenticate, ctrl.getPledges);
+router.get('/:id/pledges/:pledgeId', authenticate, ctrl.getPledgeById);
 router.post('/:id/pledges', authenticate, ctrl.createPledge);
 router.put('/:id/pledges/:pledgeId', authenticate, ctrl.updatePledge);
 router.delete('/:id/pledges/:pledgeId', authenticate, ctrl.deletePledge);

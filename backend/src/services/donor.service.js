@@ -3,6 +3,20 @@ import { sendDonorEmail } from '../utils/email.util.js';
 import Donor from '../models/donor.model.js';
 
 /**
+ * Get all pledges across all donors (flattened).
+ */
+export const getAllPledges = async (filters = {}) => {
+  return await donorRepo.findAllPledges(filters);
+};
+
+/**
+ * Get all donors who have at least one pledge.
+ */
+export const getAllPledgers = async (filters = {}) => {
+  return await donorRepo.findAllPledgers(filters);
+};
+
+/**
  * Create a donor profile for a user.
  * Ensures a user can only have one donor profile.
  */
@@ -82,6 +96,27 @@ export const createPledge = async (donorId, pledgeData) => {
   }
 
   return updated;
+};
+
+/**
+ * Get all pledges for a donor.
+ */
+export const getDonorPledges = async (donorId) => {
+  const donor = await donorRepo.findById(donorId);
+  if (!donor) throw new Error('Donor not found');
+  if (!donor.pledges || donor.pledges.length === 0) throw new Error('No pledges found for this donor');
+  return donor.pledges;
+};
+
+/**
+ * Get a single pledge by donor ID and pledge ID.
+ */
+export const getDonorPledgeById = async (donorId, pledgeId) => {
+  const donor = await donorRepo.findById(donorId);
+  if (!donor) throw new Error('Donor not found');
+  const pledge = donor.pledges.id(pledgeId);
+  if (!pledge) throw new Error('Pledge not found');
+  return pledge;
 };
 
 /**

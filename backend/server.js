@@ -28,6 +28,10 @@ app.use("/api/finance", financeRoutes);
 app.use('/api/public', transparencyRoutes);
 app.use('/api/geo', geoRoutes);
 
+app.get('/', (req, res) => {
+  res.status(200).send('NGO Donation Tracker API is running');
+});
+
 app.listen(port, () => {
   console.log(`Server is listening on port ${port}`);
 });

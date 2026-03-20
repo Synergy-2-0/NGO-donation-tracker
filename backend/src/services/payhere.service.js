@@ -2,6 +2,7 @@ import crypto from "crypto";
 import * as transactionService from "./transaction.service.js";
 import * as transactionRepository from "../repository/transaction.repository.js";
 
+const isDevMode = process.env.NODE_ENV !== "production";
 /**
  * Generate MD5 hash for PayHere
  */
@@ -135,19 +136,23 @@ export const handlePayHereCallback = async (callbackData) => {
 
     const merchantSecret = process.env.PAYHERE_MERCHANT_SECRET;
 
-    // Verify signature
-    const isValidSignature = verifyPayHereSignature(
-        merchant_id,
-        order_id,
-        payhere_amount,
-        payhere_currency,
-        status_code,
-        md5sig,
-        merchantSecret
-    );
-
-    if (!isValidSignature) {
-        throw new Error("Invalid PayHere signature");
+    // Verify signature (skip in dev mode)
+    if (!isDevMode) {
+        if (!md5sig) throw new Error("Missing MD5 signature");
+        const isValidSignature = verifyPayHereSignature(
+            merchant_id,
+            order_id,
+            payhere_amount,
+            payhere_currency,
+            status_code,
+            md5sig,
+            merchantSecret
+        );
+        if (!isValidSignature) {
+            throw new Error("Invalid PayHere signature");
+        }
+    } else {
+        console.log("Dev mode: skipping PayHere signature verification");
     }
 
     // Find transaction by order ID
@@ -166,14 +171,12 @@ export const handlePayHereCallback = async (callbackData) => {
     }
 
     // Update transaction
-    const updatedTransaction = await transactionRepository.updateById(
-        transaction._id,
-        {
-            status: newStatus,
-            paymentId: payment_id,
-            notes: `PayHere status code: ${status_code}`,
-        }
-    );
+    const updatedTransaction = await transactionRepository.updateById(transaction._id, {
+        status: newStatus,
+        paymentId: payment_id,
+        notes: `PayHere status code: ${status_code} ${isDevMode ? "(Dev: signature skipped)" : ""}`,
+    });
+
 
     return {
         success: true,

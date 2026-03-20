@@ -9,14 +9,18 @@ import agreementRoutes from './src/routes/agreement.routes.js';
 import milestoneRoutes from './src/routes/milestone.routes.js';
 import financeRoutes from "./src/routes/finance.routes.js";
 import donorRoutes from './src/routes/donor.routes.js';
-// import swaggerSpec from "./src/config/swagger.js";
-
+import transparencyRoutes from './src/routes/transparency.routes.js';
+import geoRoutes from './src/routes/geo.routes.js';
 dotenv.config();
 
 const app = express();
 const port = 3000;
 
-app.use(cors());
+app.use(cors({
+  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  methods: ['GET','HEAD','PUT','PATCH','POST','DELETE'],
+  credentials: true,
+}));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -28,58 +32,12 @@ app.use('/api/agreements', agreementRoutes);
 app.use('/api/milestones', milestoneRoutes);
 app.use("/api/donors", donorRoutes);
 app.use("/api/finance", financeRoutes);
+app.use('/api/public', transparencyRoutes);
+app.use('/api/geo', geoRoutes);
 
-
-
-// const swaggerOptions = {
-//   definition: {
-//     openapi: '3.0.0',
-//     info: {
-//       title: 'Partnerships & Transparency API',
-//       version: '1.0.0',
-//       description: 'RESTful API for CSR/NGO partnerships, transparency dashboard, AI matching, and geo map (SE3040 Assignment 2026)',
-//       contact: {
-//         name: 'Luqman (Group Member)',
-//       },
-//     },
-//     servers: [
-//       {
-//         url: `http://localhost:${port}`,
-//         description: 'Development server',
-//       },
-//       // Add production URL later (e.g. Render/Railway)
-//     ],
-//     components: {
-//       securitySchemes: {
-//         bearerAuth: {
-//           type: 'http',
-//           scheme: 'bearer',
-//           bearerFormat: 'JWT',
-//         },
-//       },
-//     },
-//     tags: [
-//       {
-//         name: 'Partners',
-//         description: 'Partner profiles and management',
-//       },
-//       // Add more tags later: Agreements, Milestones, Public, etc.
-//     ],
-//   },
-//   apis: [
-//     './src/routes/*.js',          
-//     './src/controllers/*.js',    
-//     './src/models/partner.model.js', 
-//   ],
-// };
-
-// const specs = swaggerJsdoc(swaggerOptions);
-
-// app.use('/docs', swaggerUi.serve, swaggerUi.setup(specs, {
-//   explorer: true,               // Enable search in UI
-//   customCss: '.swagger-ui .topbar { background-color: #1a1a2e; }', 
-//   customSiteTitle: 'Partnerships API Docs',
-// }));
+app.get('/', (req, res) => {
+  res.status(200).send('NGO Donation Tracker API is running');
+});
 
 app.listen(port, () => {
   console.log(`Server is listening on port ${port}`);

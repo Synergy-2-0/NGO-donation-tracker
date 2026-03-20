@@ -38,24 +38,23 @@ const donorItems = [
       </svg>
     ),
   },
-];
-
-const ngoItems = [
   {
-    to: '/finance/dashboard',
-    label: 'Finance Overview',
+    to: '/partners',
+    label: 'Partners',
+    roles: ['partner', 'admin'],
     icon: (
       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M3 21h18M5 21V7l7-4 7 4v14M9 9h.01M12 9h.01M15 9h.01M9 13h.01M12 13h.01M15 13h.01" />
       </svg>
     ),
   },
   {
-    to: '/finance/transactions',
-    label: 'Transactions',
+    to: '/partners/verification',
+    label: 'Verification Queue',
+    roles: ['admin'],
     icon: (
       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5-2a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>
     ),
   },
@@ -63,8 +62,11 @@ const ngoItems = [
 
 export default function Sidebar() {
   const { user } = useAuth();
-  const isFinanceUser = ['admin', 'ngo-admin', 'partner'].includes(user?.role);
-  const items = isFinanceUser ? [...donorItems, ...ngoItems] : donorItems;
+
+  const visibleItems = navItems.filter((item) => {
+    if (!item.roles) return true;
+    return item.roles.includes(user?.role);
+  });
 
   return (
     <aside className="w-64 bg-blue-900 text-white flex flex-col shrink-0">
@@ -74,7 +76,7 @@ export default function Sidebar() {
         </span>
       </div>
       <nav className="flex-1 px-3 py-4 space-y-1">
-        {items.map((item) => (
+        {visibleItems.map((item) => (
           <NavLink
             key={item.to}
             to={item.to}

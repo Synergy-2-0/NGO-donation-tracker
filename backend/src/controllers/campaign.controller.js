@@ -13,10 +13,17 @@ export const createCampaign = async (req, res) => {
 // get all campaigns
 export const getCampaigns = async (req, res) => {
     try {
-        const campaigns = await campaignService.getAllCampaigns();
+        const campaigns = await campaignService.getAllCampaigns(req.query);
         res.json(campaigns);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        const status =
+            error.message === 'Both lat and lng are required for radius search' ||
+            error.message === 'lat and lng must be valid numbers' ||
+            error.message === 'Invalid coordinates' ||
+            error.message === 'radius must be between 1 and 500'
+                ? 400
+                : 500;
+        res.status(status).json({ message: error.message });
     }
 };
 

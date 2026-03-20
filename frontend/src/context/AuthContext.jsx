@@ -5,11 +5,12 @@ const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => {
+    const stored = localStorage.getItem('user');
+    if (!stored) return null;
     try {
-      const stored = localStorage.getItem('user');
-      return stored && stored !== 'undefined' ? JSON.parse(stored) : null;
-    } catch (e) {
-      console.error("Failed to parse user session:", e);
+      return JSON.parse(stored);
+    } catch (parseError) {
+      console.warn('AuthContext: invalid stored user JSON, clearing bad value', parseError);
       localStorage.removeItem('user');
       return null;
     }

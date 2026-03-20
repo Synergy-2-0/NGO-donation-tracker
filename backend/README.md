@@ -9,10 +9,10 @@ RESTful API for managing NGO donations, campaigns, partnerships, and financial t
 - **Authentication**: JWT (jsonwebtoken)
 - **Validation**: Joi
 - **File Upload**: Multer + Cloudinary (multer-storage-cloudinary)
-- **Email**: Nodemailer / SendGrid (@sendgrid/mail, sib-api-v3-sdk)
+- **Email**: Nodemailer / SendGrid (@sendgrid/mail, sib-api-v3-sdk), Brevo + SMTP
 - **HTTP Client**: Axios
 - **Password Hashing**: bcryptjs
-- **Third-party APIs**: PayHere (Payment Gateway), Cloudinary (File Storage)
+- **Third-party APIs**: PayHere (Payment Gateway), Cloudinary (File Storage), Nominatim (Geocoding)
 
 ## Setup
 
@@ -24,15 +24,19 @@ npm install
 2. Create `.env` file:
 ```env
 PORT=3000
-MONGO_URI=mongodb://localhost:27017/ngo-donation-tracker
+MONGODB_URI=mongodb://localhost:27017/ngo-donation-tracker
 JWT_SECRET=your_jwt_secret
-JWT_EXPIRE=7d
+JWT_EXPIRES_IN=7d
 CLOUDINARY_CLOUD_NAME=your_cloud_name
 CLOUDINARY_API_KEY=your_api_key
 CLOUDINARY_API_SECRET=your_api_secret
-SENDGRID_API_KEY=your_sendgrid_key
+BREVO_API_KEY=your_brevo_key
+EMAIL_USER=your_email@example.com
+EMAIL_PASS=your_email_app_password
 PAYHERE_MERCHANT_ID=your_merchant_id
 PAYHERE_MERCHANT_SECRET=your_merchant_secret
+GEOCODING_PROVIDER=nominatim
+GEOCODING_BASE_URL=https://nominatim.openstreetmap.org
 ```
 
 3. Run:

@@ -66,6 +66,12 @@ const agreementSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true
+  },
+  campaignId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Campaign',
+    default: null,
+    index: true
   }
 }, {
   timestamps: true

@@ -39,6 +39,11 @@ class PartnerRepository {
   async findPublic() {
     return await Partnership.find({ verificationStatus: 'verified', status: 'active' }).sort({ createdAt: -1 });
   }
+
+  // Find partner by user ID
+  async findByUserId(userId) {
+    return await Partnership.findOne({ userId });
+  }
 }
 
 export default new PartnerRepository();

@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from 'cors';
 import dotenv from "dotenv";
 import './src/config/db.js';
 import router from './src/routes/partners.routes.js';
@@ -8,10 +9,18 @@ import agreementRoutes from './src/routes/agreement.routes.js';
 import milestoneRoutes from './src/routes/milestone.routes.js';
 import financeRoutes from "./src/routes/finance.routes.js";
 import donorRoutes from './src/routes/donor.routes.js';
+import transparencyRoutes from './src/routes/transparency.routes.js';
+import geoRoutes from './src/routes/geo.routes.js';
 dotenv.config();
 
 const app = express();
 const port = 3000;
+
+app.use(cors({
+  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  methods: ['GET','HEAD','PUT','PATCH','POST','DELETE'],
+  credentials: true,
+}));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -23,6 +32,8 @@ app.use('/api/agreements', agreementRoutes);
 app.use('/api/milestones', milestoneRoutes);
 app.use("/api/donors", donorRoutes);
 app.use("/api/finance", financeRoutes);
+app.use('/api/public', transparencyRoutes);
+app.use('/api/geo', geoRoutes);
 
 app.get('/', (req, res) => {
   res.status(200).send('NGO Donation Tracker API is running');

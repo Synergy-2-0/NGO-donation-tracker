@@ -45,6 +45,33 @@ const campaignSchema = new mongoose.Schema(
             enum: ["draft", "active", "completed", "archived"],
             default: "draft",
         },
+        location: {
+            city: {
+                type: String,
+                trim: true,
+                index: true,
+            },
+            state: {
+                type: String,
+                trim: true,
+                index: true,
+            },
+            country: {
+                type: String,
+                trim: true,
+                default: 'Sri Lanka',
+            },
+            coordinates: {
+                type: {
+                    type: String,
+                    enum: ['Point'],
+                    default: 'Point',
+                },
+                coordinates: {
+                    type: [Number],
+                },
+            },
+        },
         isDeleted: {
             type: Boolean,
             default: false,
@@ -52,5 +79,7 @@ const campaignSchema = new mongoose.Schema(
     },
     { timestamps: true }
 );
+
+campaignSchema.index({ 'location.coordinates': '2dsphere' });
 
 export default mongoose.model("Campaign", campaignSchema);

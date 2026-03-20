@@ -253,4 +253,6 @@ const partnerSchema = new mongoose.Schema({
   toObject: { virtuals: true }
 });
 
+partnerSchema.index({ 'address.coordinates': '2dsphere' });
+
 export default mongoose.model('Partner', partnerSchema);

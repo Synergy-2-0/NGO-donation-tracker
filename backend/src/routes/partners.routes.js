@@ -7,6 +7,7 @@ const router = express.Router();
 
 router.post('/', authenticate, authorizeRoles('partner'), ctrl.createPartnership);
 router.get('/', authenticate, ctrl.getPartners);
+router.get('/me/profile', authenticate, ctrl.getMyPartnerProfile);
 router.get('/:id', authenticate, ctrl.getPartner);
 router.put('/:id', authenticate, ctrl.updatePartner);
 router.patch('/:id/approve', authenticate, authorizeRoles('admin'), ctrl.approvePartner);

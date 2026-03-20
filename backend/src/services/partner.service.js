@@ -59,6 +59,13 @@ class PartnerService {
     }
     return await partnerRepository.softDelete(id);
   }
+
+  // Get current user's partner profile
+  async getPartnerByUserId(userId) {
+    const partner = await partnerRepository.findByUserId(userId);
+    if (!partner) throw new Error('Partner profile not found');
+    return partner;
+  }
 }
 
 export default new PartnerService();

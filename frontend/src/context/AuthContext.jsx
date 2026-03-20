@@ -5,10 +5,19 @@ const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => {
-    const stored = localStorage.getItem('user');
-    return stored ? JSON.parse(stored) : null;
+    try {
+      const stored = localStorage.getItem('user');
+      return stored && stored !== 'undefined' ? JSON.parse(stored) : null;
+    } catch (e) {
+      console.error("Failed to parse user session:", e);
+      localStorage.removeItem('user');
+      return null;
+    }
   });
-  const [token, setToken] = useState(() => localStorage.getItem('token'));
+  const [token, setToken] = useState(() => {
+    const t = localStorage.getItem('token');
+    return t === 'undefined' ? null : t;
+  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 

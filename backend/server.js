@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from 'cors';
 import dotenv from "dotenv";
 import './src/config/db.js';
 import router from './src/routes/partners.routes.js';
@@ -7,12 +8,15 @@ import userRoutes from "./src/routes/user.routes.js";
 import agreementRoutes from './src/routes/agreement.routes.js';
 import milestoneRoutes from './src/routes/milestone.routes.js';
 import financeRoutes from "./src/routes/finance.routes.js";
-import swaggerSpec from "./src/config/swagger.js";
+import donorRoutes from './src/routes/donor.routes.js';
+// import swaggerSpec from "./src/config/swagger.js";
 
 dotenv.config();
 
 const app = express();
 const port = 3000;
+
+app.use(cors());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

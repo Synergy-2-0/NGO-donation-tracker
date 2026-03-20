@@ -1,6 +1,12 @@
 import * as progressRepository from "../repository/progress.repository.js";
 import Campaign from "../models/campaign.model.js";
 
+/**
+ * Create a progress log for a campaign.
+ * Business rules:
+ *  - Progress can only be added to campaigns with status "active".
+ *  - campaign must exists before creating a progress entry.
+ */
 export const createProgress = async (data) => {
     const campaign = await Campaign.findById(data.campaign);
 

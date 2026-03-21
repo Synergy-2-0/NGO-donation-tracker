@@ -12,6 +12,8 @@ export default function CreateCampaignPage() {
         goalAmount: '',
         startDate: '',
         endDate: '',
+        image: null,
+        imagePreview: '',
         location: {
             city: '',
             state: '',
@@ -23,9 +25,18 @@ export default function CreateCampaignPage() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        setFormData((prev) => ({
+            ...prev,
+            image: file,
+            imagePreview: URL.createObjectURL(file),
+        }));
+    };
+
     const handleChange = (e) => {
         const { name, value } = e.target;
-
         if (['city', 'state', 'country'].includes(name)) {
             setFormData((prev) => ({
                 ...prev,
@@ -110,6 +121,42 @@ export default function CreateCampaignPage() {
                                 required
                             />
                         </div>
+
+                        {/* Image Upload */}
+                        <div>
+                            <label className={labelCls}>Campaign Image</label>
+                            <label className="mt-1 flex flex-col items-center justify-center w-full border-2 border-dashed border-gray-200 rounded-lg cursor-pointer bg-gray-50 hover:bg-red-50/30 hover:border-red-200 transition-colors group">
+                                {formData.imagePreview ? (
+                                    <div className="relative w-full">
+                                        <img
+                                            src={formData.imagePreview}
+                                            alt="preview"
+                                            className="w-full h-44 object-cover rounded-lg"
+                                        />
+                                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
+                                            <p className="text-white text-xs font-semibold">Click to change image</p>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="flex flex-col items-center justify-center py-8 px-4">
+                                        <div className="w-10 h-10 bg-red-50 rounded-xl flex items-center justify-center mb-3 group-hover:bg-red-100 transition-colors">
+                                            <svg className="w-5 h-5 text-[#DC2626]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                            </svg>
+                                        </div>
+                                        <p className="text-sm font-medium text-gray-500 group-hover:text-[#DC2626] transition-colors">Click to upload image</p>
+                                        <p className="text-xs text-gray-400 mt-1">PNG, JPG, WEBP up to 10MB</p>
+                                    </div>
+                                )}
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handleImageChange}
+                                    className="hidden"
+                                />
+                            </label>
+                        </div>
+
                         <div>
                             <label className={labelCls}>Description</label>
                             <textarea
@@ -191,60 +238,25 @@ export default function CreateCampaignPage() {
                         <div className="grid grid-cols-3 gap-4">
                             <div>
                                 <label className={labelCls}>City</label>
-                                <input
-                                    type="text"
-                                    name="city"
-                                    value={formData.location.city}
-                                    onChange={handleChange}
-                                    placeholder="Colombo"
-                                    className={inputCls}
-                                />
+                                <input type="text" name="city" value={formData.location.city} onChange={handleChange} placeholder="Colombo" className={inputCls} />
                             </div>
                             <div>
                                 <label className={labelCls}>State / Province</label>
-                                <input
-                                    type="text"
-                                    name="state"
-                                    value={formData.location.state}
-                                    onChange={handleChange}
-                                    placeholder="Western"
-                                    className={inputCls}
-                                />
+                                <input type="text" name="state" value={formData.location.state} onChange={handleChange} placeholder="Western" className={inputCls} />
                             </div>
                             <div>
                                 <label className={labelCls}>Country</label>
-                                <input
-                                    type="text"
-                                    name="country"
-                                    value={formData.location.country}
-                                    onChange={handleChange}
-                                    placeholder="Sri Lanka"
-                                    className={inputCls}
-                                />
+                                <input type="text" name="country" value={formData.location.country} onChange={handleChange} placeholder="Sri Lanka" className={inputCls} />
                             </div>
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                             <div>
                                 <label className={labelCls}>Latitude</label>
-                                <input
-                                    type="number"
-                                    name="lat"
-                                    value={formData.location.coordinates[1]}
-                                    onChange={handleChange}
-                                    placeholder="6.9271"
-                                    className={inputCls}
-                                />
+                                <input type="number" name="lat" value={formData.location.coordinates[1]} onChange={handleChange} placeholder="6.9271" className={inputCls} />
                             </div>
                             <div>
                                 <label className={labelCls}>Longitude</label>
-                                <input
-                                    type="number"
-                                    name="lng"
-                                    value={formData.location.coordinates[0]}
-                                    onChange={handleChange}
-                                    placeholder="79.8612"
-                                    className={inputCls}
-                                />
+                                <input type="number" name="lng" value={formData.location.coordinates[0]} onChange={handleChange} placeholder="79.8612" className={inputCls} />
                             </div>
                         </div>
                     </div>
@@ -293,6 +305,7 @@ export default function CreateCampaignPage() {
                     </button>
                 </div>
             </form>
+
         </div>
     );
 }

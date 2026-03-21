@@ -25,7 +25,21 @@ export function AdminCampaignProvider({ children }) {
 
     const createCampaign = useCallback(async (campaignData) => {
         try {
-            const res = await api.post('/api/campaigns', campaignData);
+            const formData = new FormData();
+
+            if (campaignData.image) {
+                formData.append('image', campaignData.image);
+            }
+            formData.append('title', campaignData.title);
+            formData.append('description', campaignData.description);
+            formData.append('goalAmount', campaignData.goalAmount);
+            formData.append('startDate', campaignData.startDate);
+            formData.append('endDate', campaignData.endDate);
+            if (campaignData.location) {
+                formData.append('location', JSON.stringify(campaignData.location));
+            }
+
+            const res = await api.post('/api/campaigns', formData);
             setCampaigns((prev) => [res.data, ...prev]);
             return res.data;
         } catch (err) {
@@ -46,10 +60,34 @@ export function AdminCampaignProvider({ children }) {
             throw err;
         }
     }, []);
+    const fetchCampaignById = useCallback(async (id) => {
+        try {
+            const res = await api.get(`/api/campaigns/${id}`);
+            return res.data;
+        } catch (err) {
+            console.error('Failed to fetch campaign', err);
+            throw err;
+        }
+    }, []);
+
+    const updateCampaign = useCallback(async (id, campaignData) => {
+        try {
+            const res = await api.put(`/api/campaigns/${id}`, campaignData);
+
+            setCampaigns(prev =>
+                prev.map(c => c._id === id ? res.data : c)
+            );
+
+            return res.data;
+        } catch (err) {
+            console.error('Failed to update campaign', err);
+            throw err;
+        }
+    }, []);
 
     return (
         <AdminCampaignContext.Provider
-            value={{ campaigns, loading, fetchCampaigns, publishCampaign, createCampaign }}
+            value={{ campaigns, loading, fetchCampaigns, fetchCampaignById, publishCampaign, createCampaign, updateCampaign }}
         >
             {children}
         </AdminCampaignContext.Provider>

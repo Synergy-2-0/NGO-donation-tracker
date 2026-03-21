@@ -6,19 +6,36 @@ class MilestoneRepository {
   }
 
   async findAll(filters = {}) {
-    return await Milestone.find(filters).sort({ dueDate: 1 });
+    return await Milestone.find(filters)
+      .populate('agreementId', 'title status campaignId')
+      .populate('campaignId', 'title status')
+      .sort({ dueDate: 1 });
   }
 
   async findById(id) {
-    return await Milestone.findById(id);
+    return await Milestone.findById(id)
+      .populate('agreementId', 'title status campaignId')
+      .populate('campaignId', 'title status');
   }
 
   async findByAgreement(agreementId) {
-    return await Milestone.find({ agreementId }).sort({ dueDate: 1 });
+    return await Milestone.find({ agreementId })
+      .populate('agreementId', 'title status campaignId')
+      .populate('campaignId', 'title status')
+      .sort({ dueDate: 1 });
+  }
+
+  async findByCampaign(campaignId) {
+    return await Milestone.find({ campaignId })
+      .populate('agreementId', 'title status campaignId')
+      .populate('campaignId', 'title status')
+      .sort({ dueDate: 1 });
   }
 
   async update(id, data) {
-    return await Milestone.findByIdAndUpdate(id, data, { new: true, runValidators: true });
+    return await Milestone.findByIdAndUpdate(id, data, { new: true, runValidators: true })
+      .populate('agreementId', 'title status campaignId')
+      .populate('campaignId', 'title status');
   }
 
   async delete(id) {

@@ -5,15 +5,20 @@ const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => {
+    const stored = localStorage.getItem('user');
+    if (!stored) return null;
     try {
-      const stored = localStorage.getItem('user');
-      return stored ? JSON.parse(stored) : null;
-    } catch {
+      return JSON.parse(stored);
+    } catch (parseError) {
+      console.warn('AuthContext: invalid stored user JSON, clearing bad value', parseError);
       localStorage.removeItem('user');
       return null;
     }
   });
-  const [token, setToken] = useState(() => localStorage.getItem('token'));
+  const [token, setToken] = useState(() => {
+    const t = localStorage.getItem('token');
+    return t === 'undefined' ? null : t;
+  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 

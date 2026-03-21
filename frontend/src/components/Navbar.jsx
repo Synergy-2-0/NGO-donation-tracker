@@ -1,7 +1,24 @@
 import { useAuth } from '../context/AuthContext';
 
 export default function Navbar() {
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
+
+  // Determine dashboard type based on user role
+  const getDashboardType = () => {
+    if (!user?.role) return 'Dashboard';
+
+    switch (user.role) {
+      case 'admin':
+      case 'ngo-admin':
+        return 'Admin Dashboard';
+      case 'donor':
+        return 'Donor Dashboard';
+      case 'partner':
+        return 'Partner Dashboard';
+      default:
+        return 'Dashboard';
+    }
+  };
 
   return (
     <header className="bg-white/70 backdrop-blur-xl border-b border-gray-100 px-10 py-5 flex items-center justify-between shrink-0 z-20">

@@ -46,6 +46,8 @@ const donorSchema = new mongoose.Schema({
     trim: true,
     match: [/^\+?[1-9]\d{1,14}$/, 'Please use a valid phone number']
   },
+  bio: { type: String, trim: true, maxlength: 500 },
+  preferredCauses: [{ type: String, trim: true }],
   address: {
     street: String,
     city: String,

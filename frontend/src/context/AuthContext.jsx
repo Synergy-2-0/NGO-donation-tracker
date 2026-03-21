@@ -48,6 +48,31 @@ export function AuthProvider({ children }) {
     }
   };
 
+  const register = async ({ name, email, password, role, phone, city, country, preferredCauses, bio }) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const { data } = await api.post('/api/users/register', { name, email, password, role, phone, city, country, preferredCauses, bio });
+      const jwt = data.token || data.data?.token;
+      const userData = data.user || data.data?.user || data.data;
+      if (!jwt) throw new Error('Registration succeeded but no token returned.');
+      localStorage.setItem('token', jwt);
+      localStorage.setItem('user', JSON.stringify(userData));
+      setToken(jwt);
+      setUser(userData);
+      return userData;
+    } catch (err) {
+      const message =
+        err.response?.data?.message ||
+        err.message ||
+        'Registration failed. Please try again.';
+      setError(message);
+      throw new Error(message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const logout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
@@ -57,7 +82,7 @@ export function AuthProvider({ children }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, token, loading, error, login, logout, isAuthenticated: !!token }}
+      value={{ user, token, loading, error, login, register, logout, isAuthenticated: !!token }}
     >
       {children}
     </AuthContext.Provider>

@@ -6,7 +6,7 @@ import ErrorAlert from '../components/ErrorAlert';
 
 const defaultForm = {
   phone: '',
-  address: { street: '', city: '', state: '', country: '', postalCode: '' },
+  address: { street: '', city: '', country: '', postalCode: '' },
   preferredCauses: '',
   bio: '',
 };
@@ -32,13 +32,11 @@ function PremiumField({ label, name, value, onChange, type = 'text', placeholder
 
 export default function ProfilePage() {
   const { user } = useAuth();
-  const { donorProfile, loading, error, fetchProfile, createProfile, updateProfile, deleteProfile } =
-    useDonor();
+  const { donorProfile, loading, error, fetchProfile, updateProfile } = useDonor();
   const [form, setForm] = useState(defaultForm);
   const [editing, setEditing] = useState(false);
   const [success, setSuccess] = useState('');
   const [localError, setLocalError] = useState('');
-  const [confirmDelete, setConfirmDelete] = useState(false);
   const [initialFetchDone, setInitialFetchDone] = useState(false);
 
   useEffect(() => {
@@ -54,7 +52,6 @@ export default function ProfilePage() {
         address: {
           street: donorProfile.address?.street || '',
           city: donorProfile.address?.city || '',
-          state: donorProfile.address?.state || '',
           country: donorProfile.address?.country || '',
           postalCode: donorProfile.address?.postalCode || '',
         },
@@ -86,28 +83,11 @@ export default function ProfilePage() {
         .filter(Boolean),
     };
     try {
-      if (donorProfile) {
-        await updateProfile(donorProfile._id, payload);
-        setSuccess('Profile updated successfully.');
-        setEditing(false);
-      } else {
-        await createProfile(payload);
-        setSuccess('Donor profile created successfully.');
-      }
+      await updateProfile(donorProfile._id, payload);
+      setSuccess('Profile updated successfully.');
+      setEditing(false);
     } catch (err) {
       setLocalError(err.response?.data?.message || err.message || 'Failed to save profile.');
-    }
-  };
-
-  const handleDelete = async () => {
-    setLocalError('');
-    try {
-      await deleteProfile(donorProfile._id);
-      setSuccess('Your donor profile has been deleted.');
-      setConfirmDelete(false);
-      setForm(defaultForm);
-    } catch {
-      setLocalError('Failed to delete profile. Please try again.');
     }
   };
 
@@ -128,7 +108,7 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      {(localError || (!donorProfile && error)) && (
+      {(localError || error) && (
         <ErrorAlert
           message={localError || error}
           onDismiss={() => setLocalError('')}

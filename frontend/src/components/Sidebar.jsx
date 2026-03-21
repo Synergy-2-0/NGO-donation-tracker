@@ -125,6 +125,10 @@ export default function Sidebar() {
   const { user } = useAuth();
   const isFinanceUser = ['admin', 'ngo-admin', 'partner'].includes(user?.role);
 
+  const navItems = user?.role === 'admin' 
+    ? [...donorNavItems, ...adminNavItems.filter(i => i.to !== '/dashboard')] 
+    : donorNavItems;
+
   const visibleItems = navItems.filter((item) => {
     if (!item.roles) return true;
     return item.roles.includes(user?.role);

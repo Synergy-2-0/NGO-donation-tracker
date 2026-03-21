@@ -15,6 +15,11 @@ const campaignSchema = new mongoose.Schema(
             trim: true,
             maxlength: [2000, "Description cannot exceed 2000 characters"]
         },
+        image: {
+            type: String,
+            default: null,
+            trim: true
+        },
         goalAmount: {
             type: Number,
             required: [true, "Goal amount is required"],

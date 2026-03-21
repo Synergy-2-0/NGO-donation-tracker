@@ -3,7 +3,11 @@ import * as campaignService from "../services/campaign.service.js";
 // create campaign
 export const createCampaign = async (req, res) => {
     try {
-        const campaign = await campaignService.createCampaign(req.body);
+        const campaignData = {
+            ...req.body,
+            image: req.file?.path || null
+        };
+        const campaign = await campaignService.createCampaign(campaignData);
         res.status(201).json(campaign);
     } catch (error) {
         res.status(400).json({ message: error.message });

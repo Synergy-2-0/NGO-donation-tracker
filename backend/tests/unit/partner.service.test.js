@@ -1,4 +1,5 @@
-import { jest } from '@jest/globals';
+import pkg from '@jest/globals';
+const { jest } = pkg;
 
 const partnerRepositoryMock = {
   create: jest.fn(),

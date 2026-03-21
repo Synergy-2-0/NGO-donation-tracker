@@ -96,6 +96,14 @@ export const updateCampaign = async (id, data) => {
 };
 
 export const deleteCampaign = async (id) => {
+    const campaign = await campaignRepository.findById(id);
+
+    if (!campaign) throw new Error("Campaign not found");
+
+    if (campaign.status === "active") {
+        throw new Error("Active campaigns cannot be deleted");
+    }
+
     return await campaignRepository.softDelete(id);
 };
 

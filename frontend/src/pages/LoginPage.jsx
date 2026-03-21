@@ -6,46 +6,17 @@ import { motion } from 'framer-motion';
 export default function LoginPage() {
   const { login, logout, loading } = useAuth();
   const navigate = useNavigate();
-  const [tab, setTab] = useState('signin'); // 'signin' | 'signup'
-  const [step, setStep] = useState(1); // signup wizard step
   const [error, setError] = useState('');
 
   // Sign-in form
-  const [signIn, setSignIn] = useState({ email: '', password: '' });
+  const [form, setForm] = useState({ email: '', password: '' });
 
-  // Sign-up form
-  const [signUp, setSignUp] = useState({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    role: 'donor',
-    // Donor profile fields (step 2)
-    phone: '',
-    city: '',
-    country: 'Sri Lanka',
-    preferredCauses: '',
-    bio: '',
-  });
-  const [fieldErrors, setFieldErrors] = useState({});
-  const [touched, setTouched] = useState({});
-
-  const touch = (field) => setTouched((t) => ({ ...t, [field]: true }));
-
-  const handleSignUpChange = (field, value) => {
-    const updated = { ...signUp, [field]: value };
-    setSignUp(updated);
-    if (touched[field]) {
-      const errs = validateAccount(updated);
-      setFieldErrors((prev) => ({ ...prev, [field]: errs[field] }));
-      // also re-validate confirmPassword when password changes
-      if (field === 'password' && touched.confirmPassword) {
-        setFieldErrors((prev) => ({ ...prev, confirmPassword: errs.confirmPassword }));
-      }
-    }
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSignIn = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     try {
@@ -58,51 +29,6 @@ export default function LoginPage() {
     } catch (err) {
       setError(err.message);
     }
-  };
-
-  const submitSignUp = async () => {
-    setError('');
-    try {
-      await register({
-        name: signUp.name.trim(),
-        email: signUp.email,
-        password: signUp.password,
-        role: signUp.role,
-        phone: signUp.phone.trim() || undefined,
-        city: signUp.city.trim() || undefined,
-        country: signUp.country.trim() || undefined,
-        preferredCauses: signUp.preferredCauses
-          ? signUp.preferredCauses.split(',').map((s) => s.trim()).filter(Boolean)
-          : [],
-        bio: signUp.bio.trim() || undefined,
-      });
-      navigate('/dashboard');
-    } catch (err) {
-      setError(err.message);
-      setStep(1);
-    }
-  };
-
-  const handleStep1 = (e) => {
-    e.preventDefault();
-    setError('');
-    const errs = validateAccount(signUp);
-    setFieldErrors(errs);
-    setTouched({ name: true, email: true, password: true, confirmPassword: true });
-    if (Object.keys(errs).length > 0) return;
-    if (signUp.role === 'donor') {
-      setStep(2);
-    } else {
-      submitSignUp();
-    }
-  };
-
-  const handleStep2 = (e) => {
-    e.preventDefault();
-    const errs = validateProfile(signUp);
-    setFieldErrors(errs);
-    if (Object.keys(errs).length > 0) return;
-    submitSignUp();
   };
 
   return (

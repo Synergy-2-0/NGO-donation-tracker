@@ -18,19 +18,7 @@ const port = process.env.PORT || 3000;
 
 const allowedOrigins = process.env.ALLOWED_ORIGINS
   ? process.env.ALLOWED_ORIGINS.split(',')
-  : ['http://localhost:5173', 'http://localhost:4173'];
-
-app.use(cors({
-  origin: (origin, callback) => {
-    // Allow requests with no origin (e.g. mobile apps, curl, Postman)
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.includes(origin)) return callback(null, true);
-    callback(new Error(`CORS: origin '${origin}' not allowed`));
-  },
-  credentials: true,
-}));
-
-const allowedOrigins = (process.env.ALLOWED_ORIGINS || 'http://localhost:5173,http://127.0.0.1:5173').split(',');
+  : ['http://localhost:5173', 'http://localhost:4173', 'http://127.0.0.1:5173'];
 
 app.use(cors({
   origin: function (origin, callback) {
@@ -46,7 +34,6 @@ app.use(cors({
   credentials: true,
   exposedHeaders: ['set-cookie'],
 }));
-
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

@@ -1,7 +1,7 @@
 import { useAuth } from '../context/AuthContext';
 
 export default function Navbar() {
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
 
   // Determine dashboard type based on user role
   const getDashboardType = () => {

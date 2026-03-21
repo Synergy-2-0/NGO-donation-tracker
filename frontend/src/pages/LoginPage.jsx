@@ -168,30 +168,25 @@ export default function LoginPage() {
         <div className="absolute top-1/2 left-1/3 w-32 h-32 bg-white/10 rounded-full blur-2xl" />
 
         {/* Content wrapper */}
-        <div className="relative z-10 max-w-md text-center space-y-6">
+        <div className="relative z-10 max-w-md text-center">
           {/* Logo */}
-          <div className="flex items-center justify-center gap-3 mb-2">
-            <div className="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center border border-white/20 shadow-lg">
-              <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-              </svg>
-            </div>
-            <span className="text-4xl font-extrabold text-white tracking-tight drop-shadow-lg">TrustFund</span>
+          <div className="flex items-center justify-center mb-4">
+            <img src="/hand-heart-logo.png" alt="TrustFund Logo" className="w-64 h-auto object-contain drop-shadow-2xl" />
           </div>
 
           {/* Tagline */}
           <h2 className="text-5xl font-bold text-white leading-tight drop-shadow-md">
             Compassion &amp;<br />Humanity
           </h2>
-          <p className="text-lg text-white/90 font-medium">in Every Donation</p>
+          <p className="text-lg text-white/90 font-medium mt-2">in Every Donation</p>
 
           {/* Description */}
-          <p className="text-brand-cream/90 text-base leading-relaxed max-w-sm mx-auto">
+          <p className="text-brand-cream/90 text-base leading-relaxed max-w-sm mx-auto mt-4">
             Track your giving, manage pledges, and see the real-world impact of your contributions.
           </p>
 
           {/* Stats with glassmorphism cards */}
-          <div className="flex justify-center gap-4 pt-6">
+          <div className="flex justify-center gap-4 mt-6">
             {[['500+', 'Campaigns'], ['10K+', 'Donors'], ['$2M+', 'Raised']].map(([num, lbl]) => (
               <div
                 key={lbl}
@@ -210,10 +205,7 @@ export default function LoginPage() {
         <div className="bg-brand-cream rounded-2xl shadow-2xl w-full max-w-sm p-8">
           {/* Logo (mobile) */}
           <div className="flex items-center justify-center gap-2 mb-6 lg:hidden">
-            <svg className="w-7 h-7 text-brand-red" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-            </svg>
-            <span className="text-2xl font-extrabold text-brand-brown">TrustFund</span>
+            <img src="/hand-heart-logo.png" alt="TrustFund Logo" className="w-12 h-12 object-contain" />
           </div>
 
           {/* Tabs */}

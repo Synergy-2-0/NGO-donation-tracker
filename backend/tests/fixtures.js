@@ -68,7 +68,8 @@ export const test = base.extend({
         }
 
         const createdAdmin = await registerResponse.json();
-        const adminId = createdAdmin._id ?? createdAdmin.id;
+        // registerUser returns { token, user } - extract id from user object
+        const adminId = createdAdmin.user?._id ?? createdAdmin.user?.id ?? createdAdmin._id ?? createdAdmin.id;
 
         const loginResponse = await requestContext.post('/api/users/login', {
             data: {
@@ -138,7 +139,8 @@ export const test = base.extend({
         }
 
         const created = await resp.json();
-        const userId = created._id ?? created.id;
+        // registerUser returns { token, user } - extract id from user object
+        const userId = created.user?._id ?? created.user?.id ?? created._id ?? created.id;
 
         await use({ ...user, id: userId });
 
@@ -154,7 +156,15 @@ export const test = base.extend({
             description: 'Generated for test',
             goalAmount: 5000,
             startDate: '2024-01-01',
-            endDate: '2024-12-31'
+            endDate: '2024-12-31',
+            location: {
+                city: 'Colombo',
+                country: 'Sri Lanka',
+                coordinates: {
+                    type: 'Point',
+                    coordinates: [79.8612, 6.9271] // [longitude, latitude] for Colombo
+                }
+            }
         };
         const resp = await authenticatedContext.post('/api/campaigns', { data: campaignData });
         if (!resp.ok()) {

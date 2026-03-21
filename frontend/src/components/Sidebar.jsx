@@ -90,8 +90,8 @@ export default function Sidebar() {
 
   return (
     <aside className="w-64 text-white flex flex-col shrink-0" style={{ background: 'linear-gradient(180deg, #7C2D12 0%, #DC2626 100%)' }}>
-      <div className="px-6 py-6 border-b border-red-800/50 flex items-center justify-center">
-        <img src="/heart-logo c.png" alt="TrustFund Logo" className="w-20 h-20 object-contain" />
+      <div className="px-12 py-8 border-b border-red-800/50 flex items-center justify-center">
+        <img src="/heart-logo c.png" alt="TrustFund Logo" className="w-134px h-134px object-contain" />
       </div>
 
       <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">

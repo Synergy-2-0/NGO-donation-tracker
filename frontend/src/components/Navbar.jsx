@@ -3,10 +3,27 @@ import { useAuth } from '../context/AuthContext';
 export default function Navbar() {
   const { user, logout } = useAuth();
 
+  // Determine dashboard type based on user role
+  const getDashboardType = () => {
+    if (!user?.role) return 'Dashboard';
+
+    switch (user.role) {
+      case 'admin':
+      case 'ngo-admin':
+        return 'Admin Dashboard';
+      case 'donor':
+        return 'Donor Dashboard';
+      case 'partner':
+        return 'Partner Dashboard';
+      default:
+        return 'Dashboard';
+    }
+  };
+
   return (
     <header className="bg-brand-cream border-b border-brand-orange/30 px-6 py-3 flex items-center justify-between shrink-0">
       <div className="flex items-center">
-        <img src="/heart-logo c.png" alt="TrustFund Logo" className="w-10 h-10 object-contain" />
+        <h1 className="text-xl font-bold text-brand-brown">{getDashboardType()}</h1>
       </div>
       <div className="flex items-center gap-4">
         <div className="text-right">

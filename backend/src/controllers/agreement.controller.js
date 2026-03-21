@@ -65,3 +65,13 @@ export const updateAgreementStatus = async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 };
+
+export const getAgreementsByCampaign = async (req, res) => {
+  try {
+    const agreements = await agreementService.getAgreementsByCampaign(req.params.campaignId);
+    res.json(agreements);
+  } catch (error) {
+    const status = error.message === 'Campaign not found' ? 404 : 500;
+    res.status(status).json({ message: error.message });
+  }
+};

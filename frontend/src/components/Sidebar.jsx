@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 const donorNavItems = [
   {
     to: '/dashboard',
-    label: 'Dashboard',
+    label: 'Overview',
     icon: (
       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
@@ -13,7 +13,7 @@ const donorNavItems = [
   },
   {
     to: '/profile',
-    label: 'My Profile',
+    label: 'My Account',
     icon: (
       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -22,7 +22,7 @@ const donorNavItems = [
   },
   {
     to: '/pledges',
-    label: 'Pledges',
+    label: 'My Pledges',
     icon: (
       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -43,7 +43,7 @@ const donorNavItems = [
 const adminNavItems = [
   {
     to: '/dashboard',
-    label: 'Dashboard',
+    label: 'Control Center',
     icon: (
       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
@@ -61,7 +61,7 @@ const adminNavItems = [
   },
   {
     to: '/admin/donors/pledges',
-    label: 'All Pledges',
+    label: 'All Commitments',
     icon: (
       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
@@ -70,7 +70,7 @@ const adminNavItems = [
   },
   {
     to: '/admin/donor-analytics',
-    label: 'Donor Analytics',
+    label: 'Impact Reports',
     icon: (
       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
@@ -84,34 +84,62 @@ export default function Sidebar() {
   const isAdmin = user?.role === 'admin' || user?.role === 'ngo-admin';
 
   const navLinkCls = ({ isActive }) =>
-    `flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-      isActive ? 'bg-white/20 text-white' : 'text-red-100 hover:bg-white/10'
+    `flex items-center gap-4 px-8 py-5 rounded-[1.25rem] text-[12px] font-bold uppercase tracking-[0.15em] transition-all duration-300 ${
+      isActive 
+        ? 'bg-tf-pink text-white shadow-xl shadow-tf-pink/10' 
+        : 'text-slate-400 hover:text-white hover:bg-white/5'
     }`;
 
   return (
-    <aside className="w-64 text-white flex flex-col shrink-0" style={{ background: 'linear-gradient(180deg, #7C2D12 0%, #DC2626 100%)' }}>
-      <div className="px-12 py-8 border-b border-red-800/50 flex items-center justify-center">
-        <img src="/heart-logo c.png" alt="TrustFund Logo" className="w-134px h-134px object-contain" />
+    <aside className="w-80 bg-slate-900 text-white flex flex-col shrink-0 relative overflow-hidden h-full shadow-2xl font-sans border-r border-white/5">
+      {/* Soft Background Gradient */}
+      <div className="absolute top-0 right-0 w-64 h-64 bg-tf-pink/5 blur-[80px]" />
+      
+      <div className="px-10 py-16 flex flex-col items-center">
+        <div className="relative group cursor-pointer transition-transform hover:scale-110">
+           <img src="/heart-logo c.png" alt="TrustFund Logo" className="w-16 h-16 object-contain" />
+        </div>
       </div>
 
-      <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-        {isAdmin
-          ? adminNavItems.map((item) => (
-              <NavLink key={item.to} to={item.to} className={navLinkCls}>
-                {item.icon}
-                {item.label}
-              </NavLink>
-            ))
-          : donorNavItems.map((item) => (
-              <NavLink key={item.to} to={item.to} className={navLinkCls}>
-                {item.icon}
-                {item.label}
-              </NavLink>
-            ))}
-      </nav>
+      {/* Navigation Space */}
+      <div className="flex-1 px-6">
+        <div className="text-[10px] font-black text-slate-600 uppercase tracking-[0.3em] mb-8 px-8 flex items-center gap-4">
+           MAIN NAVIGATION
+           <div className="flex-1 h-px bg-white/5" />
+        </div>
+        <nav className="space-y-3 overflow-y-auto">
+          {isAdmin
+            ? adminNavItems.map((item) => (
+                <NavLink key={item.to + (item.label === 'Dashboard' ? 'admin' : '')} to={item.to} className={navLinkCls}>
+                  <span className="shrink-0">{item.icon}</span>
+                  {item.label}
+                </NavLink>
+              ))
+            : donorNavItems.map((item) => (
+                <NavLink key={item.to} to={item.to} className={navLinkCls}>
+                  <span className="shrink-0">{item.icon}</span>
+                  {item.label}
+                </NavLink>
+              ))}
+        </nav>
+      </div>
 
-      <div className="px-6 py-4 border-t border-red-800/40 text-xs text-red-200">
-        TrustFund &copy; {new Date().getFullYear()}
+      {/* Footer / System Status */}
+      <div className="mt-auto px-10 py-12">
+        <div className="bg-slate-800/50 rounded-3xl p-6 border border-white/5 space-y-4">
+           <div className="space-y-1">
+              <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest leading-none">System Active</p>
+              <div className="flex items-center gap-2">
+                 <div className="w-1.5 h-1.5 rounded-full bg-tf-green shadow-[0_0_10px_rgba(34,197,94,0.3)]" />
+                 <span className="text-[10px] font-bold text-slate-300 uppercase tracking-wider">Secure Connection</span>
+              </div>
+           </div>
+        </div>
+        <div className="mt-10 pt-10 border-t border-white/5 flex items-center justify-between text-[10px] font-bold text-slate-600 uppercase tracking-widest">
+          <span>&copy; 2026 TRUSTFUND</span>
+          <span className="text-slate-700">|</span>
+          <span>PORTAL VER. 2.1</span>
+        </div>
       </div>
     </aside>
   );

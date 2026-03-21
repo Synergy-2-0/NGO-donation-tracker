@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import LoadingSpinner from '../components/LoadingSpinner';
 
@@ -10,27 +10,26 @@ const ROLES = [
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const NAME_RE  = /^[a-zA-Z\s'-]{2,50}$/;
+const PHONE_RE = /^\+?[1-9]\d{1,14}$/;
 
 const inputCls = (err) =>
-  `w-full border ${err ? 'border-brand-red bg-red-50/30' : 'border-brand-orange/40 bg-brand-cream/60'} rounded-lg px-4 py-2.5 text-sm text-brand-dark placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-red focus:border-transparent transition`;
+  `w-full bg-slate-50 border ${err ? 'border-red-300 ring-1 ring-red-100' : 'border-slate-200'} rounded-2xl px-6 py-4 text-sm font-semibold text-tf-purple placeholder-slate-300 focus:outline-none focus:border-tf-pink transition-all shadow-sm`;
 
 const FieldError = ({ msg }) =>
-  msg ? <p className="mt-1 text-xs text-brand-red">{msg}</p> : null;
-
-const PHONE_RE = /^\+?[1-9]\d{1,14}$/;
+  msg ? <p className="mt-1.5 ml-4 text-[10px] font-bold text-red-500 uppercase tracking-widest leading-tight">{msg}</p> : null;
 
 function validateAccount(signUp) {
   const errs = {};
   if (!NAME_RE.test(signUp.name.trim()))
-    errs.name = 'Enter a valid full name (letters only, 2–50 chars).';
+    errs.name = 'Valid full name required.';
   if (!EMAIL_RE.test(signUp.email))
-    errs.email = 'Enter a valid email address.';
+    errs.email = 'Valid email address required.';
   if (signUp.password.length < 8)
-    errs.password = 'Password must be at least 8 characters.';
+    errs.password = 'Min. 8 characters required.';
   if (!/[A-Z]/.test(signUp.password))
-    errs.password = (errs.password ? errs.password + ' ' : '') + 'Include at least one uppercase letter.';
+    errs.password = (errs.password ? errs.password + ' ' : '') + 'Include uppercase.';
   if (!/[0-9]/.test(signUp.password))
-    errs.password = (errs.password ? errs.password + ' ' : '') + 'Include at least one number.';
+    errs.password = (errs.password ? errs.password + ' ' : '') + 'Include number.';
   if (signUp.confirmPassword !== signUp.password)
     errs.confirmPassword = 'Passwords do not match.';
   return errs;
@@ -39,16 +38,23 @@ function validateAccount(signUp) {
 function validateProfile(signUp) {
   const errs = {};
   if (signUp.phone && !PHONE_RE.test(signUp.phone.trim()))
-    errs.phone = 'Enter a valid phone number (e.g. +94771234567).';
+    errs.phone = 'Valid phone number required.';
   return errs;
 }
 
 export default function LoginPage() {
   const { login, register, loading } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [tab, setTab] = useState('signin'); // 'signin' | 'signup'
   const [step, setStep] = useState(1); // signup wizard step
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+
+  useEffect(() => {
+    const t = searchParams.get('tab');
+    if (t === 'signup') setTab('signup');
+  }, [searchParams]);
 
   // Sign-in form
   const [signIn, setSignIn] = useState({ email: '', password: '' });
@@ -60,7 +66,6 @@ export default function LoginPage() {
     password: '',
     confirmPassword: '',
     role: 'donor',
-    // Donor profile fields (step 2)
     phone: '',
     city: '',
     country: 'Sri Lanka',
@@ -78,7 +83,6 @@ export default function LoginPage() {
     if (touched[field]) {
       const errs = validateAccount(updated);
       setFieldErrors((prev) => ({ ...prev, [field]: errs[field] }));
-      // also re-validate confirmPassword when password changes
       if (field === 'password' && touched.confirmPassword) {
         setFieldErrors((prev) => ({ ...prev, confirmPassword: errs.confirmPassword }));
       }
@@ -142,351 +146,295 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex bg-gradient-to-br from-brand-brown via-brand-red to-brand-orange">
-      {/* Left panel — branding */}
-      <div className="hidden lg:flex flex-col justify-center items-center px-16 flex-1 relative overflow-hidden">
-        {/* Background image - positioned to show hands reaching */}
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage: 'url(/hands-love-bg.jpg)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center 30%',
-            opacity: 0.2,
-          }}
-        />
-        {/* Gradient overlay for smooth blending */}
-        <div
-          className="absolute inset-0"
-          style={{
-            background: 'radial-gradient(ellipse 100% 100% at 50% 50%, transparent 30%, rgba(124, 45, 18, 0.8) 80%)'
-          }}
-        />
+    <div className="min-h-screen flex items-center justify-center p-6 bg-tf-purple relative overflow-hidden font-sans">
+       {/* High-Fidelity Cinematic Backdrop */}
+       <div className="absolute inset-0 z-0">
+          <img src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&q=80&w=1600" alt="TrustFund Hub" className="w-full h-full object-cover opacity-20 scale-105 blur-sm grayscale" />
+          <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-tf-purple to-transparent" />
+          <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-tf-pink/10 blur-[150px] rounded-full -translate-y-1/2 translate-x-1/2" />
+          <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-tf-green/5 blur-[120px] rounded-full translate-y-1/3 -translate-x-1/3" />
+       </div>
 
-        {/* Decorative glowing orbs */}
-        <div className="absolute top-20 left-20 w-64 h-64 bg-brand-orange/20 rounded-full blur-3xl" />
-        <div className="absolute bottom-32 right-16 w-48 h-48 bg-brand-red/20 rounded-full blur-3xl" />
-        <div className="absolute top-1/2 left-1/3 w-32 h-32 bg-white/10 rounded-full blur-2xl" />
-
-        {/* Content wrapper */}
-        <div className="relative z-10 max-w-md text-center">
-          {/* Logo */}
-          <div className="flex items-center justify-center mb-4">
-            <img src="/hand-heart-logo.png" alt="TrustFund Logo" className="w-64 h-auto object-contain drop-shadow-2xl" />
-          </div>
-
-          {/* Tagline */}
-          <h2 className="text-5xl font-bold text-white leading-tight drop-shadow-md">
-            Compassion &amp;<br />Humanity
-          </h2>
-          <p className="text-lg text-white/90 font-medium mt-2">in Every Donation</p>
-
-          {/* Description */}
-          <p className="text-brand-cream/90 text-base leading-relaxed max-w-sm mx-auto mt-4">
-            Track your giving, manage pledges, and see the real-world impact of your contributions.
-          </p>
-
-          {/* Stats with glassmorphism cards */}
-          <div className="flex justify-center gap-4 mt-6">
-            {[['500+', 'Campaigns'], ['10K+', 'Donors'], ['$2M+', 'Raised']].map(([num, lbl]) => (
-              <div
-                key={lbl}
-                className="bg-white/10 backdrop-blur-sm rounded-xl px-5 py-4 border border-white/20 shadow-lg"
-              >
-                <p className="text-2xl font-bold text-white">{num}</p>
-                <p className="text-brand-cream/80 text-xs mt-1 uppercase tracking-wide">{lbl}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Right panel — form card */}
-      <div className="flex items-center justify-center w-full lg:w-[480px] lg:shrink-0 px-6 py-12">
-        <div className="bg-brand-cream rounded-2xl shadow-2xl w-full max-w-sm p-8">
-          {/* Logo (mobile) */}
-          <div className="flex items-center justify-center gap-2 mb-6 lg:hidden">
-            <img src="/hand-heart-logo.png" alt="TrustFund Logo" className="w-12 h-12 object-contain" />
-          </div>
-
-          {/* Tabs */}
-          <div className="flex bg-brand-orange/20 rounded-xl p-1 mb-6">
-            {[['signin', 'Sign In'], ['signup', 'Sign Up']].map(([key, label]) => (
-              <button
-                key={key}
-                onClick={() => { setTab(key); setError(''); setStep(1); }}
-                className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all ${
-                  tab === key
-                    ? 'bg-brand-red text-white shadow'
-                    : 'text-brand-brown hover:text-brand-red'
-                }`}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
-
-          {/* Error */}
-          {error && (
-            <div className="mb-4 bg-red-50 border border-brand-red/30 text-brand-red text-sm px-4 py-3 rounded-lg">
-              {error}
-            </div>
-          )}
-
-          {/* ── Sign In ── */}
-          {tab === 'signin' && (
-            <form onSubmit={handleSignIn} className="space-y-4">
-              <div>
-                <label className="block text-xs font-semibold text-brand-brown mb-1 uppercase tracking-wide">Email</label>
-                <input
-                  type="email"
-                  value={signIn.email}
-                  onChange={(e) => setSignIn((f) => ({ ...f, email: e.target.value }))}
-                  required
-                  placeholder="you@example.com"
-                  className={inputCls(false)}
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-brand-brown mb-1 uppercase tracking-wide">Password</label>
-                <input
-                  type="password"
-                  value={signIn.password}
-                  onChange={(e) => setSignIn((f) => ({ ...f, password: e.target.value }))}
-                  required
-                  placeholder="Enter your password"
-                  className={inputCls(false)}
-                />
-              </div>
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-brand-red hover:bg-brand-red/90 disabled:opacity-60 text-white font-bold py-2.5 rounded-lg transition-colors text-sm mt-1"
-              >
-                {loading ? (
-                  <span className="flex items-center justify-center gap-2">
-                    <svg className="w-4 h-4 text-white animate-pulse" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                    </svg>
-                    Signing in...
-                  </span>
-                ) : (
-                  'Sign In'
-                )}
-              </button>
-              <p className="text-center text-xs text-gray-400 pt-1">
-                Don&apos;t have an account?{' '}
-                <button type="button" onClick={() => setTab('signup')} className="text-brand-red font-semibold hover:underline">
-                  Sign Up
-                </button>
-              </p>
-            </form>
-          )}
-
-          {/* ── Sign Up ── */}
-          {tab === 'signup' && (
-            <div className="space-y-4">
-              {/* Step indicator — donors only */}
-              {signUp.role === 'donor' && (
-                <div className="flex items-center gap-1 mb-1">
-                  {[1, 2].map((s) => (
-                    <div key={s} className="flex items-center gap-1">
-                      <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold transition-colors ${
-                        step >= s ? 'bg-brand-red text-white' : 'bg-brand-orange/20 text-brand-brown'
-                      }`}>{s}</div>
-                      {s === 1 && <div className={`h-0.5 w-10 transition-colors ${step >= 2 ? 'bg-brand-red' : 'bg-brand-orange/40'}`} />}
-                    </div>
-                  ))}
-                  <span className="text-xs text-gray-500 ml-1">{step === 1 ? 'Account Info' : 'Donor Profile'}</span>
+       <div className="relative z-10 w-full max-w-5xl flex flex-col md:flex-row bg-white rounded-[3.5rem] shadow-2xl overflow-hidden animate-fade-in border border-white/20 backdrop-blur-3xl selection:bg-tf-pink selection:text-white">
+          
+          {/* Left panel — Brand Story */}
+          <div className="hidden lg:flex flex-col justify-center px-16 py-20 bg-slate-900 text-white flex-1 relative overflow-hidden group">
+             <div className="absolute inset-0 bg-tf-pink/5 group-hover:bg-tf-pink/[0.08] transition-all duration-1000" />
+             <div className="relative z-10 space-y-10">
+                <div className="space-y-6">
+                   <h2 className="text-6xl font-black tracking-tight leading-[1.05] italic uppercase tracking-tighter">
+                      Empowering <br />
+                      <span className="text-tf-pink italic underline decoration-white/10 underline-offset-8">Compassion</span>
+                   </h2>
+                   <p className="text-slate-400 font-medium text-lg leading-relaxed max-w-sm italic">
+                      Welcome to the official TrustFund portal. Join our mission to support local communities through transparent, verified giving.
+                   </p>
                 </div>
-              )}
 
-              {/* Step 1 — Account fields */}
-              {step === 1 && (
-                <form onSubmit={handleStep1} className="space-y-4">
-                  <div>
-                    <label className="block text-xs font-semibold text-brand-brown mb-1 uppercase tracking-wide">Full Name</label>
-                    <input
-                      type="text"
-                      value={signUp.name}
-                      onChange={(e) => handleSignUpChange('name', e.target.value)}
-                      onBlur={() => touch('name')}
-                      required
-                      placeholder="John Doe"
-                      className={inputCls(fieldErrors.name)}
-                    />
-                    <FieldError msg={fieldErrors.name} />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-semibold text-brand-brown mb-1 uppercase tracking-wide">Email</label>
-                    <input
-                      type="email"
-                      value={signUp.email}
-                      onChange={(e) => handleSignUpChange('email', e.target.value)}
-                      onBlur={() => touch('email')}
-                      required
-                      placeholder="you@example.com"
-                      className={inputCls(fieldErrors.email)}
-                    />
-                    <FieldError msg={fieldErrors.email} />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-semibold text-brand-brown mb-1 uppercase tracking-wide">Role</label>
-                    <select
-                      value={signUp.role}
-                      onChange={(e) => handleSignUpChange('role', e.target.value)}
-                      className={inputCls(false)}
-                    >
-                      {ROLES.map((r) => (
-                        <option key={r.value} value={r.value}>{r.label}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-xs font-semibold text-brand-brown mb-1 uppercase tracking-wide">Password</label>
-                    <input
-                      type="password"
-                      value={signUp.password}
-                      onChange={(e) => handleSignUpChange('password', e.target.value)}
-                      onBlur={() => touch('password')}
-                      required
-                      placeholder="Min. 8 chars, 1 uppercase, 1 number"
-                      className={inputCls(fieldErrors.password)}
-                    />
-                    <FieldError msg={fieldErrors.password} />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-semibold text-brand-brown mb-1 uppercase tracking-wide">Confirm Password</label>
-                    <input
-                      type="password"
-                      value={signUp.confirmPassword}
-                      onChange={(e) => handleSignUpChange('confirmPassword', e.target.value)}
-                      onBlur={() => touch('confirmPassword')}
-                      required
-                      placeholder="Repeat password"
-                      className={inputCls(fieldErrors.confirmPassword)}
-                    />
-                    <FieldError msg={fieldErrors.confirmPassword} />
-                  </div>
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="w-full bg-brand-red hover:bg-brand-red/90 disabled:opacity-60 text-white font-bold py-2.5 rounded-lg transition-colors text-sm mt-1"
-                  >
-                    {loading ? (
-                      <span className="flex items-center justify-center gap-2">
-                        <svg className="w-4 h-4 text-white animate-pulse" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                        </svg>
-                        {signUp.role === 'donor' ? 'Continuing...' : 'Creating account...'}
+                <div className="flex gap-10">
+                   <div className="space-y-1">
+                      <p className="text-3xl font-black text-white italic tabular-nums tracking-tighter">12K+</p>
+                      <p className="text-[10px] font-bold text-tf-pink uppercase tracking-widest">Active Members</p>
+                   </div>
+                   <div className="w-px h-12 bg-white/10" />
+                   <div className="space-y-1">
+                      <p className="text-3xl font-black text-white italic tabular-nums tracking-tighter">480+</p>
+                      <p className="text-[10px] font-bold text-tf-pink uppercase tracking-widest">Verified Causes</p>
+                   </div>
+                </div>
+
+                <div className="flex flex-wrap gap-4 pt-4">
+                   {['Verified Aid', 'Real-time Impact', 'Secure Portal'].map((tag) => (
+                      <span key={tag} className="px-5 py-3 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-widest group-hover:border-tf-pink/30 group-hover:bg-tf-pink/5 transition-all italic">
+                         {tag}
                       </span>
-                    ) : (
-                      signUp.role === 'donor' ? 'Next →' : 'Create Account'
-                    )}
-                  </button>
-                  <p className="text-center text-xs text-gray-400 pt-1">
-                    Already have an account?{' '}
-                    <button type="button" onClick={() => { setTab('signin'); setStep(1); }} className="text-brand-red font-semibold hover:underline">
-                      Sign In
-                    </button>
-                  </p>
-                </form>
-              )}
+                   ))}
+                </div>
+             </div>
+          </div>
 
-              {/* Step 2 — Donor profile setup */}
-              {step === 2 && (
-                <form onSubmit={handleStep2} className="space-y-4">
-                  <p className="text-xs text-gray-500 -mt-1">
-                    Optional — you can update these anytime from your profile.
-                  </p>
-                  <div>
-                    <label className="block text-xs font-semibold text-brand-brown mb-1 uppercase tracking-wide">Phone</label>
-                    <input
-                      type="tel"
-                      value={signUp.phone}
-                      onChange={(e) => handleSignUpChange('phone', e.target.value)}
-                      onBlur={() => touch('phone')}
-                      placeholder="+94771234567"
-                      className={inputCls(fieldErrors.phone)}
-                    />
-                    <FieldError msg={fieldErrors.phone} />
-                  </div>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-xs font-semibold text-brand-brown mb-1 uppercase tracking-wide">City</label>
-                      <input
-                        type="text"
-                        value={signUp.city}
-                        onChange={(e) => handleSignUpChange('city', e.target.value)}
-                        placeholder="Colombo"
-                        className={inputCls(false)}
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-semibold text-brand-brown mb-1 uppercase tracking-wide">Country</label>
-                      <input
-                        type="text"
-                        value={signUp.country}
-                        onChange={(e) => handleSignUpChange('country', e.target.value)}
-                        placeholder="Sri Lanka"
-                        className={inputCls(false)}
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <label className="block text-xs font-semibold text-brand-brown mb-1 uppercase tracking-wide">Preferred Causes</label>
-                    <input
-                      type="text"
-                      value={signUp.preferredCauses}
-                      onChange={(e) => handleSignUpChange('preferredCauses', e.target.value)}
-                      placeholder="education, health, environment"
-                      className={inputCls(false)}
-                    />
-                    <p className="mt-1 text-xs text-gray-400">Comma-separated</p>
-                  </div>
-                  <div>
-                    <label className="block text-xs font-semibold text-brand-brown mb-1 uppercase tracking-wide">
-                      Bio <span className="font-normal text-gray-400 normal-case">(optional)</span>
-                    </label>
-                    <textarea
-                      value={signUp.bio}
-                      onChange={(e) => handleSignUpChange('bio', e.target.value)}
-                      rows={2}
-                      placeholder="Tell us a bit about yourself..."
-                      className={`${inputCls(false)} resize-none`}
-                    />
-                  </div>
-                  <div className="flex gap-3">
-                    <button
-                      type="button"
-                      onClick={() => setStep(1)}
-                      className="flex-1 border border-brand-orange/40 text-brand-brown font-semibold py-2.5 rounded-lg text-sm hover:bg-brand-orange/10 transition-colors"
-                    >
-                      ← Back
-                    </button>
-                    <button
-                      type="submit"
-                      disabled={loading}
-                      className="flex-1 bg-brand-red hover:bg-brand-red/90 disabled:opacity-60 text-white font-bold py-2.5 rounded-lg transition-colors text-sm"
-                    >
-                      {loading ? (
-                        <span className="flex items-center justify-center gap-2">
-                          <svg className="w-4 h-4 text-white animate-pulse" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                          </svg>
-                          Creating...
-                        </span>
+          {/* Right panel — Interaction Hub */}
+          <div className="w-full lg:w-[500px] p-12 md:p-16 flex flex-col justify-center bg-white">
+             <div className="space-y-12">
+                {/* Hub Header */}
+                <div className="space-y-4">
+                   <p className="text-tf-pink text-[11px] font-black uppercase tracking-[0.4em] italic leading-none">Official Access Point</p>
+                   <h1 className="text-4xl font-black text-tf-purple tracking-tighter italic uppercase underline decoration-tf-pink/20 underline-offset-8">TrustFund Login</h1>
+                </div>
+
+                {/* Tabs Hub */}
+                <div className="flex gap-10 border-b border-slate-100 pb-px">
+                   {[
+                      { id: 'signin', label: 'Sign In' },
+                      { id: 'signup', label: 'Create Account' }
+                   ].map((t) => (
+                      <button
+                         key={t.id}
+                         onClick={() => { setTab(t.id); setError(''); setStep(1); }}
+                         className={`pb-4 text-[12px] font-black uppercase tracking-[0.2em] transition-all relative italic ${
+                            tab === t.id ? 'text-tf-purple' : 'text-slate-300 hover:text-slate-500'
+                         }`}
+                      >
+                         {t.label}
+                         {tab === t.id && <div className="absolute inset-x-0 bottom-[-1px] h-[3px] bg-tf-pink rounded-full shadow-[0_0_10px_rgba(230,0,126,0.3)]" />}
+                      </button>
+                   ))}
+                </div>
+
+                {error && (
+                   <div className="bg-red-50 border border-red-100 text-red-500 text-[10px] font-bold uppercase tracking-widest px-6 py-4 rounded-2xl animate-fade-in">
+                      {error}
+                   </div>
+                )}
+
+                {/* --- Sign In Form --- */}
+                {tab === 'signin' ? (
+                   <form onSubmit={handleSignIn} className="space-y-8">
+                      <div className="space-y-3">
+                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-6">Email Address</label>
+                         <input
+                            type="email"
+                            value={signIn.email}
+                            onChange={(e) => setSignIn((f) => ({ ...f, email: e.target.value }))}
+                            required
+                            placeholder="your@email.com"
+                            className={inputCls(false)}
+                         />
+                      </div>
+                      <div className="space-y-3 relative">
+                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-6">Password</label>
+                         <input
+                            type={showPassword ? "text" : "password"}
+                            value={signIn.password}
+                            onChange={(e) => setSignIn((f) => ({ ...f, password: e.target.value }))}
+                            required
+                            placeholder="••••••••"
+                            className={inputCls(false)}
+                         />
+                         <button 
+                            type="button" 
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute right-6 top-[52px] text-slate-300 hover:text-tf-pink transition-colors"
+                         >
+                            {showPassword ? (
+                               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeWidth={2.5} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeWidth={2.5} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                            ) : (
+                               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeWidth={2.5} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.046m4.51-4.51A9.959 9.959 0 0112 5c4.478 0 8.268 2.943 9.542 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21m-2.101-2.101L3 3m11 8a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" /></svg>
+                            )}
+                         </button>
+                      </div>
+                      <button
+                         type="submit"
+                         disabled={loading}
+                         className="w-full bg-tf-purple hover:bg-slate-900 text-white font-black py-6 rounded-full transition-all text-[12px] uppercase tracking-widest shadow-2xl shadow-tf-purple/20 active:scale-95 mt-4"
+                      >
+                         {loading ? 'Authenticating…' : 'Secure Login'}
+                      </button>
+                   </form>
+                ) : (
+                   <div className="space-y-10">
+                      {/* Step Status */}
+                      <div className="flex items-center gap-8">
+                         {[1, 2].map(s => (
+                            <div key={s} className="flex items-center gap-4">
+                               <div className={`w-10 h-10 rounded-2xl flex items-center justify-center text-[11px] font-black transition-all ${
+                                  step >= s ? 'bg-tf-pink text-white shadow-xl shadow-tf-pink/30 rotate-3' : 'bg-slate-50 text-slate-300 border border-slate-100'
+                               }`}>{s}</div>
+                               <p className={`text-[10px] font-black uppercase tracking-widest italic ${step === s ? 'text-tf-purple' : 'text-slate-300'}`}>
+                                  {s === 1 ? 'Account' : 'Profile'}
+                               </p>
+                            </div>
+                         ))}
+                      </div>
+
+                      {step === 1 ? (
+                         <form onSubmit={handleStep1} className="space-y-8">
+                            <div className="space-y-3">
+                               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-6">Full Name</label>
+                               <input
+                                  type="text"
+                                  value={signUp.name}
+                                  onChange={(e) => handleSignUpChange('name', e.target.value)}
+                                  onBlur={() => touch('name')}
+                                  required
+                                  placeholder="John Doe"
+                                  className={inputCls(fieldErrors.name)}
+                                />
+                               <FieldError msg={fieldErrors.name} />
+                            </div>
+                            <div className="space-y-3">
+                               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-6">Email Address</label>
+                               <input
+                                  type="email"
+                                  value={signUp.email}
+                                  onChange={(e) => handleSignUpChange('email', e.target.value)}
+                                  onBlur={() => touch('email')}
+                                  required
+                                  placeholder="john@example.com"
+                                  className={inputCls(fieldErrors.email)}
+                               />
+                               <FieldError msg={fieldErrors.email} />
+                            </div>
+                            <div className="space-y-3">
+                               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-6">I am a...</label>
+                               <select
+                                  value={signUp.role}
+                                  onChange={(e) => handleSignUpChange('role', e.target.value)}
+                                  className={inputCls(false) + " appearance-none cursor-pointer pr-12"}
+                               >
+                                  {ROLES.map((r) => (
+                                     <option key={r.value} value={r.value}>{r.label.toUpperCase()}</option>
+                                  ))}
+                               </select>
+                            </div>
+                            <div className="space-y-3 relative">
+                               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-6">Secure Password</label>
+                               <input
+                                  type={showPassword ? "text" : "password"}
+                                  value={signUp.password}
+                                  onChange={(e) => handleSignUpChange('password', e.target.value)}
+                                  onBlur={() => touch('password')}
+                                  required
+                                  placeholder="Min. 8 Chars"
+                                  className={inputCls(fieldErrors.password)}
+                               />
+                               <button 
+                                  type="button" 
+                                  onClick={() => setShowPassword(!showPassword)}
+                                  className="absolute right-6 top-[52px] text-slate-300 hover:text-tf-pink transition-colors"
+                               >
+                                  {showPassword ? (
+                                     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeWidth={2.5} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeWidth={2.5} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                                  ) : (
+                                     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeWidth={2.5} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.046m4.51-4.51A9.959 9.959 0 0112 5c4.478 0 8.268 2.943 9.542 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21m-2.101-2.101L3 3m11 8a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" /></svg>
+                                  )}
+                               </button>
+                               <FieldError msg={fieldErrors.password} />
+                            </div>
+                            <button
+                               type="submit"
+                               className="w-full bg-tf-pink hover:bg-pink-700 text-white font-black py-6 rounded-full transition-all text-[12px] uppercase tracking-widest shadow-2xl shadow-tf-pink/30 active:scale-95"
+                            >
+                               Next Step →
+                            </button>
+                         </form>
                       ) : (
-                        'Create Account'
+                         <form onSubmit={handleStep2} className="space-y-8 animate-slide-in">
+                            <div className="space-y-3">
+                               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-6">Phone Number</label>
+                               <input
+                                  type="tel"
+                                  value={signUp.phone}
+                                  onChange={(e) => handleSignUpChange('phone', e.target.value)}
+                                  onBlur={() => touch('phone')}
+                                  placeholder="+94 77 000 0000"
+                                  className={inputCls(fieldErrors.phone)}
+                               />
+                               <FieldError msg={fieldErrors.phone} />
+                            </div>
+                            <div className="grid grid-cols-2 gap-6">
+                               <div className="space-y-3">
+                                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-6">City</label>
+                                  <input
+                                     type="text"
+                                     value={signUp.city}
+                                     onChange={(e) => handleSignUpChange('city', e.target.value)}
+                                     placeholder="Colombo"
+                                     className={inputCls(false)}
+                                  />
+                               </div>
+                               <div className="space-y-3">
+                                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-6">Country</label>
+                                  <input
+                                     type="text"
+                                     value={signUp.country}
+                                     onChange={(e) => handleSignUpChange('country', e.target.value)}
+                                     placeholder="Sri Lanka"
+                                     className={inputCls(false)}
+                                  />
+                               </div>
+                            </div>
+                            <div className="space-y-3">
+                               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-6">Preferred Causes</label>
+                               <input
+                                  type="text"
+                                  value={signUp.preferredCauses}
+                                  onChange={(e) => handleSignUpChange('preferredCauses', e.target.value)}
+                                  placeholder="Education, Healthcare, Relief"
+                                  className={inputCls(false)}
+                                />
+                               <p className="ml-6 mt-1.5 text-[9px] font-black text-slate-300 uppercase tracking-[0.2em] italic">Comma-separated interests</p>
+                            </div>
+                            <div className="flex gap-6 pt-6">
+                               <button
+                                  type="button"
+                                  onClick={() => setStep(1)}
+                                  className="flex-1 border-2 border-slate-100 text-slate-400 hover:text-tf-purple hover:border-tf-pink font-black py-6 rounded-full text-[11px] uppercase tracking-widest transition-all italic active:scale-95"
+                               >
+                                  Back
+                               </button>
+                               <button
+                                  type="submit"
+                                  disabled={loading}
+                                  className="flex-[2] bg-tf-pink hover:bg-pink-700 text-white font-black py-6 rounded-full transition-all text-[12px] uppercase tracking-widest shadow-2xl shadow-tf-pink/30 active:scale-95"
+                               >
+                                  {loading ? 'Registering…' : 'Complete Account'}
+                               </button>
+                            </div>
+                         </form>
                       )}
-                    </button>
-                  </div>
-                </form>
-              )}
-            </div>
-          )}
-        </div>
-      </div>
+                   </div>
+                )}
+             </div>
+          </div>
+       </div>
+
+       <style>{`
+          @keyframes fade-in { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+          @keyframes slide-in { from { opacity: 0; transform: translateX(10px); } to { opacity: 1; transform: translateX(0); } }
+          .animate-fade-in { animation: fade-in 1s cubic-bezier(0.16, 1, 0.3, 1) both; }
+          .animate-slide-in { animation: slide-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) both; }
+       `}</style>
     </div>
   );
 }

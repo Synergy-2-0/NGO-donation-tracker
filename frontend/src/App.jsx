@@ -4,6 +4,7 @@ import { DonorProvider } from './context/DonorContext';
 import { AdminDonorProvider } from './context/AdminDonorContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Layout from './components/Layout';
+import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
 import ProfilePage from './pages/ProfilePage';
@@ -14,6 +15,10 @@ import AdminDonorProfilePage from './pages/admin/AdminDonorProfilePage';
 import AdminDonorPledgesPage from './pages/admin/AdminDonorPledgesPage';
 import AdminDonorAnalyticsPage from './pages/admin/AdminDonorAnalyticsPage';
 import AdminDashboardPage from './pages/admin/AdminDashboardPage';
+import PublicHowItWorksPage from './pages/PublicHowItWorksPage';
+import PublicImpactPage from './pages/PublicImpactPage';
+import PublicPartnersPage from './pages/PublicPartnersPage';
+import PublicCausesPage from './pages/PublicCausesPage';
 import { useAuth } from './context/AuthContext';
 
 function RoleBasedDashboard() {
@@ -36,7 +41,13 @@ export default function App() {
         <DonorProvider>
           <AdminDonorProvider>
             <Routes>
+              <Route path="/" element={<HomePage />} />
               <Route path="/login" element={<LoginPage />} />
+              <Route path="/how-it-works" element={<PublicHowItWorksPage />} />
+              <Route path="/impact" element={<PublicImpactPage />} />
+              <Route path="/partners" element={<PublicPartnersPage />} />
+              <Route path="/causes" element={<PublicCausesPage />} />
+              
               <Route
                 path="/"
                 element={
@@ -45,7 +56,6 @@ export default function App() {
                   </ProtectedRoute>
                 }
               >
-                <Route index element={<Navigate to="/dashboard" replace />} />
                 <Route path="dashboard" element={<RoleBasedDashboard />} />
                 <Route path="profile" element={<ProfilePage />} />
                 <Route path="pledges" element={<PledgesPage />} />

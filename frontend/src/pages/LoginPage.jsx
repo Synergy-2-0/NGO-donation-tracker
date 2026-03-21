@@ -11,10 +11,10 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const NAME_RE  = /^[a-zA-Z\s'-]{2,50}$/;
 
 const inputCls = (err) =>
-  `w-full border ${err ? 'border-red-400 bg-red-50/30' : 'border-orange-200 bg-orange-50/40'} rounded-lg px-4 py-2.5 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent transition`;
+  `w-full border ${err ? 'border-brand-red bg-red-50/30' : 'border-brand-orange/40 bg-brand-cream/60'} rounded-lg px-4 py-2.5 text-sm text-brand-dark placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-red focus:border-transparent transition`;
 
 const FieldError = ({ msg }) =>
-  msg ? <p className="mt-1 text-xs text-red-600">{msg}</p> : null;
+  msg ? <p className="mt-1 text-xs text-brand-red">{msg}</p> : null;
 
 const PHONE_RE = /^\+?[1-9]\d{1,14}$/;
 
@@ -141,57 +141,91 @@ export default function LoginPage() {
   };
 
   return (
-    <div
-      className="min-h-screen flex"
-      style={{ background: 'linear-gradient(135deg, #7C2D12 0%, #DC2626 50%, #FB923C 100%)' }}
-    >
+    <div className="min-h-screen flex bg-gradient-to-br from-brand-brown via-brand-red to-brand-orange">
       {/* Left panel — branding */}
-      <div className="hidden lg:flex flex-col justify-center px-16 flex-1">
-        <div className="flex items-center gap-3 mb-8">
-          <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
-            <svg className="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-            </svg>
-          </div>
-          <span className="text-3xl font-extrabold text-white tracking-tight">TrustFund</span>
-        </div>
-        <h2 className="text-4xl font-bold text-white leading-snug mb-4">
-          Compassion &amp; Humanity<br />in Every Donation
-        </h2>
-        <p className="text-orange-100 text-base leading-relaxed max-w-sm">
-          Track your giving, manage pledges, and see the real-world impact of your contributions towards NGO campaigns.
-        </p>
-        <div className="mt-10 flex gap-6">
-          {[['500+', 'Campaigns'], ['10K+', 'Donors'], ['$2M+', 'Raised']].map(([num, lbl]) => (
-            <div key={lbl}>
-              <p className="text-2xl font-bold text-white">{num}</p>
-              <p className="text-orange-200 text-sm">{lbl}</p>
+      <div className="hidden lg:flex flex-col justify-center items-center px-16 flex-1 relative overflow-hidden">
+        {/* Background image - positioned to show hands reaching */}
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: 'url(/hands-love-bg.jpg)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center 30%',
+            opacity: 0.2,
+          }}
+        />
+        {/* Gradient overlay for smooth blending */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background: 'radial-gradient(ellipse 100% 100% at 50% 50%, transparent 30%, rgba(124, 45, 18, 0.8) 80%)'
+          }}
+        />
+
+        {/* Decorative glowing orbs */}
+        <div className="absolute top-20 left-20 w-64 h-64 bg-brand-orange/20 rounded-full blur-3xl" />
+        <div className="absolute bottom-32 right-16 w-48 h-48 bg-brand-red/20 rounded-full blur-3xl" />
+        <div className="absolute top-1/2 left-1/3 w-32 h-32 bg-white/10 rounded-full blur-2xl" />
+
+        {/* Content wrapper */}
+        <div className="relative z-10 max-w-md text-center space-y-6">
+          {/* Logo */}
+          <div className="flex items-center justify-center gap-3 mb-2">
+            <div className="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center border border-white/20 shadow-lg">
+              <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+              </svg>
             </div>
-          ))}
+            <span className="text-4xl font-extrabold text-white tracking-tight drop-shadow-lg">TrustFund</span>
+          </div>
+
+          {/* Tagline */}
+          <h2 className="text-5xl font-bold text-white leading-tight drop-shadow-md">
+            Compassion &amp;<br />Humanity
+          </h2>
+          <p className="text-lg text-white/90 font-medium">in Every Donation</p>
+
+          {/* Description */}
+          <p className="text-brand-cream/90 text-base leading-relaxed max-w-sm mx-auto">
+            Track your giving, manage pledges, and see the real-world impact of your contributions.
+          </p>
+
+          {/* Stats with glassmorphism cards */}
+          <div className="flex justify-center gap-4 pt-6">
+            {[['500+', 'Campaigns'], ['10K+', 'Donors'], ['$2M+', 'Raised']].map(([num, lbl]) => (
+              <div
+                key={lbl}
+                className="bg-white/10 backdrop-blur-sm rounded-xl px-5 py-4 border border-white/20 shadow-lg"
+              >
+                <p className="text-2xl font-bold text-white">{num}</p>
+                <p className="text-brand-cream/80 text-xs mt-1 uppercase tracking-wide">{lbl}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
       {/* Right panel — form card */}
       <div className="flex items-center justify-center w-full lg:w-[480px] lg:shrink-0 px-6 py-12">
-        <div className="bg-[#FFF7ED] rounded-2xl shadow-2xl w-full max-w-sm p-8">
+        <div className="bg-brand-cream rounded-2xl shadow-2xl w-full max-w-sm p-8">
           {/* Logo (mobile) */}
           <div className="flex items-center justify-center gap-2 mb-6 lg:hidden">
-            <svg className="w-7 h-7 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <svg className="w-7 h-7 text-brand-red" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
             </svg>
-            <span className="text-2xl font-extrabold text-[#7C2D12]">TrustFund</span>
+            <span className="text-2xl font-extrabold text-brand-brown">TrustFund</span>
           </div>
 
           {/* Tabs */}
-          <div className="flex bg-orange-100 rounded-xl p-1 mb-6">
+          <div className="flex bg-brand-orange/20 rounded-xl p-1 mb-6">
             {[['signin', 'Sign In'], ['signup', 'Sign Up']].map(([key, label]) => (
               <button
                 key={key}
                 onClick={() => { setTab(key); setError(''); setStep(1); }}
                 className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all ${
                   tab === key
-                    ? 'bg-[#DC2626] text-white shadow'
-                    : 'text-[#7C2D12] hover:text-red-700'
+                    ? 'bg-brand-red text-white shadow'
+                    : 'text-brand-brown hover:text-brand-red'
                 }`}
               >
                 {label}
@@ -201,7 +235,7 @@ export default function LoginPage() {
 
           {/* Error */}
           {error && (
-            <div className="mb-4 bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-lg">
+            <div className="mb-4 bg-red-50 border border-brand-red/30 text-brand-red text-sm px-4 py-3 rounded-lg">
               {error}
             </div>
           )}
@@ -210,7 +244,7 @@ export default function LoginPage() {
           {tab === 'signin' && (
             <form onSubmit={handleSignIn} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-[#7C2D12] mb-1 uppercase tracking-wide">Email</label>
+                <label className="block text-xs font-semibold text-brand-brown mb-1 uppercase tracking-wide">Email</label>
                 <input
                   type="email"
                   value={signIn.email}
@@ -221,7 +255,7 @@ export default function LoginPage() {
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-[#7C2D12] mb-1 uppercase tracking-wide">Password</label>
+                <label className="block text-xs font-semibold text-brand-brown mb-1 uppercase tracking-wide">Password</label>
                 <input
                   type="password"
                   value={signIn.password}
@@ -234,7 +268,7 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-[#DC2626] hover:bg-red-700 disabled:opacity-60 text-white font-bold py-2.5 rounded-lg transition-colors text-sm mt-1"
+                className="w-full bg-brand-red hover:bg-brand-red/90 disabled:opacity-60 text-white font-bold py-2.5 rounded-lg transition-colors text-sm mt-1"
               >
                 {loading ? (
                   <span className="flex items-center justify-center gap-2">
@@ -250,7 +284,7 @@ export default function LoginPage() {
               </button>
               <p className="text-center text-xs text-gray-400 pt-1">
                 Don&apos;t have an account?{' '}
-                <button type="button" onClick={() => setTab('signup')} className="text-[#DC2626] font-semibold hover:underline">
+                <button type="button" onClick={() => setTab('signup')} className="text-brand-red font-semibold hover:underline">
                   Sign Up
                 </button>
               </p>
@@ -266,9 +300,9 @@ export default function LoginPage() {
                   {[1, 2].map((s) => (
                     <div key={s} className="flex items-center gap-1">
                       <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold transition-colors ${
-                        step >= s ? 'bg-[#DC2626] text-white' : 'bg-orange-100 text-[#7C2D12]'
+                        step >= s ? 'bg-brand-red text-white' : 'bg-brand-orange/20 text-brand-brown'
                       }`}>{s}</div>
-                      {s === 1 && <div className={`h-0.5 w-10 transition-colors ${step >= 2 ? 'bg-[#DC2626]' : 'bg-orange-200'}`} />}
+                      {s === 1 && <div className={`h-0.5 w-10 transition-colors ${step >= 2 ? 'bg-brand-red' : 'bg-brand-orange/40'}`} />}
                     </div>
                   ))}
                   <span className="text-xs text-gray-500 ml-1">{step === 1 ? 'Account Info' : 'Donor Profile'}</span>
@@ -279,7 +313,7 @@ export default function LoginPage() {
               {step === 1 && (
                 <form onSubmit={handleStep1} className="space-y-4">
                   <div>
-                    <label className="block text-xs font-semibold text-[#7C2D12] mb-1 uppercase tracking-wide">Full Name</label>
+                    <label className="block text-xs font-semibold text-brand-brown mb-1 uppercase tracking-wide">Full Name</label>
                     <input
                       type="text"
                       value={signUp.name}
@@ -292,7 +326,7 @@ export default function LoginPage() {
                     <FieldError msg={fieldErrors.name} />
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-[#7C2D12] mb-1 uppercase tracking-wide">Email</label>
+                    <label className="block text-xs font-semibold text-brand-brown mb-1 uppercase tracking-wide">Email</label>
                     <input
                       type="email"
                       value={signUp.email}
@@ -305,7 +339,7 @@ export default function LoginPage() {
                     <FieldError msg={fieldErrors.email} />
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-[#7C2D12] mb-1 uppercase tracking-wide">Role</label>
+                    <label className="block text-xs font-semibold text-brand-brown mb-1 uppercase tracking-wide">Role</label>
                     <select
                       value={signUp.role}
                       onChange={(e) => handleSignUpChange('role', e.target.value)}
@@ -317,7 +351,7 @@ export default function LoginPage() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-[#7C2D12] mb-1 uppercase tracking-wide">Password</label>
+                    <label className="block text-xs font-semibold text-brand-brown mb-1 uppercase tracking-wide">Password</label>
                     <input
                       type="password"
                       value={signUp.password}
@@ -330,7 +364,7 @@ export default function LoginPage() {
                     <FieldError msg={fieldErrors.password} />
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-[#7C2D12] mb-1 uppercase tracking-wide">Confirm Password</label>
+                    <label className="block text-xs font-semibold text-brand-brown mb-1 uppercase tracking-wide">Confirm Password</label>
                     <input
                       type="password"
                       value={signUp.confirmPassword}
@@ -345,7 +379,7 @@ export default function LoginPage() {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full bg-[#DC2626] hover:bg-red-700 disabled:opacity-60 text-white font-bold py-2.5 rounded-lg transition-colors text-sm mt-1"
+                    className="w-full bg-brand-red hover:bg-brand-red/90 disabled:opacity-60 text-white font-bold py-2.5 rounded-lg transition-colors text-sm mt-1"
                   >
                     {loading ? (
                       <span className="flex items-center justify-center gap-2">
@@ -361,7 +395,7 @@ export default function LoginPage() {
                   </button>
                   <p className="text-center text-xs text-gray-400 pt-1">
                     Already have an account?{' '}
-                    <button type="button" onClick={() => { setTab('signin'); setStep(1); }} className="text-[#DC2626] font-semibold hover:underline">
+                    <button type="button" onClick={() => { setTab('signin'); setStep(1); }} className="text-brand-red font-semibold hover:underline">
                       Sign In
                     </button>
                   </p>
@@ -375,7 +409,7 @@ export default function LoginPage() {
                     Optional — you can update these anytime from your profile.
                   </p>
                   <div>
-                    <label className="block text-xs font-semibold text-[#7C2D12] mb-1 uppercase tracking-wide">Phone</label>
+                    <label className="block text-xs font-semibold text-brand-brown mb-1 uppercase tracking-wide">Phone</label>
                     <input
                       type="tel"
                       value={signUp.phone}
@@ -388,7 +422,7 @@ export default function LoginPage() {
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-xs font-semibold text-[#7C2D12] mb-1 uppercase tracking-wide">City</label>
+                      <label className="block text-xs font-semibold text-brand-brown mb-1 uppercase tracking-wide">City</label>
                       <input
                         type="text"
                         value={signUp.city}
@@ -398,7 +432,7 @@ export default function LoginPage() {
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-semibold text-[#7C2D12] mb-1 uppercase tracking-wide">Country</label>
+                      <label className="block text-xs font-semibold text-brand-brown mb-1 uppercase tracking-wide">Country</label>
                       <input
                         type="text"
                         value={signUp.country}
@@ -409,7 +443,7 @@ export default function LoginPage() {
                     </div>
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-[#7C2D12] mb-1 uppercase tracking-wide">Preferred Causes</label>
+                    <label className="block text-xs font-semibold text-brand-brown mb-1 uppercase tracking-wide">Preferred Causes</label>
                     <input
                       type="text"
                       value={signUp.preferredCauses}
@@ -420,7 +454,7 @@ export default function LoginPage() {
                     <p className="mt-1 text-xs text-gray-400">Comma-separated</p>
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-[#7C2D12] mb-1 uppercase tracking-wide">
+                    <label className="block text-xs font-semibold text-brand-brown mb-1 uppercase tracking-wide">
                       Bio <span className="font-normal text-gray-400 normal-case">(optional)</span>
                     </label>
                     <textarea
@@ -435,14 +469,14 @@ export default function LoginPage() {
                     <button
                       type="button"
                       onClick={() => setStep(1)}
-                      className="flex-1 border border-orange-200 text-[#7C2D12] font-semibold py-2.5 rounded-lg text-sm hover:bg-orange-50 transition-colors"
+                      className="flex-1 border border-brand-orange/40 text-brand-brown font-semibold py-2.5 rounded-lg text-sm hover:bg-brand-orange/10 transition-colors"
                     >
                       ← Back
                     </button>
                     <button
                       type="submit"
                       disabled={loading}
-                      className="flex-1 bg-[#DC2626] hover:bg-red-700 disabled:opacity-60 text-white font-bold py-2.5 rounded-lg transition-colors text-sm"
+                      className="flex-1 bg-brand-red hover:bg-brand-red/90 disabled:opacity-60 text-white font-bold py-2.5 rounded-lg transition-colors text-sm"
                     >
                       {loading ? (
                         <span className="flex items-center justify-center gap-2">

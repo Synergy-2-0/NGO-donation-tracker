@@ -12,6 +12,9 @@ export default {
           dark:   '#1F2937',
         },
       },
+      backgroundImage: {
+        'gradient-radial': 'radial-gradient(ellipse at center, var(--tw-gradient-stops))',
+      },
     },
   },
   plugins: [],

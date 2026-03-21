@@ -23,6 +23,17 @@ export function AdminCampaignProvider({ children }) {
         }
     }, []);
 
+    const createCampaign = useCallback(async (campaignData) => {
+        try {
+            const res = await api.post('/api/campaigns', campaignData);
+            setCampaigns((prev) => [res.data, ...prev]);
+            return res.data;
+        } catch (err) {
+            console.error('Failed to create campaign', err);
+            throw err;
+        }
+    }, []);
+
     const publishCampaign = useCallback(async (campaignId) => {
         try {
             const res = await api.put(`/api/campaigns/${campaignId}/publish`);
@@ -38,7 +49,7 @@ export function AdminCampaignProvider({ children }) {
 
     return (
         <AdminCampaignContext.Provider
-            value={{ campaigns, loading, fetchCampaigns, publishCampaign }}
+            value={{ campaigns, loading, fetchCampaigns, publishCampaign, createCampaign }}
         >
             {children}
         </AdminCampaignContext.Provider>

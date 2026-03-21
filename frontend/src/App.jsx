@@ -14,6 +14,8 @@ import AdminDonorProfilePage from './pages/admin/AdminDonorProfilePage';
 import AdminDonorPledgesPage from './pages/admin/AdminDonorPledgesPage';
 import AdminDonorAnalyticsPage from './pages/admin/AdminDonorAnalyticsPage';
 import AdminDashboardPage from './pages/admin/AdminDashboardPage';
+import CampaignDashboardPage from './pages/admin/CampaignDashboardPage.jsx';
+import { AdminCampaignProvider } from './context/AdminCampaignContext.jsx';
 import { useAuth } from './context/AuthContext';
 
 function RoleBasedDashboard() {
@@ -56,6 +58,8 @@ export default function App() {
                 <Route path="admin/donors/pledges" element={<AdminRoute><AdminDonorPledgesPage /></AdminRoute>} />
                 <Route path="admin/donors/:id" element={<AdminRoute><AdminDonorProfilePage /></AdminRoute>} />
                 <Route path="admin/donor-analytics" element={<AdminRoute><AdminDonorAnalyticsPage /></AdminRoute>} />
+                <Route path="admin/campaign-dashboard"
+                  element={<AdminRoute><AdminCampaignProvider><CampaignDashboardPage /></AdminCampaignProvider></AdminRoute>} />
               </Route>
               <Route path="*" element={<Navigate to="/dashboard" replace />} />
             </Routes>

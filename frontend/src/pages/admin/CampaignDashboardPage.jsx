@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useAdminCampaign } from '../../context/AdminCampaignContext';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import { Link } from 'react-router-dom';
@@ -9,18 +9,18 @@ const statusConfig = {
         className: 'bg-gray-100 text-gray-500',
         dot: 'bg-gray-400',
     },
-    published: {
-        label: 'Published',
-        className: 'bg-green-100 text-green-700',
-        dot: 'bg-green-500',
-    },
     active: {
         label: 'Active',
         className: 'bg-red-100 text-[#DC2626]',
         dot: 'bg-[#DC2626]',
     },
-    closed: {
-        label: 'Closed',
+    completed: {
+        label: 'Completed',
+        className: 'bg-green-100 text-green-700',
+        dot: 'bg-green-500',
+    },
+    archived: {
+        label: 'Archived',
         className: 'bg-orange-100 text-[#7C2D12]',
         dot: 'bg-orange-500',
     },
@@ -36,18 +36,28 @@ function StatusBadge({ status }) {
     );
 }
 
+
 export default function CampaignDashboardPage() {
     const { campaigns, loading, fetchCampaigns, publishCampaign } = useAdminCampaign();
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 8;
 
     useEffect(() => {
         fetchCampaigns().catch(() => { });
     }, [fetchCampaigns]);
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [campaigns.length]);
 
     if (loading && campaigns.length === 0) return <LoadingSpinner />;
 
     const totalCampaigns = campaigns.length;
     const draftCount = campaigns.filter((c) => c.status === 'draft').length;
     const publishedCount = campaigns.filter((c) => c.status !== 'draft').length;
+    const totalPages = Math.ceil(campaigns.length / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const paginatedCampaigns = campaigns.slice(startIndex, startIndex + itemsPerPage);
 
     return (
         <div className="min-h-full bg-gray-50 p-8 space-y-6">
@@ -128,7 +138,7 @@ export default function CampaignDashboardPage() {
                     </div>
                 ) : (
                     <div className="divide-y divide-gray-50">
-                        {campaigns.map((c) => (
+                        {paginatedCampaigns.map((c) => (
                             <div
                                 key={c._id}
                                 className="flex items-center justify-between px-6 py-4 hover:bg-red-50/40 transition-colors duration-150 group"
@@ -143,7 +153,7 @@ export default function CampaignDashboardPage() {
                                     <div className="min-w-0">
                                         <p className="text-sm font-semibold text-gray-800 group-hover:text-[#DC2626] transition-colors truncate">{c.title}</p>
                                         <p className="text-[10px] text-gray-400 font-medium uppercase tracking-wider mt-0.5">
-                                            ID: {c._id?.slice(-8) ?? '—'}
+                                            ID: {c._id ?? '—'}
                                         </p>
                                     </div>
                                 </div>
@@ -171,6 +181,38 @@ export default function CampaignDashboardPage() {
                         ))}
                     </div>
                 )}
+
+                {campaigns.length > itemsPerPage && (
+                    <div className="px-6 py-4 border-t border-gray-100 flex items-center justify-between">
+                        <p className="text-xs text-gray-500">
+                            Showing {startIndex + 1}-{Math.min(startIndex + itemsPerPage, campaigns.length)} of {campaigns.length}
+                        </p>
+                        <div className="flex items-center gap-2 text-sm">
+                            <button
+                                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                                disabled={currentPage === 1}
+                                className="text-gray-700 disabled:text-gray-300"
+                                aria-label="Previous page"
+                            >
+                                {"<"}
+                            </button>
+
+                            <span className="w-8 h-8 inline-flex items-center justify-center text-xs rounded border bg-[#DC2626] text-white border-[#DC2626]">
+                                {currentPage}
+                            </span>
+
+                            <button
+                                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                                disabled={currentPage === totalPages}
+                                className="text-gray-700 disabled:text-gray-300"
+                                aria-label="Next page"
+                            >
+                                {">"}
+                            </button>
+                        </div>
+                    </div>
+                )}
+
             </div>
         </div>
     );

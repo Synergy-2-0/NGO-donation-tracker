@@ -14,7 +14,7 @@ export function AdminCampaignProvider({ children }) {
     const fetchCampaigns = useCallback(async () => {
         setLoading(true);
         try {
-            const res = await api.get('/api/campaigns');
+            const res = await api.get('/api/campaigns/my');
             setCampaigns(res.data);
         } catch (err) {
             console.error('Failed to fetch campaigns', err);

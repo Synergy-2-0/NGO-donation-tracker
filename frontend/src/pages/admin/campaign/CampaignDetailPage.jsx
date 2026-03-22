@@ -2,12 +2,15 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAdminCampaign } from '../../../context/AdminCampaignContext';
 import LoadingSpinner from '../../../components/LoadingSpinner';
+import CampaignProgressSection from './CampaignProgressSection';
+import CampaignReportSection from './CampaignReportSection';
+
 
 const statusConfig = {
     draft: { label: 'Draft', className: 'bg-gray-100 text-gray-500', dot: 'bg-gray-400' },
-    published: { label: 'Published', className: 'bg-green-100 text-green-700', dot: 'bg-green-500' },
     active: { label: 'Active', className: 'bg-red-100 text-[#DC2626]', dot: 'bg-[#DC2626]' },
-    closed: { label: 'Closed', className: 'bg-orange-100 text-[#7C2D12]', dot: 'bg-orange-500' },
+    completed: { label: 'Completed', className: 'bg-green-100 text-green-700', dot: 'bg-green-500' },
+    archived: { label: 'Archived', className: 'bg-orange-100 text-[#7C2D12]', dot: 'bg-orange-500' },
 };
 
 function StatusBadge({ status }) {
@@ -33,7 +36,6 @@ export default function CampaignDetailPage() {
     const [success, setSuccess] = useState('');
     const isLocked =
         campaign?.status === "active" ||
-        campaign?.status === "published" ||
         campaign?.status === "completed";
     const [formData, setFormData] = useState({
         title: '',
@@ -124,7 +126,7 @@ export default function CampaignDetailPage() {
     const handlePublish = async () => {
         try {
             await publishCampaign(id);
-            setCampaign((prev) => ({ ...prev, status: 'published' }));
+            setCampaign((prev) => ({ ...prev, status: 'active' }));
             setSuccess('Campaign published.');
             setTimeout(() => setSuccess(''), 3000);
         } catch {
@@ -388,6 +390,19 @@ export default function CampaignDetailPage() {
                     )}
                 </div>
             </div>
+
+            {/* Progress Logs — visible for active campaigns */}
+            {campaign.status === 'active' && (
+                <CampaignProgressSection
+                    campaignId={id}
+                    campaignStatus={campaign.status}
+                />
+            )}
+
+            {/* Campaign Report — only for completed campaigns */}
+            {campaign.status === 'completed' && (
+                <CampaignReportSection campaignId={id} />
+            )}
 
         </div>
     );

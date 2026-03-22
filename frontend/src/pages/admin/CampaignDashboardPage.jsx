@@ -40,6 +40,7 @@ function StatusBadge({ status }) {
 export default function CampaignDashboardPage() {
     const { campaigns, loading, fetchCampaigns, publishCampaign } = useAdminCampaign();
     const [currentPage, setCurrentPage] = useState(1);
+    const [statusFilter, setStatusFilter] = useState('all');
     const itemsPerPage = 8;
 
     useEffect(() => {
@@ -48,16 +49,22 @@ export default function CampaignDashboardPage() {
 
     useEffect(() => {
         setCurrentPage(1);
-    }, [campaigns.length]);
+    }, [campaigns.length, statusFilter]);
 
     if (loading && campaigns.length === 0) return <LoadingSpinner />;
 
     const totalCampaigns = campaigns.length;
     const draftCount = campaigns.filter((c) => c.status === 'draft').length;
-    const publishedCount = campaigns.filter((c) => c.status !== 'draft').length;
-    const totalPages = Math.ceil(campaigns.length / itemsPerPage);
+    const nonDraftCount = campaigns.filter((c) => c.status !== 'draft').length;
+    const filteredCampaigns =
+        statusFilter === 'all'
+            ? campaigns
+            : campaigns.filter((c) => c.status === statusFilter);
+
+    const totalPages = Math.max(1, Math.ceil(filteredCampaigns.length / itemsPerPage));
     const startIndex = (currentPage - 1) * itemsPerPage;
-    const paginatedCampaigns = campaigns.slice(startIndex, startIndex + itemsPerPage);
+    const paginatedCampaigns = filteredCampaigns.slice(startIndex, startIndex + itemsPerPage);
+
 
     return (
         <div className="min-h-full bg-gray-50 p-8 space-y-6">
@@ -101,7 +108,7 @@ export default function CampaignDashboardPage() {
                         </svg>
                     </div>
                     <div>
-                        <p className="text-2xl font-bold text-green-600 leading-none">{publishedCount}</p>
+                        <p className="text-2xl font-bold text-green-600 leading-none">{nonDraftCount}</p>
                         <p className="text-xs text-gray-400 font-medium mt-1">Published</p>
                     </div>
                 </div>
@@ -123,10 +130,23 @@ export default function CampaignDashboardPage() {
             <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
                 <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
                     <h3 className="text-base font-semibold text-gray-700">All Campaigns</h3>
-                    <span className="text-xs text-gray-400 font-medium">{totalCampaigns} total</span>
+
+                    <div className="flex items-center gap-3">
+                        <select
+                            value={statusFilter}
+                            onChange={(e) => setStatusFilter(e.target.value)}
+                            className="text-xs border border-gray-200 rounded px-2 py-1 bg-white text-gray-600"
+                        >
+                            <option value="all">All Status</option>
+                            <option value="draft">Draft</option>
+                            <option value="active">Active</option>
+                            <option value="completed">Completed</option>
+                            <option value="archived">Archived</option>
+                        </select>
+                    </div>
                 </div>
 
-                {campaigns.length === 0 ? (
+                {filteredCampaigns.length === 0 ? (
                     <div className="py-16 text-center">
                         <div className="w-12 h-12 bg-red-50 rounded-xl flex items-center justify-center mx-auto mb-3">
                             <svg className="w-6 h-6 text-red-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -162,7 +182,7 @@ export default function CampaignDashboardPage() {
                                 <div className="flex items-center gap-3 shrink-0">
                                     <StatusBadge status={c.status} />
 
-                                    {c.status == 'draft' && (
+                                    {c.status === 'draft' && (
                                         <button
                                             onClick={() => publishCampaign(c._id)}
                                             className="px-3 py-1 bg-green-50 text-green-700 rounded-lg text-xs font-medium hover:bg-green-100 transition-colors border border-green-100"
@@ -182,10 +202,10 @@ export default function CampaignDashboardPage() {
                     </div>
                 )}
 
-                {campaigns.length > itemsPerPage && (
+                {filteredCampaigns.length > itemsPerPage && (
                     <div className="px-6 py-4 border-t border-gray-100 flex items-center justify-between">
                         <p className="text-xs text-gray-500">
-                            Showing {startIndex + 1}-{Math.min(startIndex + itemsPerPage, campaigns.length)} of {campaigns.length}
+                            Showing {startIndex + 1}-{Math.min(startIndex + itemsPerPage, filteredCampaigns.length)} of {filteredCampaigns.length}
                         </p>
                         <div className="flex items-center gap-2 text-sm">
                             <button

@@ -86,14 +86,14 @@ export default function Sidebar() {
   const navLinkCls = ({ isActive }) =>
     `flex items-center gap-4 px-8 py-5 rounded-[1.25rem] text-[12px] font-bold uppercase tracking-[0.15em] transition-all duration-300 ${
       isActive 
-        ? 'bg-tf-pink text-white shadow-xl shadow-tf-pink/10' 
+        ? 'bg-tf-primary text-white shadow-xl shadow-tf-primary/10' 
         : 'text-slate-400 hover:text-white hover:bg-white/5'
     }`;
 
   return (
     <aside className="w-80 bg-slate-900 text-white flex flex-col shrink-0 relative overflow-hidden h-full shadow-2xl font-sans border-r border-white/5">
       {/* Soft Background Gradient */}
-      <div className="absolute top-0 right-0 w-64 h-64 bg-tf-pink/5 blur-[80px]" />
+      <div className="absolute top-0 right-0 w-64 h-64 bg-tf-primary/5 blur-[80px]" />
       
       <div className="px-10 py-16 flex flex-col items-center">
         <div className="relative group cursor-pointer transition-transform hover:scale-110">

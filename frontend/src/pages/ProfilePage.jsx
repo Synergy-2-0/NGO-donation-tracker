@@ -24,7 +24,7 @@ function Field({ label, name, value, onChange, type = 'text', placeholder, hint,
         value={value}
         onChange={onChange}
         placeholder={placeholder}
-        className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-bold text-tf-purple focus:outline-none focus:border-tf-pink transition-all shadow-inner"
+        className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-bold text-tf-purple focus:outline-none focus:border-tf-primary transition-all shadow-inner"
       />
     </div>
   );
@@ -94,15 +94,15 @@ export default function ProfilePage() {
   if (!initialFetchDone && loading) return <LoadingSpinner />;
 
   return (
-    <div className="space-y-12 animate-fade-in max-w-[1200px] mx-auto pb-20 font-sans selection:bg-tf-pink selection:text-white">
+    <div className="space-y-12 animate-fade-in max-w-[1200px] mx-auto pb-20 font-sans selection:bg-tf-primary selection:text-white">
       {/* Cinematic Profile Header */}
       <div className="relative p-12 md:p-20 bg-tf-purple rounded-[3.5rem] overflow-hidden shadow-2xl group text-center text-white border border-white/5">
          <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?auto=format&fit=crop&q=80&w=1600')] opacity-5 blur-sm scale-110 group-hover:scale-100 transition-transform duration-1000 grayscale" />
-         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-tf-pink/20 blur-[130px] opacity-40 animate-pulse" />
+         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-tf-primary/20 blur-[130px] opacity-40 animate-pulse" />
          
          <div className="relative z-10 space-y-6">
-            <div className="w-32 h-32 bg-white rounded-full mx-auto p-1.5 shadow-2xl shadow-tf-pink/20 ring-4 ring-white/10 overflow-hidden group">
-               <div className="w-full h-full bg-tf-pink rounded-full flex items-center justify-center border-4 border-white text-4xl font-black text-white italic group-hover:scale-110 transition-transform">
+            <div className="w-32 h-32 bg-white rounded-full mx-auto p-1.5 shadow-2xl shadow-tf-primary/20 ring-4 ring-white/10 overflow-hidden group">
+               <div className="w-full h-full bg-tf-primary rounded-full flex items-center justify-center border-4 border-white text-4xl font-black text-white italic group-hover:scale-110 transition-transform">
                   {user?.name?.charAt(0) || 'D'}
                </div>
             </div>
@@ -110,7 +110,7 @@ export default function ProfilePage() {
                <h2 className="text-4xl md:text-5xl font-black tracking-tighter uppercase italic tracking-tight">
                  {user?.name || 'Verified Member'}
                </h2>
-               <p className="text-tf-pink text-[11px] font-black uppercase tracking-[0.5em] italic opacity-80">Philanthropist • Verified Account</p>
+               <p className="text-tf-primary text-[11px] font-black uppercase tracking-[0.5em] italic opacity-80">Philanthropist • Verified Account</p>
             </div>
          </div>
       </div>
@@ -129,12 +129,12 @@ export default function ProfilePage() {
       {donorProfile && !editing ? (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
           {/* Identity Hub */}
-          <div className="bg-white rounded-[3rem] border border-slate-100 p-12 shadow-sm space-y-10 group hover:border-tf-pink transition-all flex flex-col justify-between">
+          <div className="bg-white rounded-[3rem] border border-slate-100 p-12 shadow-sm space-y-10 group hover:border-tf-primary transition-all flex flex-col justify-between">
              <div className="flex items-center justify-between">
                 <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] italic font-sans group-hover:text-tf-purple transition-all">Account Details</h3>
                 <button
                   onClick={() => setEditing(true)}
-                  className="px-8 py-3 border border-slate-100 bg-slate-50 text-slate-400 hover:text-white hover:bg-tf-pink hover:border-tf-pink rounded-full text-[10px] font-black uppercase tracking-[0.1em] transition-all shadow-sm transform active:scale-95"
+                  className="px-8 py-3 border border-slate-100 bg-slate-50 text-slate-400 hover:text-white hover:bg-tf-primary hover:border-tf-primary rounded-full text-[10px] font-black uppercase tracking-[0.1em] transition-all shadow-sm transform active:scale-95"
                 >
                   Edit profile
                 </button>
@@ -143,7 +143,7 @@ export default function ProfilePage() {
              <div className="space-y-8">
                 <div>
                    <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest mb-1.5 italic">Official Email Address</p>
-                   <p className="text-[15px] font-black text-tf-purple tracking-tight italic underline underline-offset-4 decoration-tf-pink/10">{user?.email || '—'}</p>
+                   <p className="text-[15px] font-black text-tf-purple tracking-tight italic underline underline-offset-4 decoration-tf-primary/10">{user?.email || '—'}</p>
                 </div>
                 <div>
                    <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest mb-1.5 italic">Phone Contact</p>
@@ -162,7 +162,7 @@ export default function ProfilePage() {
 
           {/* Mission & Impact */}
           <div className="space-y-10">
-             <div className="bg-white rounded-[3rem] border border-slate-100 p-12 shadow-sm space-y-8 group hover:border-tf-pink transition-all">
+             <div className="bg-white rounded-[3rem] border border-slate-100 p-12 shadow-sm space-y-8 group hover:border-tf-primary transition-all">
                 <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] italic font-sans group-hover:text-tf-purple transition-all">Humanitarian Goals</h3>
                 <p className="text-[14px] font-bold text-slate-600 leading-relaxed italic opacity-80 decoration-slate-100 decoration-offset-4 underline transition-all group-hover:opacity-100">
                   {donorProfile.bio || 'Please update your bio to let us know about your philanthropic vision.'}
@@ -170,14 +170,14 @@ export default function ProfilePage() {
              </div>
 
              <div className="bg-tf-purple rounded-[3rem] p-12 shadow-2xl relative overflow-hidden group border border-white/5">
-                <div className="absolute top-0 right-0 w-40 h-40 bg-tf-pink/10 blur-[60px]" />
+                <div className="absolute top-0 right-0 w-40 h-40 bg-tf-primary/10 blur-[60px]" />
                 <h3 className="text-[10px] font-black text-white/30 uppercase tracking-[0.4em] italic font-sans mb-10 group-hover:text-white/60 transition-colors">Cause Priorities</h3>
                 <div className="flex flex-wrap gap-4">
                    {donorProfile.preferredCauses?.length > 0
                      ? donorProfile.preferredCauses.map((cause) => (
                           <span
                             key={cause}
-                            className="px-6 py-3 bg-white/5 border border-white/5 text-slate-300 hover:text-white hover:bg-tf-pink text-[10px] font-black uppercase tracking-[0.1em] rounded-2xl transition-all cursor-crosshair shadow-lg"
+                            className="px-6 py-3 bg-white/5 border border-white/5 text-slate-300 hover:text-white hover:bg-tf-primary text-[10px] font-black uppercase tracking-[0.1em] rounded-2xl transition-all cursor-crosshair shadow-lg"
                           >
                             #{cause}
                           </span>
@@ -231,7 +231,7 @@ export default function ProfilePage() {
                   onChange={handleChange}
                   rows={4}
                   placeholder="Share your goals and vision for charitable giving…"
-                  className="w-full bg-slate-50 border border-slate-100 rounded-[2.5rem] px-10 py-8 text-sm font-bold text-tf-purple focus:outline-none focus:border-tf-pink transition-all resize-none shadow-inner placeholder:text-slate-300 italic"
+                  className="w-full bg-slate-50 border border-slate-100 rounded-[2.5rem] px-10 py-8 text-sm font-bold text-tf-purple focus:outline-none focus:border-tf-primary transition-all resize-none shadow-inner placeholder:text-slate-300 italic"
                 />
              </div>
           </div>
@@ -247,7 +247,7 @@ export default function ProfilePage() {
              <button
                type="submit"
                disabled={loading}
-               className="flex-[2] py-6 bg-tf-pink hover:bg-tf-purple text-white text-[12px] font-black uppercase tracking-[0.3em] rounded-full transition-all shadow-2xl shadow-tf-pink/30 active:scale-95 disabled:opacity-50"
+               className="flex-[2] py-6 bg-tf-primary hover:bg-tf-purple text-white text-[12px] font-black uppercase tracking-[0.3em] rounded-full transition-all shadow-2xl shadow-tf-primary/30 active:scale-95 disabled:opacity-50"
              >
                {loading ? 'STORING DATA…' : 'SAVE ACCOUNT UPDATES'}
              </button>

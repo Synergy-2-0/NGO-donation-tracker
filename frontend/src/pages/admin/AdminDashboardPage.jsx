@@ -20,7 +20,7 @@ function StatCard({ label, value, trend, trendColor = 'text-tf-green', icon, col
       </div>
       <div className="relative z-10 space-y-3">
         <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] mb-1 italic leading-none">{label}</p>
-        <p className="text-3xl lg:text-4xl font-black tracking-tighter text-tf-purple group-hover:text-tf-pink transition-colors tabular-nums">{value}</p>
+        <p className="text-3xl lg:text-4xl font-black tracking-tighter text-tf-purple group-hover:text-tf-primary transition-colors tabular-nums">{value}</p>
       </div>
     </div>
   );
@@ -42,27 +42,27 @@ export default function AdminDashboardPage() {
   if (loading && donors.length === 0) return <LoadingSpinner />;
 
   return (
-    <div className="space-y-12 animate-fade-in max-w-[1700px] mx-auto pb-24 font-sans selection:bg-tf-pink selection:text-white">
+    <div className="space-y-12 animate-fade-in max-w-[1700px] mx-auto pb-24 font-sans selection:bg-tf-primary selection:text-white">
       
       {/* Professional Admin Header */}
       <div className="relative p-12 lg:p-20 bg-tf-purple rounded-[4rem] overflow-hidden shadow-2xl group text-white border border-white/5">
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=1600')] opacity-5 blur-sm scale-110 group-hover:scale-100 transition-transform duration-1000 grayscale" />
-        <div className="absolute bottom-0 right-0 w-[800px] h-[800px] bg-tf-pink/10 blur-[130px] -mr-48 -mb-48 opacity-40 animate-pulse" />
+        <div className="absolute bottom-0 right-0 w-[800px] h-[800px] bg-tf-primary/10 blur-[130px] -mr-48 -mb-48 opacity-40 animate-pulse" />
         <div className="relative z-10 space-y-8 max-w-4xl">
            <div className="flex items-center gap-3">
               <span className="w-2.5 h-2.5 rounded-full bg-tf-green shadow-[0_0_20px_rgba(34,197,94,0.8)] animate-pulse" />
               <p className="text-[10px] font-black text-white uppercase tracking-[0.5em] italic opacity-60">Operations Management Panel</p>
            </div>
            <h1 className="text-3xl lg:text-5xl font-black tracking-tighter uppercase italic leading-tight text-white italic tracking-tight">
-              Control <span className="text-tf-pink">Center </span> Dashboard
+              Control <span className="text-tf-primary">Center </span> Dashboard
            </h1>
            <div className="flex gap-6 pt-6">
-              <button onClick={() => navigate('/admin/donors')} className="px-12 py-6 bg-white text-tf-purple rounded-3xl text-[12px] font-black uppercase tracking-[0.2em] transform active:scale-95 transition-all hover:bg-tf-pink hover:text-white shadow-2xl shadow-tf-purple/10">
+              <button onClick={() => navigate('/admin/donors')} className="px-12 py-6 bg-white text-tf-purple rounded-3xl text-[12px] font-black uppercase tracking-[0.2em] transform active:scale-95 transition-all hover:bg-tf-primary hover:text-white shadow-2xl shadow-tf-purple/10">
                 Manage members
               </button>
               <button 
                 onClick={() => navigate('/admin/donor-analytics')} 
-                className="px-12 py-6 bg-white/5 backdrop-blur-xl border-2 border-white/10 hover:border-tf-pink hover:bg-white hover:text-tf-purple rounded-3xl text-[12px] font-black uppercase tracking-[0.2em] transition-all transform active:scale-95 shadow-xl"
+                className="px-12 py-6 bg-white/5 backdrop-blur-xl border-2 border-white/10 hover:border-tf-primary hover:bg-white hover:text-tf-purple rounded-3xl text-[12px] font-black uppercase tracking-[0.2em] transition-all transform active:scale-95 shadow-xl"
               >
                 View reports
               </button>
@@ -93,7 +93,7 @@ export default function AdminDashboardPage() {
           value={`LKR ${totalRaised.toLocaleString()}`} 
           trend="Secure High" 
           icon={<svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>} 
-          colorCls="text-tf-pink"
+          colorCls="text-tf-primary"
         />
         <StatCard 
           label="Average Gift size" 
@@ -108,7 +108,7 @@ export default function AdminDashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
         {/* Recent Platform Activity */}
         <div className="bg-[#0f041a] rounded-[4rem] p-16 shadow-2xl relative overflow-hidden group text-white border border-white/5 space-y-12">
-          <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-tf-pink/5 to-transparent pointer-events-none" />
+          <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-tf-primary/5 to-transparent pointer-events-none" />
           <div className="space-y-1 relative z-10">
              <h3 className="text-3xl font-black italic uppercase tracking-tighter">Activity Log</h3>
              <p className="text-[10px] font-black text-white/30 uppercase tracking-[0.4em] italic font-sans">Humanitarian Engagement Real-Time Stream</p>
@@ -121,12 +121,12 @@ export default function AdminDashboardPage() {
               { type: 'SYS_SYNC', label: 'Impact Data Synchronized', donor: 'System Ops', time: '1h ago' },
               { type: 'FUND_RX', label: 'Contribution Received', donor: 'Anonymous Partner', time: '3h ago' },
             ].map((log, i) => (
-              <div key={i} className="flex items-center justify-between p-6 rounded-[2.5rem] bg-white/5 border border-white/5 group/log hover:bg-white/[0.08] hover:border-tf-pink/30 hover:shadow-xl hover:shadow-tf-purple/5 transition-all cursor-default">
+              <div key={i} className="flex items-center justify-between p-6 rounded-[2.5rem] bg-white/5 border border-white/5 group/log hover:bg-white/[0.08] hover:border-tf-primary/30 hover:shadow-xl hover:shadow-tf-purple/5 transition-all cursor-default">
                  <div className="flex items-center gap-6">
-                    <div className="w-3 h-3 rounded-full bg-tf-pink/40 group-hover/log:bg-tf-pink transition-colors" />
+                    <div className="w-3 h-3 rounded-full bg-tf-primary/40 group-hover/log:bg-tf-primary transition-colors" />
                     <div className="space-y-1">
                        <p className="text-[13px] font-black tracking-tight text-white/90">{log.label}</p>
-                       <p className="text-[10px] font-black text-tf-pink uppercase tracking-widest">{log.donor}</p>
+                       <p className="text-[10px] font-black text-tf-primary uppercase tracking-widest">{log.donor}</p>
                     </div>
                  </div>
                  <span className="text-[10px] font-black text-white/20 uppercase tracking-widest">{log.time}</span>
@@ -148,10 +148,10 @@ export default function AdminDashboardPage() {
               { name: 'Education Relief', pct: 45, color: 'bg-tf-purple' },
               { name: 'Pure Water Access', pct: 23, color: 'bg-blue-400' },
               { name: 'Global Health', pct: 18, color: 'bg-tf-green' },
-              { name: 'Sustainable Tech', pct: 14, color: 'bg-tf-pink' },
+              { name: 'Sustainable Tech', pct: 14, color: 'bg-tf-primary' },
             ].map(item => (
-              <div key={item.name} className="p-8 rounded-[3rem] bg-slate-50 border border-slate-100 hover:border-tf-pink/30 hover:bg-white transition-all group/item">
-                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4 group-hover/item:text-tf-pink transition-colors leading-none">{item.name}</p>
+              <div key={item.name} className="p-8 rounded-[3rem] bg-slate-50 border border-slate-100 hover:border-tf-primary/30 hover:bg-white transition-all group/item">
+                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4 group-hover/item:text-tf-primary transition-colors leading-none">{item.name}</p>
                  <div className="flex items-end justify-between">
                     <span className="text-4xl font-black text-tf-purple tracking-tighter italic">{item.pct}%</span>
                     <div className={`h-1.5 w-16 ${item.color} rounded-full opacity-60 group-hover/item:opacity-100 transition-opacity mb-2`} />

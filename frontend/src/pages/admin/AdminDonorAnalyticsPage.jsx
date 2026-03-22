@@ -15,7 +15,7 @@ const SEGMENT_META = {
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
     </svg>
   ) },
-  major:   { label: 'Key Partners', bar: 'bg-tf-pink', icon: (
+  major:   { label: 'Key Partners', bar: 'bg-tf-primary', icon: (
     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
     </svg>
@@ -48,7 +48,7 @@ function ImpactCard({ label, value, color, icon, trend }) {
       </div>
       <div className="relative z-10 space-y-3">
         <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] mb-1 italic leading-none">{label}</p>
-        <p className={`text-3xl lg:text-4xl font-black tracking-tighter text-tf-purple group-hover:text-tf-pink transition-colors tabular-nums`}>{value ?? '0'}</p>
+        <p className={`text-3xl lg:text-4xl font-black tracking-tighter text-tf-purple group-hover:text-tf-primary transition-colors tabular-nums`}>{value ?? '0'}</p>
       </div>
     </div>
   );
@@ -90,7 +90,7 @@ export default function AdminDonorAnalyticsPage() {
   if (loading && donors.length === 0) return <LoadingSpinner />;
 
   return (
-    <div className="space-y-12 animate-fade-in max-w-[1700px] mx-auto pb-24 font-sans selection:bg-tf-pink selection:text-white">
+    <div className="space-y-12 animate-fade-in max-w-[1700px] mx-auto pb-24 font-sans selection:bg-tf-primary selection:text-white">
       
       {/* Cinematic Intel Header */}
       <div className="relative p-12 lg:p-16 bg-tf-purple rounded-[4rem] overflow-hidden shadow-2xl group text-white border border-white/5">
@@ -102,9 +102,9 @@ export default function AdminDonorAnalyticsPage() {
                  <span className="w-2.5 h-2.5 rounded-full bg-tf-green shadow-[0_0_20px_rgba(34,197,94,0.8)] animate-pulse" />
                  <p className="text-[10px] font-black text-white uppercase tracking-[0.5em] italic opacity-60">Philanthropic Performance Reports</p>
               </div>
-              <h2 className="text-3xl lg:text-4xl font-black tracking-tighter uppercase italic tracking-tight">Impact <span className="text-tf-pink">Analytics </span> Reports</h2>
+              <h2 className="text-3xl lg:text-4xl font-black tracking-tighter uppercase italic tracking-tight">Impact <span className="text-tf-primary">Analytics </span> Reports</h2>
            </div>
-           <button onClick={() => window.print()} className="px-12 py-6 bg-white/5 backdrop-blur-xl border-2 border-white/10 hover:border-tf-pink hover:bg-white hover:text-tf-purple rounded-3xl text-[13px] font-black uppercase tracking-[0.2em] transition-all transform active:scale-95 shadow-xl">
+           <button onClick={() => window.print()} className="px-12 py-6 bg-white/5 backdrop-blur-xl border-2 border-white/10 hover:border-tf-primary hover:bg-white hover:text-tf-purple rounded-3xl text-[13px] font-black uppercase tracking-[0.2em] transition-all transform active:scale-95 shadow-xl">
               Export Official Report
            </button>
         </div>
@@ -116,15 +116,15 @@ export default function AdminDonorAnalyticsPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
         <ImpactCard label="Total Registered Members" value={totalDonors} color="text-tf-purple" trend="Stable" icon={<svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeWidth={2.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>} />
         <ImpactCard label="Active Philanthropists" value={activeDonors} color="text-tf-green" trend="Verified" icon={<svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeWidth={3} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>} />
-        <ImpactCard label="Cumulative Donations" value={`LKR ${totalRaised.toLocaleString()}`} color="text-tf-pink" icon={<svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeWidth={2.5} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2a9 9 0 1118 0" /></svg>} />
+        <ImpactCard label="Cumulative Donations" value={`LKR ${totalRaised.toLocaleString()}`} color="text-tf-primary" icon={<svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeWidth={2.5} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2a9 9 0 1118 0" /></svg>} />
         <ImpactCard label="Average Gift Size" value={`LKR ${Math.round(avgDonation).toLocaleString()}`} color="text-blue-500" icon={<svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeWidth={3} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-12">
         {/* Support Base Breakdown */}
         <div className="lg:col-span-3 bg-[#0f041a] rounded-[4rem] p-16 shadow-2xl relative overflow-hidden group text-white border border-white/5 space-y-12">
-          <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-tf-pink/5 to-transparent pointer-events-none" />
-          <div className="absolute top-0 right-0 w-64 h-64 bg-tf-pink/10 blur-[90px] -mr-32 -mt-32" />
+          <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-tf-primary/5 to-transparent pointer-events-none" />
+          <div className="absolute top-0 right-0 w-64 h-64 bg-tf-primary/10 blur-[90px] -mr-32 -mt-32" />
           <div className="space-y-1 relative z-10">
              <h3 className="text-3xl font-black italic uppercase tracking-tighter">Support Segments</h3>
              <p className="text-[10px] font-black text-white/30 uppercase tracking-[0.4em] italic font-sans">Member Distribution Analysis</p>
@@ -144,14 +144,14 @@ export default function AdminDonorAnalyticsPage() {
                          <span className="text-xl group-hover/seg:scale-125 transition-transform duration-500">{meta.icon}</span>
                          <span className="font-black text-white/60 uppercase tracking-[0.2em] group-hover/seg:text-white transition-colors">{meta.label}</span>
                       </div>
-                      <span className="text-white/40 font-black tracking-widest font-mono group-hover/seg:text-tf-pink transition-colors">{count} MEMBERS • {pct}% REPRESENTATION</span>
+                      <span className="text-white/40 font-black tracking-widest font-mono group-hover/seg:text-tf-primary transition-colors">{count} MEMBERS • {pct}% REPRESENTATION</span>
                     </div>
                     <div className="h-2 bg-white/5 rounded-full overflow-hidden p-0.5 border border-white/5">
                       <div
                         className={`h-full rounded-full transition-all duration-[2000ms] cubic-bezier(0.16, 1, 0.3, 1) ${meta.bar}`}
                         style={{ 
                           width: `${pct}%`,
-                          boxShadow: `0 0 20px ${meta.bar.includes('pink') ? 'rgba(230,0,126,0.3)' : 'rgba(255,255,255,0.05)'}`
+                          boxShadow: `0 0 20px ${meta.bar.includes('pink') ? 'rgba(255,138,0,0.3)' : 'rgba(255,255,255,0.05)'}`
                         }}
                       />
                     </div>
@@ -166,7 +166,7 @@ export default function AdminDonorAnalyticsPage() {
         <div className="lg:col-span-2 space-y-8">
            <div className="flex items-center justify-between px-6">
               <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.5em] italic">Leading Contributors</h3>
-              <span className="text-[10px] font-black text-tf-pink uppercase tracking-widest">Active Ranking</span>
+              <span className="text-[10px] font-black text-tf-primary uppercase tracking-widest">Active Ranking</span>
            </div>
            <div className="bg-white rounded-[4rem] border border-slate-100 p-4 shadow-sm">
              <div className="bg-slate-50 rounded-[3rem] p-6 space-y-4">
@@ -181,13 +181,13 @@ export default function AdminDonorAnalyticsPage() {
                       return (
                         <div
                           key={d._id}
-                          className="flex items-center justify-between p-6 rounded-[2rem] bg-white border border-slate-100 hover:border-tf-pink/30 hover:shadow-xl hover:shadow-tf-purple/5 transition-all cursor-pointer group"
+                          className="flex items-center justify-between p-6 rounded-[2rem] bg-white border border-slate-100 hover:border-tf-primary/30 hover:shadow-xl hover:shadow-tf-purple/5 transition-all cursor-pointer group"
                           onClick={() => navigate(`/admin/donors/${d._id}`)}
                         >
                           <div className="flex items-center gap-6">
-                             <div className="text-sm font-black text-slate-200 italic group-hover:text-tf-pink transition-colors">#{i + 1}</div>
+                             <div className="text-sm font-black text-slate-200 italic group-hover:text-tf-primary transition-colors">#{i + 1}</div>
                              <div className="min-w-0">
-                               <p className="text-[13px] font-black text-tf-purple tracking-tight group-hover:text-tf-pink transition-colors truncate">
+                               <p className="text-[13px] font-black text-tf-purple tracking-tight group-hover:text-tf-primary transition-colors truncate">
                                  {d.userId?.name || 'Verified Member'}
                                </p>
                                <div className="flex items-center gap-2 mt-0.5">

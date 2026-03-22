@@ -9,14 +9,14 @@ const INTERACTION_TYPES = ['email', 'call', 'meeting', 'event', 'other'];
 const pledgeStatusBadge = {
   active: 'bg-tf-green/10 text-tf-green border-tf-green/20 shadow-[0_0_10px_rgba(34,197,94,0.1)]',
   pending: 'bg-amber-100 text-amber-600 border-tf-purple/10',
-  fulfilled: 'bg-tf-pink/10 text-tf-pink border-tf-pink/20',
+  fulfilled: 'bg-tf-primary/10 text-tf-primary border-tf-primary/20',
   cancelled: 'bg-red-50 text-red-600 border-red-100',
 };
 
 function Section({ title, children, actions }) {
   return (
     <div className="bg-white rounded-[3.5rem] border border-slate-100 p-12 shadow-sm space-y-10 group hover:shadow-2xl transition-all duration-700 relative overflow-hidden">
-      <div className="absolute top-0 right-0 w-32 h-32 bg-tf-pink/5 blur-[50px] -mr-16 -mt-16 group-hover:opacity-100 transition-opacity opacity-0" />
+      <div className="absolute top-0 right-0 w-32 h-32 bg-tf-primary/5 blur-[50px] -mr-16 -mt-16 group-hover:opacity-100 transition-opacity opacity-0" />
       <div className="flex items-center justify-between relative z-10 px-2">
          <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.5em] italic">{title}</h3>
          {actions}
@@ -141,7 +141,7 @@ export default function AdminDonorProfilePage() {
     }
   };
 
-  const inputCls = 'w-full bg-slate-50 border border-slate-100 rounded-[1.5rem] px-8 py-5 text-[14px] font-bold text-tf-purple placeholder-slate-300 focus:outline-none focus:border-tf-pink transition-all shadow-inner';
+  const inputCls = 'w-full bg-slate-50 border border-slate-100 rounded-[1.5rem] px-8 py-5 text-[14px] font-bold text-tf-purple placeholder-slate-300 focus:outline-none focus:border-tf-primary transition-all shadow-inner';
 
   if (loading && !donor) return <LoadingSpinner />;
   if (!donor && !loading) return (
@@ -151,21 +151,21 @@ export default function AdminDonorProfilePage() {
        </div>
        <div className="space-y-2">
          <p className="text-[12px] font-black text-slate-400 uppercase tracking-[0.4em] italic">Member not found in current directory.</p>
-         <button onClick={() => navigate('/admin/donors')} className="text-[11px] font-black text-tf-pink uppercase tracking-widest hover:underline underline-offset-8">Return to Member Directory</button>
+         <button onClick={() => navigate('/admin/donors')} className="text-[11px] font-black text-tf-primary uppercase tracking-widest hover:underline underline-offset-8">Return to Member Directory</button>
        </div>
     </div>
   );
 
   return (
-    <div className="max-w-[1700px] mx-auto space-y-12 animate-fade-in pb-24 font-sans text-tf-purple selection:bg-tf-pink selection:text-white">
+    <div className="max-w-[1700px] mx-auto space-y-12 animate-fade-in pb-24 font-sans text-tf-purple selection:bg-tf-primary selection:text-white">
       
       {/* Professional Member Profile Header */}
       <div className="relative p-12 lg:p-16 bg-tf-purple rounded-[4rem] overflow-hidden shadow-2xl group text-white border border-white/5">
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1593113598332-cd288d649433?auto=format&fit=crop&q=80&w=1600')] opacity-5 blur-sm scale-110 group-hover:scale-100 transition-transform duration-1000 grayscale" />
-        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-tf-pink/10 blur-[130px] -mr-48 -mt-48 opacity-40 animate-pulse" />
+        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-tf-primary/10 blur-[130px] -mr-48 -mt-48 opacity-40 animate-pulse" />
         
         <div className="relative z-10 space-y-8">
-           <button onClick={() => navigate('/admin/donors')} className="flex items-center gap-3 text-[10px] font-black text-white/50 uppercase tracking-[0.3em] hover:text-tf-pink transition-colors">
+           <button onClick={() => navigate('/admin/donors')} className="flex items-center gap-3 text-[10px] font-black text-white/50 uppercase tracking-[0.3em] hover:text-tf-primary transition-colors">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeWidth={3} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
               Member Directory List
            </button>
@@ -173,20 +173,20 @@ export default function AdminDonorProfilePage() {
            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-12">
               <div className="space-y-4">
                  <div className="flex items-center gap-3">
-                    <span className="w-2.5 h-2.5 rounded-full bg-tf-pink shadow-[0_0_20px_rgba(230,0,126,0.8)] animate-pulse" />
+                    <span className="w-2.5 h-2.5 rounded-full bg-tf-primary shadow-[0_0_20px_rgba(255,138,0,0.8)] animate-pulse" />
                     <p className="text-[10px] font-black text-white uppercase tracking-[0.5em] italic opacity-60">Verified Member Profile</p>
                  </div>
                  <h2 className="text-3xl lg:text-5xl font-black tracking-tighter uppercase italic leading-tight truncate max-w-2xl">
                     {donor?.userId?.name || 'Verified Member'}
                  </h2>
-                 <p className="text-tf-pink text-[14px] font-black uppercase tracking-[0.3em] italic">{donor?.userId?.email || 'private@member.com'}</p>
+                 <p className="text-tf-primary text-[14px] font-black uppercase tracking-[0.3em] italic">{donor?.userId?.email || 'private@member.com'}</p>
               </div>
 
               <div className="flex gap-4">
                  {!editing && (
                    <button
                      onClick={() => { setEditing(true); setSuccess(''); }}
-                     className="px-12 py-6 bg-white text-tf-purple rounded-3xl text-[12px] font-black uppercase tracking-[0.2em] transition-all hover:bg-tf-pink hover:text-white active:scale-95 shadow-2xl shadow-tf-purple/10"
+                     className="px-12 py-6 bg-white text-tf-purple rounded-3xl text-[12px] font-black uppercase tracking-[0.2em] transition-all hover:bg-tf-primary hover:text-white active:scale-95 shadow-2xl shadow-tf-purple/10"
                    >
                      Update Profile
                    </button>
@@ -218,7 +218,7 @@ export default function AdminDonorProfilePage() {
             { 
               label: 'Total Contributed', 
               value: `LKR ${Number(analytics.totalDonated ?? 0).toLocaleString()}`, 
-              color: 'text-tf-pink', 
+              color: 'text-tf-primary', 
               icon: (
                 <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2a9 9 0 1118 0" />
@@ -256,7 +256,7 @@ export default function AdminDonorProfilePage() {
               ) 
             },
           ].map(({ label, value, color, icon }) => (
-            <div key={label} className="bg-white rounded-[3.5rem] border border-slate-100 p-10 shadow-sm group hover:border-tf-pink transition-all h-full relative overflow-hidden flex flex-col justify-between">
+            <div key={label} className="bg-white rounded-[3.5rem] border border-slate-100 p-10 shadow-sm group hover:border-tf-primary transition-all h-full relative overflow-hidden flex flex-col justify-between">
               <div className="flex items-center gap-4 mb-8">
                  <span className="text-2xl group-hover:scale-125 transition-transform duration-500">{icon}</span>
                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] italic">{label}</p>
@@ -299,7 +299,7 @@ export default function AdminDonorProfilePage() {
                 </div>
               </div>
               <div className="flex gap-4 pt-4">
-                <button type="submit" disabled={loading} className="px-12 py-6 bg-tf-pink hover:bg-slate-900 disabled:opacity-60 text-white text-[12px] font-black uppercase tracking-[0.2em] rounded-full transition-all shadow-2xl shadow-tf-pink/20 active:scale-95">
+                <button type="submit" disabled={loading} className="px-12 py-6 bg-tf-primary hover:bg-slate-900 disabled:opacity-60 text-white text-[12px] font-black uppercase tracking-[0.2em] rounded-full transition-all shadow-2xl shadow-tf-primary/20 active:scale-95">
                   {loading ? 'SAVING CHANGES…' : 'SAVE PROFILE'}
                 </button>
                 <button type="button" onClick={() => setEditing(false)} className="px-12 py-6 border-2 border-slate-100 hover:bg-slate-50 text-slate-400 hover:text-tf-purple text-[11px] font-black uppercase tracking-[0.2em] rounded-full transition-all active:scale-95">
@@ -369,7 +369,7 @@ export default function AdminDonorProfilePage() {
                 <div key={item.label} className="space-y-2 group/item">
                   <div className="flex items-center gap-3">
                     <span className="text-lg opacity-40 group-hover/item:opacity-100 transition-opacity">{item.icon}</span>
-                    <p className="text-slate-300 text-[10px] font-black uppercase tracking-widest group-hover/item:text-tf-pink transition-colors">{item.label}</p>
+                    <p className="text-slate-300 text-[10px] font-black uppercase tracking-widest group-hover/item:text-tf-primary transition-colors">{item.label}</p>
                   </div>
                   <p className="text-[16px] font-black text-tf-purple tracking-tight ml-8 italic">{item.value || 'Not provided'}</p>
                 </div>
@@ -379,7 +379,7 @@ export default function AdminDonorProfilePage() {
                   <p className="text-slate-300 text-[10px] font-black uppercase tracking-[0.3em] ml-8">Cause Interests</p>
                   <div className="flex flex-wrap gap-3 ml-8">
                     {donor.preferredCauses.map((c) => (
-                      <span key={c} className="px-6 py-3 bg-slate-50 border border-slate-100 text-tf-purple text-[10px] font-black uppercase tracking-widest rounded-2xl hover:bg-tf-pink hover:text-white hover:border-tf-pink transition-all cursor-default shadow-sm italic">#{c}</span>
+                      <span key={c} className="px-6 py-3 bg-slate-50 border border-slate-100 text-tf-purple text-[10px] font-black uppercase tracking-widest rounded-2xl hover:bg-tf-primary hover:text-white hover:border-tf-primary transition-all cursor-default shadow-sm italic">#{c}</span>
                     ))}
                   </div>
                 </div>
@@ -403,7 +403,7 @@ export default function AdminDonorProfilePage() {
                 {pledges.map((p) => (
                   <div key={p._id} className="p-8 bg-slate-50 rounded-[2.5rem] border border-slate-100 group hover:bg-white hover:shadow-2xl hover:shadow-tf-purple/5 transition-all flex items-center justify-between">
                      <div className="space-y-3">
-                        <p className="text-2xl font-black text-tf-purple tracking-tighter italic tabular-nums group-hover:text-tf-pink transition-colors">LKR {Number(p.amount).toLocaleString()}</p>
+                        <p className="text-2xl font-black text-tf-purple tracking-tighter italic tabular-nums group-hover:text-tf-primary transition-colors">LKR {Number(p.amount).toLocaleString()}</p>
                         <div className="flex items-center gap-4">
                            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest group-hover:text-tf-purple transition-colors">{p.frequency}</span>
                            <span className="w-1.5 h-1.5 rounded-full bg-slate-200" />
@@ -426,7 +426,7 @@ export default function AdminDonorProfilePage() {
           actions={
             <button
               onClick={() => setShowInteractionForm((v) => !v)}
-              className="text-[10px] font-black text-tf-pink uppercase tracking-widest hover:scale-105 transition-all flex items-center gap-2"
+              className="text-[10px] font-black text-tf-primary uppercase tracking-widest hover:scale-105 transition-all flex items-center gap-2"
             >
               {showInteractionForm ? 'HIDE FORM' : '[+] ADD ENGAGEMENT RECORD'}
             </button>
@@ -434,15 +434,15 @@ export default function AdminDonorProfilePage() {
         >
           <div className="space-y-10">
             {showInteractionForm && (
-              <form onSubmit={handleAddInteraction} className="bg-slate-900 border-2 border-tf-pink/20 rounded-[3rem] p-12 space-y-8 animate-fade-in shadow-2xl relative overflow-hidden text-white">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-tf-pink/10 blur-[40px] -mr-16 -mt-16" />
+              <form onSubmit={handleAddInteraction} className="bg-slate-900 border-2 border-tf-primary/20 rounded-[3rem] p-12 space-y-8 animate-fade-in shadow-2xl relative overflow-hidden text-white">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-tf-primary/10 blur-[40px] -mr-16 -mt-16" />
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 relative z-10">
                   <div className="space-y-3">
                     <label className="text-[9px] font-black text-white/40 uppercase tracking-[0.4em] ml-6">Interaction Type</label>
                     <select
                       value={interactionForm.type}
                       onChange={(e) => setInteractionForm((f) => ({ ...f, type: e.target.value }))}
-                      className="w-full bg-white/5 border border-white/10 rounded-2xl px-8 py-5 text-sm font-bold text-white focus:outline-none focus:border-tf-pink transition-all"
+                      className="w-full bg-white/5 border border-white/10 rounded-2xl px-8 py-5 text-sm font-bold text-white focus:outline-none focus:border-tf-primary transition-all"
                     >
                       {INTERACTION_TYPES.map((t) => (
                         <option key={t} value={t} className="bg-slate-900">{t.toUpperCase()}</option>
@@ -455,7 +455,7 @@ export default function AdminDonorProfilePage() {
                       type="date"
                       value={interactionForm.date}
                       onChange={(e) => setInteractionForm((f) => ({ ...f, date: e.target.value }))}
-                      className="w-full bg-white/5 border border-white/10 rounded-2xl px-8 py-5 text-sm font-bold text-white focus:outline-none focus:border-tf-pink transition-all"
+                      className="w-full bg-white/5 border border-white/10 rounded-2xl px-8 py-5 text-sm font-bold text-white focus:outline-none focus:border-tf-primary transition-all"
                     />
                   </div>
                 </div>
@@ -466,11 +466,11 @@ export default function AdminDonorProfilePage() {
                     onChange={(e) => setInteractionForm((f) => ({ ...f, notes: e.target.value }))}
                     rows={4}
                     required
-                    className="w-full bg-white/5 border border-white/10 rounded-[2.5rem] px-10 py-8 text-sm font-bold text-white/90 placeholder-white/20 focus:outline-none focus:border-tf-pink transition-all resize-none italic"
+                    className="w-full bg-white/5 border border-white/10 rounded-[2.5rem] px-10 py-8 text-sm font-bold text-white/90 placeholder-white/20 focus:outline-none focus:border-tf-primary transition-all resize-none italic"
                     placeholder="Enter details about the member interaction…"
                   />
                 </div>
-                <button type="submit" disabled={loading} className="w-full py-6 bg-tf-pink hover:bg-white hover:text-tf-purple disabled:opacity-60 text-white text-[12px] font-black uppercase tracking-[0.3em] rounded-full transition-all shadow-2xl shadow-tf-pink/20 active:scale-95">
+                <button type="submit" disabled={loading} className="w-full py-6 bg-tf-primary hover:bg-white hover:text-tf-purple disabled:opacity-60 text-white text-[12px] font-black uppercase tracking-[0.3em] rounded-full transition-all shadow-2xl shadow-tf-primary/20 active:scale-95">
                   {loading ? 'STORING RECORD…' : 'SAVE ENGAGEMENT RECORD'}
                 </button>
               </form>
@@ -489,7 +489,7 @@ export default function AdminDonorProfilePage() {
                         {i.type}
                       </span>
                       <div className="space-y-4 flex-1">
-                        <p className="text-sm font-black text-tf-purple leading-relaxed italic opacity-80 decoration-slate-200 decoration-offset-4 group-hover:opacity-100 transition-opacity underline group-hover:decoration-tf-pink/40">"{i.notes || i.note || 'No notes'}"</p>
+                        <p className="text-sm font-black text-tf-purple leading-relaxed italic opacity-80 decoration-slate-200 decoration-offset-4 group-hover:opacity-100 transition-opacity underline group-hover:decoration-tf-primary/40">"{i.notes || i.note || 'No notes'}"</p>
                         <p className="text-[9px] font-black text-slate-300 uppercase tracking-[0.3em]">{new Date(i.date).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}</p>
                       </div>
                     </div>
@@ -511,7 +511,7 @@ export default function AdminDonorProfilePage() {
            <button
              onClick={handleRecalculate}
              disabled={loading}
-             className="px-12 py-5 border-2 border-slate-100 hover:border-tf-pink text-slate-300 hover:text-tf-pink text-[11px] font-black uppercase tracking-[0.3em] rounded-full hover:bg-slate-50 transition-all disabled:opacity-50 italic"
+             className="px-12 py-5 border-2 border-slate-100 hover:border-tf-primary text-slate-300 hover:text-tf-primary text-[11px] font-black uppercase tracking-[0.3em] rounded-full hover:bg-slate-50 transition-all disabled:opacity-50 italic"
            >
              Refresh Impact Analytics for this Member
            </button>

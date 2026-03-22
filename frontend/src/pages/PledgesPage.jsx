@@ -7,7 +7,7 @@ const FREQUENCIES = ['one-time', 'monthly', 'quarterly', 'annually'];
 
 const statusColor = {
   active: 'bg-tf-green/10 text-tf-green border-tf-green/20 shadow-[0_0_10px_rgba(34,197,94,0.1)]',
-  fulfilled: 'bg-tf-pink/10 text-tf-pink border-tf-pink/20',
+  fulfilled: 'bg-tf-primary/10 text-tf-primary border-tf-primary/20',
   cancelled: 'bg-slate-100 text-slate-400 border-slate-200',
   pending: 'bg-amber-100 text-amber-600 border-tf-purple/5',
 };
@@ -47,14 +47,14 @@ function PledgeModal({ pledge, onClose, onSave, loading }) {
     onSave(payload);
   };
 
-  const inputCls = "w-full bg-slate-50 border border-slate-100 rounded-[1.5rem] px-8 py-5 text-[14px] font-bold text-tf-purple focus:outline-none focus:border-tf-pink transition-all shadow-inner placeholder:text-slate-300";
+  const inputCls = "w-full bg-slate-50 border border-slate-100 rounded-[1.5rem] px-8 py-5 text-[14px] font-bold text-tf-purple focus:outline-none focus:border-tf-primary transition-all shadow-inner placeholder:text-slate-300";
 
   return (
     <div className="fixed inset-0 bg-tf-purple/60 backdrop-blur-3xl flex items-center justify-center z-[100] animate-fade-in p-6">
       <div className="bg-white rounded-[4rem] border border-white/20 shadow-2xl p-16 max-w-2xl w-full space-y-10 relative overflow-hidden group">
-        <div className="absolute top-0 right-0 w-32 h-32 bg-tf-pink/5 blur-[50px] -mr-16 -mt-16 group-hover:opacity-100 transition-opacity" />
+        <div className="absolute top-0 right-0 w-32 h-32 bg-tf-primary/5 blur-[50px] -mr-16 -mt-16 group-hover:opacity-100 transition-opacity" />
         <div className="space-y-4 text-center">
-          <h4 className="text-4xl lg:text-5xl font-black text-tf-purple tracking-tighter italic uppercase underline decoration-tf-pink/20 underline-offset-8">
+          <h4 className="text-4xl lg:text-5xl font-black text-tf-purple tracking-tighter italic uppercase underline decoration-tf-primary/20 underline-offset-8">
             {pledge?._id ? 'Adjust Pledge' : 'New Commitment'}
           </h4>
           <p className="text-slate-400 text-sm font-black uppercase tracking-[0.3em] italic">Humanitarian Support Planning</p>
@@ -123,7 +123,7 @@ function PledgeModal({ pledge, onClose, onSave, loading }) {
             <button
               type="submit"
               disabled={loading}
-              className="flex-[2] py-6 bg-tf-pink hover:bg-tf-purple text-white text-[12px] font-black uppercase tracking-[0.3em] rounded-full transition-all shadow-2xl shadow-tf-pink/30 active:scale-95 disabled:opacity-50"
+              className="flex-[2] py-6 bg-tf-primary hover:bg-tf-purple text-white text-[12px] font-black uppercase tracking-[0.3em] rounded-full transition-all shadow-2xl shadow-tf-primary/30 active:scale-95 disabled:opacity-50"
             >
               {loading ? 'PROCESSING…' : 'AUTHORIZE PLEDGE'}
             </button>
@@ -203,24 +203,24 @@ export default function PledgesPage() {
   if (!initialFetchDone && loading) return <LoadingSpinner />;
 
   return (
-    <div className="space-y-12 animate-fade-in max-w-[1700px] mx-auto pb-24 font-sans selection:bg-tf-pink selection:text-white">
+    <div className="space-y-12 animate-fade-in max-w-[1700px] mx-auto pb-24 font-sans selection:bg-tf-primary selection:text-white">
       
       {/* Cinematic Strategy Header */}
       <div className="relative p-12 lg:p-16 bg-tf-purple rounded-[4rem] overflow-hidden shadow-2xl group text-white border border-white/5">
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&q=80&w=1600')] opacity-5 blur-sm scale-110 group-hover:scale-100 transition-transform duration-1000 grayscale" />
-        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-tf-pink/10 blur-[130px] -mr-48 -mt-48 opacity-40 animate-pulse" />
+        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-tf-primary/10 blur-[130px] -mr-48 -mt-48 opacity-40 animate-pulse" />
         <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-10">
            <div className="space-y-4">
               <div className="flex items-center gap-3">
-                 <span className="w-2.5 h-2.5 rounded-full bg-tf-pink shadow-[0_0_20px_rgba(230,0,126,0.8)] animate-pulse" />
+                 <span className="w-2.5 h-2.5 rounded-full bg-tf-primary shadow-[0_0_20px_rgba(255,138,0,0.8)] animate-pulse" />
                  <p className="text-[10px] font-black text-white uppercase tracking-[0.5em] italic opacity-60">Verified Humanitarian Support History</p>
               </div>
-              <h2 className="text-4xl lg:text-5xl font-black tracking-tighter uppercase italic tracking-tight">Active <span className="text-tf-pink">Pledge </span> Commitments</h2>
+              <h2 className="text-4xl lg:text-5xl font-black tracking-tighter uppercase italic tracking-tight">Active <span className="text-tf-primary">Pledge </span> Commitments</h2>
            </div>
            {donorProfile && (
              <button
                onClick={() => { setShowCreateModal(true); setSuccess(''); setLocalError(''); }}
-               className="px-12 py-6 bg-tf-pink hover:bg-white hover:text-tf-purple text-white text-[12px] font-black uppercase tracking-[0.2em] rounded-3xl transition-all shadow-2xl shadow-tf-pink/20 active:scale-95 hover:translate-x-1"
+               className="px-12 py-6 bg-tf-primary hover:bg-white hover:text-tf-purple text-white text-[12px] font-black uppercase tracking-[0.2em] rounded-3xl transition-all shadow-2xl shadow-tf-primary/20 active:scale-95 hover:translate-x-1"
              >
                + Start New Pledge
              </button>
@@ -240,8 +240,8 @@ export default function PledgesPage() {
 
       {!donorProfile && (
         <div className="bg-slate-900 rounded-[4rem] p-16 shadow-2xl border border-white/5 text-white flex flex-col items-center text-center space-y-10 group overflow-hidden relative">
-           <div className="absolute top-0 right-0 w-64 h-64 bg-tf-pink/10 blur-[80px]" />
-           <div className="w-24 h-24 bg-white/5 rounded-[2.5rem] flex items-center justify-center text-tf-pink border border-white/5 shadow-inner scale-110">
+           <div className="absolute top-0 right-0 w-64 h-64 bg-tf-primary/10 blur-[80px]" />
+           <div className="w-24 h-24 bg-white/5 rounded-[2.5rem] flex items-center justify-center text-tf-primary border border-white/5 shadow-inner scale-110">
               <svg className="w-12 h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeWidth={2.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
            </div>
            <div className="space-y-4 relative z-10">
@@ -250,7 +250,7 @@ export default function PledgesPage() {
                Please complete your profile details to begin managing your charitable pledges.
              </p>
            </div>
-           <a href="/profile" className="px-12 py-6 bg-tf-pink group-hover:bg-tf-purple text-white rounded-full text-[12px] font-black uppercase tracking-[0.3em] transition-all shadow-3xl shadow-tf-pink/20 hover:scale-105 active:scale-95">
+           <a href="/profile" className="px-12 py-6 bg-tf-primary group-hover:bg-tf-purple text-white rounded-full text-[12px] font-black uppercase tracking-[0.3em] transition-all shadow-3xl shadow-tf-primary/20 hover:scale-105 active:scale-95">
               Complete Profile Now
            </a>
         </div>
@@ -266,7 +266,7 @@ export default function PledgesPage() {
           </p>
           <button
             onClick={() => setShowCreateModal(true)}
-            className="px-12 py-6 bg-slate-900 hover:bg-tf-pink text-white rounded-full text-[12px] font-black uppercase tracking-widest transition-all shadow-2xl active:scale-95"
+            className="px-12 py-6 bg-slate-900 hover:bg-tf-primary text-white rounded-full text-[12px] font-black uppercase tracking-widest transition-all shadow-2xl active:scale-95"
           >
             Create Your First Pledge
           </button>
@@ -290,11 +290,11 @@ export default function PledgesPage() {
                   <tr key={pledge._id} className="group hover:bg-slate-50 transition-all cursor-default">
                     <td className="px-10 py-12">
                       <div className="space-y-3">
-                        <span className="text-3xl font-black text-tf-purple tracking-tighter group-hover:text-tf-pink transition-colors italic tabular-nums">LKR {Number(pledge.amount).toLocaleString()}</span>
+                        <span className="text-3xl font-black text-tf-purple tracking-tighter group-hover:text-tf-primary transition-colors italic tabular-nums">LKR {Number(pledge.amount).toLocaleString()}</span>
                         <div className="flex items-center gap-4">
                            <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">ID: {pledge._id.slice(-8).toUpperCase()}</span>
-                           <span className="w-1.5 h-1.5 rounded-full bg-tf-pink/10" />
-                           <span className="text-[10px] font-black text-tf-pink uppercase tracking-widest italic decoration-tf-pink underline underline-offset-4 decoration-1">{pledge.campaign?.title || pledge.campaign || 'Community Support'}</span>
+                           <span className="w-1.5 h-1.5 rounded-full bg-tf-primary/10" />
+                           <span className="text-[10px] font-black text-tf-primary uppercase tracking-widest italic decoration-tf-primary underline underline-offset-4 decoration-1">{pledge.campaign?.title || pledge.campaign || 'Community Support'}</span>
                         </div>
                       </div>
                     </td>
@@ -310,7 +310,7 @@ export default function PledgesPage() {
                       <div className="flex gap-8 items-center">
                         <button
                           onClick={() => { setEditPledge(pledge); setSuccess(''); setLocalError(''); }}
-                          className="px-8 py-3 bg-white border-2 border-slate-100 hover:border-tf-pink hover:text-tf-pink text-tf-purple text-[10px] font-black uppercase tracking-[0.2em] rounded-xl transition-all shadow-sm hover:shadow-xl hover:shadow-tf-pink/10 active:scale-95 translate-y-0 hover:-translate-y-1"
+                          className="px-8 py-3 bg-white border-2 border-slate-100 hover:border-tf-primary hover:text-tf-primary text-tf-purple text-[10px] font-black uppercase tracking-[0.2em] rounded-xl transition-all shadow-sm hover:shadow-xl hover:shadow-tf-primary/10 active:scale-95 translate-y-0 hover:-translate-y-1"
                         >
                           Modify
                         </button>

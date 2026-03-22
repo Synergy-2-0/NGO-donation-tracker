@@ -49,7 +49,7 @@ export default function PublicNavbar() {
             <Link
               key={item.label}
               to={item.href}
-              className={`text-[12px] font-bold uppercase tracking-wider transition-colors hover:text-tf-pink ${
+              className={`text-[12px] font-bold uppercase tracking-wider transition-colors hover:text-tf-primary ${
                 isScrolled ? 'text-slate-600' : 'text-white'
               }`}
             >
@@ -72,7 +72,7 @@ export default function PublicNavbar() {
           </button>
           <button
             onClick={() => navigate('/login?tab=signup')}
-            className="px-8 py-2.5 bg-tf-pink hover:bg-pink-700 text-white text-[12px] font-bold uppercase tracking-wider rounded-full shadow-lg shadow-tf-pink/20 transition-all transform active:scale-95"
+            className="px-8 py-2.5 bg-tf-primary hover:bg-orange-700 text-white text-[12px] font-bold uppercase tracking-wider rounded-full shadow-lg shadow-tf-primary/20 transition-all transform active:scale-95"
           >
             Start Campaign
           </button>

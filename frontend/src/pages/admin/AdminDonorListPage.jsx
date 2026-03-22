@@ -56,24 +56,24 @@ export default function AdminDonorListPage() {
   if (loading && donors.length === 0) return <LoadingSpinner />;
 
   return (
-    <div className="space-y-12 animate-fade-in max-w-[1700px] mx-auto pb-24 font-sans selection:bg-tf-pink selection:text-white">
+    <div className="space-y-12 animate-fade-in max-w-[1700px] mx-auto pb-24 font-sans selection:bg-tf-primary selection:text-white">
       
       {/* Cinematic Header */}
       <div className="relative p-12 lg:p-16 bg-tf-purple rounded-[4rem] overflow-hidden shadow-2xl group text-white border border-white/5">
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1593113598332-cd288d649433?auto=format&fit=crop&q=80&w=1600')] opacity-5 blur-sm scale-110 group-hover:scale-100 transition-transform duration-1000 grayscale" />
-        <div className="absolute top-0 left-0 w-[600px] h-[600px] bg-tf-pink/10 blur-[120px] -ml-48 -mt-48 opacity-40" />
+        <div className="absolute top-0 left-0 w-[600px] h-[600px] bg-tf-primary/10 blur-[120px] -ml-48 -mt-48 opacity-40" />
         <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-10">
            <div className="space-y-4">
               <div className="flex items-center gap-3">
-                 <span className="w-2 h-2 rounded-full bg-tf-pink shadow-[0_0_15px_rgba(230,0,126,0.8)] animate-pulse" />
+                 <span className="w-2 h-2 rounded-full bg-tf-primary shadow-[0_0_15px_rgba(255,138,0,0.8)] animate-pulse" />
                  <p className="text-[10px] font-black text-white uppercase tracking-[0.5em] italic opacity-60">Verified Donor Community Registry</p>
               </div>
-              <h2 className="text-3xl lg:text-4xl font-black tracking-tighter uppercase italic tracking-tight">Donor <span className="text-tf-pink">Directory </span> Listing</h2>
+              <h2 className="text-3xl lg:text-4xl font-black tracking-tighter uppercase italic tracking-tight">Donor <span className="text-tf-primary">Directory </span> Listing</h2>
            </div>
            <div className="bg-white/5 border border-white/10 backdrop-blur-md px-10 py-5 rounded-[2.5rem] flex items-center gap-12">
               <div className="text-center group/stat">
                  <p className="text-[10px] font-black text-white/40 uppercase tracking-widest mb-1 group-hover/stat:text-white transition-colors">Total Members</p>
-                 <p className="text-2xl font-black tabular-nums italic text-tf-pink">{donors.length}</p>
+                 <p className="text-2xl font-black tabular-nums italic text-tf-primary">{donors.length}</p>
               </div>
               <div className="w-px h-10 bg-white/10" />
               <div className="text-center group/stat">
@@ -101,16 +101,16 @@ export default function AdminDonorListPage() {
              value={search}
              onChange={(e) => { setSearch(e.target.value); setPage(1); }}
              placeholder="Search by name, email or phone number…"
-             className="w-full h-full bg-slate-50 border border-slate-100 rounded-full px-12 text-[13px] font-bold text-tf-purple placeholder-slate-300 focus:outline-none focus:border-tf-pink transition-all shadow-inner"
+             className="w-full h-full bg-slate-50 border border-slate-100 rounded-full px-12 text-[13px] font-bold text-tf-purple placeholder-slate-300 focus:outline-none focus:border-tf-primary transition-all shadow-inner"
            />
-           <div className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-hover:text-tf-pink transition-colors">
+           <div className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-hover:text-tf-primary transition-colors">
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
            </div>
         </div>
         <select
           value={statusFilter}
           onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
-          className="h-16 bg-slate-50 border border-slate-100 rounded-full px-10 text-[11px] font-black uppercase tracking-widest text-tf-purple appearance-none focus:outline-none focus:border-tf-pink transition-all cursor-pointer shadow-inner pr-16"
+          className="h-16 bg-slate-50 border border-slate-100 rounded-full px-10 text-[11px] font-black uppercase tracking-widest text-tf-purple appearance-none focus:outline-none focus:border-tf-primary transition-all cursor-pointer shadow-inner pr-16"
         >
           <option value="">All Statuses</option>
           <option value="active">Verified (Active)</option>
@@ -118,7 +118,7 @@ export default function AdminDonorListPage() {
         </select>
         <button
           onClick={() => fetchDonors().catch(() => {})}
-          className="h-16 px-12 bg-tf-purple hover:bg-tf-pink text-white text-[12px] font-black uppercase tracking-widest rounded-full transition-all shadow-xl shadow-tf-purple/10 active:scale-95"
+          className="h-16 px-12 bg-tf-purple hover:bg-tf-primary text-white text-[12px] font-black uppercase tracking-widest rounded-full transition-all shadow-xl shadow-tf-purple/10 active:scale-95"
         >
           Refresh Directory
         </button>
@@ -152,24 +152,24 @@ export default function AdminDonorListPage() {
                   <tr key={donor._id} className="group hover:bg-slate-50 transition-all cursor-default">
                     <td className="px-10 py-10">
                       <div className="flex items-center gap-6">
-                         <div className="w-14 h-14 bg-tf-purple rounded-2xl flex items-center justify-center text-white text-[13px] font-black italic shadow-2xl shadow-tf-purple/10 group-hover:bg-tf-pink group-hover:rotate-6 transition-all">
+                         <div className="w-14 h-14 bg-tf-purple rounded-2xl flex items-center justify-center text-white text-[13px] font-black italic shadow-2xl shadow-tf-purple/10 group-hover:bg-tf-primary group-hover:rotate-6 transition-all">
                             {donor.userId?.name?.charAt(0) || 'D'}
                          </div>
                          <div className="space-y-1">
-                            <span className="block text-[15px] font-black text-tf-purple tracking-tight group-hover:text-tf-pink transition-colors">{donor.userId?.name || 'Member'}</span>
+                            <span className="block text-[15px] font-black text-tf-purple tracking-tight group-hover:text-tf-primary transition-colors">{donor.userId?.name || 'Member'}</span>
                             <span className="block text-[10px] font-black text-slate-300 uppercase tracking-widest">ID: {donor._id.slice(-8).toUpperCase()}</span>
                          </div>
                       </div>
                     </td>
                     <td className="px-10 py-10">
                        <div className="space-y-1.5">
-                          <span className="block text-sm font-bold text-slate-700 tracking-tight group-hover:text-tf-purple transition-all italic underline decoration-tf-pink/10 underline-offset-4">{donor.userId?.email || '—'}</span>
+                          <span className="block text-sm font-bold text-slate-700 tracking-tight group-hover:text-tf-purple transition-all italic underline decoration-tf-primary/10 underline-offset-4">{donor.userId?.email || '—'}</span>
                           <span className="block text-[10px] font-black text-slate-300 uppercase tracking-widest italic">P: {donor.phone || 'N/A'}</span>
                        </div>
                     </td>
                     <td className="px-10 py-10">
                        <div className="space-y-1">
-                          <span className="text-xl font-black text-tf-purple tracking-tighter italic tabular-nums group-hover:text-tf-pink transition-colors">
+                          <span className="text-xl font-black text-tf-purple tracking-tighter italic tabular-nums group-hover:text-tf-primary transition-colors">
                             {donor.analytics?.totalDonated != null
                               ? `LKR ${Number(donor.analytics.totalDonated).toLocaleString()}`
                               : 'LKR 0'}
@@ -186,7 +186,7 @@ export default function AdminDonorListPage() {
                       <div className="flex gap-8 items-center">
                         <button
                           onClick={() => navigate(`/admin/donors/${donor._id}`)}
-                          className="px-8 py-3 bg-white border-2 border-slate-100 hover:border-tf-pink hover:text-tf-pink text-tf-purple text-[10px] font-black uppercase tracking-[0.2em] rounded-xl transition-all shadow-sm hover:shadow-xl hover:shadow-tf-pink/10 active:scale-95 translate-y-0 hover:-translate-y-1"
+                          className="px-8 py-3 bg-white border-2 border-slate-100 hover:border-tf-primary hover:text-tf-primary text-tf-purple text-[10px] font-black uppercase tracking-[0.2em] rounded-xl transition-all shadow-sm hover:shadow-xl hover:shadow-tf-primary/10 active:scale-95 translate-y-0 hover:-translate-y-1"
                         >
                           Details
                         </button>
@@ -217,7 +217,7 @@ export default function AdminDonorListPage() {
           </div>
           <div className="flex gap-5">
             <button disabled={page === 1} onClick={() => setPage((p) => p - 1)} className="px-12 py-5 rounded-full border border-slate-200 text-slate-400 hover:text-tf-purple hover:border-tf-purple disabled:opacity-30 transition-all font-black uppercase tracking-[0.2em] text-[11px] bg-white group hover:shadow-xl active:scale-95">← Previous</button>
-            <button disabled={page === totalPages} onClick={() => setPage((p) => p + 1)} className="px-12 py-5 rounded-full bg-tf-pink text-white hover:bg-tf-purple disabled:opacity-30 transition-all font-black uppercase tracking-[0.2em] text-[11px] shadow-2xl shadow-tf-pink/20 active:scale-95 group hover:-translate-y-1">Next Page →</button>
+            <button disabled={page === totalPages} onClick={() => setPage((p) => p + 1)} className="px-12 py-5 rounded-full bg-tf-primary text-white hover:bg-tf-purple disabled:opacity-30 transition-all font-black uppercase tracking-[0.2em] text-[11px] shadow-2xl shadow-tf-primary/20 active:scale-95 group hover:-translate-y-1">Next Page →</button>
           </div>
         </div>
       )}

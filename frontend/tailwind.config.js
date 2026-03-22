@@ -8,11 +8,13 @@ export default {
       },
       colors: {
         tf: {
-          purple: '#512D6D',
-          pink: '#E6007E',
-          green: '#22C55E',
-          grey: '#F5F5F7',
-          dark: '#1F2937',
+          primary: '#FF8A00', // The Logo Orange
+          orange: '#FF8A00',
+          pink: '#FF8A00',   // Backwards compat for existing classes
+          purple: '#05010B', // Deepest dark for contrast
+          green: '#10B981', 
+          grey: '#F9FAFB',
+          dark: '#05010B',
         },
       },
       backgroundImage: {

@@ -35,24 +35,24 @@ export default function DonationHistoryPage() {
   ).size;
 
   return (
-    <div className="space-y-12 animate-fade-in max-w-[1700px] mx-auto pb-24 font-sans selection:bg-tf-pink selection:text-white">
+    <div className="space-y-12 animate-fade-in max-w-[1700px] mx-auto pb-24 font-sans selection:bg-tf-primary selection:text-white">
       
       {/* Cinematic History Header */}
       <div className="relative p-12 lg:p-16 bg-tf-purple rounded-[4rem] overflow-hidden shadow-2xl group text-white border border-white/5">
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?auto=format&fit=crop&q=80&w=1600')] opacity-5 blur-sm scale-110 group-hover:scale-100 transition-transform duration-1000 grayscale" />
-        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-tf-pink/10 blur-[130px] -ml-40 -mb-40 opacity-40 animate-pulse" />
+        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-tf-primary/10 blur-[130px] -ml-40 -mb-40 opacity-40 animate-pulse" />
         <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-10">
            <div className="space-y-4">
               <div className="flex items-center gap-3">
-                 <span className="w-2.5 h-2.5 rounded-full bg-tf-pink shadow-[0_0_20px_rgba(230,0,126,0.8)] animate-pulse" />
+                 <span className="w-2.5 h-2.5 rounded-full bg-tf-primary shadow-[0_0_20px_rgba(255,138,0,0.8)] animate-pulse" />
                  <p className="text-[10px] font-black text-white uppercase tracking-[0.5em] italic opacity-60">Verified Personal Donation History</p>
               </div>
-              <h2 className="text-4xl lg:text-5xl font-black tracking-tighter uppercase italic tracking-tight">Impact <span className="text-tf-pink">History </span> Archive</h2>
+              <h2 className="text-4xl lg:text-5xl font-black tracking-tighter uppercase italic tracking-tight">Impact <span className="text-tf-primary">History </span> Archive</h2>
            </div>
            <div className="bg-white/5 border border-white/10 backdrop-blur-md px-10 py-6 rounded-[2.5rem] flex items-center gap-12">
               <div className="text-center group/stat">
                  <p className="text-[10px] font-black text-white/40 uppercase tracking-widest mb-1 group-hover/stat:text-white transition-colors">Cumulative Giving</p>
-                 <p className="text-2xl font-black tabular-nums italic text-tf-pink">LKR {totalDonated.toLocaleString()}</p>
+                 <p className="text-2xl font-black tabular-nums italic text-tf-primary">LKR {totalDonated.toLocaleString()}</p>
               </div>
               <div className="w-px h-10 bg-white/10" />
               <div className="text-center group/stat">
@@ -93,7 +93,7 @@ export default function DonationHistoryPage() {
                   <tr key={tx._id} className="group hover:bg-slate-50 transition-all cursor-default">
                     <td className="px-10 py-10">
                       <div className="space-y-1">
-                        <span className="text-[15px] font-black text-tf-purple tracking-tight group-hover:text-tf-pink transition-colors italic">
+                        <span className="text-[15px] font-black text-tf-purple tracking-tight group-hover:text-tf-primary transition-colors italic">
                           {tx.campaignId?.title || tx.campaignId || 'General Aid Support'}
                         </span>
                         <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest">Ref: {tx._id.slice(-12).toUpperCase()}</p>
@@ -112,7 +112,7 @@ export default function DonationHistoryPage() {
                     </td>
                     <td className="px-10 py-10">
                       <div className="space-y-1">
-                         <p className="text-[10px] font-black text-tf-purple italic underline decoration-tf-pink/20 underline-offset-4">
+                         <p className="text-[10px] font-black text-tf-purple italic underline decoration-tf-primary/20 underline-offset-4">
                            {new Date(tx.createdAt).toLocaleDateString(undefined, {
                              year: 'numeric',
                              month: 'short',

@@ -13,7 +13,7 @@ const NAME_RE  = /^[a-zA-Z\s'-]{2,50}$/;
 const PHONE_RE = /^\+?[1-9]\d{1,14}$/;
 
 const inputCls = (err) =>
-  `w-full bg-slate-50 border ${err ? 'border-red-300 ring-1 ring-red-100' : 'border-slate-200'} rounded-2xl px-6 py-4 text-sm font-semibold text-tf-purple placeholder-slate-300 focus:outline-none focus:border-tf-pink transition-all shadow-sm`;
+  `w-full bg-slate-50 border ${err ? 'border-red-300 ring-1 ring-red-100' : 'border-slate-200'} rounded-2xl px-6 py-4 text-sm font-semibold text-tf-purple placeholder-slate-300 focus:outline-none focus:border-tf-primary transition-all shadow-sm`;
 
 const FieldError = ({ msg }) =>
   msg ? <p className="mt-1.5 ml-4 text-[10px] font-bold text-red-500 uppercase tracking-widest leading-tight">{msg}</p> : null;
@@ -151,20 +151,20 @@ export default function LoginPage() {
        <div className="absolute inset-0 z-0">
           <img src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&q=80&w=1600" alt="TrustFund Hub" className="w-full h-full object-cover opacity-20 scale-105 blur-sm grayscale" />
           <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-tf-purple to-transparent" />
-          <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-tf-pink/10 blur-[150px] rounded-full -translate-y-1/2 translate-x-1/2" />
+          <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-tf-primary/10 blur-[150px] rounded-full -translate-y-1/2 translate-x-1/2" />
           <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-tf-green/5 blur-[120px] rounded-full translate-y-1/3 -translate-x-1/3" />
        </div>
 
-       <div className="relative z-10 w-full max-w-5xl flex flex-col md:flex-row bg-white rounded-[3.5rem] shadow-2xl overflow-hidden animate-fade-in border border-white/20 backdrop-blur-3xl selection:bg-tf-pink selection:text-white">
+       <div className="relative z-10 w-full max-w-5xl flex flex-col md:flex-row bg-white rounded-[3.5rem] shadow-2xl overflow-hidden animate-fade-in border border-white/20 backdrop-blur-3xl selection:bg-tf-primary selection:text-white">
           
           {/* Left panel — Brand Story */}
           <div className="hidden lg:flex flex-col justify-center px-16 py-20 bg-slate-900 text-white flex-1 relative overflow-hidden group">
-             <div className="absolute inset-0 bg-tf-pink/5 group-hover:bg-tf-pink/[0.08] transition-all duration-1000" />
+             <div className="absolute inset-0 bg-tf-primary/5 group-hover:bg-tf-primary/[0.08] transition-all duration-1000" />
              <div className="relative z-10 space-y-10">
                 <div className="space-y-6">
                    <h2 className="text-6xl font-black tracking-tight leading-[1.05] italic uppercase tracking-tighter">
                       Empowering <br />
-                      <span className="text-tf-pink italic underline decoration-white/10 underline-offset-8">Compassion</span>
+                      <span className="text-tf-primary italic underline decoration-white/10 underline-offset-8">Compassion</span>
                    </h2>
                    <p className="text-slate-400 font-medium text-lg leading-relaxed max-w-sm italic">
                       Welcome to the official TrustFund portal. Join our mission to support local communities through transparent, verified giving.
@@ -174,18 +174,18 @@ export default function LoginPage() {
                 <div className="flex gap-10">
                    <div className="space-y-1">
                       <p className="text-3xl font-black text-white italic tabular-nums tracking-tighter">12K+</p>
-                      <p className="text-[10px] font-bold text-tf-pink uppercase tracking-widest">Active Members</p>
+                      <p className="text-[10px] font-bold text-tf-primary uppercase tracking-widest">Active Members</p>
                    </div>
                    <div className="w-px h-12 bg-white/10" />
                    <div className="space-y-1">
                       <p className="text-3xl font-black text-white italic tabular-nums tracking-tighter">480+</p>
-                      <p className="text-[10px] font-bold text-tf-pink uppercase tracking-widest">Verified Causes</p>
+                      <p className="text-[10px] font-bold text-tf-primary uppercase tracking-widest">Verified Causes</p>
                    </div>
                 </div>
 
                 <div className="flex flex-wrap gap-4 pt-4">
                    {['Verified Aid', 'Real-time Impact', 'Secure Portal'].map((tag) => (
-                      <span key={tag} className="px-5 py-3 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-widest group-hover:border-tf-pink/30 group-hover:bg-tf-pink/5 transition-all italic">
+                      <span key={tag} className="px-5 py-3 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-widest group-hover:border-tf-primary/30 group-hover:bg-tf-primary/5 transition-all italic">
                          {tag}
                       </span>
                    ))}
@@ -198,8 +198,8 @@ export default function LoginPage() {
              <div className="space-y-12">
                 {/* Hub Header */}
                 <div className="space-y-4">
-                   <p className="text-tf-pink text-[11px] font-black uppercase tracking-[0.4em] italic leading-none">Official Access Point</p>
-                   <h1 className="text-4xl font-black text-tf-purple tracking-tighter italic uppercase underline decoration-tf-pink/20 underline-offset-8">TrustFund Login</h1>
+                   <p className="text-tf-primary text-[11px] font-black uppercase tracking-[0.4em] italic leading-none">Official Access Point</p>
+                   <h1 className="text-4xl font-black text-tf-purple tracking-tighter italic uppercase underline decoration-tf-primary/20 underline-offset-8">TrustFund Login</h1>
                 </div>
 
                 {/* Tabs Hub */}
@@ -216,7 +216,7 @@ export default function LoginPage() {
                          }`}
                       >
                          {t.label}
-                         {tab === t.id && <div className="absolute inset-x-0 bottom-[-1px] h-[3px] bg-tf-pink rounded-full shadow-[0_0_10px_rgba(230,0,126,0.3)]" />}
+                         {tab === t.id && <div className="absolute inset-x-0 bottom-[-1px] h-[3px] bg-tf-primary rounded-full shadow-[0_0_10px_rgba(255,138,0,0.3)]" />}
                       </button>
                    ))}
                 </div>
@@ -254,7 +254,7 @@ export default function LoginPage() {
                          <button 
                             type="button" 
                             onClick={() => setShowPassword(!showPassword)}
-                            className="absolute right-6 top-[52px] text-slate-300 hover:text-tf-pink transition-colors"
+                            className="absolute right-6 top-[52px] text-slate-300 hover:text-tf-primary transition-colors"
                          >
                             {showPassword ? (
                                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeWidth={2.5} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeWidth={2.5} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
@@ -278,7 +278,7 @@ export default function LoginPage() {
                          {[1, 2].map(s => (
                             <div key={s} className="flex items-center gap-4">
                                <div className={`w-10 h-10 rounded-2xl flex items-center justify-center text-[11px] font-black transition-all ${
-                                  step >= s ? 'bg-tf-pink text-white shadow-xl shadow-tf-pink/30 rotate-3' : 'bg-slate-50 text-slate-300 border border-slate-100'
+                                  step >= s ? 'bg-tf-primary text-white shadow-xl shadow-tf-primary/30 rotate-3' : 'bg-slate-50 text-slate-300 border border-slate-100'
                                }`}>{s}</div>
                                <p className={`text-[10px] font-black uppercase tracking-widest italic ${step === s ? 'text-tf-purple' : 'text-slate-300'}`}>
                                   {s === 1 ? 'Account' : 'Profile'}
@@ -341,7 +341,7 @@ export default function LoginPage() {
                                <button 
                                   type="button" 
                                   onClick={() => setShowPassword(!showPassword)}
-                                  className="absolute right-6 top-[52px] text-slate-300 hover:text-tf-pink transition-colors"
+                                  className="absolute right-6 top-[52px] text-slate-300 hover:text-tf-primary transition-colors"
                                >
                                   {showPassword ? (
                                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeWidth={2.5} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeWidth={2.5} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
@@ -353,7 +353,7 @@ export default function LoginPage() {
                             </div>
                             <button
                                type="submit"
-                               className="w-full bg-tf-pink hover:bg-pink-700 text-white font-black py-6 rounded-full transition-all text-[12px] uppercase tracking-widest shadow-2xl shadow-tf-pink/30 active:scale-95"
+                               className="w-full bg-tf-primary hover:bg-orange-700 text-white font-black py-6 rounded-full transition-all text-[12px] uppercase tracking-widest shadow-2xl shadow-tf-primary/30 active:scale-95"
                             >
                                Next Step →
                             </button>
@@ -409,14 +409,14 @@ export default function LoginPage() {
                                <button
                                   type="button"
                                   onClick={() => setStep(1)}
-                                  className="flex-1 border-2 border-slate-100 text-slate-400 hover:text-tf-purple hover:border-tf-pink font-black py-6 rounded-full text-[11px] uppercase tracking-widest transition-all italic active:scale-95"
+                                  className="flex-1 border-2 border-slate-100 text-slate-400 hover:text-tf-purple hover:border-tf-primary font-black py-6 rounded-full text-[11px] uppercase tracking-widest transition-all italic active:scale-95"
                                >
                                   Back
                                </button>
                                <button
                                   type="submit"
                                   disabled={loading}
-                                  className="flex-[2] bg-tf-pink hover:bg-pink-700 text-white font-black py-6 rounded-full transition-all text-[12px] uppercase tracking-widest shadow-2xl shadow-tf-pink/30 active:scale-95"
+                                  className="flex-[2] bg-tf-primary hover:bg-orange-700 text-white font-black py-6 rounded-full transition-all text-[12px] uppercase tracking-widest shadow-2xl shadow-tf-primary/30 active:scale-95"
                                >
                                   {loading ? 'Registering…' : 'Complete Account'}
                                </button>

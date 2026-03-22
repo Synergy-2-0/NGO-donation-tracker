@@ -4,8 +4,8 @@ export const create = async (data) => {
     return await Campaign.create(data);
 };
 
-export const findAll = async () => {
-    return await Campaign.find({ isDeleted: false });
+export const findAll = async (query = {}) => {
+    return await Campaign.find(query);
 };
 
 export const findById = async (id) => {

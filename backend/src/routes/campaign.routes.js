@@ -3,6 +3,7 @@ import upload from "../middlewares/upload.middleware.js";
 import {
     createCampaign,
     getCampaigns,
+    getMyCampaigns,
     getCampaignById,
     updateCampaign,
     deleteCampaign,
@@ -33,7 +34,7 @@ const router = express.Router();
 router.post("/", authenticate, authorizeRoles("admin", "ngo-admin"), upload.single('image'), createCampaign);
 
 router.get("/", getCampaigns);
-
+router.get("/my", authenticate, authorizeRoles("admin", "ngo-admin"), getMyCampaigns);
 router.get("/:id", getCampaignById);
 
 // Update campaign (only if it's a draft)

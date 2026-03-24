@@ -6,7 +6,7 @@ import ErrorAlert from '../components/ErrorAlert';
 
 const defaultForm = {
   phone: '',
-  address: { street: '', city: '', state: '', country: '', postalCode: '' },
+  address: { street: '', city: '', country: '', postalCode: '' },
   preferredCauses: '',
   bio: '',
 };
@@ -14,9 +14,9 @@ const defaultForm = {
 function Field({ label, name, value, onChange, type = 'text', placeholder, hint, className = '' }) {
   return (
     <div className={className}>
-      <label className="block text-sm font-medium text-gray-700 mb-1">
+      <label className="block text-xs font-semibold text-[#7C2D12] uppercase tracking-wide mb-1">
         {label}
-        {hint && <span className="ml-1 text-gray-400 text-xs font-normal">{hint}</span>}
+        {hint && <span className="ml-1 text-gray-400 text-xs font-normal normal-case">{hint}</span>}
       </label>
       <input
         type={type}
@@ -24,7 +24,7 @@ function Field({ label, name, value, onChange, type = 'text', placeholder, hint,
         value={value}
         onChange={onChange}
         placeholder={placeholder}
-        className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        className="w-full border border-orange-200 bg-orange-50/40 rounded-lg px-4 py-2.5 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent transition"
       />
     </div>
   );
@@ -32,13 +32,11 @@ function Field({ label, name, value, onChange, type = 'text', placeholder, hint,
 
 export default function ProfilePage() {
   const { user } = useAuth();
-  const { donorProfile, loading, error, fetchProfile, createProfile, updateProfile, deleteProfile } =
-    useDonor();
+  const { donorProfile, loading, error, fetchProfile, updateProfile } = useDonor();
   const [form, setForm] = useState(defaultForm);
   const [editing, setEditing] = useState(false);
   const [success, setSuccess] = useState('');
   const [localError, setLocalError] = useState('');
-  const [confirmDelete, setConfirmDelete] = useState(false);
   const [initialFetchDone, setInitialFetchDone] = useState(false);
 
   useEffect(() => {
@@ -54,7 +52,6 @@ export default function ProfilePage() {
         address: {
           street: donorProfile.address?.street || '',
           city: donorProfile.address?.city || '',
-          state: donorProfile.address?.state || '',
           country: donorProfile.address?.country || '',
           postalCode: donorProfile.address?.postalCode || '',
         },
@@ -86,28 +83,11 @@ export default function ProfilePage() {
         .filter(Boolean),
     };
     try {
-      if (donorProfile) {
-        await updateProfile(donorProfile._id, payload);
-        setSuccess('Profile updated successfully.');
-        setEditing(false);
-      } else {
-        await createProfile(payload);
-        setSuccess('Donor profile created successfully.');
-      }
+      await updateProfile(donorProfile._id, payload);
+      setSuccess('Profile updated successfully.');
+      setEditing(false);
     } catch (err) {
       setLocalError(err.response?.data?.message || err.message || 'Failed to save profile.');
-    }
-  };
-
-  const handleDelete = async () => {
-    setLocalError('');
-    try {
-      await deleteProfile(donorProfile._id);
-      setSuccess('Your donor profile has been deleted.');
-      setConfirmDelete(false);
-      setForm(defaultForm);
-    } catch {
-      setLocalError('Failed to delete profile. Please try again.');
     }
   };
 
@@ -116,15 +96,11 @@ export default function ProfilePage() {
   return (
     <div className="max-w-2xl space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-gray-800">Donor Profile</h2>
-        <p className="text-sm text-gray-500 mt-1">
-          {donorProfile
-            ? 'View and manage your donor information.'
-            : 'Create your donor profile to start pledging and tracking donations.'}
-        </p>
+        <h2 className="text-2xl font-bold text-[#7C2D12]">Donor Profile</h2>
+        <p className="text-sm text-gray-500 mt-1">View and manage your donor information.</p>
       </div>
 
-      {(localError || (!donorProfile && error)) && (
+      {(localError || error) && (
         <ErrorAlert
           message={localError || error}
           onDismiss={() => setLocalError('')}
@@ -143,7 +119,7 @@ export default function ProfilePage() {
             <h3 className="text-base font-semibold text-gray-700">Profile Information</h3>
             <button
               onClick={() => setEditing(true)}
-              className="text-sm text-blue-600 hover:text-blue-800 font-medium"
+              className="text-sm text-[#DC2626] hover:text-red-700 font-semibold"
             >
               Edit Profile
             </button>
@@ -170,10 +146,6 @@ export default function ProfilePage() {
               <p className="text-gray-400 mb-0.5">City</p>
               <p className="font-medium text-gray-800">{donorProfile.address?.city || '—'}</p>
             </div>
-            <div>
-              <p className="text-gray-400 mb-0.5">State</p>
-              <p className="font-medium text-gray-800">{donorProfile.address?.state || '—'}</p>
-            </div>
             {donorProfile.address?.street && (
               <div className="col-span-2">
                 <p className="text-gray-400 mb-0.5">Street Address</p>
@@ -187,7 +159,7 @@ export default function ProfilePage() {
                   ? donorProfile.preferredCauses.map((cause) => (
                       <span
                         key={cause}
-                        className="px-2 py-0.5 bg-blue-50 text-blue-700 text-xs rounded-full font-medium"
+                        className="px-2 py-0.5 bg-orange-50 text-[#7C2D12] text-xs rounded-full font-medium"
                       >
                         {cause}
                       </span>
@@ -203,24 +175,15 @@ export default function ProfilePage() {
             )}
           </div>
 
-          <div className="pt-4 border-t border-gray-100">
-            <button
-              onClick={() => setConfirmDelete(true)}
-              className="text-sm text-red-500 hover:text-red-700 font-medium"
-            >
-              Delete Donor Profile
-            </button>
-          </div>
         </div>
       ) : (
-        /* Create / Edit Form */
+        /* Edit Form — only shown when editing an existing profile */
+        donorProfile ? (
         <form
           onSubmit={handleSubmit}
           className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 space-y-5"
         >
-          <h3 className="text-base font-semibold text-gray-700">
-            {donorProfile ? 'Edit Profile' : 'Create Profile'}
-          </h3>
+          <h3 className="text-base font-semibold text-gray-700">Edit Profile</h3>
 
           <Field
             label="Phone"
@@ -242,12 +205,6 @@ export default function ProfilePage() {
               label="City"
               name="address.city"
               value={form.address.city}
-              onChange={handleChange}
-            />
-            <Field
-              label="State / Province"
-              name="address.state"
-              value={form.address.state}
               onChange={handleChange}
             />
             <Field
@@ -274,13 +231,13 @@ export default function ProfilePage() {
           />
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Bio</label>
+            <label className="block text-xs font-semibold text-[#7C2D12] uppercase tracking-wide mb-1">Bio <span className="font-normal text-gray-400 normal-case">(optional)</span></label>
             <textarea
               name="bio"
               value={form.bio}
               onChange={handleChange}
               rows={3}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+              className="w-full border border-orange-200 bg-orange-50/40 rounded-lg px-4 py-2.5 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent resize-none transition"
             />
           </div>
 
@@ -288,52 +245,24 @@ export default function ProfilePage() {
             <button
               type="submit"
               disabled={loading}
-              className="px-5 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white text-sm font-semibold rounded-lg transition-colors"
+              className="px-5 py-2 bg-[#DC2626] hover:bg-red-700 disabled:opacity-60 text-white text-sm font-semibold rounded-lg transition-colors"
             >
-              {loading ? 'Saving...' : donorProfile ? 'Save Changes' : 'Create Profile'}
+              {loading ? 'Saving...' : 'Save Changes'}
             </button>
-            {donorProfile && (
-              <button
-                type="button"
-                onClick={() => setEditing(false)}
-                className="px-5 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium rounded-lg transition-colors"
-              >
-                Cancel
-              </button>
-            )}
+            <button
+              type="button"
+              onClick={() => setEditing(false)}
+              className="px-5 py-2 border border-orange-200 hover:bg-orange-50 text-[#7C2D12] text-sm font-medium rounded-lg transition-colors"
+            >
+              Cancel
+            </button>
           </div>
         </form>
+        ) : (
+          <LoadingSpinner message="Setting up your profile..." />
+        )
       )}
 
-      {/* Delete Confirmation Modal */}
-      {confirmDelete && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl shadow-xl p-6 max-w-sm w-full mx-4">
-            <h4 className="text-base font-semibold text-gray-800 mb-2">
-              Delete Donor Profile?
-            </h4>
-            <p className="text-sm text-gray-500 mb-5">
-              This action cannot be undone. All your pledge and interaction history will also be
-              removed.
-            </p>
-            <div className="flex gap-3 justify-end">
-              <button
-                onClick={() => setConfirmDelete(false)}
-                className="px-4 py-2 text-sm text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg font-medium"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleDelete}
-                disabled={loading}
-                className="px-4 py-2 text-sm text-white bg-red-600 hover:bg-red-700 disabled:bg-red-400 rounded-lg font-medium"
-              >
-                {loading ? 'Deleting...' : 'Delete'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

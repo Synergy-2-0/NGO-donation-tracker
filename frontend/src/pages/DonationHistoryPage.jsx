@@ -48,7 +48,7 @@ export default function DonationHistoryPage() {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
             <p className="text-sm text-gray-500 mb-1">Total Donated</p>
-            <p className="text-2xl font-bold text-blue-600">
+            <p className="text-2xl font-bold text-[#DC2626]">
               LKR {totalDonated.toLocaleString()}
             </p>
           </div>
@@ -88,7 +88,7 @@ export default function DonationHistoryPage() {
                   <td className="px-5 py-3 font-medium text-gray-800">
                     {tx.campaignId?.title || tx.campaignId || '—'}
                   </td>
-                  <td className="px-5 py-3 font-semibold text-blue-600">
+                  <td className="px-5 py-3 font-semibold text-[#DC2626]">
                     LKR {Number(tx.amount).toLocaleString()}
                   </td>
                   <td className="px-5 py-3 capitalize text-gray-500">{tx.type || '—'}</td>

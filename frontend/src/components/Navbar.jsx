@@ -3,9 +3,28 @@ import { useAuth } from '../context/AuthContext';
 export default function Navbar() {
   const { user, logout } = useAuth();
 
+  // Determine dashboard type based on user role
+  const getDashboardType = () => {
+    if (!user?.role) return 'Dashboard';
+
+    switch (user.role) {
+      case 'admin':
+      case 'ngo-admin':
+        return 'Admin Dashboard';
+      case 'donor':
+        return 'Donor Dashboard';
+      case 'partner':
+        return 'Partner Dashboard';
+      default:
+        return 'Dashboard';
+    }
+  };
+
   return (
-    <header className="bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between shrink-0">
-      <h1 className="text-lg font-semibold text-gray-800">NGO Donation Tracker</h1>
+    <header className="bg-brand-cream border-b border-brand-orange/30 px-6 py-3 flex items-center justify-between shrink-0">
+      <div className="flex items-center">
+        <h1 className="text-xl font-bold text-brand-brown">{getDashboardType()}</h1>
+      </div>
       <div className="flex items-center gap-4">
         <div className="text-right">
           <p className="text-sm font-medium text-gray-700">{user?.name}</p>
@@ -13,7 +32,7 @@ export default function Navbar() {
         </div>
         <button
           onClick={logout}
-          className="text-sm text-red-500 hover:text-red-700 font-medium transition-colors"
+          className="text-sm text-brand-red hover:text-brand-red/80 font-medium transition-colors"
         >
           Logout
         </button>

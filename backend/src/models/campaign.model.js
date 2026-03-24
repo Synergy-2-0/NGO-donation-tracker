@@ -2,6 +2,11 @@ import mongoose from "mongoose";
 
 const campaignSchema = new mongoose.Schema(
     {
+        createdBy: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+            required: true,
+        },
         title: {
             type: String,
             required: [true, "Campaign title is required"],
@@ -14,6 +19,11 @@ const campaignSchema = new mongoose.Schema(
             type: String,
             trim: true,
             maxlength: [2000, "Description cannot exceed 2000 characters"]
+        },
+        image: {
+            type: String,
+            default: null,
+            trim: true
         },
         goalAmount: {
             type: Number,
@@ -79,6 +89,7 @@ const campaignSchema = new mongoose.Schema(
     },
     { timestamps: true }
 );
+campaignSchema.index({ 'location.coordinates': '2dsphere' });
 
 campaignSchema.index({ 'location.coordinates': '2dsphere' });
 

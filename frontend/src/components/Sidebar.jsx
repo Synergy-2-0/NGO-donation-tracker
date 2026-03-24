@@ -77,6 +77,15 @@ const adminNavItems = [
       </svg>
     ),
   },
+  {
+    to: '/admin/campaign-dashboard',
+    label: 'Manage Campaigns',
+    icon: (
+      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M3 7h18M6 3v4m12-4v4M5 11h14a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2z" />
+      </svg>
+    ),
+  },
 ];
 
 export default function Sidebar() {
@@ -84,8 +93,7 @@ export default function Sidebar() {
   const isAdmin = user?.role === 'admin' || user?.role === 'ngo-admin';
 
   const navLinkCls = ({ isActive }) =>
-    `flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-      isActive ? 'bg-white/20 text-white' : 'text-red-100 hover:bg-white/10'
+    `flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${isActive ? 'bg-white/20 text-white' : 'text-red-100 hover:bg-white/10'
     }`;
 
   return (
@@ -97,17 +105,17 @@ export default function Sidebar() {
       <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
         {isAdmin
           ? adminNavItems.map((item) => (
-              <NavLink key={item.to} to={item.to} className={navLinkCls}>
-                {item.icon}
-                {item.label}
-              </NavLink>
-            ))
+            <NavLink key={item.to} to={item.to} className={navLinkCls}>
+              {item.icon}
+              {item.label}
+            </NavLink>
+          ))
           : donorNavItems.map((item) => (
-              <NavLink key={item.to} to={item.to} className={navLinkCls}>
-                {item.icon}
-                {item.label}
-              </NavLink>
-            ))}
+            <NavLink key={item.to} to={item.to} className={navLinkCls}>
+              {item.icon}
+              {item.label}
+            </NavLink>
+          ))}
       </nav>
 
       <div className="px-6 py-4 border-t border-red-800/40 text-xs text-red-200">

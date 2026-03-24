@@ -95,7 +95,18 @@ export const updateCampaign = async (id, data) => {
     return await campaignRepository.updateById(id, data);
 };
 
-export const deleteCampaign = async (id) => {
+export const deleteCampaign = async (id, actor) => {
+    const campaign = await campaignRepository.findById(id);
+
+    if (!canManageCampaign(campaign, actor)) {
+        throw new Error("Forbidden");
+    }
+    if (!campaign) throw new Error("Campaign not found");
+
+    if (campaign.status === "active") {
+        throw new Error("Active campaigns cannot be deleted");
+    }
+
     return await campaignRepository.softDelete(id);
 };
 
@@ -105,8 +116,12 @@ export const deleteCampaign = async (id) => {
  *  - Only campaigns in "draft" status can be published.
  *  - Publishing makes the campaign visible and active.
  */
-export const publishCampaign = async (id) => {
+export const publishCampaign = async (id, actor) => {
     const campaign = await campaignRepository.findById(id);
+
+    if (!canManageCampaign(campaign, actor)) {
+        throw new Error("Forbidden");
+    }
     if (!campaign) throw new Error("Campaign not found");
 
     if (campaign.status !== "draft") throw new Error("Only draft campaigns can be published");

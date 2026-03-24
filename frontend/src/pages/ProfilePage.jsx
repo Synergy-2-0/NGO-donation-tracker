@@ -11,7 +11,7 @@ const defaultForm = {
   bio: '',
 };
 
-function Field({ label, name, value, onChange, type = 'text', placeholder, hint, className = '' }) {
+function PremiumField({ label, name, value, onChange, type = 'text', placeholder, hint, className = '' }) {
   return (
     <div className={className}>
       <label className="block text-xs font-semibold text-[#7C2D12] uppercase tracking-wide mb-1">
@@ -106,8 +106,9 @@ export default function ProfilePage() {
           onDismiss={() => setLocalError('')}
         />
       )}
+      
       {success && (
-        <div className="bg-green-50 border border-green-200 text-green-700 text-sm px-4 py-3 rounded-lg">
+        <div className="bg-emerald-50 border border-emerald-100 text-emerald-700 text-sm font-bold px-6 py-4 rounded-2xl shadow-sm animate-pulse">
           {success}
         </div>
       )}
@@ -167,13 +168,6 @@ export default function ProfilePage() {
                   : <p className="font-medium text-gray-800">—</p>}
               </div>
             </div>
-            {donorProfile.bio && (
-              <div className="col-span-2">
-                <p className="text-gray-400 mb-0.5">Bio</p>
-                <p className="font-medium text-gray-800">{donorProfile.bio}</p>
-              </div>
-            )}
-          </div>
 
         </div>
       ) : (
@@ -185,13 +179,19 @@ export default function ProfilePage() {
         >
           <h3 className="text-base font-semibold text-gray-700">Edit Profile</h3>
 
-          <Field
-            label="Phone"
-            name="phone"
-            value={form.phone}
-            onChange={handleChange}
-            placeholder="+94771234567"
-          />
+        {/* Right Side: Data/Form */}
+        <div className="lg:col-span-2">
+            {!editing && donorProfile ? (
+                 <div className="bg-white/80 backdrop-blur-md p-10 rounded-3xl border border-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] space-y-10">
+                    <div className="flex items-center justify-between border-b border-gray-50 pb-6">
+                        <h3 className="text-lg font-black text-gray-800 tracking-tight uppercase tracking-widest text-[10px]">Registry Information</h3>
+                        <button
+                            onClick={() => setEditing(true)}
+                            className="px-4 py-2 bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-sm"
+                        >
+                            Update Profile
+                        </button>
+                    </div>
 
           <div className="grid grid-cols-2 gap-4">
             <Field
@@ -221,14 +221,26 @@ export default function ProfilePage() {
             />
           </div>
 
-          <Field
-            label="Preferred Causes"
-            name="preferredCauses"
-            value={form.preferredCauses}
-            onChange={handleChange}
-            placeholder="education, health, environment"
-            hint="(comma-separated)"
-          />
+                    <div className="pt-8 border-t border-gray-50 flex justify-between items-center">
+                        <p className="text-[10px] font-medium text-gray-400 italic">Careful with sensitive data deletion.</p>
+                        <button
+                            onClick={() => setConfirmDelete(true)}
+                            className="bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm"
+                        >
+                            Delete Registry Record
+                        </button>
+                    </div>
+                </div>
+            ) : (
+                <form
+                    onSubmit={handleSubmit}
+                    className="bg-white/80 backdrop-blur-md p-10 rounded-3xl border border-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] space-y-8"
+                >
+                    <div className="flex items-center justify-between border-b border-gray-50 pb-6">
+                        <h3 className="text-lg font-black text-gray-800 tracking-tight uppercase tracking-widest text-[10px]">
+                            {donorProfile ? 'Update Record' : 'Create Registry'}
+                        </h3>
+                    </div>
 
           <div>
             <label className="block text-xs font-semibold text-[#7C2D12] uppercase tracking-wide mb-1">Bio <span className="font-normal text-gray-400 normal-case">(optional)</span></label>

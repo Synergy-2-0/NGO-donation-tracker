@@ -75,3 +75,13 @@ export const getPartnerImpact = async (req, res) => {
     res.status(status).json({ message: err.message });
   }
 };
+
+// Get current user's profile
+export const getMyPartnerProfile = async (req, res) => {
+  try {
+    const partner = await partnerService.getPartnerByUserId(req.user.id);
+    res.json(partner);
+  } catch (err) {
+    res.status(404).json({ message: err.message });
+  }
+};

@@ -51,11 +51,14 @@ function PledgeModal({ pledge, onClose, onSave, loading }) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-      <div className="bg-white rounded-xl shadow-xl p-6 max-w-md w-full mx-4">
-        <h4 className="text-base font-semibold text-gray-800 mb-5">
-          {pledge?._id ? 'Edit Pledge' : 'New Pledge'}
-        </h4>
+    <div className="fixed inset-0 bg-[#0F172A]/80 backdrop-blur-sm flex items-center justify-center z-50 p-6 animate-in fade-in duration-300">
+      <div className="bg-white rounded-[32px] shadow-2xl p-10 max-w-md w-full relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 rounded-full blur-3xl -mr-16 -mt-16"></div>
+        
+        <div className="relative z-10">
+            <h4 className="text-2xl font-black text-gray-800 tracking-tight mb-8 uppercase tracking-widest text-[10px]">
+                {pledge?._id ? 'Modify Commitment' : 'New Impact Pledge'}
+            </h4>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -220,19 +223,22 @@ export default function PledgesPage() {
   if (!initialFetchDone && loading) return <LoadingSpinner />;
 
   return (
-    <div className="space-y-6">
+    <div className="max-w-7xl mx-auto space-y-8 pb-10">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-gray-800">Pledges</h2>
-          <p className="text-sm text-gray-500 mt-1">Manage your recurring and one-time donation pledges.</p>
+          <h2 className="text-3xl font-extrabold text-[#1E293B] tracking-tight">
+            Impact <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-600">Pledges</span>
+          </h2>
+          <p className="text-gray-400 font-bold text-xs uppercase tracking-widest mt-1">Manage your active commitments and recurring support.</p>
         </div>
         {donorProfile && (
           <button
             onClick={() => { setShowCreateModal(true); setSuccess(''); setLocalError(''); }}
             className="px-4 py-2 bg-[#DC2626] hover:bg-red-700 text-white text-sm font-semibold rounded-lg transition-colors"
           >
-            + New Pledge
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 4v16m8-8H4" /></svg>
+            Initialize Pledge
           </button>
         )}
       </div>
@@ -241,18 +247,25 @@ export default function PledgesPage() {
         <ErrorAlert message={localError || error} onDismiss={() => setLocalError('')} />
       )}
       {success && (
-        <div className="bg-green-50 border border-green-200 text-green-700 text-sm px-4 py-3 rounded-lg">
+        <div className="bg-emerald-50 border border-emerald-100 text-emerald-700 text-sm font-bold px-6 py-4 rounded-2xl shadow-sm animate-pulse">
           {success}
         </div>
       )}
 
       {!donorProfile && (
-        <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 text-sm px-4 py-3 rounded-lg">
-          Please{' '}
-          <a href="/profile" className="font-semibold underline">
-            create a donor profile
-          </a>{' '}
-          first to manage pledges.
+        <div className="bg-indigo-900 rounded-3xl p-10 text-white flex flex-col md:flex-row items-center gap-8 shadow-2xl shadow-indigo-200">
+            <div className="w-20 h-20 bg-white/10 rounded-[24px] flex items-center justify-center shrink-0">
+                <svg className="w-10 h-10 text-indigo-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+            </div>
+            <div>
+                <h3 className="text-xl font-black mb-2 tracking-tight">Registry Required</h3>
+                <p className="text-indigo-200 text-sm leading-relaxed max-w-lg mb-6">
+                    You must first establish your donor identity in the synergy ecosystem before committing to pledges.
+                </p>
+                <a href="/profile" className="inline-block py-3 px-8 bg-white text-indigo-900 text-[10px] font-black uppercase tracking-[0.2em] rounded-xl hover:scale-105 transition-transform active:scale-95 shadow-lg shadow-black/10">
+                    Create Profile
+                </a>
+            </div>
         </div>
       )}
 
@@ -320,13 +333,61 @@ export default function PledgesPage() {
                     </div>
                   </td>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+                </thead>
+                <tbody className="divide-y divide-gray-50">
+                {pledges.map((pledge) => (
+                    <tr key={pledge._id} className="group hover:bg-gray-50/50 transition-colors">
+                        <td className="px-10 py-6">
+                            <div>
+                                <p className="text-lg font-black text-gray-800 tracking-tight">LKR {Number(pledge.amount).toLocaleString()}</p>
+                                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">General Support</p>
+                            </div>
+                        </td>
+                        <td className="px-10 py-6">
+                            <span className="px-3 py-1 bg-gray-100 text-gray-600 text-[10px] font-black uppercase tracking-tighter rounded-md border border-gray-200">
+                                {pledge.frequency}
+                            </span>
+                        </td>
+                        <td className="px-10 py-6">
+                            <span
+                            className={`px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest border ${
+                                statusBadgeStyle[pledge.status] || 'bg-gray-50 text-gray-400 border-gray-100'
+                            }`}
+                            >
+                            {pledge.status}
+                            </span>
+                        </td>
+                        <td className="px-10 py-6">
+                            <p className="text-sm font-bold text-gray-700">{new Date(pledge.startDate).toLocaleDateString(undefined, {month: 'short', day: 'numeric', year: 'numeric'})}</p>
+                            <p className="text-[10px] font-medium text-gray-400 uppercase tracking-widest mt-1">Registry Date</p>
+                        </td>
+                        <td className="px-10 py-6 text-right">
+                            <div className="flex gap-3 justify-end">
+                                <button
+                                    onClick={() => { setEditPledge(pledge); setSuccess(''); setLocalError(''); }}
+                                    className="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center hover:bg-indigo-600 hover:text-white transition-all active:scale-95 shadow-sm border border-indigo-100"
+                                    title="Edit Pledge"
+                                >
+                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+                                </button>
+                                <button
+                                    onClick={() => setConfirmDelete(pledge._id)}
+                                    className="w-10 h-10 bg-rose-50 text-rose-500 rounded-xl flex items-center justify-center hover:bg-rose-600 hover:text-white transition-all active:scale-95 shadow-sm border border-rose-100"
+                                    title="Delete Pledge"
+                                >
+                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                ))}
+                </tbody>
+            </table>
+          </div>
         </div>
       )}
 
-      {/* Create Modal */}
+      {/* Modals integrated with logic */}
       {showCreateModal && (
         <PledgeModal
           onClose={() => setShowCreateModal(false)}
@@ -335,7 +396,6 @@ export default function PledgesPage() {
         />
       )}
 
-      {/* Edit Modal */}
       {editPledge && (
         <PledgeModal
           pledge={editPledge}
@@ -345,28 +405,34 @@ export default function PledgesPage() {
         />
       )}
 
-      {/* Delete Confirmation */}
       {confirmDelete && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl shadow-xl p-6 max-w-sm w-full mx-4">
-            <h4 className="text-base font-semibold text-gray-800 mb-2">Delete Pledge?</h4>
-            <p className="text-sm text-gray-500 mb-5">
-              This pledge will be permanently deleted and cannot be recovered.
-            </p>
-            <div className="flex gap-3 justify-end">
-              <button
-                onClick={() => setConfirmDelete(null)}
-                className="px-4 py-2 text-sm text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg font-medium"
-              >
-                Keep It
-              </button>
-              <button
-                onClick={() => handleDelete(confirmDelete)}
-                disabled={loading}
-                className="px-4 py-2 text-sm text-white bg-red-600 hover:bg-red-700 disabled:bg-red-400 rounded-lg font-medium"
-              >
-                {loading ? 'Deleting...' : 'Delete'}
-              </button>
+        <div className="fixed inset-0 bg-[#0F172A]/80 backdrop-blur-sm flex items-center justify-center z-50 p-6 animate-in fade-in duration-300">
+          <div className="bg-white rounded-[32px] shadow-2xl p-10 max-w-sm w-full relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-rose-500/10 rounded-full blur-3xl -mr-16 -mt-16"></div>
+            
+            <div className="relative z-10 text-center">
+                <div className="w-16 h-16 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-sm border border-rose-100 italic">
+                    <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                </div>
+                <h4 className="text-2xl font-black text-gray-800 tracking-tight mb-4">Terminate Pledge</h4>
+                <p className="text-sm text-gray-400 font-medium leading-relaxed mb-10">
+                You are about to remove this active commitment from your registry. This action is irreversible.
+                </p>
+                <div className="flex gap-4">
+                    <button
+                        onClick={() => handleDelete(confirmDelete)}
+                        disabled={loading}
+                        className="flex-1 py-4 bg-rose-600 text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-2xl shadow-xl shadow-rose-100 hover:bg-rose-700 transition-all active:scale-95"
+                    >
+                        {loading ? 'Erasing...' : 'Confirm'}
+                    </button>
+                    <button
+                        onClick={() => setConfirmDelete(null)}
+                        className="flex-1 py-4 bg-gray-50 text-gray-400 text-[10px] font-black uppercase tracking-[0.2em] rounded-2xl border border-gray-100 hover:bg-gray-100 transition-all active:scale-95"
+                    >
+                        Abort
+                    </button>
+                </div>
             </div>
           </div>
         </div>

@@ -9,6 +9,7 @@ const router = express.Router();
 
 router.post('/', authenticate, authorizeRoles('partner'), validateRequest(createPartnerSchema), ctrl.createPartnership);
 router.get('/', authenticate, ctrl.getPartners);
+router.get('/me/profile', authenticate, ctrl.getMyPartnerProfile);
 router.get('/:id/impact', authenticate, ctrl.getPartnerImpact);
 router.get('/:id', authenticate, ctrl.getPartner);
 router.put('/:id', authenticate, validateRequest(updatePartnerSchema), ctrl.updatePartner);

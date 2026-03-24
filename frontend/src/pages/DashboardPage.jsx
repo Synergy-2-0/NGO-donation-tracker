@@ -1,14 +1,45 @@
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { 
+  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer 
+} from 'recharts';
 import { useAuth } from '../context/AuthContext';
 import { useDonor } from '../context/DonorContext';
 import LoadingSpinner from '../components/LoadingSpinner';
 
-function StatCard({ label, value, color, bg }) {
+const dummyChartData = [
+  { name: 'Jan', amount: 4000 },
+  { name: 'Feb', amount: 3000 },
+  { name: 'Mar', amount: 2000 },
+  { name: 'Apr', amount: 2780 },
+  { name: 'May', amount: 1890 },
+  { name: 'Jun', amount: 2390 },
+  { name: 'Jul', amount: 3490 },
+];
+
+function PremiumStatCard({ label, value, icon, trend, color, bg }) {
   return (
-    <div className={`${bg} rounded-xl border border-gray-100 shadow-sm p-5`}>
-      <p className="text-sm text-gray-500 mb-1">{label}</p>
-      <p className={`text-3xl font-bold ${color}`}>{value ?? '—'}</p>
+    <div className="relative overflow-hidden bg-white/80 backdrop-blur-md p-6 rounded-2xl border border-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all duration-300 group">
+      <div className="flex justify-between items-start">
+        <div>
+          <p className="text-sm font-medium text-gray-400 mb-1">{label}</p>
+          <h3 className={`text-2xl font-bold tracking-tight ${color}`}>{value ?? '—'}</h3>
+          {trend && (
+            <div className="flex items-center gap-1 mt-2">
+              <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${trend > 0 ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'}`}>
+                {trend > 0 ? '↑' : '↓'} {Math.abs(trend)}%
+              </span>
+              <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">vs last month</span>
+            </div>
+          )}
+        </div>
+        <div className={`p-3 rounded-xl ${bg} text-white shadow-lg shadow-${color}/20 group-hover:scale-110 transition-transform`}>
+          {icon}
+        </div>
+      </div>
+      <div className="absolute -bottom-2 -right-2 opacity-[0.03] group-hover:opacity-[0.05] transition-opacity">
+        {icon}
+      </div>
     </div>
   );
 }
@@ -71,23 +102,25 @@ export default function DashboardPage() {
           color="text-[#DC2626]"
           bg="bg-white"
         />
-        <StatCard
+        <PremiumStatCard
           label="Campaigns Supported"
           value={analytics?.totalCampaigns ?? null}
-          color="text-green-600"
-          bg="bg-white"
+          color="text-emerald-600"
+          bg="bg-emerald-600"
+          icon={<svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>}
         />
-        <StatCard
+        <PremiumStatCard
           label="Active Pledges"
           value={pledges.length > 0 ? activePledges : null}
           color="text-[#7C2D12]"
           bg="bg-white"
         />
-        <StatCard
-          label="Total Pledges"
-          value={pledges.length || null}
-          color="text-orange-600"
-          bg="bg-white"
+        <PremiumStatCard
+          label="Total Impact Score"
+          value="98%"
+          color="text-rose-600"
+          bg="bg-rose-600"
+          icon={<svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>}
         />
       </div>
 
@@ -125,42 +158,59 @@ export default function DashboardPage() {
               View all →
             </Link>
           </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="text-left text-gray-500 border-b border-gray-100">
-                  <th className="pb-2 font-medium">Amount</th>
-                  <th className="pb-2 font-medium">Frequency</th>
-                  <th className="pb-2 font-medium">Status</th>
-                  <th className="pb-2 font-medium">Start Date</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-50">
-                {pledges.slice(0, 5).map((pledge) => (
-                  <tr key={pledge._id}>
-                    <td className="py-2.5 font-semibold text-gray-800">
-                      LKR {Number(pledge.amount).toLocaleString()}
-                    </td>
-                    <td className="py-2.5 capitalize text-gray-600">{pledge.frequency}</td>
-                    <td className="py-2.5">
-                      <span
-                        className={`px-2 py-0.5 rounded-full text-xs font-medium ${
-                          pledgeStatusColor[pledge.status] || 'bg-gray-100 text-gray-600'
-                        }`}
-                      >
-                        {pledge.status}
-                      </span>
-                    </td>
-                    <td className="py-2.5 text-gray-500">
-                      {new Date(pledge.startDate).toLocaleDateString()}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <Link to="/pledges" className="text-sm font-bold text-indigo-600 hover:text-indigo-800 transition-colors">
+            Manage All →
+          </Link>
         </div>
-      )}
+        
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="text-left text-xs text-gray-400 uppercase tracking-widest font-bold">
+                <th className="pb-4 px-2">Campaign Category</th>
+                <th className="pb-4 px-2">Amount</th>
+                <th className="pb-4 px-2 text-center">Frequency</th>
+                <th className="pb-4 px-2">Status</th>
+                <th className="pb-4 px-2">Next Payment</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-50">
+              {pledges.length > 0 ? pledges.slice(0, 5).map((pledge) => (
+                <tr key={pledge._id} className="group hover:bg-gray-50/50 transition-colors">
+                  <td className="py-4 px-2">
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center text-indigo-600 group-hover:scale-110 transition-transform">
+                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                        </div>
+                        <span className="font-semibold text-gray-700">General Support</span>
+                    </div>
+                  </td>
+                  <td className="py-4 px-2 font-bold text-gray-900">
+                    LKR {Number(pledge.amount).toLocaleString()}
+                  </td>
+                  <td className="py-4 px-2 text-center">
+                    <span className="px-2.5 py-1 bg-gray-100 text-gray-600 text-[10px] uppercase font-black tracking-tighter rounded-md">
+                        {pledge.frequency}
+                    </span>
+                  </td>
+                  <td className="py-4 px-2">
+                    <span className={`px-3 py-1 rounded-lg text-xs font-bold border ${statusBadgeStyle[pledge.status] || 'bg-gray-100 text-gray-600 border-gray-200'}`}>
+                      {pledge.status.toUpperCase()}
+                    </span>
+                  </td>
+                  <td className="py-4 px-2 text-gray-500 text-sm font-medium">
+                    {new Date(pledge.startDate).toLocaleDateString(undefined, {month: 'short', day: 'numeric', year: 'numeric'})}
+                  </td>
+                </tr>
+              )) : (
+                <tr>
+                    <td colSpan="5" className="py-10 text-center text-gray-300 font-medium italic">You haven't made any pledges yet.</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   );
 }

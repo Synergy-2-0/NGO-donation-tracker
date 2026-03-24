@@ -6,15 +6,6 @@ const hasCoordinates = (location) => {
     return Array.isArray(location?.coordinates?.coordinates) && location.coordinates.coordinates.length === 2;
 };
 
-const canManageCampaign = (campaign, actor) => {
-    if (!actor) return false;
-    if (actor.role === "admin") return true;
-    if (actor.role === "ngo-admin") {
-        return String(campaign.createdBy) === String(actor.id);
-    }
-    return false;
-};
-
 /**
  * Create a new campaign.
  */
@@ -70,22 +61,6 @@ export const getAllCampaigns = async (filters = {}) => {
     return await campaignRepository.findAll(normalized);
 };
 
-export const getMyCampaigns = async (filters = {}, actor) => {
-    if (!actor) throw new Error("Unauthorized");
-
-    const query = { isDeleted: false };
-
-    if (actor.role === "ngo-admin") {
-        query.createdBy = actor.id;
-    }
-
-    if (filters.status) {
-        query.status = filters.status;
-    }
-
-    return await campaignRepository.findAll(query);
-};
-
 /**
  * Get a campaign by its ID.
  */
@@ -102,11 +77,7 @@ export const getCampaignById = async (id) => {
 /**
  * Update campaign details.
  */
-export const updateCampaign = async (id, data, actor) => {
-    const existing = await campaignRepository.findById(id);
-    if (!existing) throw new Error("Campaign not found");
-    if (!canManageCampaign(existing, actor)) throw new Error("Forbidden");
-
+export const updateCampaign = async (id, data) => {
     if (data.location && !hasCoordinates(data.location)) {
         const campaign = await campaignRepository.findById(id);
         if (!campaign) throw new Error('Campaign not found');

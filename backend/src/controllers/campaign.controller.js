@@ -33,9 +33,9 @@ export const getCampaigns = async (req, res) => {
     } catch (error) {
         const status =
             error.message === 'Both lat and lng are required for radius search' ||
-                error.message === 'lat and lng must be valid numbers' ||
-                error.message === 'Invalid coordinates' ||
-                error.message === 'radius must be between 1 and 500'
+            error.message === 'lat and lng must be valid numbers' ||
+            error.message === 'Invalid coordinates' ||
+            error.message === 'radius must be between 1 and 500'
                 ? 400
                 : 500;
         res.status(status).json({ message: error.message });

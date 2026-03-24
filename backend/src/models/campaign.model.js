@@ -91,4 +91,6 @@ const campaignSchema = new mongoose.Schema(
 );
 campaignSchema.index({ 'location.coordinates': '2dsphere' });
 
+campaignSchema.index({ 'location.coordinates': '2dsphere' });
+
 export default mongoose.model("Campaign", campaignSchema);

@@ -18,6 +18,16 @@ export const createProgress = async (data) => {
         throw new Error("Progress can only be added to active campaigns");
     }
 
+    // update campaign raisedAmount
+    const amount = Number(data.amountRaised) || 0;
+    campaign.raisedAmount += amount;
+
+    if (campaign.raisedAmount >= campaign.goalAmount) {
+        campaign.status = "completed";
+    }
+
+    await campaign.save();
+
     return progressRepository.create(data);
 };
 

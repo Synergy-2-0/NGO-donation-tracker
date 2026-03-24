@@ -3,7 +3,22 @@ import * as campaignService from "../services/campaign.service.js";
 // create campaign
 export const createCampaign = async (req, res) => {
     try {
-        const campaign = await campaignService.createCampaign(req.body);
+        let parsedLocation = req.body.location;
+
+        if (typeof parsedLocation === "string") {
+            try {
+                parsedLocation = JSON.parse(parsedLocation);
+            } catch {
+                return res.status(400).json({ message: "Invalid location format. Must be valid JSON." });
+            }
+        }
+        const campaignData = {
+            ...req.body,
+            location: parsedLocation,
+            image: req.file?.path || null,
+            createdBy: req.user.id,
+        };
+        const campaign = await campaignService.createCampaign(campaignData);
         res.status(201).json(campaign);
     } catch (error) {
         res.status(400).json({ message: error.message });
@@ -30,7 +45,7 @@ export const getCampaigns = async (req, res) => {
 // get single campaign
 export const getCampaignById = async (req, res) => {
     try {
-        const campaign = await campaignService.getCampaignById(req.params.id);
+        const campaign = await campaignService.getCampaignById(req.params.id, req.user);
         res.json(campaign);
     } catch (error) {
         res.status(404).json({ message: error.message });
@@ -42,7 +57,8 @@ export const updateCampaign = async (req, res) => {
     try {
         const campaign = await campaignService.updateCampaign(
             req.params.id,
-            req.body
+            req.body,
+            req.user
         );
         res.json(campaign);
     } catch (error) {
@@ -53,8 +69,18 @@ export const updateCampaign = async (req, res) => {
 // delete campaign
 export const deleteCampaign = async (req, res) => {
     try {
-        await campaignService.deleteCampaign(req.params.id);
+        await campaignService.deleteCampaign(req.params.id, req.user);
         res.json({ message: "Campaign archived successfully" });
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
+
+// get campaigns created by the logged-in user
+export const getMyCampaigns = async (req, res) => {
+    try {
+        const campaigns = await campaignService.getMyCampaigns(req.query, req.user);
+        res.json(campaigns);
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
@@ -66,7 +92,7 @@ export const deleteCampaign = async (req, res) => {
  */
 export const publishCampaign = async (req, res) => {
     try {
-        const campaign = await campaignService.publishCampaign(req.params.id);
+        const campaign = await campaignService.publishCampaign(req.params.id, req.user);
         res.json(campaign);
     } catch (error) {
         res.status(400).json({ message: error.message });

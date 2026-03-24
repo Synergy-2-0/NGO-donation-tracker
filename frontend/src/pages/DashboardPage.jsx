@@ -44,11 +44,11 @@ function PremiumStatCard({ label, value, icon, trend, color, bg }) {
   );
 }
 
-const statusBadgeStyle = {
-  active: 'bg-emerald-50 text-emerald-600 border-emerald-100',
-  fulfilled: 'bg-indigo-50 text-indigo-600 border-indigo-100',
-  cancelled: 'bg-rose-50 text-rose-600 border-rose-100',
-  pending: 'bg-amber-50 text-amber-600 border-amber-100',
+const pledgeStatusColor = {
+  active: 'bg-green-100 text-green-700',
+  fulfilled: 'bg-orange-100 text-orange-700',
+  cancelled: 'bg-red-100 text-red-700',
+  pending: 'bg-yellow-100 text-yellow-700',
 };
 
 export default function DashboardPage() {
@@ -79,34 +79,28 @@ export default function DashboardPage() {
   const activePledges = pledges.filter((p) => p.status === 'active').length;
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8 pb-10">
-      {/* Welcome Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight">
-            Welcome back, <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">{user?.name || 'Donor'}</span> 👋
-          </h2>
-          <p className="text-gray-500 font-medium mt-1">
-            Empowering change through your generous contributions.
-          </p>
-        </div>
-        <div className="flex gap-3">
-          <Link to="/pledges" className="px-5 py-2.5 bg-indigo-600 text-white rounded-xl shadow-lg shadow-indigo-200 hover:bg-indigo-700 hover:shadow-indigo-300 transition-all text-sm font-semibold flex items-center gap-2">
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" /></svg>
-            Make a Pledge
-          </Link>
-        </div>
+    <div className="space-y-6">
+      {/* Header */}
+      <div>
+        <h2 className="text-2xl font-bold text-gray-800">
+          Welcome back, {user?.name || 'Donor'} 👋
+        </h2>
+        <p className="text-gray-500 text-sm mt-1">
+          Here&apos;s an overview of your donation activity.
+        </p>
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <PremiumStatCard
+      {/* Stats */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <StatCard
           label="Total Donated"
-          value={analytics?.totalDonations != null ? `LKR ${Number(analytics.totalDonations).toLocaleString()}` : null}
-          color="text-indigo-600"
-          bg="bg-indigo-600"
-          trend={12}
-          icon={<svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>}
+          value={
+            analytics?.totalDonations != null
+              ? `LKR ${Number(analytics.totalDonations).toLocaleString()}`
+              : null
+          }
+          color="text-[#DC2626]"
+          bg="bg-white"
         />
         <PremiumStatCard
           label="Campaigns Supported"
@@ -118,10 +112,8 @@ export default function DashboardPage() {
         <PremiumStatCard
           label="Active Pledges"
           value={pledges.length > 0 ? activePledges : null}
-          color="text-purple-600"
-          bg="bg-purple-600"
-          trend={5}
-          icon={<svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04M12 2.944a11.955 11.955 0 01-8.618 3.04M12 2.944V21m0 0l-9-9m9 9l9-9" /></svg>}
+          color="text-[#7C2D12]"
+          bg="bg-white"
         />
         <PremiumStatCard
           label="Total Impact Score"
@@ -132,63 +124,39 @@ export default function DashboardPage() {
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Chart View */}
-        <div className="lg:col-span-2 bg-white/80 backdrop-blur-md p-6 rounded-2xl border border-white shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
-          <div className="flex items-center justify-between mb-8">
-            <h3 className="text-lg font-bold text-gray-800">Donation Trends</h3>
-            <select className="bg-gray-50 border-none text-gray-500 text-xs font-bold rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-indigo-500">
-              <option>Last 6 Months</option>
-              <option>Last Year</option>
-            </select>
-          </div>
-          <div className="h-64 w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={dummyChartData}>
-                <defs>
-                  <linearGradient id="colorAmount" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#6366f1" stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor="#6366f1" stopOpacity={0}/>
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 12}} dy={10} />
-                <YAxis axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 12}} />
-                <Tooltip 
-                  contentStyle={{borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)'}}
-                  itemStyle={{color: '#6366f1', fontWeight: 'bold'}}
-                />
-                <Area type="monotone" dataKey="amount" stroke="#6366f1" strokeWidth={3} fillOpacity={1} fill="url(#colorAmount)" />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
-        {/* Quick Insights */}
-        <div className="bg-indigo-900 rounded-3xl p-8 text-white relative overflow-hidden group">
-            <div className="relative z-10 h-full flex flex-col justify-between">
-                <div>
-                    <span className="text-xs font-bold uppercase tracking-widest text-indigo-300">Daily Insight</span>
-                    <h3 className="text-2xl font-bold mt-3 leading-tight text-white/90">Your support recently helped 12 orphans in Colombo get school supplies.</h3>
-                </div>
-                <div className="mt-8">
-                    <p className="text-sm text-indigo-200 mb-4">View your full transparency impact report to see exactly where your funds went.</p>
-                    <button className="w-full py-3 bg-white text-indigo-900 font-bold rounded-xl text-sm hover:scale-105 transition-transform active:scale-95">
-                        Download Report
-                    </button>
-                </div>
-            </div>
-            <div className="absolute top-10 right-10 w-32 h-32 bg-indigo-500 rounded-full blur-[80px] opacity-20 group-hover:blur-[100px] transition-all"></div>
-            <div className="absolute bottom-10 left-10 w-24 h-24 bg-blue-400 rounded-full blur-[60px] opacity-20 group-hover:blur-[80px] transition-all"></div>
+      {/* Quick Actions */}
+      <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
+        <h3 className="text-base font-semibold text-gray-700 mb-4">Quick Actions</h3>
+        <div className="flex flex-wrap gap-3">
+          <Link
+            to="/profile"
+            className="px-4 py-2 bg-red-50 text-[#DC2626] hover:bg-red-100 rounded-lg text-sm font-medium transition-colors"
+          >
+            Manage Profile
+          </Link>
+          <Link
+            to="/pledges"
+            className="px-4 py-2 bg-green-50 text-green-700 hover:bg-green-100 rounded-lg text-sm font-medium transition-colors"
+          >
+            New Pledge
+          </Link>
+          <Link
+            to="/donations"
+            className="px-4 py-2 bg-orange-50 text-[#7C2D12] hover:bg-orange-100 rounded-lg text-sm font-medium transition-colors"
+          >
+            Donation History
+          </Link>
         </div>
       </div>
 
-      {/* Recent Pledges Table */}
-      <div className="bg-white/80 backdrop-blur-md p-6 rounded-2xl border border-white shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h3 className="text-lg font-bold text-gray-800">Your Active Pledges</h3>
-            <p className="text-xs text-gray-400 font-medium">Auto-renewing recurring support records</p>
+      {/* Recent Pledges */}
+      {pledges.length > 0 && (
+        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-base font-semibold text-gray-700">Recent Pledges</h3>
+            <Link to="/pledges" className="text-sm text-[#DC2626] hover:underline">
+              View all →
+            </Link>
           </div>
           <Link to="/pledges" className="text-sm font-bold text-indigo-600 hover:text-indigo-800 transition-colors">
             Manage All →

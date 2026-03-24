@@ -72,25 +72,21 @@ export default function DonationHistoryPage() {
 
       {/* Stats Summary */}
       {transactions.length > 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-          <HistoryStatCard
-            label="Historical Total"
-            value={`LKR ${totalDonated.toLocaleString()}`}
-            color="bg-indigo-600 shadow-indigo-200"
-            icon={<svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>}
-          />
-          <HistoryStatCard
-            label="Total Ledger Entries"
-            value={transactions.length}
-            color="bg-slate-800 shadow-slate-200"
-            icon={<svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>}
-          />
-          <HistoryStatCard
-            label="Causes Supported"
-            value={uniqueCampaigns}
-            color="bg-emerald-600 shadow-emerald-100"
-            icon={<svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>}
-          />
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
+            <p className="text-sm text-gray-500 mb-1">Total Donated</p>
+            <p className="text-2xl font-bold text-[#DC2626]">
+              LKR {totalDonated.toLocaleString()}
+            </p>
+          </div>
+          <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
+            <p className="text-sm text-gray-500 mb-1">Total Transactions</p>
+            <p className="text-2xl font-bold text-gray-800">{transactions.length}</p>
+          </div>
+          <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
+            <p className="text-sm text-gray-500 mb-1">Campaigns Supported</p>
+            <p className="text-2xl font-bold text-green-600">{uniqueCampaigns}</p>
+          </div>
         </div>
       )}
 
@@ -108,55 +104,31 @@ export default function DonationHistoryPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
-              {transactions.length > 0 ? (
-                transactions.map((tx) => (
-                  <tr key={tx._id} className="group hover:bg-gray-50/50 transition-colors">
-                    <td className="px-10 py-6">
-                        <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center font-black group-hover:scale-110 transition-transform">
-                                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-                            </div>
-                            <span className="font-bold text-gray-800 tracking-tight truncate max-w-[200px]">
-                                {tx.campaignId?.title || tx.campaignId || 'General Pool'}
-                            </span>
-                        </div>
-                    </td>
-                    <td className="px-10 py-6">
-                        <span className="text-sm font-black text-indigo-600 tracking-tighter">
-                            LKR {Number(tx.amount).toLocaleString()}
-                        </span>
-                    </td>
-                    <td className="px-10 py-6 text-center">
-                        <span className="px-2.5 py-1 bg-gray-100 text-gray-500 text-[10px] font-black uppercase tracking-tight rounded-md border border-gray-100">
-                            {tx.type || 'Direct'}
-                        </span>
-                    </td>
-                    <td className="px-10 py-6">
-                      <span
-                        className={`px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest border ${
-                          statusBadgeStyle[tx.status] || 'bg-gray-50 text-gray-400 border-gray-100'
-                        }`}
-                      >
-                        {tx.status}
-                      </span>
-                    </td>
-                    <td className="px-10 py-6">
-                        <p className="text-sm font-bold text-gray-700">
-                             {new Date(tx.createdAt).toLocaleDateString(undefined, {month: 'short', day: 'numeric', year: 'numeric'})}
-                        </p>
-                        <p className="text-[10px] font-medium text-gray-400 uppercase tracking-widest mt-0.5">Finalized</p>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                   <td colSpan="5" className="px-10 py-24 text-center">
-                        <div className="w-16 h-16 bg-gray-50 rounded-2xl flex items-center justify-center mx-auto mb-4 text-gray-200">
-                            <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" /></svg>
-                        </div>
-                        <p className="text-gray-400 font-bold text-sm tracking-tight mb-2">Registry Record Empty</p>
-                        <p className="text-gray-300 text-xs font-medium">Historical donation data will be visualized here upon completion.</p>
-                   </td>
+              {transactions.map((tx) => (
+                <tr key={tx._id} className="hover:bg-gray-50">
+                  <td className="px-5 py-3 font-medium text-gray-800">
+                    {tx.campaignId?.title || tx.campaignId || '—'}
+                  </td>
+                  <td className="px-5 py-3 font-semibold text-[#DC2626]">
+                    LKR {Number(tx.amount).toLocaleString()}
+                  </td>
+                  <td className="px-5 py-3 capitalize text-gray-500">{tx.type || '—'}</td>
+                  <td className="px-5 py-3">
+                    <span
+                      className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                        statusColor[tx.status] || 'bg-gray-100 text-gray-600'
+                      }`}
+                    >
+                      {tx.status}
+                    </span>
+                  </td>
+                  <td className="px-5 py-3 text-gray-500">
+                    {new Date(tx.createdAt).toLocaleDateString(undefined, {
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric',
+                    })}
+                  </td>
                 </tr>
               )}
             </tbody>

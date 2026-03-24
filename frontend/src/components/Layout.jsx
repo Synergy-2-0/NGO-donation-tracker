@@ -4,7 +4,7 @@ import Navbar from './Navbar';
 
 export default function Layout() {
   return (
-    <div className="flex h-screen bg-[#F8FAFC] overflow-hidden font-sans antialiased text-slate-900">
+    <div className="flex h-screen bg-[#FFF7ED] overflow-hidden">
       <Sidebar />
       <div className="flex flex-col flex-1 overflow-hidden relative">
         {/* Subtle background glow */}

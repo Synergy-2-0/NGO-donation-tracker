@@ -11,7 +11,7 @@ const defaultForm = {
   bio: '',
 };
 
-function Field({ label, name, value, onChange, type = 'text', placeholder, hint, className = '' }) {
+function PremiumField({ label, name, value, onChange, type = 'text', placeholder, hint, className = '' }) {
   return (
     <div className={className + " space-y-2"}>
       <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2 group-hover:text-tf-purple transition-colors">
@@ -120,7 +120,7 @@ export default function ProfilePage() {
       )}
       
       {success && (
-        <div className="bg-tf-green/10 border border-tf-green/20 text-tf-green text-[11px] font-black uppercase tracking-widest px-8 py-5 rounded-full animate-fade-in shadow-sm w-fit mx-auto text-center">
+        <div className="bg-emerald-50 border border-emerald-100 text-emerald-700 text-sm font-bold px-6 py-4 rounded-2xl shadow-sm animate-pulse">
           {success}
         </div>
       )}
@@ -160,14 +160,48 @@ export default function ProfilePage() {
              </div>
           </div>
 
-          {/* Mission & Impact */}
-          <div className="space-y-10">
-             <div className="bg-white rounded-[3rem] border border-slate-100 p-12 shadow-sm space-y-8 group hover:border-tf-primary transition-all">
-                <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] italic font-sans group-hover:text-tf-purple transition-all">Humanitarian Goals</h3>
-                <p className="text-[14px] font-bold text-slate-600 leading-relaxed italic opacity-80 decoration-slate-100 decoration-offset-4 underline transition-all group-hover:opacity-100">
-                  {donorProfile.bio || 'Please update your bio to let us know about your philanthropic vision.'}
-                </p>
-             </div>
+          <div className="grid grid-cols-2 gap-x-8 gap-y-4 text-sm">
+            <div>
+              <p className="text-gray-400 mb-0.5">Name</p>
+              <p className="font-medium text-gray-800">{user?.name || '—'}</p>
+            </div>
+            <div>
+              <p className="text-gray-400 mb-0.5">Email</p>
+              <p className="font-medium text-gray-800">{user?.email || '—'}</p>
+            </div>
+            <div>
+              <p className="text-gray-400 mb-0.5">Phone</p>
+              <p className="font-medium text-gray-800">{donorProfile.phone || '—'}</p>
+            </div>
+            <div>
+              <p className="text-gray-400 mb-0.5">Country</p>
+              <p className="font-medium text-gray-800">{donorProfile.address?.country || '—'}</p>
+            </div>
+            <div>
+              <p className="text-gray-400 mb-0.5">City</p>
+              <p className="font-medium text-gray-800">{donorProfile.address?.city || '—'}</p>
+            </div>
+            {donorProfile.address?.street && (
+              <div className="col-span-2">
+                <p className="text-gray-400 mb-0.5">Street Address</p>
+                <p className="font-medium text-gray-800">{donorProfile.address.street}</p>
+              </div>
+            )}
+            <div className="col-span-2">
+              <p className="text-gray-400 mb-0.5">Preferred Causes</p>
+              <div className="flex flex-wrap gap-2 mt-1">
+                {donorProfile.preferredCauses?.length > 0
+                  ? donorProfile.preferredCauses.map((cause) => (
+                      <span
+                        key={cause}
+                        className="px-2 py-0.5 bg-orange-50 text-[#7C2D12] text-xs rounded-full font-medium"
+                      >
+                        {cause}
+                      </span>
+                    ))
+                  : <p className="font-medium text-gray-800">—</p>}
+              </div>
+            </div>
 
              <div className="bg-tf-purple rounded-[3rem] p-12 shadow-2xl relative overflow-hidden group border border-white/5">
                 <div className="absolute top-0 right-0 w-40 h-40 bg-tf-primary/10 blur-[60px]" />
@@ -199,14 +233,19 @@ export default function ProfilePage() {
              <p className="text-slate-400 text-[11px] font-black uppercase tracking-[0.3em] italic">Humanitarian Information Registry</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-             <Field
-               label="Contact Number"
-               name="phone"
-               value={form.phone}
-               onChange={handleChange}
-               placeholder="+94 77 000 0000"
-             />
+        {/* Right Side: Data/Form */}
+        <div className="lg:col-span-2">
+            {!editing && donorProfile ? (
+                 <div className="bg-white/80 backdrop-blur-md p-10 rounded-3xl border border-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] space-y-10">
+                    <div className="flex items-center justify-between border-b border-gray-50 pb-6">
+                        <h3 className="text-lg font-black text-gray-800 tracking-tight uppercase tracking-widest text-[10px]">Registry Information</h3>
+                        <button
+                            onClick={() => setEditing(true)}
+                            className="px-4 py-2 bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-sm"
+                        >
+                            Update Profile
+                        </button>
+                    </div>
 
              <Field
                label="Cause Interests"
@@ -217,11 +256,26 @@ export default function ProfilePage() {
                hint="(Comma-separated)"
              />
 
-             <div className="md:col-span-2 grid grid-cols-2 md:col-cols-4 gap-8">
-                <Field label="Street" name="address.street" value={form.address.street} onChange={handleChange} className="col-span-2" />
-                <Field label="City" name="address.city" value={form.address.city} onChange={handleChange} />
-                <Field label="Country" name="address.country" value={form.address.country} onChange={handleChange} />
-             </div>
+                    <div className="pt-8 border-t border-gray-50 flex justify-between items-center">
+                        <p className="text-[10px] font-medium text-gray-400 italic">Careful with sensitive data deletion.</p>
+                        <button
+                            onClick={() => setConfirmDelete(true)}
+                            className="bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm"
+                        >
+                            Delete Registry Record
+                        </button>
+                    </div>
+                </div>
+            ) : (
+                <form
+                    onSubmit={handleSubmit}
+                    className="bg-white/80 backdrop-blur-md p-10 rounded-3xl border border-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] space-y-8"
+                >
+                    <div className="flex items-center justify-between border-b border-gray-50 pb-6">
+                        <h3 className="text-lg font-black text-gray-800 tracking-tight uppercase tracking-widest text-[10px]">
+                            {donorProfile ? 'Update Record' : 'Create Registry'}
+                        </h3>
+                    </div>
 
              <div className="md:col-span-2 space-y-4">
                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-4 leading-none italic">Your Humanitarian Vision</label>

@@ -1,27 +1,45 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { 
+  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer 
+} from 'recharts';
 import { useAuth } from '../context/AuthContext';
 import { useDonor } from '../context/DonorContext';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ErrorAlert from '../components/ErrorAlert';
 
-function MetricCard({ label, value, colorCls, icon, trend }) {
+const dummyChartData = [
+  { name: 'Jan', amount: 4000 },
+  { name: 'Feb', amount: 3000 },
+  { name: 'Mar', amount: 2000 },
+  { name: 'Apr', amount: 2780 },
+  { name: 'May', amount: 1890 },
+  { name: 'Jun', amount: 2390 },
+  { name: 'Jul', amount: 3490 },
+];
+
+function PremiumStatCard({ label, value, icon, trend, color, bg }) {
   return (
-    <div className="bg-white rounded-[3.5rem] border border-slate-100 p-12 shadow-sm hover:shadow-2xl transition-all duration-700 group relative overflow-hidden flex flex-col justify-between h-72">
-      <div className={`absolute top-0 right-0 w-32 h-32 ${colorCls} opacity-[0.03] blur-[60px] -mr-16 -mt-16 group-hover:opacity-10 transition-opacity`} />
-      <div className="flex justify-between items-start mb-auto relative z-10">
-         <div className={`p-4 rounded-2xl ${colorCls} bg-opacity-10 text-sm font-black transition-all group-hover:bg-tf-purple group-hover:text-white group-hover:scale-110 shadow-sm border border-white/10`}>
-            {icon}
-         </div>
-         {trend && (
-           <span className="text-[10px] font-black text-tf-green bg-tf-green/10 px-4 py-1.5 rounded-full uppercase tracking-widest border border-tf-green/20 shadow-sm">
-             {trend}
-           </span>
-         )}
+    <div className="relative overflow-hidden bg-white/80 backdrop-blur-md p-6 rounded-2xl border border-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all duration-300 group">
+      <div className="flex justify-between items-start">
+        <div>
+          <p className="text-sm font-medium text-gray-400 mb-1">{label}</p>
+          <h3 className={`text-2xl font-bold tracking-tight ${color}`}>{value ?? '—'}</h3>
+          {trend && (
+            <div className="flex items-center gap-1 mt-2">
+              <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${trend > 0 ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'}`}>
+                {trend > 0 ? '↑' : '↓'} {Math.abs(trend)}%
+              </span>
+              <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">vs last month</span>
+            </div>
+          )}
+        </div>
+        <div className={`p-3 rounded-xl ${bg} text-white shadow-lg shadow-${color}/20 group-hover:scale-110 transition-transform`}>
+          {icon}
+        </div>
       </div>
-      <div className="relative z-10 space-y-3">
-        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] mb-1 italic leading-none">{label}</p>
-        <p className="text-4xl lg:text-5xl font-black tracking-tighter text-tf-purple group-hover:text-tf-primary transition-colors tabular-nums">{value}</p>
+      <div className="absolute -bottom-2 -right-2 opacity-[0.03] group-hover:opacity-[0.05] transition-opacity">
+        {icon}
       </div>
     </div>
   );
@@ -73,13 +91,38 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {error && <ErrorAlert message={error} />}
-
-      {/* Impact Snapshot */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 px-4">
-        <MetricCard label="Total Impact Portfolio" value={`LKR ${totalDonated.toLocaleString()}`} colorCls="text-tf-primary" trend="Top 10%" icon={<svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>} />
-        <MetricCard label="Active Commitments" value={activePledges} colorCls="text-tf-purple" trend="Stable" icon={<svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>} />
-        <MetricCard label="Global Influence" value="7.4X" colorCls="text-tf-green" trend="Impact Multiplier" icon={<svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>} />
+      {/* Stats */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <StatCard
+          label="Total Donated"
+          value={
+            analytics?.totalDonations != null
+              ? `LKR ${Number(analytics.totalDonations).toLocaleString()}`
+              : null
+          }
+          color="text-[#DC2626]"
+          bg="bg-white"
+        />
+        <PremiumStatCard
+          label="Campaigns Supported"
+          value={analytics?.totalCampaigns ?? null}
+          color="text-emerald-600"
+          bg="bg-emerald-600"
+          icon={<svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>}
+        />
+        <PremiumStatCard
+          label="Active Pledges"
+          value={pledges.length > 0 ? activePledges : null}
+          color="text-[#7C2D12]"
+          bg="bg-white"
+        />
+        <PremiumStatCard
+          label="Total Impact Score"
+          value="98%"
+          color="text-rose-600"
+          bg="bg-rose-600"
+          icon={<svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>}
+        />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
@@ -155,39 +198,59 @@ export default function DashboardPage() {
              <h3 className="text-3xl font-black italic uppercase tracking-tighter text-tf-purple">Impact Reach</h3>
              <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.4em] italic font-sans">Active Donation Interest Areas</p>
           </div>
-
-          <div className="space-y-8 relative z-10">
-            {donorProfile?.preferredCauses?.length > 0 ? (
-              donorProfile.preferredCauses.map(cause => (
-                <div key={cause} className="group/bar cursor-default">
-                  <div className="flex justify-between items-end mb-3 px-2">
-                    <p className="text-[11px] font-black text-tf-purple uppercase tracking-[0.2em] italic group-hover/bar:text-tf-primary transition-colors">#{cause.toUpperCase()}</p>
-                    <span className="text-[10px] font-black tracking-widest text-slate-300 italic">Verified Support Focus</span>
-                  </div>
-                  <div className="h-1.5 bg-slate-50 border border-slate-100 rounded-full overflow-hidden p-0.5">
-                    <div className="h-full bg-tf-purple w-full rounded-full transition-all duration-[1500ms] group-hover/bar:bg-tf-primary group-hover/bar:shadow-[0_0_15px_rgba(255,138,0,0.3)]" />
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div className="py-24 text-center space-y-6">
-                <div className="w-20 h-20 bg-slate-50 rounded-[2.5rem] flex items-center justify-center mx-auto text-slate-200">
-                  <svg className="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
-                </div>
-                <p className="text-[11px] font-black text-slate-300 uppercase tracking-widest italic max-w-sm mx-auto">
-                   Please update your profile to highlight causes that matter most to you.
-                </p>
-                <button onClick={() => navigate('/profile')} className="text-[12px] font-black text-tf-primary uppercase tracking-widest hover:underline underline-offset-8">Update Focus Hub</button>
-              </div>
-            )}
-          </div>
+          <Link to="/pledges" className="text-sm font-bold text-indigo-600 hover:text-indigo-800 transition-colors">
+            Manage All →
+          </Link>
+        </div>
+        
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="text-left text-xs text-gray-400 uppercase tracking-widest font-bold">
+                <th className="pb-4 px-2">Campaign Category</th>
+                <th className="pb-4 px-2">Amount</th>
+                <th className="pb-4 px-2 text-center">Frequency</th>
+                <th className="pb-4 px-2">Status</th>
+                <th className="pb-4 px-2">Next Payment</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-50">
+              {pledges.length > 0 ? pledges.slice(0, 5).map((pledge) => (
+                <tr key={pledge._id} className="group hover:bg-gray-50/50 transition-colors">
+                  <td className="py-4 px-2">
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center text-indigo-600 group-hover:scale-110 transition-transform">
+                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                        </div>
+                        <span className="font-semibold text-gray-700">General Support</span>
+                    </div>
+                  </td>
+                  <td className="py-4 px-2 font-bold text-gray-900">
+                    LKR {Number(pledge.amount).toLocaleString()}
+                  </td>
+                  <td className="py-4 px-2 text-center">
+                    <span className="px-2.5 py-1 bg-gray-100 text-gray-600 text-[10px] uppercase font-black tracking-tighter rounded-md">
+                        {pledge.frequency}
+                    </span>
+                  </td>
+                  <td className="py-4 px-2">
+                    <span className={`px-3 py-1 rounded-lg text-xs font-bold border ${statusBadgeStyle[pledge.status] || 'bg-gray-100 text-gray-600 border-gray-200'}`}>
+                      {pledge.status.toUpperCase()}
+                    </span>
+                  </td>
+                  <td className="py-4 px-2 text-gray-500 text-sm font-medium">
+                    {new Date(pledge.startDate).toLocaleDateString(undefined, {month: 'short', day: 'numeric', year: 'numeric'})}
+                  </td>
+                </tr>
+              )) : (
+                <tr>
+                    <td colSpan="5" className="py-10 text-center text-gray-300 font-medium italic">You haven't made any pledges yet.</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
-
-      <style>{`
-        @keyframes fade-in { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        .animate-fade-in { animation: fade-in 1.2s cubic-bezier(0.16, 1, 0.3, 1) both; }
-      `}</style>
     </div>
   );
 }

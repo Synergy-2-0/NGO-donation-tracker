@@ -64,3 +64,24 @@ export const deletePartner = async (req, res) => {
     res.status(status).json({ message: err.message });
   }
 };
+
+// Get public impact data for a verified partner
+export const getPartnerImpact = async (req, res) => {
+  try {
+    const data = await partnerService.getPartnerImpact(req.params.id);
+    res.json(data);
+  } catch (err) {
+    const status = err.message === 'Partner not found' ? 404 : 500;
+    res.status(status).json({ message: err.message });
+  }
+};
+
+// Get current user's profile
+export const getMyPartnerProfile = async (req, res) => {
+  try {
+    const partner = await partnerService.getPartnerByUserId(req.user.id);
+    res.json(partner);
+  } catch (err) {
+    res.status(404).json({ message: err.message });
+  }
+};

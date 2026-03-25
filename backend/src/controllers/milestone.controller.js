@@ -2,19 +2,29 @@ import milestoneService from '../services/milestone.service.js';
 
 export const createMilestone = async (req, res) => {
   try {
-    const milestone = await milestoneService.createMilestone(req.body);
+    const milestone = await milestoneService.createMilestone(req.body, req.user);
     res.status(201).json(milestone);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    const status =
+      error.message === 'Agreement not found' || error.message === 'Campaign not found' || error.message === 'Milestone not found'
+        ? 404
+        : error.message === 'Unauthorized'
+          ? 403
+          : 400;
+    res.status(status).json({ message: error.message });
   }
 };
 
 export const getMilestones = async (req, res) => {
   try {
-    const milestones = await milestoneService.getMilestones(req.query.agreementId);
+    const milestones = await milestoneService.getMilestones({
+      agreementId: req.query.agreementId,
+      campaignId: req.query.campaignId,
+    });
     res.json(milestones);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    const status = error.message === 'agreementId or campaignId query parameter is required' ? 400 : 500;
+    res.status(status).json({ message: error.message });
   }
 };
 
@@ -29,18 +39,25 @@ export const getMilestone = async (req, res) => {
 
 export const updateMilestone = async (req, res) => {
   try {
-    const milestone = await milestoneService.updateMilestone(req.params.id, req.body);
+    const milestone = await milestoneService.updateMilestone(req.params.id, req.body, req.user);
     res.json(milestone);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    const status =
+      error.message === 'Agreement not found' || error.message === 'Campaign not found' || error.message === 'Milestone not found'
+        ? 404
+        : error.message === 'Unauthorized'
+          ? 403
+          : 400;
+    res.status(status).json({ message: error.message });
   }
 };
 
 export const deleteMilestone = async (req, res) => {
   try {
-    await milestoneService.deleteMilestone(req.params.id);
+    await milestoneService.deleteMilestone(req.params.id, req.user);
     res.status(204).send();
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    const status = error.message === 'Milestone not found' ? 404 : error.message === 'Unauthorized' ? 403 : 400;
+    res.status(status).json({ message: error.message });
   }
 };

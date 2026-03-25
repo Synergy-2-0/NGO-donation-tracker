@@ -2,6 +2,11 @@ import mongoose from "mongoose";
 
 const campaignSchema = new mongoose.Schema(
     {
+        createdBy: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+            required: true,
+        },
         title: {
             type: String,
             required: [true, "Campaign title is required"],
@@ -14,6 +19,11 @@ const campaignSchema = new mongoose.Schema(
             type: String,
             trim: true,
             maxlength: [2000, "Description cannot exceed 2000 characters"]
+        },
+        image: {
+            type: String,
+            default: null,
+            trim: true
         },
         goalAmount: {
             type: Number,
@@ -45,6 +55,33 @@ const campaignSchema = new mongoose.Schema(
             enum: ["draft", "active", "completed", "archived"],
             default: "draft",
         },
+        location: {
+            city: {
+                type: String,
+                trim: true,
+                index: true,
+            },
+            state: {
+                type: String,
+                trim: true,
+                index: true,
+            },
+            country: {
+                type: String,
+                trim: true,
+                default: 'Sri Lanka',
+            },
+            coordinates: {
+                type: {
+                    type: String,
+                    enum: ['Point'],
+                    default: 'Point',
+                },
+                coordinates: {
+                    type: [Number],
+                },
+            },
+        },
         isDeleted: {
             type: Boolean,
             default: false,
@@ -52,5 +89,8 @@ const campaignSchema = new mongoose.Schema(
     },
     { timestamps: true }
 );
+campaignSchema.index({ 'location.coordinates': '2dsphere' });
+
+campaignSchema.index({ 'location.coordinates': '2dsphere' });
 
 export default mongoose.model("Campaign", campaignSchema);

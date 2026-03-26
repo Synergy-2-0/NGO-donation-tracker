@@ -24,14 +24,14 @@ function PledgeModal({ pledge, onClose, onSave, loading }) {
   const [form, setForm] = useState(
     pledge
       ? {
-          amount: pledge.amount ?? '',
-          frequency: pledge.frequency ?? 'one-time',
-          campaignId: pledge.campaign ?? '',
-          notes: pledge.notes ?? '',
-          startDate: pledge.startDate
-            ? new Date(pledge.startDate).toISOString().split('T')[0]
-            : new Date().toISOString().split('T')[0],
-        }
+        amount: pledge.amount ?? '',
+        frequency: pledge.frequency ?? 'one-time',
+        campaignId: pledge.campaign ?? '',
+        notes: pledge.notes ?? '',
+        startDate: pledge.startDate
+          ? new Date(pledge.startDate).toISOString().split('T')[0]
+          : new Date().toISOString().split('T')[0],
+      }
       : defaultForm
   );
 
@@ -54,101 +54,102 @@ function PledgeModal({ pledge, onClose, onSave, loading }) {
     <div className="fixed inset-0 bg-[#0F172A]/80 backdrop-blur-sm flex items-center justify-center z-50 p-6 animate-in fade-in duration-300">
       <div className="bg-white rounded-[32px] shadow-2xl p-10 max-w-md w-full relative overflow-hidden">
         <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 rounded-full blur-3xl -mr-16 -mt-16"></div>
-        
+
         <div className="relative z-10">
-            <h4 className="text-2xl font-black text-gray-800 tracking-tight mb-8 uppercase tracking-widest text-[10px]">
-                {pledge?._id ? 'Modify Commitment' : 'New Impact Pledge'}
-            </h4>
+          <h4 className="text-2xl font-black text-gray-800 tracking-tight mb-8 uppercase tracking-widest text-[10px]">
+            {pledge?._id ? 'Modify Commitment' : 'New Impact Pledge'}
+          </h4>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-xs font-semibold text-[#7C2D12] uppercase tracking-wide mb-1">
-              Amount (LKR)
-            </label>
-            <input
-              type="number"
-              name="amount"
-              value={form.amount}
-              onChange={handleChange}
-              required
-              min="1"
-              className="w-full border border-orange-200 bg-orange-50/40 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent transition"
-            />
-          </div>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="block text-xs font-semibold text-[#7C2D12] uppercase tracking-wide mb-1">
+                Amount (LKR)
+              </label>
+              <input
+                type="number"
+                name="amount"
+                value={form.amount}
+                onChange={handleChange}
+                required
+                min="1"
+                className="w-full border border-orange-200 bg-orange-50/40 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent transition"
+              />
+            </div>
 
-          <div>
-            <label className="block text-xs font-semibold text-[#7C2D12] uppercase tracking-wide mb-1">
-              Frequency
-            </label>
-            <select
-              name="frequency"
-              value={form.frequency}
-              onChange={handleChange}
-              className="w-full border border-orange-200 bg-orange-50/40 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent transition"
-            >
-              {FREQUENCIES.map((f) => (
-                <option key={f} value={f}>
-                  {f.charAt(0).toUpperCase() + f.slice(1)}
-                </option>
-              ))}
-            </select>
-          </div>
+            <div>
+              <label className="block text-xs font-semibold text-[#7C2D12] uppercase tracking-wide mb-1">
+                Frequency
+              </label>
+              <select
+                name="frequency"
+                value={form.frequency}
+                onChange={handleChange}
+                className="w-full border border-orange-200 bg-orange-50/40 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent transition"
+              >
+                {FREQUENCIES.map((f) => (
+                  <option key={f} value={f}>
+                    {f.charAt(0).toUpperCase() + f.slice(1)}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-          <div>
-            <label className="block text-xs font-semibold text-[#7C2D12] uppercase tracking-wide mb-1">
-              Start Date
-            </label>
-            <input
-              type="date"
-              name="startDate"
-              value={form.startDate}
-              onChange={handleChange}
-              className="w-full border border-orange-200 bg-orange-50/40 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent transition"
-            />
-          </div>
+            <div>
+              <label className="block text-xs font-semibold text-[#7C2D12] uppercase tracking-wide mb-1">
+                Start Date
+              </label>
+              <input
+                type="date"
+                name="startDate"
+                value={form.startDate}
+                onChange={handleChange}
+                className="w-full border border-orange-200 bg-orange-50/40 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent transition"
+              />
+            </div>
 
-          <div>
-            <label className="block text-xs font-semibold text-[#7C2D12] uppercase tracking-wide mb-1">
-              Campaign ID{' '}
-              <span className="text-gray-400 text-xs font-normal normal-case">(optional)</span>
-            </label>
-            <input
-              name="campaignId"
-              value={form.campaignId}
-              onChange={handleChange}
-              placeholder="Leave blank for general donation"
-              className="w-full border border-orange-200 bg-orange-50/40 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent transition"
-            />
-          </div>
+            <div>
+              <label className="block text-xs font-semibold text-[#7C2D12] uppercase tracking-wide mb-1">
+                Campaign ID{' '}
+                <span className="text-gray-400 text-xs font-normal normal-case">(optional)</span>
+              </label>
+              <input
+                name="campaignId"
+                value={form.campaignId}
+                onChange={handleChange}
+                placeholder="Leave blank for general donation"
+                className="w-full border border-orange-200 bg-orange-50/40 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent transition"
+              />
+            </div>
 
-          <div>
-            <label className="block text-xs font-semibold text-[#7C2D12] uppercase tracking-wide mb-1">Notes</label>
-            <textarea
-              name="notes"
-              value={form.notes}
-              onChange={handleChange}
-              rows={2}
-              className="w-full border border-orange-200 bg-orange-50/40 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent resize-none transition"
-            />
-          </div>
+            <div>
+              <label className="block text-xs font-semibold text-[#7C2D12] uppercase tracking-wide mb-1">Notes</label>
+              <textarea
+                name="notes"
+                value={form.notes}
+                onChange={handleChange}
+                rows={2}
+                className="w-full border border-orange-200 bg-orange-50/40 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent resize-none transition"
+              />
+            </div>
 
-          <div className="flex gap-3 justify-end pt-2">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 text-sm text-[#7C2D12] border border-orange-200 hover:bg-orange-50 rounded-lg font-medium transition-colors"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={loading}
-              className="px-4 py-2 text-sm text-white bg-[#DC2626] hover:bg-red-700 disabled:opacity-60 rounded-lg font-medium transition-colors"
-            >
-              {loading ? 'Saving...' : 'Save Pledge'}
-            </button>
-          </div>
-        </form>
+            <div className="flex gap-3 justify-end pt-2">
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-4 py-2 text-sm text-[#7C2D12] border border-orange-200 hover:bg-orange-50 rounded-lg font-medium transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={loading}
+                className="px-4 py-2 text-sm text-white bg-[#DC2626] hover:bg-red-700 disabled:opacity-60 rounded-lg font-medium transition-colors"
+              >
+                {loading ? 'Saving...' : 'Save Pledge'}
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );
@@ -254,18 +255,18 @@ export default function PledgesPage() {
 
       {!donorProfile && (
         <div className="bg-indigo-900 rounded-3xl p-10 text-white flex flex-col md:flex-row items-center gap-8 shadow-2xl shadow-indigo-200">
-            <div className="w-20 h-20 bg-white/10 rounded-[24px] flex items-center justify-center shrink-0">
-                <svg className="w-10 h-10 text-indigo-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
-            </div>
-            <div>
-                <h3 className="text-xl font-black mb-2 tracking-tight">Registry Required</h3>
-                <p className="text-indigo-200 text-sm leading-relaxed max-w-lg mb-6">
-                    You must first establish your donor identity in the synergy ecosystem before committing to pledges.
-                </p>
-                <a href="/profile" className="inline-block py-3 px-8 bg-white text-indigo-900 text-[10px] font-black uppercase tracking-[0.2em] rounded-xl hover:scale-105 transition-transform active:scale-95 shadow-lg shadow-black/10">
-                    Create Profile
-                </a>
-            </div>
+          <div className="w-20 h-20 bg-white/10 rounded-[24px] flex items-center justify-center shrink-0">
+            <svg className="w-10 h-10 text-indigo-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+          </div>
+          <div>
+            <h3 className="text-xl font-black mb-2 tracking-tight">Registry Required</h3>
+            <p className="text-indigo-200 text-sm leading-relaxed max-w-lg mb-6">
+              You must first establish your donor identity in the synergy ecosystem before committing to pledges.
+            </p>
+            <a href="/profile" className="inline-block py-3 px-8 bg-white text-indigo-900 text-[10px] font-black uppercase tracking-[0.2em] rounded-xl hover:scale-105 transition-transform active:scale-95 shadow-lg shadow-black/10">
+              Create Profile
+            </a>
+          </div>
         </div>
       )}
 
@@ -303,9 +304,8 @@ export default function PledgesPage() {
                   <td className="px-5 py-3 capitalize text-gray-600">{pledge.frequency}</td>
                   <td className="px-5 py-3">
                     <span
-                      className={`px-2 py-0.5 rounded-full text-xs font-medium ${
-                        statusColor[pledge.status] || 'bg-gray-100 text-gray-600'
-                      }`}
+                      className={`px-2 py-0.5 rounded-full text-xs font-medium ${statusColor[pledge.status] || 'bg-gray-100 text-gray-600'
+                        }`}
                     >
                       {pledge.status}
                     </span>
@@ -333,57 +333,9 @@ export default function PledgesPage() {
                     </div>
                   </td>
                 </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-50">
-                {pledges.map((pledge) => (
-                    <tr key={pledge._id} className="group hover:bg-gray-50/50 transition-colors">
-                        <td className="px-10 py-6">
-                            <div>
-                                <p className="text-lg font-black text-gray-800 tracking-tight">LKR {Number(pledge.amount).toLocaleString()}</p>
-                                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">General Support</p>
-                            </div>
-                        </td>
-                        <td className="px-10 py-6">
-                            <span className="px-3 py-1 bg-gray-100 text-gray-600 text-[10px] font-black uppercase tracking-tighter rounded-md border border-gray-200">
-                                {pledge.frequency}
-                            </span>
-                        </td>
-                        <td className="px-10 py-6">
-                            <span
-                            className={`px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest border ${
-                                statusBadgeStyle[pledge.status] || 'bg-gray-50 text-gray-400 border-gray-100'
-                            }`}
-                            >
-                            {pledge.status}
-                            </span>
-                        </td>
-                        <td className="px-10 py-6">
-                            <p className="text-sm font-bold text-gray-700">{new Date(pledge.startDate).toLocaleDateString(undefined, {month: 'short', day: 'numeric', year: 'numeric'})}</p>
-                            <p className="text-[10px] font-medium text-gray-400 uppercase tracking-widest mt-1">Registry Date</p>
-                        </td>
-                        <td className="px-10 py-6 text-right">
-                            <div className="flex gap-3 justify-end">
-                                <button
-                                    onClick={() => { setEditPledge(pledge); setSuccess(''); setLocalError(''); }}
-                                    className="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center hover:bg-indigo-600 hover:text-white transition-all active:scale-95 shadow-sm border border-indigo-100"
-                                    title="Edit Pledge"
-                                >
-                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
-                                </button>
-                                <button
-                                    onClick={() => setConfirmDelete(pledge._id)}
-                                    className="w-10 h-10 bg-rose-50 text-rose-500 rounded-xl flex items-center justify-center hover:bg-rose-600 hover:text-white transition-all active:scale-95 shadow-sm border border-rose-100"
-                                    title="Delete Pledge"
-                                >
-                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                ))}
-                </tbody>
-            </table>
-          </div>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
 
@@ -409,30 +361,30 @@ export default function PledgesPage() {
         <div className="fixed inset-0 bg-[#0F172A]/80 backdrop-blur-sm flex items-center justify-center z-50 p-6 animate-in fade-in duration-300">
           <div className="bg-white rounded-[32px] shadow-2xl p-10 max-w-sm w-full relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-rose-500/10 rounded-full blur-3xl -mr-16 -mt-16"></div>
-            
+
             <div className="relative z-10 text-center">
-                <div className="w-16 h-16 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-sm border border-rose-100 italic">
-                    <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                </div>
-                <h4 className="text-2xl font-black text-gray-800 tracking-tight mb-4">Terminate Pledge</h4>
-                <p className="text-sm text-gray-400 font-medium leading-relaxed mb-10">
+              <div className="w-16 h-16 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-sm border border-rose-100 italic">
+                <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+              </div>
+              <h4 className="text-2xl font-black text-gray-800 tracking-tight mb-4">Terminate Pledge</h4>
+              <p className="text-sm text-gray-400 font-medium leading-relaxed mb-10">
                 You are about to remove this active commitment from your registry. This action is irreversible.
-                </p>
-                <div className="flex gap-4">
-                    <button
-                        onClick={() => handleDelete(confirmDelete)}
-                        disabled={loading}
-                        className="flex-1 py-4 bg-rose-600 text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-2xl shadow-xl shadow-rose-100 hover:bg-rose-700 transition-all active:scale-95"
-                    >
-                        {loading ? 'Erasing...' : 'Confirm'}
-                    </button>
-                    <button
-                        onClick={() => setConfirmDelete(null)}
-                        className="flex-1 py-4 bg-gray-50 text-gray-400 text-[10px] font-black uppercase tracking-[0.2em] rounded-2xl border border-gray-100 hover:bg-gray-100 transition-all active:scale-95"
-                    >
-                        Abort
-                    </button>
-                </div>
+              </p>
+              <div className="flex gap-4">
+                <button
+                  onClick={() => handleDelete(confirmDelete)}
+                  disabled={loading}
+                  className="flex-1 py-4 bg-rose-600 text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-2xl shadow-xl shadow-rose-100 hover:bg-rose-700 transition-all active:scale-95"
+                >
+                  {loading ? 'Erasing...' : 'Confirm'}
+                </button>
+                <button
+                  onClick={() => setConfirmDelete(null)}
+                  className="flex-1 py-4 bg-gray-50 text-gray-400 text-[10px] font-black uppercase tracking-[0.2em] rounded-2xl border border-gray-100 hover:bg-gray-100 transition-all active:scale-95"
+                >
+                  Abort
+                </button>
+              </div>
             </div>
           </div>
         </div>

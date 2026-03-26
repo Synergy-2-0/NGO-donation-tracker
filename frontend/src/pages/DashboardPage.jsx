@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { 
-  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer 
+import {
+  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
 } from 'recharts';
 import { useAuth } from '../context/AuthContext';
 import { useDonor } from '../context/DonorContext';
@@ -67,11 +67,11 @@ export default function DashboardPage() {
     fetchProfile()
       .then((profile) => {
         if (profile?._id) {
-          fetchAnalytics(profile._id).catch(() => {});
-          fetchPledges(profile._id).catch(() => {});
+          fetchAnalytics(profile._id).catch(() => { });
+          fetchPledges(profile._id).catch(() => { });
         }
       })
-      .catch(() => {});
+      .catch(() => { });
   }, [fetchProfile, fetchAnalytics, fetchPledges]);
 
   if (loading && !donorProfile) return <LoadingSpinner />;
@@ -92,7 +92,7 @@ export default function DashboardPage() {
 
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard
+        <PremiumStatCard
           label="Total Donated"
           value={
             analytics?.totalDonations != null
@@ -151,66 +151,68 @@ export default function DashboardPage() {
 
       {/* Recent Pledges */}
       {pledges.length > 0 && (
-        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-base font-semibold text-gray-700">Recent Pledges</h3>
-            <Link to="/pledges" className="text-sm text-[#DC2626] hover:underline">
-              View all →
+        <>
+          <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-base font-semibold text-gray-700">Recent Pledges</h3>
+              <Link to="/pledges" className="text-sm text-[#DC2626] hover:underline">
+                View all →
+              </Link>
+            </div>
+            <Link to="/pledges" className="text-sm font-bold text-indigo-600 hover:text-indigo-800 transition-colors">
+              Manage All →
             </Link>
           </div>
-          <Link to="/pledges" className="text-sm font-bold text-indigo-600 hover:text-indigo-800 transition-colors">
-            Manage All →
-          </Link>
-        </div>
-        
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="text-left text-xs text-gray-400 uppercase tracking-widest font-bold">
-                <th className="pb-4 px-2">Campaign Category</th>
-                <th className="pb-4 px-2">Amount</th>
-                <th className="pb-4 px-2 text-center">Frequency</th>
-                <th className="pb-4 px-2">Status</th>
-                <th className="pb-4 px-2">Next Payment</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-50">
-              {pledges.length > 0 ? pledges.slice(0, 5).map((pledge) => (
-                <tr key={pledge._id} className="group hover:bg-gray-50/50 transition-colors">
-                  <td className="py-4 px-2">
-                    <div className="flex items-center gap-3">
+
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="text-left text-xs text-gray-400 uppercase tracking-widest font-bold">
+                  <th className="pb-4 px-2">Campaign Category</th>
+                  <th className="pb-4 px-2">Amount</th>
+                  <th className="pb-4 px-2 text-center">Frequency</th>
+                  <th className="pb-4 px-2">Status</th>
+                  <th className="pb-4 px-2">Next Payment</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-50">
+                {pledges.length > 0 ? pledges.slice(0, 5).map((pledge) => (
+                  <tr key={pledge._id} className="group hover:bg-gray-50/50 transition-colors">
+                    <td className="py-4 px-2">
+                      <div className="flex items-center gap-3">
                         <div className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center text-indigo-600 group-hover:scale-110 transition-transform">
-                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
                         </div>
                         <span className="font-semibold text-gray-700">General Support</span>
-                    </div>
-                  </td>
-                  <td className="py-4 px-2 font-bold text-gray-900">
-                    LKR {Number(pledge.amount).toLocaleString()}
-                  </td>
-                  <td className="py-4 px-2 text-center">
-                    <span className="px-2.5 py-1 bg-gray-100 text-gray-600 text-[10px] uppercase font-black tracking-tighter rounded-md">
+                      </div>
+                    </td>
+                    <td className="py-4 px-2 font-bold text-gray-900">
+                      LKR {Number(pledge.amount).toLocaleString()}
+                    </td>
+                    <td className="py-4 px-2 text-center">
+                      <span className="px-2.5 py-1 bg-gray-100 text-gray-600 text-[10px] uppercase font-black tracking-tighter rounded-md">
                         {pledge.frequency}
-                    </span>
-                  </td>
-                  <td className="py-4 px-2">
-                    <span className={`px-3 py-1 rounded-lg text-xs font-bold border ${statusBadgeStyle[pledge.status] || 'bg-gray-100 text-gray-600 border-gray-200'}`}>
-                      {pledge.status.toUpperCase()}
-                    </span>
-                  </td>
-                  <td className="py-4 px-2 text-gray-500 text-sm font-medium">
-                    {new Date(pledge.startDate).toLocaleDateString(undefined, {month: 'short', day: 'numeric', year: 'numeric'})}
-                  </td>
-                </tr>
-              )) : (
-                <tr>
+                      </span>
+                    </td>
+                    <td className="py-4 px-2">
+                      <span className={`px-3 py-1 rounded-lg text-xs font-bold border ${pledgeStatusColor[pledge.status] || 'bg-gray-100 text-gray-600 border-gray-200'}`}>
+                        {pledge.status.toUpperCase()}
+                      </span>
+                    </td>
+                    <td className="py-4 px-2 text-gray-500 text-sm font-medium">
+                      {new Date(pledge.startDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+                    </td>
+                  </tr>
+                )) : (
+                  <tr>
                     <td colSpan="5" className="py-10 text-center text-gray-300 font-medium italic">You haven't made any pledges yet.</td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </>
+      )}
+    </div >
   );
 }

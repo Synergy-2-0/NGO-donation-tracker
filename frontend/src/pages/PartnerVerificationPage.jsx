@@ -1,15 +1,18 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import { usePartner } from '../context/PartnerContext';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ErrorAlert from '../components/ErrorAlert';
 
 export default function PartnerVerificationPage() {
+  const { user } = useAuth();
   const { partners, loading, error, setError, fetchPartners, approvePartner } = usePartner();
   const [success, setSuccess] = useState('');
+  const isAdmin = user?.role === 'admin';
 
   useEffect(() => {
-    fetchPartners().catch(() => {});
+    fetchPartners().catch(() => { });
   }, [fetchPartners]);
 
   const pendingPartners = useMemo(
@@ -80,7 +83,9 @@ export default function PartnerVerificationPage() {
                   <td className="px-5 py-3">
                     <div className="flex gap-3 text-xs font-medium">
                       <Link to={`/partners/${partner._id}`} className="text-blue-600 hover:text-blue-800">Review</Link>
-                      <button onClick={() => onApprove(partner._id)} className="text-emerald-600 hover:text-emerald-800">Approve</button>
+                      {isAdmin && (
+                        <button onClick={() => onApprove(partner._id)} className="text-emerald-600 hover:text-emerald-800">Approve</button>
+                      )}
                     </div>
                   </td>
                 </tr>

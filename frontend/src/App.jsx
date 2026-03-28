@@ -10,6 +10,7 @@ import Layout from './components/Layout';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
 import ProfilePage from './pages/ProfilePage';
+import PartnerProfilePage from './pages/PartnerProfilePage';
 import PledgesPage from './pages/PledgesPage';
 import DonationHistoryPage from './pages/DonationHistoryPage';
 import PartnersPage from './pages/PartnersPage';
@@ -33,8 +34,35 @@ import { useAuth } from './context/AuthContext';
 
 function RoleBasedDashboard() {
   const { user } = useAuth();
-  const isAdmin = user?.role === 'admin' || user?.role === 'ngo-admin';
-  return isAdmin ? <AdminDashboardPage /> : <DashboardPage />;
+  const role = user?.role;
+  if (role === 'admin' || role === 'ngo-admin') return <AdminDashboardPage />;
+  if (role === 'partner') return <FinanceDashboard />;
+  return <DashboardPage />;
+}
+
+function RoleBasedProfile() {
+  const { user } = useAuth();
+  return user?.role === 'partner' ? <PartnerProfilePage /> : <ProfilePage />;
+}
+
+function RoleBasedPledges() {
+  const { user } = useAuth();
+  return user?.role === 'partner' ? <Navigate to="/partner/pledges" replace /> : <PledgesPage />;
+}
+
+function RoleBasedDonations() {
+  const { user } = useAuth();
+  return user?.role === 'partner' ? <TransactionsPage /> : <DonationHistoryPage />;
+}
+
+function RoleBasedFinanceDashboard() {
+  const { user } = useAuth();
+  return user?.role === 'donor' ? <DashboardPage /> : <FinanceDashboard />;
+}
+
+function RoleBasedTransactions() {
+  const { user } = useAuth();
+  return user?.role === 'donor' ? <DonationHistoryPage /> : <TransactionsPage />;
 }
 
 function AdminRoute({ children }) {
@@ -68,9 +96,9 @@ export default function App() {
                   >
                     <Route index element={<Navigate to="dashboard" replace />} />
                     <Route path="dashboard" element={<RoleBasedDashboard />} />
-                    <Route path="profile" element={<ProfilePage />} />
-                    <Route path="pledges" element={<PledgesPage />} />
-                    <Route path="donations" element={<DonationHistoryPage />} />
+                    <Route path="profile" element={<RoleBasedProfile />} />
+                    <Route path="pledges" element={<RoleBasedPledges />} />
+                    <Route path="donations" element={<RoleBasedDonations />} />
 
                     <Route
                       path="partners"
@@ -83,7 +111,7 @@ export default function App() {
                     <Route
                       path="partners/verification"
                       element={
-                        <RoleProtectedRoute roles={['admin']}>
+                        <RoleProtectedRoute roles={['admin', 'ngo-admin', 'partner', 'donor']}>
                           <PartnerVerificationPage />
                         </RoleProtectedRoute>
                       }
@@ -109,16 +137,16 @@ export default function App() {
                     <Route
                       path="finance/dashboard"
                       element={
-                        <RoleProtectedRoute roles={['ngo-admin', 'partner', 'admin']}>
-                          <FinanceDashboard />
+                        <RoleProtectedRoute roles={['ngo-admin', 'partner', 'admin', 'donor']}>
+                          <RoleBasedFinanceDashboard />
                         </RoleProtectedRoute>
                       }
                     />
                     <Route
                       path="finance/transactions"
                       element={
-                        <RoleProtectedRoute roles={['ngo-admin', 'partner', 'admin']}>
-                          <TransactionsPage />
+                        <RoleProtectedRoute roles={['ngo-admin', 'partner', 'admin', 'donor']}>
+                          <RoleBasedTransactions />
                         </RoleProtectedRoute>
                       }
                     />

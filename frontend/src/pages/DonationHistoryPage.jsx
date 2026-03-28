@@ -115,7 +115,7 @@ export default function DonationHistoryPage() {
                   <td className="px-5 py-3 capitalize text-gray-500">{tx.type || '—'}</td>
                   <td className="px-5 py-3">
                     <span
-                      className={`px-2 py-0.5 rounded-full text-xs font-medium ${statusColor[tx.status] || 'bg-gray-100 text-gray-600'
+                      className={`px-2 py-0.5 rounded-full text-xs font-medium ${statusBadgeStyle[tx.status] || 'bg-gray-100 text-gray-600'
                         }`}
                     >
                       {tx.status}

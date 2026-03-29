@@ -5,7 +5,7 @@ import LoadingSpinner from '../components/LoadingSpinner';
 
 const ROLES = [
   { value: 'donor',   label: 'Donor' },
-  { value: 'partner', label: 'Partner' },
+  { value: 'partner', label: 'Apply for Partnership' },
 ];
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

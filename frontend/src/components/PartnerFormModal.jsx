@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import ErrorAlert from './ErrorAlert';
+import { SDG_GOALS } from '../utils/partnerInsights';
 
 const ORG_TYPES = ['corporate', 'foundation', 'government', 'individual'];
 const COMPANY_SIZES = ['small', 'medium', 'large', 'enterprise'];
@@ -28,6 +29,7 @@ const SKILLS = [
 const DOC_TYPES = ['registration', 'tax_clearance', 'csr_policy', 'annual_report'];
 
 const defaultForm = {
+  logoUrl: '',
   organizationName: '',
   organizationType: 'corporate',
   industry: '',
@@ -79,10 +81,19 @@ const splitCsv = (value) =>
     .map((item) => item.trim())
     .filter(Boolean);
 
+const parseSdgGoals = (value) => {
+  const numbers = splitCsv(value)
+    .map((item) => Number(item))
+    .filter((item) => Number.isInteger(item) && item >= 1 && item <= 17);
+
+  return Array.from(new Set(numbers));
+};
+
 function fromPartner(partner) {
   const longitude = partner?.address?.coordinates?.coordinates?.[0];
   const latitude = partner?.address?.coordinates?.coordinates?.[1];
   return {
+    logoUrl: partner?.logoUrl || '',
     organizationName: partner?.organizationName || '',
     organizationType: partner?.organizationType || 'corporate',
     industry: partner?.industry || '',
@@ -139,6 +150,7 @@ function fromPartner(partner) {
 
 function buildPayload(form) {
   const payload = {
+    logoUrl: form.logoUrl,
     organizationName: form.organizationName.trim(),
     organizationType: form.organizationType,
     industry: form.industry.trim(),
@@ -174,7 +186,7 @@ function buildPayload(form) {
     verificationDocuments: form.verificationDocuments.filter((doc) => doc.url.trim()),
   };
 
-  const sdgGoals = splitCsv(form.sdgGoalsText).map((item) => Number(item));
+  const sdgGoals = parseSdgGoals(form.sdgGoalsText);
   if (sdgGoals.length > 0) payload.sdgGoals = sdgGoals;
 
   if (form.capabilities.employeeCount !== '') {
@@ -244,6 +256,7 @@ export default function PartnerFormModal({ partner, loading, onClose, onSave }) 
   }, [partner]);
 
   const title = useMemo(() => (partner?._id ? 'Edit Partner' : 'Create Partner'), [partner]);
+  const selectedSdgs = useMemo(() => parseSdgGoals(form.sdgGoalsText), [form.sdgGoalsText]);
 
   const updateField = (path, value) => {
     setForm((prev) => {
@@ -279,6 +292,15 @@ export default function PartnerFormModal({ partner, loading, onClose, onSave }) 
       docs[index] = { ...docs[index], [key]: value };
       return { ...prev, verificationDocuments: docs };
     });
+  };
+
+  const toggleSdgGoal = (goal) => {
+    const current = parseSdgGoals(form.sdgGoalsText);
+    const next = current.includes(goal)
+      ? current.filter((value) => value !== goal)
+      : [...current, goal].sort((a, b) => a - b);
+
+    updateField(['sdgGoalsText'], next.join(', '));
   };
 
   const addDocument = () => {
@@ -326,6 +348,9 @@ export default function PartnerFormModal({ partner, loading, onClose, onSave }) 
 
           <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <h4 className="md:col-span-2 font-semibold text-gray-700">Organization</h4>
+            <div className="md:col-span-2">
+                <Input label="Logo URL" placeholder="https://example.com/logo.png" value={form.logoUrl} onChange={(value) => updateField(['logoUrl'], value)} />
+            </div>
             <Input label="Organization Name" required value={form.organizationName} onChange={(value) => updateField(['organizationName'], value)} />
             <Select label="Organization Type" value={form.organizationType} onChange={(value) => updateField(['organizationType'], value)} options={ORG_TYPES} />
             <Input label="Industry" required value={form.industry} onChange={(value) => updateField(['industry'], value)} />
@@ -357,6 +382,25 @@ export default function PartnerFormModal({ partner, loading, onClose, onSave }) 
             <h4 className="font-semibold text-gray-700">CSR Focus (required)</h4>
             <CheckboxGrid options={CSR_FOCUS} selected={form.csrFocus} onToggle={(value) => toggleInArray(['csrFocus'], value)} />
             <Input label="SDG Goals (comma-separated, 1-17)" value={form.sdgGoalsText} onChange={(value) => updateField(['sdgGoalsText'], value)} placeholder="1, 4, 8" />
+            <div>
+              <p className="text-sm font-medium text-gray-700 mb-2">Quick SDG Selection</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 max-h-44 overflow-y-auto pr-2">
+                {SDG_GOALS.map((goal) => {
+                  const checked = selectedSdgs.includes(goal.id);
+                  return (
+                    <button
+                      key={goal.id}
+                      type="button"
+                      onClick={() => toggleSdgGoal(goal.id)}
+                      className={`text-left text-xs rounded-md px-3 py-2 border transition ${checked ? 'bg-indigo-50 text-indigo-700 border-indigo-200' : 'bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100'}`}
+                    >
+                      <span className="font-semibold">SDG {goal.id}</span>
+                      <span className="block text-[11px]">{goal.title}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
           </section>
 
           <section className="grid grid-cols-1 md:grid-cols-2 gap-4">

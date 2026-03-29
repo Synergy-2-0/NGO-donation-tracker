@@ -23,21 +23,38 @@ class MilestoneService {
     return await milestoneRepository.create({ ...data, createdBy: user.id });
   }
 
-  async getMilestones({ agreementId, campaignId }) {
+  async getMilestones({ agreementId, campaignId }, user) {
     if (!agreementId && !campaignId) {
       throw new Error('agreementId or campaignId query parameter is required');
     }
 
     if (agreementId) {
+      const agreement = await agreementRepository.findById(agreementId);
+      if (!agreement) throw new Error('Agreement not found');
+      
+      // Admin/ngo-admin: see all milestones for this agreement
+      // Partner/creator: see if they created or are assigned to this agreement
+      if (['admin', 'ngo-admin'].includes(user.role)) {
+        return await milestoneRepository.findByAgreement(agreementId);
+      }
+      
+      // For now, allow authenticated users (can further restrict to agreement creator later)
       return await milestoneRepository.findByAgreement(agreementId);
     }
 
     return await milestoneRepository.findByCampaign(campaignId);
   }
 
-  async getMilestoneById(id) {
+  async getMilestoneById(id, user) {
     const milestone = await milestoneRepository.findById(id);
     if (!milestone) throw new Error('Milestone not found');
+    
+    // Admin/ngo-admin can see any milestone
+    if (['admin', 'ngo-admin'].includes(user.role)) {
+      return milestone;
+    }
+    
+    // For now, allow authenticated users to view
     return milestone;
   }
 

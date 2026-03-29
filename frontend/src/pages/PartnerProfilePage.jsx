@@ -40,12 +40,20 @@ export default function PartnerProfilePage() {
                     <p className="text-sm text-gray-500 mt-1">Manage your organization details and verification status.</p>
                 </div>
                 {partner && (
-                    <Link
-                        to={`/partners/${partner._id}`}
-                        className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-semibold hover:bg-indigo-700"
-                    >
-                        Open Full Profile
-                    </Link>
+                    <div className="flex gap-2">
+                        <Link
+                            to="/partner/agreements"
+                            className="px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-semibold hover:bg-emerald-700"
+                        >
+                            Partnership Ops
+                        </Link>
+                        <Link
+                            to={`/partners/${partner._id}`}
+                            className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-semibold hover:bg-indigo-700"
+                        >
+                            Open Full Profile
+                        </Link>
+                    </div>
                 )}
             </div>
 

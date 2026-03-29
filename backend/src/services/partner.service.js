@@ -34,7 +34,7 @@ class PartnerService {
     const partner = await partnerRepository.findById(id);
     if (!partner) throw new Error('Partner not found');
     
-    if (user.role !== 'admin' && partner.userId.toString() !== user.id && partner.verificationStatus !== 'verified') {
+    if (user.role !== 'admin' && user.role !== 'ngo-admin' && partner.userId.toString() !== user.id && partner.verificationStatus !== 'verified') {
       throw new Error('Unauthorized');
     }
     return partner;
@@ -45,7 +45,7 @@ class PartnerService {
     const partner = await partnerRepository.findById(id);
     if (!partner) throw new Error('Partner not found');
     
-    if (user.role !== 'admin' && partner.userId.toString() !== user.id) {
+    if (user.role !== 'admin' && user.role !== 'ngo-admin' && partner.userId.toString() !== user.id) {
       throw new Error('Unauthorized');
     }
 
@@ -83,7 +83,7 @@ class PartnerService {
     const partner = await partnerRepository.findById(id);
     if (!partner) throw new Error('Partner not found');
     
-    if (user.role !== 'admin' && partner.userId.toString() !== user.id) {
+    if (user.role !== 'admin' && user.role !== 'ngo-admin' && partner.userId.toString() !== user.id) {
       throw new Error('Unauthorized');
     }
     return await partnerRepository.softDelete(id);

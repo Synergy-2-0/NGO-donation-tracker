@@ -69,10 +69,10 @@ export default function AdminDashboardPage() {
             {/* Header */}
             <div>
                 <h2 className="text-2xl font-bold text-gray-800">
-                    Welcome, {user?.name || 'Admin'} 👋
+                    {user?.role === 'ngo-admin' ? 'NGO Admin Dashboard' : 'Admin Dashboard'}
                 </h2>
                 <p className="text-gray-500 text-sm mt-1">
-                    Platform overview and donor management summary.
+                    {user?.role === 'ngo-admin' ? 'NGO operations overview and campaign management.' : 'Platform overview and donor management summary.'}
                 </p>
             </div>
 

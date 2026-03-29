@@ -12,8 +12,8 @@ import {
 const router = express.Router();
 
 router.post('/', authenticate, authorizeRoles('admin', 'ngo-admin'), validateRequest(createMilestoneSchema), ctrl.createMilestone);
-router.get('/', authenticate, validateRequest(milestoneQuerySchema, 'query'), ctrl.getMilestones);
-router.get('/:id', authenticate, ctrl.getMilestone);
+router.get('/', authenticate, authorizeRoles('admin', 'ngo-admin', 'partner'), validateRequest(milestoneQuerySchema, 'query'), ctrl.getMilestones);
+router.get('/:id', authenticate, authorizeRoles('admin', 'ngo-admin', 'partner'), ctrl.getMilestone);
 router.put('/:id', authenticate, authorizeRoles('admin', 'ngo-admin'), validateRequest(updateMilestoneSchema), ctrl.updateMilestone);
 router.delete('/:id', authenticate, authorizeRoles('admin', 'ngo-admin'), ctrl.deleteMilestone);
 

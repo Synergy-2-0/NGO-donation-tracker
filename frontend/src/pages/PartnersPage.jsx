@@ -5,6 +5,7 @@ import { usePartner } from '../context/PartnerContext';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ErrorAlert from '../components/ErrorAlert';
 import PartnerFormModal from '../components/PartnerFormModal';
+import { SDG_GOALS, calculatePartnerReadiness, formatSdgLabel, getReadinessTier } from '../utils/partnerInsights';
 
 const pageSizeOptions = [5, 10, 20];
 
@@ -46,6 +47,9 @@ export default function PartnersPage() {
   const [statusFilter, setStatusFilter] = useState('all');
   const [verificationFilter, setVerificationFilter] = useState('all');
   const [orgTypeFilter, setOrgTypeFilter] = useState('all');
+  const [sdgFilter, setSdgFilter] = useState('all');
+  const [partnershipTypeFilter, setPartnershipTypeFilter] = useState('all');
+  const [readinessFilter, setReadinessFilter] = useState('all');
   const [sortBy, setSortBy] = useState('newest');
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -56,6 +60,8 @@ export default function PartnersPage() {
 
   const canCreate = user?.role === 'partner';
   const isAdmin = user?.role === 'admin';
+  const isNgoAdmin = user?.role === 'ngo-admin';
+  const canModerate = isAdmin || isNgoAdmin;
 
   useEffect(() => {
     fetchPartners().catch(() => {});
@@ -63,7 +69,7 @@ export default function PartnersPage() {
 
   useEffect(() => {
     setPage(1);
-  }, [search, statusFilter, verificationFilter, orgTypeFilter, sortBy, pageSize]);
+  }, [search, statusFilter, verificationFilter, orgTypeFilter, sdgFilter, partnershipTypeFilter, readinessFilter, sortBy, pageSize]);
 
   const filtered = useMemo(() => {
     const keyword = search.trim().toLowerCase();
@@ -72,6 +78,11 @@ export default function PartnersPage() {
       if (statusFilter !== 'all' && partner.status !== statusFilter) return false;
       if (verificationFilter !== 'all' && partner.verificationStatus !== verificationFilter) return false;
       if (orgTypeFilter !== 'all' && partner.organizationType !== orgTypeFilter) return false;
+      if (sdgFilter !== 'all' && !(partner.sdgGoals || []).includes(Number(sdgFilter))) return false;
+      if (partnershipTypeFilter !== 'all' && !(partner.partnershipPreferences?.partnershipTypes || []).includes(partnershipTypeFilter)) return false;
+
+      const readinessTier = getReadinessTier(calculatePartnerReadiness(partner));
+      if (readinessFilter !== 'all' && readinessTier !== readinessFilter) return false;
 
       if (!keyword) return true;
       const haystack = [
@@ -96,12 +107,20 @@ export default function PartnersPage() {
     });
 
     return rows;
-  }, [partners, search, statusFilter, verificationFilter, orgTypeFilter, sortBy]);
+  }, [partners, search, statusFilter, verificationFilter, orgTypeFilter, sdgFilter, partnershipTypeFilter, readinessFilter, sortBy]);
+
+  const partnerTypeOptions = useMemo(() => {
+    const values = new Set();
+    partners.forEach((partner) => {
+      (partner.partnershipPreferences?.partnershipTypes || []).forEach((item) => values.add(item));
+    });
+    return Array.from(values);
+  }, [partners]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
   const pagedPartners = filtered.slice((page - 1) * pageSize, page * pageSize);
 
-  const canMutatePartner = (partner) => isAdmin || String(partner.userId) === String(user?.id);
+  const canMutatePartner = (partner) => canModerate || String(partner.userId) === String(user?.id);
 
   const onCreate = async (payload) => {
     try {
@@ -163,7 +182,7 @@ export default function PartnersPage() {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          {isAdmin && (
+          {canModerate && (
             <Link
               to="/partners/verification"
               className="px-5 py-2.5 bg-amber-50 text-amber-700 hover:bg-amber-600 hover:text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border border-amber-100 shadow-sm"
@@ -200,7 +219,7 @@ export default function PartnersPage() {
 
       {/* Filters & Control Hub */}
       <div className="bg-white/80 backdrop-blur-md rounded-[32px] border border-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-8 space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-8 gap-4">
            <div className="lg:col-span-2 relative">
                 <input
                     value={search}
@@ -231,6 +250,27 @@ export default function PartnersPage() {
             <option value="foundation">Foundation</option>
             <option value="government">Public Sector</option>
             <option value="individual">Direct Member</option>
+          </select>
+
+          <select value={sdgFilter} onChange={(e) => setSdgFilter(e.target.value)} className="bg-gray-50/50 border border-gray-100 rounded-2xl px-4 py-4 text-[10px] font-black uppercase tracking-widest focus:outline-none focus:ring-2 focus:ring-indigo-500/10">
+            <option value="all">All SDGs</option>
+            {SDG_GOALS.map((goal) => (
+              <option key={goal.id} value={goal.id}>{`SDG ${goal.id}`}</option>
+            ))}
+          </select>
+
+          <select value={partnershipTypeFilter} onChange={(e) => setPartnershipTypeFilter(e.target.value)} className="bg-gray-50/50 border border-gray-100 rounded-2xl px-4 py-4 text-[10px] font-black uppercase tracking-widest focus:outline-none focus:ring-2 focus:ring-indigo-500/10">
+            <option value="all">All Partnerships</option>
+            {partnerTypeOptions.map((type) => (
+              <option key={type} value={type}>{toTitle(type)}</option>
+            ))}
+          </select>
+
+          <select value={readinessFilter} onChange={(e) => setReadinessFilter(e.target.value)} className="bg-gray-50/50 border border-gray-100 rounded-2xl px-4 py-4 text-[10px] font-black uppercase tracking-widest focus:outline-none focus:ring-2 focus:ring-indigo-500/10">
+            <option value="all">All Readiness</option>
+            <option value="high">High Readiness</option>
+            <option value="medium">Medium Readiness</option>
+            <option value="low">Early Readiness</option>
           </select>
         </div>
 
@@ -276,22 +316,60 @@ export default function PartnersPage() {
                   <th className="px-10 py-6">Identity Registry</th>
                   <th className="px-10 py-6">Structural Type</th>
                   <th className="px-10 py-6">Direct Contact</th>
+                  <th className="px-10 py-6">SDG Alignment</th>
                   <th className="px-10 py-6">Liquidity Capability</th>
                   <th className="px-10 py-6">Operational Status</th>
+                  <th className="px-10 py-6">Readiness</th>
                   <th className="px-10 py-6 text-right">Strategic Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
                 {pagedPartners.map((partner) => (
+                  (() => {
+                    const readiness = calculatePartnerReadiness(partner);
+                    const readinessTier = getReadinessTier(readiness);
+                    const readinessStyle = readinessTier === 'high'
+                      ? 'bg-emerald-50 text-emerald-700 border-emerald-100'
+                      : readinessTier === 'medium'
+                        ? 'bg-amber-50 text-amber-700 border-amber-100'
+                        : 'bg-rose-50 text-rose-700 border-rose-100';
+
+                    return (
                   <tr key={partner._id} className="group hover:bg-gray-50/50 transition-colors">
                     <td className="px-10 py-6">
-                      <div className="font-black text-gray-800 tracking-tight text-sm mb-1 group-hover:text-indigo-600 transition-colors uppercase">{partner.organizationName}</div>
-                      <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{partner.industry || 'Legacy Industry'} &bull; {partner.address?.city || 'Global Hub'}</div>
+                      <div className="flex items-center gap-4">
+                        {partner.logoUrl ? (
+                          <img src={partner.logoUrl} alt={partner.organizationName} className="w-12 h-12 rounded-xl object-contain border border-gray-100 shadow-sm bg-white" />
+                        ) : (
+                          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-50 to-blue-50 text-indigo-600 font-black text-xl flex items-center justify-center border border-indigo-100 shadow-sm">
+                            {partner.organizationName?.charAt(0).toUpperCase()}
+                          </div>
+                        )}
+                        <div>
+                          <div className="font-black text-gray-800 tracking-tight text-sm mb-1 group-hover:text-indigo-600 transition-colors uppercase">{partner.organizationName}</div>
+                          <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{partner.industry || 'Legacy Industry'} &bull; {partner.address?.city || 'Global Hub'}</div>
+                        </div>
+                      </div>
                     </td>
                     <td className="px-10 py-6 capitalize text-xs font-bold text-gray-700">{toTitle(partner.organizationType || 'Individual')}</td>
                     <td className="px-10 py-6">
                       <div className="text-sm font-bold text-gray-800">{partner.contactPerson?.name || '—'}</div>
                       <div className="text-[10px] font-medium text-gray-400 truncate max-w-[150px]">{partner.contactPerson?.email || '—'}</div>
+                    </td>
+                    <td className="px-10 py-6">
+                      <div className="flex flex-col gap-1">
+                        {(partner.sdgGoals || []).slice(0, 2).map((goal) => (
+                          <span key={`${partner._id}-sdg-${goal}`} className="text-[10px] font-bold text-indigo-600 uppercase tracking-wider">
+                            {formatSdgLabel(goal)}
+                          </span>
+                        ))}
+                        {(partner.sdgGoals || []).length > 2 && (
+                          <span className="text-[10px] font-medium text-gray-400">+{(partner.sdgGoals || []).length - 2} more</span>
+                        )}
+                        {(partner.sdgGoals || []).length === 0 && (
+                          <span className="text-[10px] font-medium text-gray-400">No SDGs mapped</span>
+                        )}
+                      </div>
                     </td>
                     <td className="px-10 py-6">
                        <p className="text-xs font-black text-indigo-600 tracking-tighter">LKR {Number(partner.partnershipPreferences?.budgetRange?.min || 0).toLocaleString()} - {Number(partner.partnershipPreferences?.budgetRange?.max || 0).toLocaleString()}</p>
@@ -307,12 +385,19 @@ export default function PartnersPage() {
                         </span>
                       </div>
                     </td>
+                    <td className="px-10 py-6">
+                      <div className="flex flex-col gap-2">
+                        <span className={`px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest border w-fit ${readinessStyle}`}>
+                          {readiness}%
+                        </span>
+                      </div>
+                    </td>
                     <td className="px-10 py-6 text-right">
                       <div className="flex flex-wrap gap-2 justify-end">
                         <Link to={`/partners/${partner._id}`} className="px-4 py-1.5 bg-indigo-50 text-indigo-600 rounded-lg text-[10px] font-black uppercase tracking-widest border border-indigo-100 hover:bg-indigo-600 hover:text-white transition-all active:scale-95 shadow-sm">Audit View</Link>
                         <Link to={`/partners/${partner._id}/impact`} className="px-4 py-1.5 bg-emerald-50 text-emerald-600 rounded-lg text-[10px] font-black uppercase tracking-widest border border-emerald-100 hover:bg-emerald-600 hover:text-white transition-all active:scale-95 shadow-sm">Impact Profile</Link>
                         
-                        {(canMutatePartner(partner) || isAdmin) && (
+                        {(canMutatePartner(partner) || canModerate) && (
                             <div className="flex gap-2">
                                 <button
                                     onClick={() => setEditingPartner(partner)}
@@ -330,7 +415,7 @@ export default function PartnersPage() {
                                 </button>
                             </div>
                         )}
-                        {isAdmin && partner.verificationStatus === 'pending' && (
+                        {canModerate && partner.verificationStatus === 'pending' && (
                           <button
                             onClick={() => onApprove(partner._id)}
                             className="px-4 py-1.5 bg-indigo-900 text-white rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-black transition-all active:scale-95 shadow-lg"
@@ -341,6 +426,8 @@ export default function PartnersPage() {
                       </div>
                     </td>
                   </tr>
+                    );
+                  })()
                 ))}
               </tbody>
             </table>

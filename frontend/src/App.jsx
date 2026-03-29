@@ -20,22 +20,32 @@ import PartnerVerificationPage from './pages/PartnerVerificationPage';
 import FinanceDashboard from './pages/FinanceDashboard';
 import TransactionsPage from './pages/TransactionsPage';
 import HomePage from './pages/HomePage';
+import PartnerAgreementsPage from './pages/PartnerAgreementsPage';
+import AgreementMilestonesPage from './pages/AgreementMilestonesPage';
+import CampaignMarketplacePage from './pages/CampaignMarketplacePage';
 
 import AdminDonorListPage from './pages/admin/AdminDonorListPage';
 import AdminDonorProfilePage from './pages/admin/AdminDonorProfilePage';
 import AdminDonorPledgesPage from './pages/admin/AdminDonorPledgesPage';
 import AdminDonorAnalyticsPage from './pages/admin/AdminDonorAnalyticsPage';
 import AdminDashboardPage from './pages/admin/AdminDashboardPage';
+import NgoAdminDashboardPage from './pages/admin/NgoAdminDashboardPage';
 import CampaignDashboardPage from './pages/admin/CampaignDashboardPage';
 import { AdminCampaignProvider } from './context/AdminCampaignContext';
 import CreateCampaignPage from './pages/admin/campaign/CreateCampaignPage';
 import CampaignDetailPage from './pages/admin/campaign/CampaignDetailPage';
 import { useAuth } from './context/AuthContext';
+import { PartnerOperationsProvider } from './context/PartnerOperationsContext';
+import PartnerOnboardingGuard from './components/PartnerOnboardingGuard';
+import PartnerOnboardingPage from './pages/PartnerOnboardingPage';
+
+import PartnerPendingApprovalPage from './pages/PartnerPendingApprovalPage';
 
 function RoleBasedDashboard() {
   const { user } = useAuth();
   const role = user?.role;
-  if (role === 'admin' || role === 'ngo-admin') return <AdminDashboardPage />;
+  if (role === 'admin') return <AdminDashboardPage />;
+  if (role === 'ngo-admin') return <AdminCampaignProvider><NgoAdminDashboardPage /></AdminCampaignProvider>;
   if (role === 'partner') return <FinanceDashboard />;
   return <DashboardPage />;
 }
@@ -77,20 +87,41 @@ export default function App() {
     <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <AuthProvider>
         <FinanceProvider>
-          <DonorProvider>
-            <PartnerProvider>
-              <AdminDonorProvider>
-                <Routes>
+          <PartnerOperationsProvider>
+            <DonorProvider>
+              <PartnerProvider>
+                <AdminDonorProvider>
+                  <Routes>
                   {/* Public Routes */}
                   <Route path="/" element={<HomePage />} />
                   <Route path="/login" element={<LoginPage />} />
+
+                  {/* Partner Onboarding (No Layout) */}
+                  <Route 
+                    path="/onboarding/partner" 
+                    element={
+                      <ProtectedRoute>
+                        <PartnerOnboardingPage />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route 
+                    path="/partner/pending-approval" 
+                    element={
+                      <ProtectedRoute>
+                        <PartnerPendingApprovalPage />
+                      </ProtectedRoute>
+                    } 
+                  />
 
                   {/* Dashboard / Protected Routes */}
                   <Route
                     path="/*"
                     element={
                       <ProtectedRoute>
-                        <Layout />
+                        <PartnerOnboardingGuard>
+                          <Layout />
+                        </PartnerOnboardingGuard>
                       </ProtectedRoute>
                     }
                   >
@@ -99,6 +130,8 @@ export default function App() {
                     <Route path="profile" element={<RoleBasedProfile />} />
                     <Route path="pledges" element={<RoleBasedPledges />} />
                     <Route path="donations" element={<RoleBasedDonations />} />
+                    
+                    <Route path="marketplace" element={<CampaignMarketplacePage />} />
 
                     <Route
                       path="partners"
@@ -151,6 +184,23 @@ export default function App() {
                       }
                     />
 
+                    <Route
+                      path="partner/agreements"
+                      element={
+                        <RoleProtectedRoute roles={['partner', 'admin', 'ngo-admin']}>
+                          <PartnerAgreementsPage />
+                        </RoleProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="partner/agreements/:id/milestones"
+                      element={
+                        <RoleProtectedRoute roles={['partner', 'admin', 'ngo-admin']}>
+                          <AgreementMilestonesPage />
+                        </RoleProtectedRoute>
+                      }
+                    />
+
                     {/* Admin donor routes */}
                     <Route path="admin/donors" element={<AdminRoute><AdminDonorListPage /></AdminRoute>} />
                     <Route path="admin/donors/pledges" element={<AdminRoute><AdminDonorPledgesPage /></AdminRoute>} />
@@ -173,10 +223,11 @@ export default function App() {
                   </Route>
 
                   <Route path="*" element={<Navigate to="/" replace />} />
-                </Routes>
-              </AdminDonorProvider>
-            </PartnerProvider>
-          </DonorProvider>
+                  </Routes>
+                </AdminDonorProvider>
+              </PartnerProvider>
+            </DonorProvider>
+          </PartnerOperationsProvider>
         </FinanceProvider>
       </AuthProvider>
     </BrowserRouter>

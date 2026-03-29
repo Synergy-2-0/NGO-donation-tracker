@@ -5,6 +5,7 @@ import { usePartner } from '../context/PartnerContext';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ErrorAlert from '../components/ErrorAlert';
 import PartnerFormModal from '../components/PartnerFormModal';
+import { calculatePartnerReadiness, formatSdgLabel, getReadinessLabel } from '../utils/partnerInsights';
 
 const badgeColor = {
   verified: 'bg-emerald-100 text-emerald-700',
@@ -31,6 +32,8 @@ export default function PartnerDetailsPage() {
   const [editing, setEditing] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
   const [success, setSuccess] = useState('');
+  const readinessScore = useMemo(() => calculatePartnerReadiness(currentPartner), [currentPartner]);
+  const readinessLabel = useMemo(() => getReadinessLabel(readinessScore), [readinessScore]);
 
   useEffect(() => {
     fetchPartnerById(id).catch(() => {});
@@ -38,7 +41,7 @@ export default function PartnerDetailsPage() {
 
   const canMutate = useMemo(() => {
     if (!currentPartner) return false;
-    return user?.role === 'admin' || String(currentPartner.userId) === String(user?.id);
+    return user?.role === 'admin' || user?.role === 'ngo-admin' || String(currentPartner.userId) === String(user?.id);
   }, [currentPartner, user]);
 
   const onUpdate = async (payload) => {
@@ -86,20 +89,26 @@ export default function PartnerDetailsPage() {
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-800">{currentPartner.organizationName}</h2>
-          <p className="text-sm text-gray-500 mt-1">{toTitle(currentPartner.organizationType)} • {currentPartner.industry}</p>
-          <div className="mt-2 flex gap-2">
-            <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${badgeColor[currentPartner.verificationStatus] || 'bg-gray-100 text-gray-700'}`}>
-              {toTitle(currentPartner.verificationStatus)}
-            </span>
-            <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
-              {toTitle(currentPartner.status)}
-            </span>
+        <div className="flex items-center gap-4">
+          {currentPartner.logoUrl && (
+              <img src={currentPartner.logoUrl} alt="Logo" className="w-16 h-16 rounded-xl object-cover bg-white border border-gray-200 shadow-sm" />
+          )}
+          <div>
+            <h2 className="text-2xl font-bold text-gray-800">{currentPartner.organizationName}</h2>
+            <p className="text-sm text-gray-500 mt-1">{toTitle(currentPartner.organizationType)} • {currentPartner.industry}</p>
+            <div className="mt-2 flex gap-2">
+              <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${badgeColor[currentPartner.verificationStatus] || 'bg-gray-100 text-gray-700'}`}>
+                {toTitle(currentPartner.verificationStatus)}
+              </span>
+              <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
+                {toTitle(currentPartner.status)}
+              </span>
+            </div>
           </div>
         </div>
         <div className="flex flex-wrap gap-2">
           <Link to="/partners" className="px-3 py-2 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg">Back</Link>
+          <Link to="/partner/agreements" className="px-3 py-2 text-sm bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-lg">Agreements</Link>
           <Link to={`/partners/${id}/impact`} className="px-3 py-2 text-sm bg-indigo-50 text-indigo-700 hover:bg-indigo-100 rounded-lg">Impact</Link>
           {canMutate && (
             <button onClick={() => setEditing(true)} className="px-3 py-2 text-sm bg-amber-50 text-amber-700 hover:bg-amber-100 rounded-lg">
@@ -111,7 +120,7 @@ export default function PartnerDetailsPage() {
               Delete
             </button>
           )}
-          {user?.role === 'admin' && currentPartner.verificationStatus === 'pending' && (
+          {(user?.role === 'admin' || user?.role === 'ngo-admin') && currentPartner.verificationStatus === 'pending' && (
             <button onClick={onApprove} className="px-3 py-2 text-sm bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-lg">
               Approve
             </button>
@@ -167,7 +176,7 @@ export default function PartnerDetailsPage() {
           <TagList values={currentPartner.csrFocus || []} />
           <div className="mt-3">
             <p className="text-xs text-gray-500 mb-1">SDG Goals</p>
-            <TagList values={(currentPartner.sdgGoals || []).map((goal) => `SDG ${goal}`)} />
+            <TagList values={(currentPartner.sdgGoals || []).map((goal) => formatSdgLabel(goal))} />
           </div>
         </Section>
 
@@ -203,6 +212,14 @@ export default function PartnerDetailsPage() {
           <Info label="Active Partnerships" value={currentPartner.partnershipHistory?.activePartnerships ?? 0} />
           <Info label="Completed Partnerships" value={currentPartner.partnershipHistory?.completedPartnerships ?? 0} />
           <Info label="Total Contributed" value={numberText(currentPartner.partnershipHistory?.totalContributed)} />
+        </Section>
+
+        <Section title="Readiness Insight">
+          <Info label="Readiness Score" value={`${readinessScore}%`} />
+          <Info label="Readiness Tier" value={readinessLabel} />
+          <p className="text-xs text-gray-500 mt-2">
+            Score considers verification quality, contact completeness, SDG mapping, and contribution signals for partnership suitability.
+          </p>
         </Section>
       </div>
 

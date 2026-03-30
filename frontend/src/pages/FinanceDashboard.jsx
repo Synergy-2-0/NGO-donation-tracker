@@ -3,22 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { useFinance } from '../context/FinanceContext';
 import api from '../api/axios';
 import LoadingSpinner from '../components/LoadingSpinner';
-
-function PremiumStatCard({ label, value, color, icon, bg }) {
-  return (
-    <div className="bg-white/80 backdrop-blur-md p-8 rounded-[32px] border border-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] group hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all">
-      <div className="flex justify-between items-start">
-        <div>
-          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-2">{label}</p>
-          <h3 className={`text-2xl font-black tracking-tight ${color}`}>{value ?? '—'}</h3>
-        </div>
-        <div className={`p-3 rounded-2xl ${bg} text-white shadow-lg group-hover:rotate-6 transition-transform`}>
-          {icon}
-        </div>
-      </div>
-    </div>
-  );
-}
+import { motion } from 'framer-motion';
 
 export default function FinanceDashboard() {
   const { user } = useAuth();
@@ -37,104 +22,171 @@ export default function FinanceDashboard() {
   if (loading && !summary) return <LoadingSpinner />;
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8 pb-10 font-sans">
-      {/* Header */}
-      <div>
-        <h2 className="text-3xl font-extrabold text-[#1E293B] tracking-tight">
-          Financial <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">Treasury</span>
-        </h2>
-        <p className="text-gray-400 font-bold text-xs uppercase tracking-widest mt-1">
-          {ngoProfile?.organizationName || 'Strategic Partner'} &bull; Real-time liquidity & allocation tracking.
-        </p>
-      </div>
+    <div className="space-y-12 pb-24 font-sans selection:bg-tf-primary selection:text-white max-w-7xl mx-auto">
+      
+      {/* Tactical Treasury Header */}
+      <section className="bg-slate-950 rounded-[3.5rem] p-16 text-white relative overflow-hidden shadow-2xl border border-white/5">
+        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-tf-primary/10 blur-[150px] -mr-60 -mt-60 animate-pulse pointer-events-none" />
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-12">
+          <div className="space-y-6">
+            <div className="space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,1)] animate-bounce" />
+                <p className="text-[10px] font-black text-white/30 uppercase tracking-[0.5em] leading-none italic">Institutional Liquidity Registry</p>
+              </div>
+              <h2 className="text-4xl md:text-5xl font-black tracking-tighter leading-none lowercase italic text-stroke-white opacity-90">
+                Capital <span className="text-tf-primary font-black uppercase-none tracking-normal not-italic">Treasury.</span>
+              </h2>
+            </div>
+            <div className="flex items-center gap-6">
+              <div className="px-6 py-2 bg-white/5 border border-white/10 rounded-full flex items-center gap-3">
+                <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
+                <p className="text-[10px] font-black text-white/60 uppercase tracking-widest">{ngoProfile?.organizationName || 'Synergy Partner Registry'}</p>
+              </div>
+              <span className="w-px h-6 bg-white/10" />
+              <p className="text-sm text-white/40 font-medium italic">Verified Liquidity & Allocation Monitoring</p>
+            </div>
+          </div>
+        </div>
+      </section>
 
+      {/* Exception Notification Hub */}
       {error && (
-        <div className="bg-rose-50 border border-rose-100 text-rose-700 px-6 py-4 rounded-2xl text-sm font-bold shadow-sm">
-          {error}
+        <div className="flex items-center gap-4 px-10 py-6 bg-rose-50 border border-rose-100 rounded-[2rem] shadow-sm">
+          <div className="w-10 h-10 bg-rose-500/10 rounded-full flex items-center justify-center shrink-0">
+            <svg className="w-5 h-5 text-rose-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+          </div>
+          <div className="space-y-1">
+            <p className="text-[10px] font-black text-rose-400 uppercase tracking-widest leading-none italic">Treasury Alert</p>
+            <p className="text-[13px] text-rose-700 font-bold tracking-tight italic">{error}</p>
+          </div>
         </div>
       )}
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <PremiumStatCard
-          label="Gross Cumulative Income"
-          value={summary?.totalIncome ? `LKR ${Number(summary.totalIncome).toLocaleString()}` : 'LKR 0'}
-          color="text-emerald-600"
-          bg="bg-emerald-600 shadow-emerald-100"
-          icon={<svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>}
-        />
-        <PremiumStatCard
-          label="Total Allocated Funds"
-          value={summary?.totalAllocated ? `LKR ${Number(summary.totalAllocated).toLocaleString()}` : 'LKR 0'}
-          color="text-indigo-600"
-          bg="bg-indigo-600 shadow-indigo-100"
-          icon={<svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>}
-        />
-        <PremiumStatCard
-          label="Net Treasury Balance"
-          value={summary ? `LKR ${(Number(summary.totalIncome || 0) - Number(summary.totalAllocated || 0)).toLocaleString()}` : 'LKR 0'}
-          color="text-slate-800"
-          bg="bg-slate-800 shadow-slate-200"
-          icon={<svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>}
-        />
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Allocation Summary Table */}
-        <div className="bg-white/80 backdrop-blur-md p-10 rounded-[40px] border border-white shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
-          <h3 className="text-lg font-black text-gray-800 mb-8 uppercase tracking-widest text-[10px]">Allocation Taxonomy</h3>
-          {summary?.allocationsByCategory?.length > 0 ? (
-            <div className="space-y-8">
-              {summary.allocationsByCategory.map(item => (
-                <div key={item._id} className="group">
-                  <div className="flex justify-between items-end mb-3">
-                    <div>
-                        <span className="capitalize text-xs font-black text-gray-500 tracking-widest">{item._id}</span>
-                        <p className="text-sm font-bold text-gray-800 mt-1">LKR {Number(item.total).toLocaleString()}</p>
-                    </div>
-                    <span className="text-[10px] font-black text-indigo-500 bg-indigo-50 px-2 py-0.5 rounded-md">
-                        {((item.total / summary.totalIncome) * 100).toFixed(1)}%
-                    </span>
-                  </div>
-                  <div className="w-full bg-gray-50 rounded-full h-3 border border-gray-100 overflow-hidden">
-                    <div 
-                      className="bg-gradient-to-r from-indigo-500 to-purple-600 h-3 group-hover:scale-x-105 origin-left transition-transform duration-1000" 
-                      style={{ width: `${(item.total / summary.totalIncome) * 100}%` }}
-                    ></div>
-                  </div>
-                </div>
-              ))}
+      {/* Liquidity Informatics Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+        <div className="bg-white rounded-[4rem] border border-slate-100 shadow-sm p-12 space-y-12 group transition-all hover:shadow-2xl overflow-hidden relative">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-slate-50 blur-[100px] -mr-32 -mt-32 pointer-events-none" />
+          <div className="flex items-center gap-6 relative z-10">
+            <div className="w-16 h-16 bg-white border border-slate-100 rounded-3xl flex items-center justify-center shrink-0 group-hover:scale-110 group-hover:bg-emerald-50 transition-all duration-500 shadow-inner">
+              <svg className="w-8 h-8 text-slate-200 group-hover:text-emerald-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2a9 9 0 1118 0" /></svg>
             </div>
-          ) : (
-            <div className="py-20 text-center">
-                <div className="w-16 h-16 bg-gray-50 rounded-2xl flex items-center justify-center mx-auto mb-4 text-gray-200 border border-gray-100">
-                    <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
-                </div>
-                <p className="text-gray-400 font-bold text-sm">No allocations defined.</p>
+            <div className="space-y-1">
+              <h3 className="text-xl font-black text-slate-950 tracking-tighter uppercase italic leading-none">Gross Intake</h3>
+              <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.4em] leading-none italic">Cumulative Capital Stabilized</p>
             </div>
-          )}
+          </div>
+          <p className="text-4xl font-black text-emerald-600 tracking-tighter italic tabular-nums leading-none relative z-10">LKR {Number(summary?.totalIncome || 0).toLocaleString()}</p>
         </div>
 
-        {/* Audit & Compliance Card */}
-        <div className="bg-indigo-900 rounded-[40px] p-12 text-white relative overflow-hidden group flex flex-col justify-center text-center">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500 rounded-full blur-[100px] opacity-20 -mr-32 -mt-32"></div>
+        <div className="bg-white rounded-[4rem] border border-slate-100 shadow-sm p-12 space-y-12 group transition-all hover:shadow-2xl overflow-hidden relative">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-slate-50 blur-[100px] -mr-32 -mt-32 pointer-events-none" />
+          <div className="flex items-center gap-6 relative z-10">
+            <div className="w-16 h-16 bg-white border border-slate-100 rounded-3xl flex items-center justify-center shrink-0 group-hover:scale-110 group-hover:bg-indigo-50 transition-all duration-500 shadow-inner">
+              <svg className="w-8 h-8 text-slate-200 group-hover:text-indigo-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+            </div>
+            <div className="space-y-1">
+              <h3 className="text-xl font-black text-slate-950 tracking-tighter uppercase italic leading-none">Total Allocation</h3>
+              <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.4em] leading-none italic">Verified Tactical Asset Flows</p>
+            </div>
+          </div>
+          <p className="text-4xl font-black text-indigo-500 tracking-tighter italic tabular-nums leading-none relative z-10">LKR {Number(summary?.totalAllocated || 0).toLocaleString()}</p>
+        </div>
+
+        <div className="bg-white rounded-[4rem] border border-slate-100 shadow-sm p-12 space-y-12 group transition-all hover:shadow-2xl overflow-hidden relative">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-slate-50 blur-[100px] -mr-32 -mt-32 pointer-events-none" />
+          <div className="flex items-center gap-6 relative z-10">
+            <div className="w-16 h-16 bg-white border border-slate-100 rounded-3xl flex items-center justify-center shrink-0 group-hover:scale-110 group-hover:bg-slate-950 group-hover:text-white transition-all duration-500 shadow-inner">
+              <svg className="w-8 h-8 text-slate-200 group-hover:text-white transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>
+            </div>
+            <div className="space-y-1">
+              <h3 className="text-xl font-black text-slate-950 tracking-tighter uppercase italic leading-none">Net Reserves</h3>
+              <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.4em] leading-none italic">Unallocated Liquidity Buffer</p>
+            </div>
+          </div>
+          <p className="text-4xl font-black text-slate-900 tracking-tighter italic tabular-nums leading-none relative z-10">LKR {(Number(summary?.totalIncome || 0) - Number(summary?.totalAllocated || 0)).toLocaleString()}</p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+        {/* Allocation Taxonomy Interface */}
+        <div className="bg-white rounded-[4rem] border border-slate-100 shadow-sm p-16 space-y-12 group transition-all hover:shadow-2xl relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-slate-50 blur-[100px] -mr-32 -mt-32 pointer-events-none" />
           
-          <div className="relative z-10">
-              <div className="w-20 h-20 bg-white/10 rounded-3xl flex items-center justify-center mb-8 mx-auto shadow-2xl border border-white/10 group-hover:scale-110 transition-transform">
-                <svg className="w-10 h-10 text-indigo-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04M12 2.944a11.955 11.955 0 01-8.618 3.04M12 2.944V21m0 0l-9-9m9 9l9-9" />
-                </svg>
+          <div className="flex items-center gap-6 relative z-10">
+            <div className="w-16 h-16 bg-white border border-slate-100 rounded-3xl flex items-center justify-center shrink-0 group-hover:scale-110 group-hover:bg-indigo-50 transition-all duration-500 shadow-inner">
+              <svg className="w-8 h-8 text-slate-200 group-hover:text-indigo-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v12m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+            </div>
+            <div className="space-y-1">
+              <h3 className="text-2xl font-black text-slate-950 tracking-tighter uppercase italic leading-none">Allocation Taxonomy</h3>
+              <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.4em] leading-none italic">Verified Categorical Distribution</p>
+            </div>
+          </div>
+
+          <div className="space-y-10 relative z-10">
+            {summary?.allocationsByCategory?.length > 0 ? (
+              summary.allocationsByCategory.map(item => (
+                <div key={item._id} className="group/item space-y-4">
+                  <div className="flex justify-between items-end">
+                    <div className="space-y-1">
+                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic">{item._id}</p>
+                      <p className="text-2xl font-black text-slate-900 tracking-tighter italic">LKR {Number(item.total).toLocaleString()}</p>
+                    </div>
+                    <div className="px-6 py-2 bg-indigo-50 border border-indigo-100 rounded-full">
+                      <p className="text-[10px] font-black text-indigo-600 uppercase tracking-widest tabular-nums italic">
+                        {((item.total / summary.totalIncome) * 100).toFixed(1)}% Protocol
+                      </p>
+                    </div>
+                  </div>
+                  <div className="w-full bg-slate-50 rounded-full h-4 overflow-hidden border border-slate-100 shadow-inner group-hover/item:bg-white transition-all duration-700">
+                    <motion.div 
+                      initial={{ width: 0 }}
+                      animate={{ width: `${(item.total / summary.totalIncome) * 100}%` }}
+                      transition={{ duration: 1.5, ease: "easeOut" }}
+                      className="h-full bg-gradient-to-r from-indigo-500 to-tf-primary rounded-full"
+                    />
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="py-24 text-center group/empty">
+                <div className="w-24 h-24 bg-slate-50 border border-slate-100 rounded-[2.5rem] flex items-center justify-center mx-auto mb-10 transition-all duration-700 group-hover/empty:rotate-12 group-hover/empty:scale-110 shadow-inner">
+                  <svg className="w-10 h-10 text-slate-200 group-hover/empty:text-tf-primary transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
+                </div>
+                <h4 className="text-xl font-bold text-slate-400 tracking-tight italic">Null Allocation Registry</h4>
+                <p className="text-[10px] text-slate-300 font-black uppercase tracking-[0.4em] mt-2 italic">Institutional capital waiting for tactical deployment.</p>
               </div>
-              <h3 className="text-2xl font-black mb-4 tracking-tight leading-none">Immutable Audit Protocols</h3>
-              <p className="text-indigo-200 text-sm font-medium leading-relaxed max-w-xs mx-auto mb-10">
-                Every financial transaction in the Synergy network is governed by real-time audit logging for absolute donor transparency.
+            )}
+          </div>
+        </div>
+
+        {/* Audit & Compliance Interface */}
+        <div className="bg-slate-950 rounded-[4rem] p-16 text-white relative overflow-hidden group flex flex-col justify-center text-center shadow-2xl border border-white/5">
+          <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-indigo-500/10 blur-[150px] -mr-60 -mt-60 animate-pulse pointer-events-none" />
+          
+          <div className="relative z-10 space-y-10">
+            <div className="w-24 h-24 bg-white/5 border border-white/10 rounded-[2.5rem] flex items-center justify-center mx-auto shadow-2xl group-hover:scale-110 transition-all duration-700 backdrop-blur-xl">
+              <svg className="w-12 h-12 text-white opacity-80" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04M12 2.944a11.955 11.955 0 01-8.618 3.04M12 2.944V21m0 0l-9-9m9 9l9-9" />
+              </svg>
+            </div>
+            
+            <div className="space-y-4">
+              <h3 className="text-3xl font-black tracking-tighter leading-none italic">Strategy <span className="text-tf-primary font-black uppercase-none not-italic">Audit.</span></h3>
+              <p className="text-white/40 text-sm font-medium leading-relaxed max-w-sm mx-auto italic">
+                Every capital movement is registered on our immutable ledger, ensuring absolute transparency for institutional oversight.
               </p>
-              <button className="w-full py-4 bg-white text-indigo-900 text-[10px] font-black uppercase tracking-[0.2em] rounded-2xl hover:bg-indigo-50 hover:shadow-2xl transition-all active:scale-95">
-                Execute Audit Review
+            </div>
+
+            <div className="pt-8">
+              <button className="w-full py-6 bg-tf-primary text-white text-[11px] font-black uppercase tracking-[0.4em] rounded-[1.5rem] hover:bg-white hover:text-tf-primary transition-all duration-500 shadow-xl active:scale-95 italic">
+                Execute Audit Review Registry
               </button>
+            </div>
           </div>
         </div>
       </div>
+
     </div>
   );
 }

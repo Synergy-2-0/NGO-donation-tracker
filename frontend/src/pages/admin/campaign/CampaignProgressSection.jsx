@@ -65,189 +65,219 @@ export default function CampaignProgressSection({ campaignId, campaignStatus }) 
     const labelCls = 'block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1';
 
     return (
-        <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
-            {/* Header */}
-            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-orange-50 rounded-lg flex items-center justify-center">
-                        <svg className="w-4 h-4 text-[#7C2D12]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+        <div className="bg-white rounded-[4rem] border border-slate-100 shadow-sm overflow-hidden p-12 space-y-12 relative group transition-all hover:shadow-2xl">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-slate-50 blur-[100px] -mr-32 -mt-32 pointer-events-none" />
+            
+            {/* Log Header Interface */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 relative z-10">
+                <div className="flex items-center gap-6">
+                    <div className="w-16 h-16 bg-white border border-slate-100 rounded-3xl flex items-center justify-center shrink-0 group-hover:scale-110 group-hover:bg-tf-primary/5 transition-all duration-500 shadow-inner">
+                        <svg className="w-8 h-8 text-slate-200 group-hover:text-tf-primary transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v12m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                         </svg>
                     </div>
-                    <h3 className="text-sm font-semibold text-gray-700">Progress Logs</h3>
-                    {logs.length > 0 && (
-                        <span className="text-xs text-gray-400 font-medium">{logs.length} entries</span>
-                    )}
+                    <div className="space-y-1">
+                        <h3 className="text-3xl font-black text-slate-950 tracking-tighter uppercase italic leading-none">Operational Logs</h3>
+                        <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.4em] leading-none italic">Verified Milestone Synchronization</p>
+                    </div>
                 </div>
+                
                 {campaignStatus === 'active' && !showForm && (
                     <button
                         onClick={() => setShowForm(true)}
-                        className="flex items-center gap-1.5 px-3 py-1.5 text-white rounded-lg text-xs font-medium transition-all hover:opacity-90 shadow-sm"
-                        style={{ background: 'linear-gradient(135deg, #7C2D12 0%, #DC2626 100%)' }}
+                        className="px-10 py-5 bg-slate-950 text-white text-[11px] font-black uppercase tracking-[0.4em] rounded-[1.5rem] hover:bg-tf-primary transition-all duration-500 shadow-xl active:scale-95 flex items-center gap-4 group/add"
                     >
-                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-                        </svg>
-                        Add Log
+                        <svg className="w-4 h-4 group-hover/add:rotate-90 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" /></svg>
+                        Initialize Entry
                     </button>
                 )}
             </div>
 
-            <div className="p-6 space-y-4">
-                {/* Alerts */}
-                {error && (
-                    <div className="flex items-center gap-2 px-4 py-3 bg-red-50 border border-red-100 rounded-lg">
-                        <svg className="w-4 h-4 text-[#DC2626] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        <p className="text-sm text-[#DC2626] font-medium">{error}</p>
-                    </div>
-                )}
-                {success && (
-                    <div className="flex items-center gap-2 px-4 py-3 bg-green-50 border border-green-100 rounded-lg">
-                        <svg className="w-4 h-4 text-green-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        <p className="text-sm text-green-700 font-medium">{success}</p>
+            <div className="space-y-10 relative z-10">
+                {/* Exception Handling Hub */}
+                {(error || success) && (
+                    <div className="space-y-4">
+                        {error && (
+                            <div className="flex items-center gap-4 px-10 py-6 bg-rose-50 border border-rose-100 rounded-[2rem] shadow-sm">
+                                <div className="w-10 h-10 bg-rose-500/10 rounded-full flex items-center justify-center shrink-0">
+                                   <svg className="w-5 h-5 text-rose-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                </div>
+                                <div className="space-y-1">
+                                   <p className="text-[10px] font-black text-rose-400 uppercase tracking-widest leading-none italic">Log Failure</p>
+                                   <p className="text-[13px] text-rose-700 font-bold tracking-tight italic">{error}</p>
+                                </div>
+                            </div>
+                        )}
+                        {success && (
+                            <div className="flex items-center gap-4 px-10 py-6 bg-emerald-50 border border-emerald-100 rounded-[2rem] shadow-sm">
+                                <div className="w-10 h-10 bg-emerald-500/10 rounded-full flex items-center justify-center shrink-0">
+                                   <svg className="w-5 h-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                </div>
+                                <div className="space-y-1">
+                                   <p className="text-[10px] font-black text-emerald-400 uppercase tracking-widest leading-none italic">Entry Synchronized</p>
+                                   <p className="text-[13px] text-emerald-700 font-bold tracking-tight italic">{success}</p>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 )}
 
-                {/* Add Log Form */}
+                {/* Secure Log Form */}
                 {showForm && (
-                    <form onSubmit={handleSubmit} className="bg-gray-50 border border-gray-100 rounded-xl p-5 space-y-4">
-                        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">New Progress Entry</p>
-                        <div>
-                            <label className={labelCls}>Description</label>
+                    <form onSubmit={handleSubmit} className="bg-slate-50 rounded-[3rem] p-12 border border-slate-100 shadow-inner space-y-10 group/form">
+                        <div className="flex items-center gap-4 mb-2">
+                             <div className="w-2 h-2 rounded-full bg-tf-primary animate-pulse" />
+                             <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] italic">Secure Milestone Initialization</p>
+                        </div>
+
+                        <div className="space-y-4">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] ml-4 italic">Description of Achievement</label>
                             <textarea
                                 name="description"
                                 value={formData.description}
                                 onChange={handleChange}
-                                rows={3}
-                                placeholder="Describe the progress made..."
-                                className={inputCls}
+                                placeholder="Describe the tactical progress and community impact achieved in this phase..."
+                                className="w-full bg-white border border-slate-100 rounded-[2rem] px-8 py-8 text-sm font-bold text-slate-900 placeholder-slate-200 focus:outline-none focus:border-tf-primary transition-all shadow-sm leading-relaxed min-h-[150px]"
                                 required
                             />
                         </div>
-                        <div className="grid grid-cols-2 gap-4">
-                            <div>
-                                <label className={labelCls}>Amount Raised (LKR)</label>
-                                <input
-                                    type="number"
-                                    name="amountRaised"
-                                    value={formData.amountRaised}
-                                    onChange={handleChange}
-                                    placeholder="0"
-                                    className={inputCls}
-                                />
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                            <div className="space-y-4">
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] ml-4 italic">Capital Mobilized (LKR)</label>
+                                <div className="relative">
+                                    <input
+                                        type="number"
+                                        name="amountRaised"
+                                        value={formData.amountRaised}
+                                        onChange={handleChange}
+                                        placeholder="0.00"
+                                        className="w-full bg-white border border-slate-100 rounded-3xl px-12 py-5 text-2xl font-black text-tf-primary focus:outline-none focus:border-tf-primary transition-all shadow-inner italic tabular-nums tracking-tighter"
+                                    />
+                                    <span className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-200 font-black text-lg group-hover/form:text-tf-primary/20 transition-colors">¤</span>
+                                </div>
                             </div>
-                            <div>
-                                <label className={labelCls}>Beneficiaries</label>
-                                <input
-                                    type="number"
-                                    name="beneficiaries"
-                                    value={formData.beneficiaries}
-                                    onChange={handleChange}
-                                    placeholder="0"
-                                    className={inputCls}
-                                />
+                            <div className="space-y-4">
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] ml-4 italic">Lives Impacted</label>
+                                <div className="relative">
+                                    <input
+                                        type="number"
+                                        name="beneficiaries"
+                                        value={formData.beneficiaries}
+                                        onChange={handleChange}
+                                        placeholder="0"
+                                        className="w-full bg-white border border-slate-100 rounded-3xl px-12 py-5 text-2xl font-black text-indigo-500 focus:outline-none focus:border-indigo-400 transition-all shadow-inner italic tabular-nums tracking-tighter"
+                                    />
+                                    <span className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-200 font-black text-lg group-hover/form:text-indigo-400/20 transition-colors">¶</span>
+                                </div>
                             </div>
                         </div>
-                        <div>
-                            <label className={labelCls}>Evidence (images / files)</label>
-                            <label className="mt-1 flex items-center gap-3 px-4 py-3 border border-dashed border-gray-200 rounded-lg cursor-pointer bg-white hover:border-red-200 hover:bg-red-50/30 transition-colors group">
-                                <div className="w-8 h-8 bg-red-50 rounded-lg flex items-center justify-center shrink-0 group-hover:bg-red-100 transition-colors">
-                                    <svg className="w-4 h-4 text-[#DC2626]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+
+                        <div className="space-y-4">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] ml-4 italic">Evidence Repository</label>
+                            <label className="relative flex items-center gap-6 px-10 py-6 bg-white border border-dashed border-slate-200 rounded-[2rem] cursor-pointer hover:border-tf-primary hover:bg-tf-primary/5 transition-all duration-500 group/evidence overflow-hidden">
+                                <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center shrink-0 group-hover/evidence:scale-110 group-hover/evidence:bg-white transition-all shadow-inner">
+                                    <svg className="w-6 h-6 text-slate-200 group-hover/evidence:text-tf-primary transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
                                     </svg>
                                 </div>
-                                <div>
-                                    <p className="text-sm text-gray-500 group-hover:text-[#DC2626] transition-colors font-medium">
-                                        {formData.evidence.length > 0 ? `${formData.evidence.length} file(s) selected` : 'Attach evidence files'}
+                                <div className="space-y-1">
+                                    <p className="text-[11px] font-black text-slate-900 group-hover/evidence:text-tf-primary transition-colors uppercase tracking-widest leading-none">
+                                        {formData.evidence.length > 0 ? `${formData.evidence.length} Artifacts Prepared` : 'Upload Strategic Evidence'}
                                     </p>
-                                    <p className="text-xs text-gray-400">Images, PDFs supported</p>
+                                    <p className="text-[9px] text-slate-400 font-black uppercase tracking-widest italic">Images, PDFs, Geo-logs (Limited Support)</p>
                                 </div>
                                 <input type="file" name="evidence" multiple onChange={handleChange} className="hidden" />
                             </label>
                         </div>
-                        <div className="flex justify-end gap-2 pt-1">
+
+                        <div className="flex justify-end gap-6 pt-4">
                             <button
                                 type="button"
                                 onClick={() => { setShowForm(false); setError(''); }}
-                                className="px-4 py-2 bg-white border border-gray-200 text-gray-500 hover:text-gray-700 rounded-lg text-xs font-medium transition-colors"
+                                className="px-10 py-5 bg-white border border-slate-100 text-slate-400 text-[10px] font-black uppercase tracking-[0.4em] rounded-[1.5rem] hover:bg-slate-50 hover:text-slate-900 transition-all duration-500 active:scale-95 italic text-center"
                             >
-                                Cancel
+                                Abort Entry
                             </button>
                             <button
                                 type="submit"
                                 disabled={submitting}
-                                className="flex items-center gap-1.5 px-4 py-2 text-white rounded-lg text-xs font-medium transition-all hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
-                                style={{ background: 'linear-gradient(135deg, #7C2D12 0%, #DC2626 100%)' }}
+                                className="px-12 py-5 bg-slate-950 text-white text-[10px] font-black uppercase tracking-[0.5em] rounded-[1.5rem] hover:bg-tf-primary transition-all duration-500 shadow-xl disabled:opacity-50 active:scale-95 flex items-center gap-4"
                             >
                                 {submitting ? (
                                     <>
-                                        <svg className="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
-                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
-                                        </svg>
-                                        Saving...
+                                        <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                                        Synchronizing Hub...
                                     </>
-                                ) : 'Save Log'}
+                                ) : 'Authorize Milestone'}
                             </button>
                         </div>
                     </form>
                 )}
 
-                {/* Logs Timeline */}
+                {/* Milestone Temporal Flow */}
                 {loading ? (
-                    <div className="py-8 flex justify-center">
-                        <svg className="w-5 h-5 animate-spin text-[#DC2626]" fill="none" viewBox="0 0 24 24">
-                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
-                        </svg>
+                    <div className="py-20 flex flex-col items-center justify-center space-y-6">
+                        <div className="w-16 h-16 border-4 border-slate-50 border-t-tf-primary rounded-full animate-spin shadow-inner" />
+                        <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.5em] animate-pulse">Syncing Mission History...</p>
                     </div>
                 ) : logs.length === 0 ? (
-                    <div className="py-10 text-center">
-                        <div className="w-10 h-10 bg-orange-50 rounded-xl flex items-center justify-center mx-auto mb-3">
-                            <svg className="w-5 h-5 text-orange-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <div className="py-24 text-center group/empty">
+                        <div className="w-24 h-24 bg-slate-50 border border-slate-100 rounded-[2.5rem] flex items-center justify-center mx-auto mb-10 transition-all duration-700 group-hover/empty:rotate-12 group-hover/empty:scale-110 shadow-inner">
+                            <svg className="w-10 h-10 text-slate-200 group-hover/empty:text-tf-primary transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                             </svg>
                         </div>
-                        <p className="text-sm text-gray-400 font-medium">No progress logs yet.</p>
-                        {campaignStatus === 'active' && (
-                            <p className="text-xs text-gray-300 mt-1">Add the first log entry above.</p>
-                        )}
+                        <h4 className="text-xl font-bold text-slate-400 tracking-tight italic">Null Progress Detected</h4>
+                        <p className="text-[10px] text-slate-300 font-black uppercase tracking-[0.4em] mt-2 italic">Initial protocol requires active engagement logs.</p>
                     </div>
                 ) : (
-                    <div className="relative space-y-4 pl-4">
-                        <div className="absolute left-[7px] top-2 bottom-2 w-px bg-gray-100" />
+                    <div className="relative space-y-10 pl-16">
+                        <div className="absolute left-[24px] top-4 bottom-4 w-1 bg-slate-50 group-hover:bg-tf-primary/5 transition-colors rounded-full" />
                         {logs.map((log, i) => (
-                            <div key={log._id ?? i} className="relative flex gap-4">
-                                <div className="w-3.5 h-3.5 rounded-full bg-[#DC2626] border-2 border-white shadow shrink-0 mt-1 z-10" />
-                                <div className="flex-1 bg-gray-50 border border-gray-100 rounded-xl p-4 hover:border-red-100 transition-colors">
-                                    <div className="flex items-start justify-between gap-2 mb-2">
-                                        <p className="text-sm text-gray-700 leading-relaxed">{log.description}</p>
-                                        <p className="text-[10px] text-gray-400 font-medium shrink-0">
-                                            {new Date(log.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
-                                        </p>
+                            <div key={log._id ?? i} className="relative group/log">
+                                <div className="absolute left-[-56px] top-6 w-12 h-px bg-slate-100 group-hover/log:bg-tf-primary/20 transition-colors" />
+                                <div className="absolute left-[-56px] top-5 w-4 h-4 rounded-full bg-white border-4 border-slate-100 group-hover/log:border-tf-primary transition-all duration-500 shadow-sm z-10" />
+                                
+                                <motion.div 
+                                    whileHover={{ x: 10 }}
+                                    className="bg-white border border-slate-100 rounded-[2.5rem] p-10 hover:shadow-2xl hover:border-tf-primary/10 transition-all duration-700 space-y-8 relative overflow-hidden"
+                                >
+                                    <div className="absolute top-0 right-0 w-32 h-32 bg-tf-primary/5 blur-[50px] -mr-16 -mt-16 pointer-events-none opacity-0 group-hover/log:opacity-100 transition-opacity" />
+                                    
+                                    <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 overflow-hidden">
+                                        <div className="flex-1 space-y-3">
+                                             <div className="flex items-center gap-3">
+                                                 <div className="w-1.5 h-1.5 rounded-full bg-tf-primary" />
+                                                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest tabular-nums italic">
+                                                     {new Date(log.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                                                 </p>
+                                             </div>
+                                            <p className="text-base text-slate-700 font-bold leading-relaxed italic tracking-tight">{log.description}</p>
+                                        </div>
                                     </div>
-                                    <div className="flex items-center gap-4">
+
+                                    <div className="flex flex-wrap items-center gap-4 pt-6 border-t border-slate-50">
                                         {log.amountRaised > 0 && (
-                                            <span className="text-xs font-semibold text-[#7C2D12] bg-orange-50 px-2 py-0.5 rounded-full">
-                                                LKR {log.amountRaised.toLocaleString()} raised
-                                            </span>
+                                            <div className="px-6 py-2 bg-tf-primary/5 border border-tf-primary/10 rounded-full flex items-center gap-2">
+                                                <span className="w-1 h-1 bg-tf-primary rounded-full shadow-[0_0_5px_rgba(255,138,0,0.8)]" />
+                                                <p className="text-[9px] font-black text-tf-primary uppercase tracking-widest tabular-nums italic">LKR {log.amountRaised.toLocaleString()} Stabilized</p>
+                                            </div>
                                         )}
                                         {log.beneficiaries > 0 && (
-                                            <span className="text-xs font-semibold text-green-700 bg-green-50 px-2 py-0.5 rounded-full">
-                                                {log.beneficiaries} beneficiaries
-                                            </span>
+                                            <div className="px-6 py-2 bg-indigo-50 border border-indigo-100 rounded-full flex items-center gap-2">
+                                                <span className="w-1 h-1 bg-indigo-500 rounded-full shadow-[0_0_5px_rgba(99,102,241,0.8)]" />
+                                                <p className="text-[9px] font-black text-indigo-600 uppercase tracking-widest tabular-nums italic">{log.beneficiaries} Lives Impacted</p>
+                                            </div>
                                         )}
                                         {log.evidence?.length > 0 && (
-                                            <span className="text-xs text-gray-400 font-medium">
-                                                {log.evidence.length} file(s) attached
-                                            </span>
+                                            <div className="px-6 py-2 bg-slate-50 border border-slate-100 rounded-full flex items-center gap-2">
+                                                <svg className="w-3 h-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" /></svg>
+                                                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest tabular-nums italic">{log.evidence.length} Protocol Artifacts</p>
+                                            </div>
                                         )}
                                     </div>
-                                </div>
+                                </motion.div>
                             </div>
                         ))}
                     </div>

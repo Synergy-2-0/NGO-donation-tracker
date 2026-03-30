@@ -9,12 +9,25 @@ import {
 	updateMilestoneSchema,
 } from '../validators/milestone.validator.js';
 
+import upload from '../middlewares/upload.middleware.js';
+
 const router = express.Router();
 
-router.post('/', authenticate, authorizeRoles('admin', 'ngo-admin'), validateRequest(createMilestoneSchema), ctrl.createMilestone);
+router.post('/', authenticate, authorizeRoles('admin', 'ngo-admin', 'partner'), validateRequest(createMilestoneSchema), ctrl.createMilestone);
+router.post('/upload-evidence', authenticate, upload.single('evidence'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: 'No evidence file uploaded' });
+    }
+    const fileUrl = `${req.protocol}://${req.get('host')}/public/uploads/${req.file.filename}`;
+    res.json({ url: fileUrl });
+  } catch (error) {
+    res.status(500).json({ message: 'Evidence upload failed', details: error.message });
+  }
+});
 router.get('/', authenticate, authorizeRoles('admin', 'ngo-admin', 'partner'), validateRequest(milestoneQuerySchema, 'query'), ctrl.getMilestones);
 router.get('/:id', authenticate, authorizeRoles('admin', 'ngo-admin', 'partner'), ctrl.getMilestone);
-router.put('/:id', authenticate, authorizeRoles('admin', 'ngo-admin'), validateRequest(updateMilestoneSchema), ctrl.updateMilestone);
+router.put('/:id', authenticate, authorizeRoles('admin', 'ngo-admin', 'partner'), validateRequest(updateMilestoneSchema), ctrl.updateMilestone);
 router.delete('/:id', authenticate, authorizeRoles('admin', 'ngo-admin'), ctrl.deleteMilestone);
 
 export default router;

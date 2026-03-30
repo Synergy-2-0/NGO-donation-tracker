@@ -16,6 +16,7 @@ import DonationHistoryPage from './pages/DonationHistoryPage';
 import PartnersPage from './pages/PartnersPage';
 import PartnerDetailsPage from './pages/PartnerDetailsPage';
 import PartnerImpactPage from './pages/PartnerImpactPage';
+import PartnerDashboardPage from './pages/PartnerDashboardPage';
 import PartnerVerificationPage from './pages/PartnerVerificationPage';
 import FinanceDashboard from './pages/FinanceDashboard';
 import TransactionsPage from './pages/TransactionsPage';
@@ -45,14 +46,16 @@ function RoleBasedDashboard() {
   const { user } = useAuth();
   const role = user?.role;
   if (role === 'admin') return <AdminDashboardPage />;
-  if (role === 'ngo-admin') return <AdminCampaignProvider><NgoAdminDashboardPage /></AdminCampaignProvider>;
-  if (role === 'partner') return <FinanceDashboard />;
+  if (role === 'ngo-admin') return <NgoAdminDashboardPage />;
+  if (role === 'partner') return <PartnerDashboardPage />;
   return <DashboardPage />;
 }
 
 function RoleBasedProfile() {
   const { user } = useAuth();
-  return user?.role === 'partner' ? <PartnerProfilePage /> : <ProfilePage />;
+  if (user?.role === 'partner') return <PartnerProfilePage />;
+  if (user?.role === 'ngo-admin' || user?.role === 'admin') return <Navigate to="/dashboard" replace />;
+  return <ProfilePage />;
 }
 
 function RoleBasedPledges() {
@@ -91,7 +94,8 @@ export default function App() {
             <DonorProvider>
               <PartnerProvider>
                 <AdminDonorProvider>
-                  <Routes>
+                  <AdminCampaignProvider>
+                    <Routes>
                   {/* Public Routes */}
                   <Route path="/" element={<HomePage />} />
                   <Route path="/login" element={<LoginPage />} />
@@ -136,7 +140,7 @@ export default function App() {
                     <Route
                       path="partners"
                       element={
-                        <RoleProtectedRoute roles={['partner', 'admin', 'donor']}>
+                        <RoleProtectedRoute roles={['partner', 'admin', 'ngo-admin', 'donor']}>
                           <PartnersPage />
                         </RoleProtectedRoute>
                       }
@@ -218,12 +222,13 @@ export default function App() {
                     />
                     <Route
                       path="admin/campaigns/:id"
-                      element={<AdminRoute><AdminCampaignProvider><CampaignDetailPage /></AdminCampaignProvider></AdminRoute>}
+                      element={<AdminRoute><CampaignDetailPage /></AdminRoute>}
                     />
                   </Route>
 
                   <Route path="*" element={<Navigate to="/" replace />} />
-                  </Routes>
+                    </Routes>
+                  </AdminCampaignProvider>
                 </AdminDonorProvider>
               </PartnerProvider>
             </DonorProvider>

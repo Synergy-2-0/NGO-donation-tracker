@@ -1,263 +1,240 @@
-import { NavLink } from 'react-router-dom';
+import { useState } from 'react';
+import { NavLink, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import {
+  FiGrid,
+  FiDollarSign,
+  FiRepeat,
+  FiShoppingBag,
+  FiUser,
+  FiCheckSquare,
+  FiClock,
+  FiUsers,
+  FiShield,
+  FiFileText,
+  FiBarChart2,
+  FiTarget,
+  FiChevronRight,
+  FiLogOut,
+  FiMapPin,
+} from 'react-icons/fi';
+import { LuScale3D } from 'react-icons/lu';
 
-const donorNavItems = [
+// ─── Navigation configs per role ─────────────────────────────────────────────
+
+const partnerNav = [
   {
-    to: '/dashboard',
-    label: 'Dashboard',
-    icon: (
-      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-      </svg>
-    ),
+    section: 'Overview',
+    items: [
+      { to: '/dashboard', label: 'Dashboard', icon: <FiGrid /> },
+      { to: '/finance/dashboard', label: 'Finance Summary', icon: <FiDollarSign /> },
+      { to: '/finance/transactions', label: 'Recent Activity', icon: <FiRepeat /> },
+    ],
   },
   {
-    to: '/finance/dashboard',
-    label: 'Finance Overview',
-    roles: ['ngo-admin', 'partner', 'admin'],
-    icon: (
-      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
-    ),
+    section: 'Partnerships',
+    items: [
+      { to: '/partner/agreements', label: 'My Agreements', icon: <LuScale3D /> },
+      { to: '/partners', label: 'Partner List', icon: <FiUsers /> },
+      { to: '/marketplace', label: 'Campaigns', icon: <FiShoppingBag /> },
+    ],
   },
   {
-    to: '/finance/transactions',
-    label: 'Transactions',
-    roles: ['ngo-admin', 'partner', 'admin'],
-    icon: (
-      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
-      </svg>
-    ),
-  },
-  {
-    to: '/marketplace',
-    label: 'Campaigns',
-    roles: ['donor', 'partner'],
-    icon: (
-      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-      </svg>
-    ),
-  },
-  {
-    to: '/profile',
-    label: 'My Profile',
-    icon: (
-      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-      </svg>
-    ),
-  },
-  {
-    to: '/pledges',
-    label: 'Pledges',
-    roles: ['donor', 'admin'],
-    icon: (
-      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
-    ),
-  },
-  {
-    to: '/donations',
-    label: 'Donation History',
-    roles: ['donor', 'admin'],
-    icon: (
-      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-      </svg>
-    ),
-  },
-  {
-    to: '/partners',
-    label: 'Partners List',
-    roles: ['partner', 'admin', 'donor'],
-    icon: (
-      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-      </svg>
-    ),
-  },
-  {
-    to: '/partners/verification',
-    label: 'Verification Queue',
-    roles: ['admin'],
-    icon: (
-      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
-    ),
-  },
-  {
-    to: '/partner/agreements',
-    label: 'Partnership Ops',
-    roles: ['partner', 'admin', 'ngo-admin'],
-    icon: (
-      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M8 7h8M8 11h5m-8 8h14a2 2 0 002-2V7a2 2 0 00-2-2h-3l-2-2H10L8 5H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-      </svg>
-    ),
+    section: 'Account',
+    items: [
+      { to: '/profile', label: 'My Profile', icon: <FiUser /> },
+    ],
   },
 ];
 
-const adminNavItems = [
+const adminNav = [
   {
-    to: '/dashboard',
-    label: 'Dashboard',
-    icon: (
-      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-      </svg>
-    ),
+    section: 'Overview',
+    items: [
+      { to: '/dashboard', label: 'Dashboard', icon: <FiGrid /> },
+    ],
   },
   {
-    to: '/admin/donors',
-    label: 'Donor Directory',
-    icon: (
-      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
-      </svg>
-    ),
+    section: 'Donors',
+    items: [
+      { to: '/admin/donors', label: 'Donor List', icon: <FiUsers /> },
+      { to: '/admin/donors/pledges', label: 'All Pledges', icon: <FiCheckSquare /> },
+      { to: '/admin/donor-analytics', label: 'Donor Data', icon: <FiBarChart2 /> },
+    ],
   },
   {
-    to: '/admin/donors/pledges',
-    label: 'All Pledges',
-    icon: (
-      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
-      </svg>
-    ),
+    section: 'Missions',
+    items: [
+      { to: '/admin/campaign-dashboard', label: 'Mission Registry', icon: <FiTarget /> },
+    ],
   },
   {
-    to: '/admin/donor-analytics',
-    label: 'Donor Analytics',
-    icon: (
-      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-      </svg>
-    ),
-  },
-  {
-    to: '/partners',
-    label: 'Partners Directory',
-    icon: (
-      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-      </svg>
-    ),
-  },
-  {
-    to: '/partners/verification',
-    label: 'Verification Queue',
-    icon: (
-      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
-    ),
+    section: 'Partners',
+    items: [
+      { to: '/partners', label: 'Partner List', icon: <FiMapPin /> },
+      { to: '/partners/verification', label: 'Pending Access', icon: <FiShield /> },
+      { to: '/partner/agreements', label: 'Managed Agreements', icon: <LuScale3D /> },
+    ],
   },
 ];
 
-const ngoNavItems = [
+const ngoAdminNav = [
   {
-    to: '/dashboard',
-    label: 'Dashboard',
-    icon: (
-      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-      </svg>
-    ),
+    section: 'Overview',
+    items: [
+      { to: '/dashboard', label: 'Dashboard', icon: <FiGrid /> },
+      { to: '/finance/dashboard', label: 'Finance Summary', icon: <FiDollarSign /> },
+      { to: '/finance/transactions', label: 'Recent Activity', icon: <FiRepeat /> },
+    ],
   },
   {
-    to: '/admin/campaign-dashboard',
-    label: 'Manage Campaigns',
-    icon: (
-      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M3 7h18M6 3v4m12-4v4M5 11h14a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2z" />        
-      </svg>
-    ),
+    section: 'Campaigns',
+    items: [
+      { to: '/admin/campaign-dashboard', label: 'Manage Projects', icon: <FiTarget /> },
+    ],
   },
   {
-    to: '/finance/dashboard',
-    label: 'Finance Overview',
-    icon: (
-      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />   
-      </svg>
-    ),
+    section: 'Partners',
+    items: [
+      { to: '/partners', label: 'Partner List', icon: <FiUsers /> },
+      { to: '/partners/verification', label: 'Pending Access', icon: <FiShield /> },
+      { to: '/partner/agreements', label: 'Active Agreements', icon: <LuScale3D /> },
+    ],
   },
-  {
-    to: '/finance/transactions',
-    label: 'Transactions',
-    icon: (
-      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
-      </svg>
-    ),
-  },
-  {
-    to: '/partner/agreements',
-    label: 'Partnership Ops',
-    icon: (
-      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M8 7h8M8 11h5m-8 8h14a2 2 0 002-2V7a2 2 0 00-2-2h-3l-2-2H10L8 5H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-      </svg>
-    ),
-  },
-  {
-    to: '/partners',
-    label: 'Partners Directory',
-    icon: (
-      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-      </svg>
-    ),
-  },
-  {
-    to: '/partners/verification',
-    label: 'Verification Queue',
-    icon: (
-      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
-    ),
-  }
 ];
+
+const donorNav = [
+  {
+    section: 'Overview',
+    items: [
+      { to: '/dashboard', label: 'Dashboard', icon: <FiGrid /> },
+    ],
+  },
+  {
+    section: 'Giving',
+    items: [
+      { to: '/marketplace', label: 'Campaigns', icon: <FiShoppingBag /> },
+      { to: '/pledges', label: 'My Pledges', icon: <FiCheckSquare /> },
+      { to: '/donations', label: 'Donation History', icon: <FiClock /> },
+    ],
+  },
+  {
+    section: 'Partners',
+    items: [
+      { to: '/partners', label: 'Partners Directory', icon: <FiUsers /> },
+    ],
+  },
+  {
+    section: 'Account',
+    items: [
+      { to: '/profile', label: 'My Profile', icon: <FiUser /> },
+    ],
+  },
+];
+
+function getNavByRole(role) {
+  if (role === 'admin') return adminNav;
+  if (role === 'ngo-admin') return ngoAdminNav;
+  if (role === 'partner') return partnerNav;
+  return donorNav;
+}
+
+function getRoleTag(role) {
+  const map = {
+    admin: { label: 'System Admin', color: 'bg-rose-50/5 text-rose-400 border-rose-500/20' },
+    'ngo-admin': { label: 'Administrator', color: 'bg-white/5 text-slate-300 border-white/10' },
+    partner: { label: 'Official Partner', color: 'bg-emerald-50/5 text-emerald-400 border-emerald-500/20' },
+    donor: { label: 'Verified Donor', color: 'bg-sky-50/5 text-sky-400 border-sky-500/20' },
+  };
+  return map[role] || { label: role, color: 'bg-slate-500/5 text-slate-400 border-slate-500/20' };
+}
 
 export default function Sidebar() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const role = user?.role;
-  const isAdmin = role === 'admin';
-  const isNgoAdmin = role === 'ngo-admin';
+  const navSections = getNavByRole(role);
+  const roleTag = getRoleTag(role);
 
-  const visibleDonorNavItems = donorNavItems.filter((item) => !item.roles || item.roles.includes(role));
-
-  let itemsToRender = visibleDonorNavItems;
-  if (isAdmin) itemsToRender = adminNavItems;
-  if (isNgoAdmin) itemsToRender = ngoNavItems;
-
-  const navLinkCls = ({ isActive }) =>
-    `flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${isActive ? 'bg-white/20 text-white' : 'text-red-100 hover:bg-white/10'
+  const linkCls = ({ isActive }) =>
+    `group flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 relative ${
+      isActive
+        ? 'bg-white/10 text-white shadow-inner'
+        : 'text-slate-400 hover:text-white hover:bg-white/5'
     }`;
 
   return (
-    <aside className="w-64 text-white flex flex-col shrink-0" style={{ background: 'linear-gradient(180deg, #7C2D12 0%, #DC2626 100%)' }}>
-      <div className="px-12 py-8 border-b border-red-800/50 flex items-center justify-center">
-        <img src="/heart-logo c.png" alt="TrustFund Logo" className="w-134px h-134px object-contain" />
+    <aside className="w-64 shrink-0 flex flex-col h-screen sticky top-0 overflow-hidden"
+      style={{ background: 'linear-gradient(170deg, #0f172a 0%, #1e1b2e 60%, #1a0a0a 100%)' }}>
+
+      {/* Top glow accent */}
+      <div className="absolute top-0 left-0 right-0 h-48 bg-brand-red/10 blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-brand-orange/5 blur-3xl pointer-events-none" />
+
+      {/* Logo */}
+      <div className="relative p-6 flex items-center justify-center border-b border-white/5 shrink-0">
+        <img src="/heart-logo c.png" alt="TrustFund" className="w-40 h-auto object-contain drop-shadow-[0_0_15px_rgba(220,38,38,0.3)] transition-transform hover:scale-105 duration-500" />
       </div>
 
-      <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-        {itemsToRender.map((item) => (
-            <NavLink key={item.to} to={item.to} className={navLinkCls}>
-              {item.icon}
-              {item.label}
-            </NavLink>
+      {/* User profile chip */}
+      <div className="relative px-4 py-4 border-b border-white/5 shrink-0">
+        <Link to="/profile" className="flex items-center gap-3 p-2.5 rounded-full hover:bg-white/[0.02] border border-transparent hover:border-white/5 transition-all group animate-soft">
+          <div className="w-10 h-10 rounded-full bg-slate-800/80 border border-white/10 flex items-center justify-center shrink-0 shadow-lg group-hover:border-brand-red/20 transition-all duration-500">
+            <span className="text-white font-bold text-sm tracking-bespoke opacity-80 group-hover:opacity-100 transition-opacity">
+              {(user?.name || user?.email || 'U')[0]}
+            </span>
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-white text-[11px] font-semibold truncate tracking-bespoke">{user?.name || 'User'}</p>
+            <div className="flex items-center gap-1.5 mt-1">
+               <span className={`text-[8px] font-bold uppercase tracking-[0.15em] px-2 py-0.5 rounded-full border ${roleTag.color}`}>
+                {roleTag.label}
+              </span>
+            </div>
+          </div>
+        </Link>
+      </div>
+
+      {/* Navigation */}
+      <nav className="flex-1 overflow-y-auto px-4 py-3 space-y-4 scrollbar-none">
+        {navSections.map((section) => (
+          <div key={section.section} className="mb-4">
+            <p className="text-[9px] font-black text-slate-600 uppercase tracking-[0.2em] px-4 mb-2">
+              {section.section}
+            </p>
+            <div className="space-y-0.5">
+              {section.items.map((item) => (
+                <NavLink key={item.to} to={item.to} end className={linkCls}>
+                  {({ isActive }) => (
+                    <>
+                      {isActive && (
+                        <span className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 bg-brand-red rounded-r-full" />
+                      )}
+                      <span className={`text-lg shrink-0 transition-colors ${isActive ? 'text-brand-red' : 'text-slate-500 group-hover:text-slate-300'}`}>
+                        {item.icon}
+                      </span>
+                      <span className="truncate">{item.label}</span>
+                      {isActive && <FiChevronRight className="ml-auto text-slate-500 text-xs" />}
+                    </>
+                  )}
+                </NavLink>
+              ))}
+            </div>
+          </div>
         ))}
       </nav>
 
-      <div className="px-6 py-4 border-t border-red-800/40 text-xs text-red-200">
-        TrustFund &copy; {new Date().getFullYear()}
+      {/* Footer / Logout */}
+      <div className="relative px-4 py-4 border-t border-white/5">
+        <button
+          onClick={logout}
+          className="group w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-all text-sm font-medium"
+        >
+          <FiLogOut className="text-lg group-hover:text-rose-400 transition-colors" />
+          <span>Sign Out</span>
+        </button>
+        <p className="text-center text-slate-700 text-[10px] font-bold uppercase tracking-widest mt-3">
+          TrustFund &copy; {new Date().getFullYear()}
+        </p>
       </div>
     </aside>
   );

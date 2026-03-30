@@ -23,7 +23,10 @@ export const getMilestones = async (req, res) => {
     }, req.user);
     res.json(milestones);
   } catch (error) {
-    const status = error.message === 'agreementId or campaignId query parameter is required' ? 400 : error.message === 'Unauthorized' ? 403 : 500;
+    const status = 
+      error.message === 'agreementId or campaignId query parameter is required' ? 400 : 
+      error.message === 'Unauthorized' ? 403 : 
+      error.message === 'Agreement not found' ? 404 : 500;
     res.status(status).json({ message: error.message });
   }
 };

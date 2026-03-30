@@ -32,8 +32,16 @@ export function PartnerOperationsProvider({ children }) {
 
   const fetchPartnerProfile = useCallback(async () => {
     return withLoading(async () => {
-      const { data } = await api.get('/api/partners/me/profile');
-      return data;
+      try {
+        const { data } = await api.get('/api/partners/me/profile');
+        return data;
+      } catch (err) {
+        if (err.response?.status === 404) {
+          // No partner profile exists yet (partner onboarding not completed)
+          return null;
+        }
+        throw err;
+      }
     });
   }, []);
 
@@ -114,6 +122,15 @@ export function PartnerOperationsProvider({ children }) {
     });
   }, []);
 
+  const acceptAgreement = useCallback(async (agreementId) => {
+    return withLoading(async () => {
+      const { data } = await api.patch(`/api/agreements/${agreementId}/accept`);
+      setAgreements((prev) => prev.map((item) => (item._id === agreementId ? data : item)));
+      setCurrentAgreement((prev) => (prev?._id === agreementId ? data : prev));
+      return data;
+    });
+  }, []);
+
   const deleteAgreement = useCallback(async (agreementId) => {
     return withLoading(async () => {
       await api.delete(`/api/agreements/${agreementId}`);
@@ -178,6 +195,7 @@ export function PartnerOperationsProvider({ children }) {
     updateAgreement,
     updateAgreementStatus,
     approveAgreement,
+    acceptAgreement,
     deleteAgreement,
     fetchMilestones,
     createMilestone,
@@ -198,6 +216,7 @@ export function PartnerOperationsProvider({ children }) {
     updateAgreement,
     updateAgreementStatus,
     approveAgreement,
+    acceptAgreement,
     deleteAgreement,
     fetchMilestones,
     createMilestone,

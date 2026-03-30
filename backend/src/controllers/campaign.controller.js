@@ -95,6 +95,7 @@ export const publishCampaign = async (req, res) => {
         const campaign = await campaignService.publishCampaign(req.params.id, req.user);
         res.json(campaign);
     } catch (error) {
+        console.error(`[Publish Error] Campaign ID: ${req.params.id}`, error);
         res.status(400).json({ message: error.message });
     }
 };

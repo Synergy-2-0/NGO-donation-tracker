@@ -1,55 +1,41 @@
-export default function LoadingSpinner({ message = 'Loading...', size = 'md' }) {
+import { FiActivity } from 'react-icons/fi';
+
+export default function LoadingSpinner({ message = 'Synchronizing Ledger...', size = 'md' }) {
   const sizeClasses = {
     sm: 'w-8 h-8',
-    md: 'w-12 h-12',
-    lg: 'w-16 h-16'
+    md: 'w-14 h-14',
+    lg: 'w-20 h-20'
   };
 
   return (
-    <div className="flex flex-col items-center justify-center py-20">
-      {/* Heart beating animation */}
+    <div className="flex flex-col items-center justify-center py-24 space-y-6 animate-fadeIn">
       <div className="relative">
-        <svg
-          className={`${sizeClasses[size]} text-brand-red animate-pulse`}
-          fill="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-        </svg>
+        {/* Main core circle */}
+        <div className={`${sizeClasses[size]} border-4 border-slate-100 rounded-full`} />
+        
+        {/* Spinning accent border */}
+        <div className={`absolute inset-0 ${sizeClasses[size]} border-t-4 border-brand-red rounded-full animate-spin shadow-[0_0_15px_rgba(220,38,38,0.2)]`} />
 
-        {/* Pulsing rings around heart */}
-        <div className="absolute inset-0 animate-ping">
-          <svg
-            className={`${sizeClasses[size]} text-brand-orange opacity-30`}
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            strokeWidth={1}
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-          </svg>
+        {/* Pulsing center icon */}
+        <div className="absolute inset-0 flex items-center justify-center text-slate-900 drop-shadow-sm">
+            <div className={`w-2 h-2 rounded-full bg-brand-red animate-ping opacity-75`} />
         </div>
 
-        {/* Second pulsing ring */}
-        <div className="absolute inset-0 animate-ping" style={{ animationDelay: '150ms' }}>
-          <svg
-            className={`${sizeClasses[size]} text-brand-brown opacity-20`}
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            strokeWidth={1}
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-          </svg>
-        </div>
+        {/* Ambient glow pulses */}
+        <div className="absolute inset-0 rounded-full bg-brand-red/5 blur-2xl animate-pulse -z-10" />
       </div>
 
-      {/* Loading text */}
-      {message && (
-        <p className="mt-4 text-sm font-medium text-brand-brown animate-pulse">
+      {/* Industrial loading text */}
+      <div className="flex flex-col items-center gap-3">
+        <p className="text-[9px] font-bold uppercase tracking-[0.5em] text-slate-400">
           {message}
         </p>
-      )}
+        <div className="flex gap-2">
+           <span className="w-1 h-1 rounded-full bg-slate-200 animate-bounce" style={{ animationDelay: '0ms' }} />
+           <span className="w-1 h-1 rounded-full bg-slate-300 animate-bounce" style={{ animationDelay: '150ms' }} />
+           <span className="w-1 h-1 rounded-full bg-slate-200 animate-bounce" style={{ animationDelay: '300ms' }} />
+        </div>
+      </div>
     </div>
   );
 }

@@ -79,6 +79,16 @@ export const approveAgreement = async (req, res) => {
   }
 };
 
+export const acceptAgreement = async (req, res) => {
+  try {
+    const agreement = await agreementService.acceptAgreement(req.params.id, req.user);
+    res.json(agreement);
+  } catch (error) {
+    const status = error.message === 'Agreement not found' ? 404 : error.message === 'Unauthorized' ? 403 : 400;
+    res.status(status).json({ message: error.message });
+  }
+};
+
 export const getAgreementsByCampaign = async (req, res) => {
   try {
     const agreements = await agreementService.getAgreementsByCampaign(req.params.campaignId, req.user);

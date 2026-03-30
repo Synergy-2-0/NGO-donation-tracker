@@ -1,238 +1,262 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useAdminCampaign } from '../../context/AdminCampaignContext';
-import LoadingSpinner from '../../components/LoadingSpinner';
+import { DashboardSkeleton } from '../../components/Skeleton';
+import { useAuth } from '../../context/AuthContext';
 import { Link } from 'react-router-dom';
+import { 
+  FiPlus, FiTarget, FiCheckCircle, FiEdit3, FiSearch, 
+  FiChevronLeft, FiChevronRight, FiGrid, FiList, FiPieChart,
+  FiActivity, FiClock, FiArchive, FiSend
+} from 'react-icons/fi';
 
 const statusConfig = {
     draft: {
-        label: 'Draft',
-        className: 'bg-gray-100 text-gray-500',
-        dot: 'bg-gray-400',
+        label: 'Proposal',
+        className: 'bg-slate-100 text-slate-500 border-slate-200',
+        icon: <FiClock className="text-xs" />,
     },
     active: {
-        label: 'Active',
-        className: 'bg-red-100 text-[#DC2626]',
-        dot: 'bg-[#DC2626]',
+        label: 'Live Mission',
+        className: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20',
+        icon: <FiActivity className="text-xs" />,
     },
     completed: {
-        label: 'Completed',
-        className: 'bg-green-100 text-green-700',
-        dot: 'bg-green-500',
+        label: 'Accomplished',
+        className: 'bg-indigo-500/10 text-indigo-500 border-indigo-500/20',
+        icon: <FiCheckCircle className="text-xs" />,
     },
     archived: {
-        label: 'Archived',
-        className: 'bg-orange-100 text-[#7C2D12]',
-        dot: 'bg-orange-500',
+        label: 'Closed',
+        className: 'bg-rose-500/10 text-rose-500 border-rose-500/20',
+        icon: <FiArchive className="text-xs" />,
     },
 };
 
 function StatusBadge({ status }) {
     const cfg = statusConfig[status] ?? statusConfig.draft;
     return (
-        <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium ${cfg.className}`}>
-            <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`} />
+        <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border transition-all ${cfg.className}`}>
+            {cfg.icon}
             {cfg.label}
         </span>
     );
 }
 
-
 export default function CampaignDashboardPage() {
+    const { user } = useAuth();
     const { campaigns, loading, fetchCampaigns, publishCampaign } = useAdminCampaign();
     const [currentPage, setCurrentPage] = useState(1);
     const [statusFilter, setStatusFilter] = useState('all');
+    const [searchQuery, setSearchQuery] = useState('');
     const itemsPerPage = 8;
 
     useEffect(() => {
         fetchCampaigns().catch(() => { });
     }, [fetchCampaigns]);
 
+    const filteredCampaigns = useMemo(() => {
+        return campaigns.filter(c => {
+            const matchesStatus = statusFilter === 'all' || c.status === statusFilter;
+            const matchesSearch = c.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                                 c._id.toLowerCase().includes(searchQuery.toLowerCase());
+            return matchesStatus && matchesSearch;
+        });
+    }, [campaigns, statusFilter, searchQuery]);
+
     useEffect(() => {
         setCurrentPage(1);
-    }, [campaigns.length, statusFilter]);
-
-    if (loading && campaigns.length === 0) return <LoadingSpinner />;
-
-    const totalCampaigns = campaigns.length;
-    const draftCount = campaigns.filter((c) => c.status === 'draft').length;
-    const nonDraftCount = campaigns.filter((c) => c.status !== 'draft').length;
-    const filteredCampaigns =
-        statusFilter === 'all'
-            ? campaigns
-            : campaigns.filter((c) => c.status === statusFilter);
+    }, [filteredCampaigns.length]);
 
     const totalPages = Math.max(1, Math.ceil(filteredCampaigns.length / itemsPerPage));
     const startIndex = (currentPage - 1) * itemsPerPage;
     const paginatedCampaigns = filteredCampaigns.slice(startIndex, startIndex + itemsPerPage);
 
+    const stats = useMemo(() => {
+        const total = campaigns.length;
+        const live = campaigns.filter(c => c.status === 'active').length;
+        const drafts = campaigns.filter(c => c.status === 'draft').length;
+        const totalRaised = campaigns.reduce((sum, c) => sum + (c.raisedAmount || 0), 0);
+
+        return [
+            { label: 'Network Missions', value: total, icon: <FiTarget />, color: 'bg-brand-red' },
+            { label: 'Active Status', value: live, icon: <FiActivity />, color: 'bg-emerald-500' },
+            { label: 'Pending Drafts', value: drafts, icon: <FiEdit3 />, color: 'bg-amber-500' },
+            { label: 'Cumulative Impact', value: `LKR ${(totalRaised / 1000).toFixed(0)}K`, icon: <FiPieChart />, color: 'bg-indigo-600' },
+        ];
+    }, [campaigns]);
+
+    if (loading && campaigns.length === 0) return <DashboardSkeleton />;
 
     return (
-        <div className="min-h-full bg-gray-50 p-8 space-y-6">
+        <div className="max-w-7xl mx-auto space-y-8 pb-16 animate-fadeIn text-left">
+            {/* Header Section */}
+            <div className="relative overflow-hidden bg-slate-900 rounded-[32px] p-8 md:p-10 shadow-2xl">
+                <div className="absolute top-0 right-0 w-96 h-96 bg-brand-red/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3" />
+                <div className="absolute bottom-0 left-0 w-72 h-72 bg-brand-orange/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4" />
 
-            {/* Header */}
-            <div className="flex items-start justify-between">
-                <div>
-                    <h2 className="text-2xl font-bold text-gray-800">Campaign Dashboard</h2>
-                    <p className="text-gray-500 text-sm mt-1">View and manage campaigns.</p>
-                </div>
-                <Link
-                    to="/admin/campaigns/create"
-                    className="flex items-center gap-2 px-4 py-2 text-white rounded-lg text-sm font-medium transition-all duration-200 shadow-sm hover:shadow-md hover:opacity-90"
-                    style={{ background: 'linear-gradient(135deg, #7C2D12 0%, #DC2626 100%)' }}
-                >
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-                    </svg>
-                    Create Campaign
-                </Link>
-            </div>
-
-            {/* Stat Cards */}
-            <div className="grid grid-cols-3 gap-4">
-                <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5 flex items-center gap-4">
-                    <div className="w-11 h-11 bg-red-50 rounded-xl flex items-center justify-center shrink-0">
-                        <svg className="w-5 h-5 text-[#DC2626]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M3 7h18M6 3v4m12-4v4M5 11h14a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2z" />
-                        </svg>
-                    </div>
+                <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
                     <div>
-                        <p className="text-2xl font-bold text-[#DC2626] leading-none">{totalCampaigns}</p>
-                        <p className="text-xs text-gray-400 font-medium mt-1">Total Campaigns</p>
-                    </div>
-                </div>
-
-                <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5 flex items-center gap-4">
-                    <div className="w-11 h-11 bg-green-50 rounded-xl flex items-center justify-center shrink-0">
-                        <svg className="w-5 h-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                    </div>
-                    <div>
-                        <p className="text-2xl font-bold text-green-600 leading-none">{nonDraftCount}</p>
-                        <p className="text-xs text-gray-400 font-medium mt-1">Published</p>
-                    </div>
-                </div>
-
-                <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5 flex items-center gap-4">
-                    <div className="w-11 h-11 bg-orange-50 rounded-xl flex items-center justify-center shrink-0">
-                        <svg className="w-5 h-5 text-[#7C2D12]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                        </svg>
-                    </div>
-                    <div>
-                        <p className="text-2xl font-bold text-[#7C2D12] leading-none">{draftCount}</p>
-                        <p className="text-xs text-gray-400 font-medium mt-1">Drafts</p>
+                        <p className="text-[10px] font-black uppercase tracking-[.2em] text-slate-500 mb-2">Operational Hub</p>
+                        <h2 className="text-3xl md:text-4xl font-black text-white tracking-tight">Mission <span className="text-brand-red">Registry</span></h2>
+                        <p className="text-slate-400 text-sm mt-2 max-w-xl font-medium">Coordinate, publish, and monitor impact initiatives across the global network.</p>
+                        {user?.role === 'ngo-admin' && (
+                            <Link 
+                                to="/admin/campaigns/create" 
+                                className="flex items-center gap-2 px-8 py-4 bg-brand-red text-white rounded-[24px] text-xs font-black uppercase tracking-widest hover:bg-white hover:text-slate-900 transition-all hover:shadow-[0_0_30px_rgba(220,38,38,0.3)] active:scale-95 group mt-6"
+                            >
+                                <FiPlus className="text-lg group-hover:rotate-90 transition-transform duration-500" />
+                                <span>Initialize Mission</span>
+                            </Link>
+                        )}
                     </div>
                 </div>
             </div>
 
-            {/* Campaign List */}
-            <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
-                <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-                    <h3 className="text-base font-semibold text-gray-700">All Campaigns</h3>
+            {/* Stats Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                {stats.map((s, idx) => (
+                    <div key={idx} className="bg-white rounded-[32px] border border-slate-100 p-7 flex items-center gap-5 shadow-sm hover:shadow-md transition-shadow group">
+                        <div className={`w-14 h-14 ${s.color} text-white rounded-2xl flex items-center justify-center text-xl shadow-lg transition-transform group-hover:scale-110 shadow-slate-900/5`}>{s.icon}</div>
+                        <div className="min-w-0">
+                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 truncate">{s.label}</p>
+                            <h4 className="text-xl font-black text-slate-900 truncate tracking-tight">{s.value}</h4>
+                        </div>
+                    </div>
+                ))}
+            </div>
+
+            {/* Management Hub */}
+            <div className="bg-white rounded-[40px] border border-slate-100 shadow-sm overflow-hidden flex flex-col">
+                <div className="p-8 border-b border-slate-50 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div className="relative flex-1 max-w-md">
+                        <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+                        <input 
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            placeholder="Filter missions by title or ID..."
+                            className="w-full bg-slate-50 border border-slate-100 rounded-2xl pl-12 pr-4 py-3 text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-brand-red/5 focus:border-brand-red/20 transition-all"
+                        />
+                    </div>
 
                     <div className="flex items-center gap-3">
                         <select
                             value={statusFilter}
                             onChange={(e) => setStatusFilter(e.target.value)}
-                            className="text-xs border border-gray-200 rounded px-2 py-1 bg-white text-gray-600"
+                            className="bg-slate-50 border border-slate-100 rounded-2xl px-5 py-3 text-[10px] font-black uppercase tracking-widest text-slate-600 focus:outline-none focus:ring-4 focus:ring-brand-red/5 transition-all outline-none appearance-none cursor-pointer pr-10 relative"
+                            style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' fill=\'none\' viewBox=\'0 0 24 24\' stroke=\'currentColor\'%3E%3Cpath stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M19 9l-7 7-7-7\' /%3E%3C/svg%3E")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 15px center', backgroundSize: '12px' }}
                         >
-                            <option value="all">All Status</option>
-                            <option value="draft">Draft</option>
-                            <option value="active">Active</option>
-                            <option value="completed">Completed</option>
-                            <option value="archived">Archived</option>
+                            <option value="all">Every Status</option>
+                            <option value="draft">Proposals Only</option>
+                            <option value="active">Live Missions</option>
+                            <option value="completed">Accomplished</option>
+                            <option value="archived">Closed</option>
                         </select>
                     </div>
                 </div>
 
-                {filteredCampaigns.length === 0 ? (
-                    <div className="py-16 text-center">
-                        <div className="w-12 h-12 bg-red-50 rounded-xl flex items-center justify-center mx-auto mb-3">
-                            <svg className="w-6 h-6 text-red-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M3 7h18M6 3v4m12-4v4M5 11h14a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2z" />
-                            </svg>
-                        </div>
-                        <p className="text-sm text-gray-400 font-medium">No campaigns yet.</p>
-                        <p className="text-xs text-gray-300 mt-1">Create your first campaign to get started.</p>
-                    </div>
-                ) : (
-                    <div className="divide-y divide-gray-50">
-                        {paginatedCampaigns.map((c) => (
-                            <div
-                                key={c._id}
-                                className="flex items-center justify-between px-6 py-4 hover:bg-red-50/40 transition-colors duration-150 group"
-                            >
-                                {/* Left */}
-                                <div className="flex items-center gap-3 min-w-0">
-                                    <div className="w-8 h-8 bg-gray-50 border border-gray-100 rounded-lg flex items-center justify-center shrink-0 group-hover:border-red-200 group-hover:bg-red-50 transition-colors">
-                                        <svg className="w-4 h-4 text-gray-400 group-hover:text-[#DC2626] transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                            <path strokeLinecap="round" strokeLinejoin="round" d="M3 7h18M6 3v4m12-4v4M5 11h14a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2z" />
-                                        </svg>
-                                    </div>
-                                    <div className="min-w-0">
-                                        <p className="text-sm font-semibold text-gray-800 group-hover:text-[#DC2626] transition-colors truncate">{c.title}</p>
-                                        <p className="text-[10px] text-gray-400 font-medium uppercase tracking-wider mt-0.5">
-                                            ID: {c._id ?? '—'}
-                                        </p>
-                                    </div>
-                                </div>
+                <div className="overflow-x-auto min-h-[400px]">
+                    <table className="w-full border-collapse">
+                        <thead>
+                            <tr className="bg-slate-50/50">
+                                <th className="px-8 py-5 text-left text-[10px] font-black uppercase tracking-[.2em] text-slate-400">Mission Identity</th>
+                                <th className="px-8 py-5 text-left text-[10px] font-black uppercase tracking-[.2em] text-slate-400">Target Progress</th>
+                                <th className="px-8 py-5 text-center text-[10px] font-black uppercase tracking-[.2em] text-slate-400">Operational Level</th>
+                                <th className="px-8 py-5 text-right text-[10px] font-black uppercase tracking-[.2em] text-slate-400">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-50">
+                            {paginatedCampaigns.length > 0 ? paginatedCampaigns.map((c) => (
+                                <tr key={c._id} className="group hover:bg-slate-50/50 transition-all duration-200">
+                                    <td className="px-8 py-6">
+                                        <div className="flex items-center gap-5">
+                                            <div className="w-12 h-12 rounded-2xl bg-white border border-slate-100 flex items-center justify-center text-slate-200 group-hover:text-brand-red group-hover:border-brand-red/20 transition-all shadow-sm shrink-0">
+                                                <FiTarget className="text-xl" />
+                                            </div>
+                                            <div className="min-w-0">
+                                                <p className="text-sm font-black text-slate-800 truncate tracking-tight group-hover:text-brand-red transition-colors">{c.title}</p>
+                                                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-1">ID: {c._id.slice(-8)}</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td className="px-8 py-6">
+                                        <div className="flex flex-col gap-2 w-48">
+                                            <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-widest">
+                                               <span className="text-slate-400">Raised</span>
+                                               <span className="text-slate-900">{Math.round((c.raisedAmount / c.goalAmount) * 100)}%</span>
+                                            </div>
+                                            <div className="h-2 bg-slate-50 rounded-full overflow-hidden border border-slate-100">
+                                                <div 
+                                                    className={`h-full transition-all duration-1000 ${c.status === 'active' ? 'bg-brand-red' : 'bg-slate-300'}`} 
+                                                    style={{ width: `${Math.min(100, (c.raisedAmount / c.goalAmount) * 100)}%` }}
+                                                />
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td className="px-8 py-6 text-center">
+                                        <StatusBadge status={c.status} />
+                                    </td>
+                                    <td className="px-8 py-6 text-right">
+                                        <div className="flex items-center justify-end gap-2">
+                                            {c.status === 'draft' && user?.role === 'admin' && (
+                                                <button
+                                                    onClick={() => publishCampaign(c._id)}
+                                                    className="px-4 py-2 bg-emerald-50 text-emerald-600 rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-emerald-500 hover:text-white transition-all shadow-sm border border-emerald-100 hover:border-emerald-500 flex items-center gap-2 active:scale-95"
+                                                >
+                                                    <FiSend className="text-xs" /> Deploy
+                                                </button>
+                                            )}
+                                            <Link
+                                                to={`/admin/campaigns/${c._id}`}
+                                                className="px-4 py-2 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-brand-red transition-all shadow-xl shadow-slate-900/10 active:scale-95 flex items-center gap-2"
+                                            >
+                                                Details <FiChevronRight className="text-sm" />
+                                            </Link>
+                                        </div>
+                                    </td>
+                                </tr>
+                            )) : (
+                                <tr>
+                                    <td colSpan="4" className="px-8 py-20 text-center">
+                                        <div className="w-20 h-20 bg-slate-50 rounded-[28px] flex items-center justify-center mx-auto mb-4 border border-slate-100 text-slate-200">
+                                            <FiTarget className="text-3xl" />
+                                        </div>
+                                        <p className="text-slate-400 font-black text-sm uppercase tracking-widest">No matching missions identified.</p>
+                                    </td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
 
-                                {/* Right */}
-                                <div className="flex items-center gap-3 shrink-0">
-                                    <StatusBadge status={c.status} />
-
-                                    {c.status === 'draft' && (
-                                        <button
-                                            onClick={() => publishCampaign(c._id)}
-                                            className="px-3 py-1 bg-green-50 text-green-700 rounded-lg text-xs font-medium hover:bg-green-100 transition-colors border border-green-100"
-                                        >
-                                            Publish
-                                        </button>
-                                    )}
-                                    <Link
-                                        to={`/admin/campaigns/${c._id}`}
-                                        className="px-3 py-1 bg-red-50 text-[#DC2626] rounded-lg text-xs font-medium hover:bg-red-100 transition-colors border border-red-100"
-                                    >
-                                        View
-                                    </Link>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                )}
-
-                {filteredCampaigns.length > itemsPerPage && (
-                    <div className="px-6 py-4 border-t border-gray-100 flex items-center justify-between">
-                        <p className="text-xs text-gray-500">
-                            Showing {startIndex + 1}-{Math.min(startIndex + itemsPerPage, filteredCampaigns.length)} of {filteredCampaigns.length}
+                {/* Pagination */}
+                {totalPages > 1 && (
+                    <div className="px-8 py-6 border-t border-slate-50 flex items-center justify-between">
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                            {startIndex + 1}—{Math.min(startIndex + itemsPerPage, filteredCampaigns.length)} of {filteredCampaigns.length}
                         </p>
-                        <div className="flex items-center gap-2 text-sm">
+                        <div className="flex items-center gap-2">
                             <button
                                 onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                                 disabled={currentPage === 1}
-                                className="text-gray-700 disabled:text-gray-300"
-                                aria-label="Previous page"
+                                className="w-10 h-10 flex items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 disabled:opacity-30 disabled:pointer-events-none transition-all"
                             >
-                                {"<"}
+                                <FiChevronLeft />
                             </button>
 
-                            <span className="w-8 h-8 inline-flex items-center justify-center text-xs rounded border bg-[#DC2626] text-white border-[#DC2626]">
-                                {currentPage}
-                            </span>
+                            <div className="h-10 px-4 flex items-center bg-slate-900 text-white rounded-xl text-[10px] font-black tracking-widest">
+                                {currentPage} <span className="mx-2 opacity-30">/</span> {totalPages}
+                            </div>
 
                             <button
                                 onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                                 disabled={currentPage === totalPages}
-                                className="text-gray-700 disabled:text-gray-300"
-                                aria-label="Next page"
+                                className="w-10 h-10 flex items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 disabled:opacity-30 disabled:pointer-events-none transition-all"
                             >
-                                {">"}
+                                <FiChevronRight />
                             </button>
                         </div>
                     </div>
                 )}
-
             </div>
         </div>
     );

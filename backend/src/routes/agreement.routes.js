@@ -19,6 +19,7 @@ router.get('/:id', authenticate, ctrl.getAgreement);
 router.put('/:id', authenticate, validateRequest(updateAgreementSchema), ctrl.updateAgreement);
 router.patch('/:id/status', authenticate, validateRequest(updateAgreementStatusSchema), ctrl.updateAgreementStatus);
 router.patch('/:id/approve', authenticate, authorizeRoles('admin', 'ngo-admin'), ctrl.approveAgreement);
+router.patch('/:id/accept', authenticate, authorizeRoles('partner'), ctrl.acceptAgreement);
 router.delete('/:id', authenticate, ctrl.deleteAgreement);
 
 export default router;

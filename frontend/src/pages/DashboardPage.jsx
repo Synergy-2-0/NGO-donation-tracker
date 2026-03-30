@@ -1,55 +1,31 @@
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import {
-  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
-} from 'recharts';
 import { useAuth } from '../context/AuthContext';
 import { useDonor } from '../context/DonorContext';
 import LoadingSpinner from '../components/LoadingSpinner';
+import { FiHeart, FiActivity, FiDollarSign, FiZap, FiArrowRight, FiUser, FiClock, FiPlusCircle, FiList } from 'react-icons/fi';
 
-const dummyChartData = [
-  { name: 'Jan', amount: 4000 },
-  { name: 'Feb', amount: 3000 },
-  { name: 'Mar', amount: 2000 },
-  { name: 'Apr', amount: 2780 },
-  { name: 'May', amount: 1890 },
-  { name: 'Jun', amount: 2390 },
-  { name: 'Jul', amount: 3490 },
-];
+const pledgeStatusColor = {
+  active: 'bg-emerald-50 text-emerald-600 border-emerald-100',
+  fulfilled: 'bg-indigo-50 text-indigo-600 border-indigo-100',
+  cancelled: 'bg-rose-50 text-rose-600 border-rose-100',
+  pending: 'bg-amber-50 text-amber-600 border-amber-100',
+};
 
-function PremiumStatCard({ label, value, icon, trend, color, bg }) {
+function PremiumStatCard({ label, value, icon, color, bg }) {
   return (
-    <div className="relative overflow-hidden bg-white/80 backdrop-blur-md p-6 rounded-2xl border border-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all duration-300 group">
-      <div className="flex justify-between items-start">
-        <div>
-          <p className="text-sm font-medium text-gray-400 mb-1">{label}</p>
-          <h3 className={`text-2xl font-bold tracking-tight ${color}`}>{value ?? '—'}</h3>
-          {trend && (
-            <div className="flex items-center gap-1 mt-2">
-              <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${trend > 0 ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'}`}>
-                {trend > 0 ? '↑' : '↓'} {Math.abs(trend)}%
-              </span>
-              <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">vs last month</span>
-            </div>
-          )}
-        </div>
-        <div className={`p-3 rounded-xl ${bg} text-white shadow-lg shadow-${color}/20 group-hover:scale-110 transition-transform`}>
-          {icon}
-        </div>
+    <div className="bg-white rounded-[32px] border border-slate-100 shadow-sm p-7 flex items-center justify-between gap-4 group hover:shadow-xl transition-all duration-300 relative overflow-hidden text-left">
+      <div className="absolute -right-6 -top-6 w-24 h-24 rounded-full bg-slate-50 group-hover:scale-110 transition-transform opacity-60" />
+      <div className="relative z-10">
+        <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">{label}</p>
+        <h3 className={`text-2xl font-black tracking-tight ${color}`}>{value ?? <span className="text-slate-200">—</span>}</h3>
       </div>
-      <div className="absolute -bottom-2 -right-2 opacity-[0.03] group-hover:opacity-[0.05] transition-opacity">
-        {icon}
+      <div className={`relative z-10 w-12 h-12 rounded-2xl flex items-center justify-center text-white shadow-lg shrink-0 group-hover:rotate-3 group-hover:scale-110 transition-transform ${bg}`}>
+        <span className="text-lg">{icon}</span>
       </div>
     </div>
   );
 }
-
-const pledgeStatusColor = {
-  active: 'bg-green-100 text-green-700',
-  fulfilled: 'bg-orange-100 text-orange-700',
-  cancelled: 'bg-red-100 text-red-700',
-  pending: 'bg-yellow-100 text-yellow-700',
-};
 
 export default function DashboardPage() {
   const { user } = useAuth();
@@ -74,145 +50,165 @@ export default function DashboardPage() {
       .catch(() => { });
   }, [fetchProfile, fetchAnalytics, fetchPledges]);
 
-  if (loading && !donorProfile) return <LoadingSpinner />;
+  if (loading && !donorProfile) return (
+    <div className="py-20 flex justify-center">
+      <LoadingSpinner message="Syncing donor intelligence..." />
+    </div>
+  );
 
-  const activePledges = pledges.filter((p) => p.status === 'active').length;
+  const activePledgesCount = pledges.filter((p) => p.status === 'active').length;
 
   return (
-    <div className="space-y-6">
+    <div className="max-w-7xl mx-auto space-y-8 pb-16 animate-fadeIn text-left">
       {/* Header */}
-      <div>
-        <h2 className="text-2xl font-bold text-gray-800">
-          Welcome back, {user?.name || 'Donor'} 👋
-        </h2>
-        <p className="text-gray-500 text-sm mt-1">
-          Here&apos;s an overview of your donation activity.
-        </p>
-      </div>
-
-      {/* Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <PremiumStatCard
-          label="Total Donated"
-          value={
-            analytics?.totalDonations != null
-              ? `LKR ${Number(analytics.totalDonations).toLocaleString()}`
-              : null
-          }
-          color="text-[#DC2626]"
-          bg="bg-white"
-        />
-        <PremiumStatCard
-          label="Campaigns Supported"
-          value={analytics?.totalCampaigns ?? null}
-          color="text-emerald-600"
-          bg="bg-emerald-600"
-          icon={<svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>}
-        />
-        <PremiumStatCard
-          label="Active Pledges"
-          value={pledges.length > 0 ? activePledges : null}
-          color="text-[#7C2D12]"
-          bg="bg-white"
-        />
-        <PremiumStatCard
-          label="Total Impact Score"
-          value="98%"
-          color="text-rose-600"
-          bg="bg-rose-600"
-          icon={<svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>}
-        />
-      </div>
-
-      {/* Quick Actions */}
-      <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
-        <h3 className="text-base font-semibold text-gray-700 mb-4">Quick Actions</h3>
-        <div className="flex flex-wrap gap-3">
-          <Link
-            to="/profile"
-            className="px-4 py-2 bg-red-50 text-[#DC2626] hover:bg-red-100 rounded-lg text-sm font-medium transition-colors"
-          >
-            Manage Profile
-          </Link>
-          <Link
-            to="/pledges"
-            className="px-4 py-2 bg-green-50 text-green-700 hover:bg-green-100 rounded-lg text-sm font-medium transition-colors"
-          >
-            New Pledge
-          </Link>
-          <Link
-            to="/donations"
-            className="px-4 py-2 bg-orange-50 text-[#7C2D12] hover:bg-orange-100 rounded-lg text-sm font-medium transition-colors"
-          >
-            Donation History
-          </Link>
+      <div className="relative overflow-hidden bg-slate-900 rounded-[32px] p-8 md:p-10 shadow-2xl">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-brand-red/15 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3" />
+        <div className="absolute bottom-0 left-0 w-72 h-72 bg-brand-orange/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4" />
+        <div className="relative z-10">
+          <p className="text-[10px] font-black uppercase tracking-[.2em] text-slate-500 mb-2">Internal Registry</p>
+          <h2 className="text-3xl md:text-4xl font-black text-white tracking-tight">
+            Welcome, <span className="text-brand-red">{user?.name?.split(' ')[0] || 'Donor'}</span>
+          </h2>
+          <p className="text-slate-400 text-sm mt-2 max-w-xl font-medium">Monitoring your philanthropic contributions and strategic impact scores across all active campaigns.</p>
         </div>
       </div>
 
-      {/* Recent Pledges */}
-      {pledges.length > 0 && (
-        <>
-          <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-base font-semibold text-gray-700">Recent Pledges</h3>
-              <Link to="/pledges" className="text-sm text-[#DC2626] hover:underline">
-                View all →
-              </Link>
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <PremiumStatCard
+          label="Cumulative Donated"
+          value={analytics?.totalDonations != null ? `LKR ${Number(analytics.totalDonations).toLocaleString()}` : null}
+          color="text-slate-900"
+          bg="bg-slate-900"
+          icon={<FiDollarSign />}
+        />
+        <PremiumStatCard
+          label="Mission Count"
+          value={analytics?.totalCampaigns ?? null}
+          color="text-brand-red"
+          bg="bg-brand-red"
+          icon={<FiActivity />}
+        />
+        <PremiumStatCard
+          label="Active Pledges"
+          value={pledges.length > 0 ? activePledgesCount : null}
+          color="text-brand-orange"
+          bg="bg-brand-orange shadow-brand-orange/20"
+          icon={<FiZap />}
+        />
+        <PremiumStatCard
+          label="Trust Score"
+          value="98.4%"
+          color="text-emerald-600"
+          bg="bg-emerald-600"
+          icon={<FiHeart />}
+        />
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Recent Pledges Table Section */}
+        <div className="lg:col-span-2 bg-white rounded-[40px] border border-slate-100 shadow-sm overflow-hidden flex flex-col">
+          <div className="p-8 pb-4 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+               <span className="w-8 h-8 bg-slate-900 text-white rounded-xl flex items-center justify-center text-sm"><FiList /></span>
+               <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-500">Recent Pledges Node</h3>
             </div>
-            <Link to="/pledges" className="text-sm font-bold text-indigo-600 hover:text-indigo-800 transition-colors">
-              Manage All →
+            <Link to="/pledges" className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-brand-red hover:underline">
+               Full Ledger <FiArrowRight />
             </Link>
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="text-left text-xs text-gray-400 uppercase tracking-widest font-bold">
-                  <th className="pb-4 px-2">Campaign Category</th>
-                  <th className="pb-4 px-2">Amount</th>
-                  <th className="pb-4 px-2 text-center">Frequency</th>
-                  <th className="pb-4 px-2">Status</th>
-                  <th className="pb-4 px-2">Next Payment</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-50">
-                {pledges.length > 0 ? pledges.slice(0, 5).map((pledge) => (
-                  <tr key={pledge._id} className="group hover:bg-gray-50/50 transition-colors">
-                    <td className="py-4 px-2">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center text-indigo-600 group-hover:scale-110 transition-transform">
-                          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-                        </div>
-                        <span className="font-semibold text-gray-700">General Support</span>
-                      </div>
-                    </td>
-                    <td className="py-4 px-2 font-bold text-gray-900">
-                      LKR {Number(pledge.amount).toLocaleString()}
-                    </td>
-                    <td className="py-4 px-2 text-center">
-                      <span className="px-2.5 py-1 bg-gray-100 text-gray-600 text-[10px] uppercase font-black tracking-tighter rounded-md">
-                        {pledge.frequency}
-                      </span>
-                    </td>
-                    <td className="py-4 px-2">
-                      <span className={`px-3 py-1 rounded-lg text-xs font-bold border ${pledgeStatusColor[pledge.status] || 'bg-gray-100 text-gray-600 border-gray-200'}`}>
-                        {pledge.status.toUpperCase()}
-                      </span>
-                    </td>
-                    <td className="py-4 px-2 text-gray-500 text-sm font-medium">
-                      {new Date(pledge.startDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
-                    </td>
-                  </tr>
-                )) : (
-                  <tr>
-                    <td colSpan="5" className="py-10 text-center text-gray-300 font-medium italic">You haven't made any pledges yet.</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
+          <div className="flex-1 overflow-x-auto">
+             <table className="w-full">
+               <thead>
+                 <tr className="text-left text-[9px] text-slate-400 uppercase tracking-widest font-black border-b border-slate-50">
+                    <th className="px-8 py-4">Synergy Node</th>
+                    <th className="px-8 py-4">Inbound Liquidity</th>
+                    <th className="px-8 py-4 text-center">Frequency</th>
+                    <th className="px-8 py-4 text-right">Governance</th>
+                 </tr>
+               </thead>
+               <tbody className="divide-y divide-slate-50">
+                  {pledges.length > 0 ? pledges.slice(0, 5).map((p) => (
+                    <tr key={p._id} className="group hover:bg-slate-50/50 transition-colors">
+                       <td className="px-8 py-5">
+                          <div className="flex items-center gap-3">
+                             <div className="w-9 h-9 bg-slate-100 rounded-xl flex items-center justify-center text-slate-400 group-hover:bg-slate-900 group-hover:text-white transition-all">
+                                <FiPlusCircle />
+                             </div>
+                             <div>
+                                <p className="text-sm font-bold text-slate-800 tracking-tight">Mission Support</p>
+                                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-0.5 font-serif font-serif">Registry Entry</p>
+                             </div>
+                          </div>
+                       </td>
+                       <td className="px-8 py-5">
+                          <p className="text-sm font-black text-slate-900 tracking-tighter">LKR {Number(p.amount).toLocaleString()}</p>
+                       </td>
+                       <td className="px-8 py-5 text-center">
+                          <span className="px-2.5 py-1 bg-slate-50 border border-slate-100 text-slate-500 text-[10px] font-black uppercase tracking-tighter rounded-md">
+                             {p.frequency}
+                          </span>
+                       </td>
+                       <td className="px-8 py-5 text-right">
+                          <span className={`px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest border ${pledgeStatusColor[p.status] || 'bg-slate-50'}`}>
+                             {p.status}
+                          </span>
+                       </td>
+                    </tr>
+                  )) : (
+                    <tr>
+                       <td colSpan="4" className="px-8 py-20 text-center">
+                          <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-slate-100 text-slate-200">
+                             <FiClock className="text-2xl" />
+                          </div>
+                          <p className="text-slate-400 font-black text-xs uppercase tracking-widest">No Intelligence Detected.</p>
+                       </td>
+                    </tr>
+                  )}
+               </tbody>
+             </table>
           </div>
-        </>
-      )}
-    </div >
+        </div>
+
+        {/* Audit & Quick Actions Panel */}
+        <div className="bg-slate-900 rounded-[40px] p-8 text-white relative overflow-hidden flex flex-col justify-between text-left">
+           <div className="absolute top-0 right-0 w-64 h-64 bg-brand-red/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+           
+           <div className="relative z-10">
+              <div className="w-14 h-14 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center mb-6">
+                <FiUser className="text-2xl text-slate-300" />
+              </div>
+              <h3 className="text-xl font-black tracking-tight mb-3">Identity Ops</h3>
+              <p className="text-slate-400 text-sm leading-relaxed mb-8 font-medium">Manage your donor credentials, security preferences, and synchronization nodes.</p>
+              
+              <div className="space-y-3">
+                 <Link to="/profile" className="w-full flex items-center justify-between p-4 bg-white/5 hover:bg-white/10 border border-white/5 hover:border-white/10 rounded-2xl text-white text-[10px] font-black uppercase tracking-widest transition-all group">
+                    <span>Manage Profile Registry</span>
+                    <FiArrowRight className="text-slate-600 group-hover:text-white transition-all transform group-hover:translate-x-1" />
+                 </Link>
+                 <Link to="/pledges" className="w-full flex items-center justify-between p-4 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 hover:border-emerald-500/30 rounded-2xl text-emerald-500 text-[10px] font-black uppercase tracking-widest transition-all group">
+                    <span>Initiate New Pledge Node</span>
+                    <FiArrowRight className="transform group-hover:translate-x-1 transition-transform" />
+                 </Link>
+                 <Link to="/donations" className="w-full flex items-center justify-between p-4 bg-brand-red/10 hover:bg-brand-red/20 border border-brand-red/20 hover:border-brand-red/30 rounded-2xl text-brand-red text-[10px] font-black uppercase tracking-widest transition-all group">
+                    <span>Access Historical Ledger</span>
+                    <FiArrowRight className="transform group-hover:translate-x-1 transition-transform" />
+                 </Link>
+              </div>
+           </div>
+
+           <div className="relative z-10 pt-8 mt-8 border-t border-white/5 flex items-end justify-between">
+              <div>
+                 <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Protocol Type</p>
+                 <p className="text-sm font-bold text-slate-300">Strategic Philanthropy</p>
+              </div>
+              <div className="px-3 py-1 bg-white/5 border border-white/10 rounded-lg text-[9px] font-black text-slate-500 uppercase tracking-[.2em]">
+                 SYNERGY V2.4
+              </div>
+           </div>
+        </div>
+      </div>
+    </div>
   );
 }

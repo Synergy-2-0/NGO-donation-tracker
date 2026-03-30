@@ -31,6 +31,10 @@ class PartnerService {
 
   // Get single partner with authorization check
   async getPartnerById(id, user) {
+    if (id === 'me') {
+      return await this.getPartnerByUserId(user.id);
+    }
+    
     const partner = await partnerRepository.findById(id);
     if (!partner) throw new Error('Partner not found');
     

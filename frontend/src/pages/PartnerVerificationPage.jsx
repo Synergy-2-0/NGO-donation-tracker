@@ -4,6 +4,16 @@ import { useAuth } from '../context/AuthContext';
 import { usePartner } from '../context/PartnerContext';
 import LoadingSpinner from '../components/LoadingSpinner';
 import api from '../api/axios';
+import { 
+    FiCheckCircle, 
+    FiMap, 
+    FiAlertTriangle, 
+    FiX, 
+    FiFileText, 
+    FiBriefcase, 
+    FiArrowRight, 
+    FiShield 
+} from 'react-icons/fi';
 
 export default function PartnerVerificationPage() {
   const { user } = useAuth();
@@ -43,7 +53,6 @@ export default function PartnerVerificationPage() {
     try {
       setRejectingId(id);
       await api.put(`/api/partners/${id}`, { verificationStatus: 'rejected' });
-      // remove from pending view efficiently
       fetchPartners();
       setSuccess('Partner application rejected.');
       setError('');
@@ -57,7 +66,7 @@ export default function PartnerVerificationPage() {
   };
 
   return (
-    <div className="space-y-8 animate-fadeIn">
+    <div className="space-y-8 animate-fadeIn text-left">
       {/* Header section with styling */}
       <div className="relative overflow-hidden bg-slate-900 rounded-[32px] p-8 md:p-10 shadow-2xl">
         <div className="absolute top-0 right-0 w-96 h-96 bg-brand-red/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
@@ -70,9 +79,9 @@ export default function PartnerVerificationPage() {
               Review and verify institutional partners. Uphold network integrity by analyzing compliance documents and alignment with SDG goals before granting funding platform access.
             </p>
           </div>
-          <Link to="/partners" className="group inline-flex items-center gap-2 px-6 py-3 bg-white/10 hover:bg-white/20 text-white text-sm font-semibold rounded-xl backdrop-blur-md border border-white/10 transition-all">
+          <Link to="/partners" className="group inline-flex items-center justify-center gap-2 px-6 py-3 bg-white/10 hover:bg-white/20 text-white text-sm font-semibold rounded-xl backdrop-blur-md border border-white/10 transition-all">
             <span>Network Directory</span>
-            <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+            <FiArrowRight className="text-lg group-hover:translate-x-1 transition-transform" />
           </Link>
         </div>
       </div>
@@ -83,16 +92,16 @@ export default function PartnerVerificationPage() {
            <div className="space-y-3 mb-6">
              {error && (
                <div className="flex items-center gap-3 bg-red-50/50 border border-brand-red/20 text-brand-red px-5 py-4 rounded-2xl animate-fadeIn">
-                  <svg className="w-5 h-5 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" /></svg>
+                  <FiAlertTriangle className="text-xl shrink-0" />
                   <p className="text-sm font-medium">{error}</p>
-                  <button onClick={() => setError('')} className="ml-auto text-brand-red/60 hover:text-brand-red p-1"><svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg></button>
+                  <button onClick={() => setError('')} className="ml-auto text-brand-red/60 hover:text-brand-red p-1"><FiX className="text-xl" /></button>
                </div>
              )}
              {success && (
                <div className="flex items-center gap-3 bg-emerald-50/50 border border-emerald-200/50 text-emerald-700 px-5 py-4 rounded-2xl animate-fadeIn">
-                  <svg className="w-5 h-5 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
+                  <FiCheckCircle className="text-xl shrink-0" />
                   <p className="text-sm font-medium">{success}</p>
-                  <button onClick={() => setSuccess('')} className="ml-auto text-emerald-700/60 hover:text-emerald-700 p-1"><svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg></button>
+                  <button onClick={() => setSuccess('')} className="ml-auto text-emerald-700/60 hover:text-emerald-700 p-1"><FiX className="text-xl" /></button>
                </div>
              )}
            </div>
@@ -105,8 +114,8 @@ export default function PartnerVerificationPage() {
           </div>
         ) : pendingPartners.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-24 text-center bg-white rounded-[32px] border border-slate-100 shadow-sm">
-            <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mb-4">
-              <span className="text-3xl">📭</span>
+            <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mb-4 text-slate-300">
+              <FiBriefcase className="text-3xl" />
             </div>
             <h3 className="text-lg font-bold text-slate-800 mb-1">Queue Empty</h3>
             <p className="text-slate-500 text-sm max-w-sm">There are currently no partner verification requests waiting for review.</p>
@@ -127,11 +136,11 @@ export default function PartnerVerificationPage() {
 
                 <div className="p-8 flex-1">
                   <div className="flex items-start gap-4 mb-6">
-                    <div className="w-14 h-14 rounded-2xl border border-slate-100 bg-slate-50 p-2 shrink-0 flex items-center justify-center">
+                    <div className="w-14 h-14 rounded-2xl border border-slate-100 bg-slate-50 p-2 shrink-0 flex items-center justify-center overflow-hidden">
                       {partner.logoUrl ? (
-                         <img src={partner.logoUrl} alt={partner.organizationName} className="w-full h-full object-contain" />
+                         <img src={partner.logoUrl} alt={partner.organizationName} className="w-full h-full object-cover" />
                       ) : (
-                         <span className="text-xl">🏢</span>
+                         <FiBriefcase className="text-2xl text-slate-400" />
                       )}
                     </div>
                     <div>
@@ -171,7 +180,7 @@ export default function PartnerVerificationPage() {
                 {/* Footer Actions */}
                 <div className="bg-slate-50 p-6 border-t border-slate-100 flex items-center justify-between mt-auto">
                    <div className="flex items-center gap-2">
-                      <svg className="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                      <FiFileText className="text-lg text-slate-400" />
                       <span className="text-xs font-semibold text-slate-500">{partner.verificationDocuments?.length || 0} Docs Attached</span>
                    </div>
 
@@ -180,9 +189,9 @@ export default function PartnerVerificationPage() {
                            setSelectedPartner(partner);
                            setHasReviewedDocs(false);
                        }} 
-                       className="px-6 py-2 bg-slate-900 text-white rounded-xl text-xs font-bold hover:bg-brand-red transition-all shadow-md active:scale-95"
+                       className="px-6 py-2 bg-slate-900 text-white rounded-xl text-xs font-bold hover:bg-brand-red transition-all shadow-md active:scale-95 flex items-center gap-1.5"
                    >
-                     Review Application →
+                     Review Application <FiArrowRight className="text-lg" />
                    </button>
                 </div>
               </div>
@@ -217,11 +226,11 @@ export default function PartnerVerificationPage() {
                                      >
                                         <div className="flex items-center gap-3 mb-2">
                                             <div className="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center shrink-0 group-hover:bg-brand-red group-hover:text-white transition-colors">
-                                                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                                                <FiFileText className="text-xl" />
                                             </div>
                                             <div>
                                                <span className="block text-sm font-bold text-slate-800 capitalize">{doc.documentType || 'Official Record'}</span>
-                                               <span className="text-[10px] uppercase font-bold text-brand-red tracking-widest">{isDocx ? 'Preview Document' : 'Click to Preview'}</span>
+                                               <span className="text-[10px] uppercase font-bold text-brand-red tracking-widest flex items-center gap-1">{isDocx ? 'Preview Document' : 'Click to Preview'}</span>
                                             </div>
                                         </div>
                                         <p className="text-xs text-slate-500 font-medium line-clamp-2 mt-2 break-all">{doc.url}</p>
@@ -230,18 +239,18 @@ export default function PartnerVerificationPage() {
                              })}
                              
                              <div className="mt-auto pt-6">
-                                <p className="text-xs text-slate-500 font-medium leading-relaxed bg-brand-orange/10 p-4 border border-brand-orange/20 rounded-xl text-brand-orange">
-                                    <strong className="block mb-1 font-bold text-brand-orange">Verification Policy</strong>
+                                <p className="text-xs text-slate-500 font-medium leading-relaxed bg-brand-orange/10 p-4 border border-brand-orange/20 rounded-xl text-brand-orange flex flex-col gap-1">
+                                    <strong className="block font-bold text-brand-orange flex items-center gap-1"><FiAlertTriangle /> Verification Policy</strong>
                                     You must preview and verify the authenticity of all attached documents before approving this entity into the network directory.
                                 </p>
                              </div>
                          </div>
                      ) : (
                          <div className="flex-1 flex flex-col items-center justify-center text-center p-6 border-2 border-dashed border-red-200 bg-red-50/30 rounded-2xl">
-                             <span className="text-4xl mb-3">⚠️</span>
+                             <FiAlertTriangle className="text-4xl text-brand-red mb-3" />
                              <h4 className="text-sm font-bold text-slate-800 mb-1">No Documents</h4>
                              <p className="text-xs text-slate-500">This entity has bypassed the document upload requirement. Extreme diligence recommended.</p>
-                             <button onClick={() => setHasReviewedDocs(true)} className="mt-4 px-4 py-2 border border-slate-300 rounded text-xs font-bold bg-white hover:bg-slate-50">Override Policy</button>
+                             <button onClick={() => setHasReviewedDocs(true)} className="mt-4 px-4 py-2 border border-slate-300 gap-1 flex items-center justify-center rounded text-xs font-bold bg-white hover:bg-slate-50"><FiShield /> Override Policy</button>
                          </div>
                      )}
                  </div>
@@ -251,10 +260,10 @@ export default function PartnerVerificationPage() {
                      <div className="p-8 flex-1">
                         <div className="flex items-center gap-4 mb-8">
                             {selectedPartner.logoUrl ? (
-                                <img src={selectedPartner.logoUrl} alt="Logo" className="w-16 h-16 rounded-2xl border border-slate-100 object-contain p-2 shrink-0 bg-slate-50" />
+                                <img src={selectedPartner.logoUrl} alt="Logo" className="w-16 h-16 rounded-2xl border border-slate-100 object-cover shrink-0 bg-slate-50" />
                             ) : (
                                 <div className="w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center shrink-0 border border-slate-200">
-                                   <span className="text-2xl">🏢</span>
+                                   <FiBriefcase className="text-3xl text-slate-300" />
                                 </div>
                             )}
                             <div>
@@ -313,7 +322,7 @@ export default function PartnerVerificationPage() {
                                    className="px-8 py-3 w-full sm:w-auto bg-brand-red text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-xl hover:bg-brand-red/90 shadow-[0_8px_30px_rgb(220,38,38,0.3)] transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                                    title={!hasReviewedDocs ? 'Open and review the document first to enable approval.' : ''}
                                  >
-                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                                    <FiShield className="text-lg" />
                                     {approvingId === selectedPartner._id ? 'Approving...' : 'Verify & Approve'}
                                  </button>
                              </div>

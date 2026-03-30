@@ -91,174 +91,149 @@ export default function ProfilePage() {
     }
   };
 
-  if (!initialFetchDone && loading) return <LoadingSpinner />;
+  if (!initialFetchDone && loading) return <LoadingSpinner message="Accessing profile data..." />;
+
+  const isNgoOrAdmin = user?.role === 'ngo-admin' || user?.role === 'admin';
 
   return (
-    <div className="max-w-2xl space-y-6">
+    <div className="max-w-7xl mx-auto space-y-8 pb-16 animate-soft text-left">
       <div>
-        <h2 className="text-2xl font-bold text-[#7C2D12]">Donor Profile</h2>
-        <p className="text-sm text-gray-500 mt-1">View and manage your donor information.</p>
+        <div className="flex items-center gap-3 mb-2">
+            <span className="w-8 h-8 bg-slate-900 text-white rounded-full flex items-center justify-center text-sm"><FiUser /></span>
+            <h2 className="text-2xl font-black text-slate-900 tracking-bespoke">Account Credentials</h2>
+        </div>
+        <p className="text-sm text-slate-500 font-medium">Manage your digital identity and secure access tokens.</p>
       </div>
 
-      {(localError || error) && (
-        <ErrorAlert
-          message={localError || error}
-          onDismiss={() => setLocalError('')}
-        />
-      )}
-
-      {success && (
-        <div className="bg-emerald-50 border border-emerald-100 text-emerald-700 text-sm font-bold px-6 py-4 rounded-2xl shadow-sm animate-pulse">
-          {success}
-        </div>
-      )}
-
-      {/* View Mode */}
-      {donorProfile && !editing ? (
-        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 space-y-5">
-          <div className="flex items-center justify-between">
-            <h3 className="text-base font-semibold text-gray-700">Profile Information</h3>
-            <button
-              onClick={() => setEditing(true)}
-              className="text-sm text-[#DC2626] hover:text-red-700 font-semibold"
-            >
-              Edit Profile
-            </button>
-          </div>
-
-          <div className="grid grid-cols-2 gap-x-8 gap-y-4 text-sm">
-            <div>
-              <p className="text-gray-400 mb-0.5">Name</p>
-              <p className="font-medium text-gray-800">{user?.name || '—'}</p>
-            </div>
-            <div>
-              <p className="text-gray-400 mb-0.5">Email</p>
-              <p className="font-medium text-gray-800">{user?.email || '—'}</p>
-            </div>
-            <div>
-              <p className="text-gray-400 mb-0.5">Phone</p>
-              <p className="font-medium text-gray-800">{donorProfile.phone || '—'}</p>
-            </div>
-            <div>
-              <p className="text-gray-400 mb-0.5">Country</p>
-              <p className="font-medium text-gray-800">{donorProfile.address?.country || '—'}</p>
-            </div>
-            <div>
-              <p className="text-gray-400 mb-0.5">City</p>
-              <p className="font-medium text-gray-800">{donorProfile.address?.city || '—'}</p>
-            </div>
-            {donorProfile.address?.street && (
-              <div className="col-span-2">
-                <p className="text-gray-400 mb-0.5">Street Address</p>
-                <p className="font-medium text-gray-800">{donorProfile.address.street}</p>
-              </div>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <div className="lg:col-span-8">
+            {(localError || error) && (
+                <ErrorAlert
+                message={localError || error}
+                onDismiss={() => setLocalError('')}
+                />
             )}
-            <div className="col-span-2">
-              <p className="text-gray-400 mb-0.5">Preferred Causes</p>
-              <div className="flex flex-wrap gap-2 mt-1">
-                {donorProfile.preferredCauses?.length > 0
-                  ? donorProfile.preferredCauses.map((cause) => (
-                    <span
-                      key={cause}
-                      className="px-2 py-0.5 bg-orange-50 text-[#7C2D12] text-xs rounded-full font-medium"
+
+            {success && (
+                <div className="bg-emerald-50 border border-emerald-100 text-emerald-700 text-[10px] font-black uppercase tracking-widest px-6 py-4 rounded-2xl shadow-sm mb-6">
+                {success}
+                </div>
+            )}
+
+            {isNgoOrAdmin ? (
+                <div className="bg-white rounded-[40px] border border-slate-100 p-12 text-center space-y-6 shadow-sm">
+                    <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto text-slate-300">
+                        <FiShield className="text-4xl" />
+                    </div>
+                    <div className="space-y-2">
+                         <h3 className="text-xl font-black text-slate-900 tracking-tight">Institutional Account</h3>
+                         <p className="text-slate-500 text-sm font-medium max-w-sm mx-auto">
+                            As an {user.role === 'admin' ? 'System' : 'NGO'} Administrator, you manage organizational performance directly from your mission dashboard.
+                         </p>
+                    </div>
+                    <Link to="/dashboard" className="inline-flex items-center gap-2 px-6 py-3 bg-slate-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-brand-red transition-all shadow-xl shadow-slate-900/10 active:scale-95">
+                        <FiArrowRight /> Return to Command
+                    </Link>
+                </div>
+            ) : donorProfile && !editing ? (
+                <div className="bg-white rounded-[40px] border border-slate-100 shadow-sm p-8 space-y-8">
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <span className="w-8 h-8 bg-brand-red text-white rounded-xl flex items-center justify-center text-sm"><FiBriefcase /></span>
+                        <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-500">Identity Details</h3>
+                    </div>
+                    <button
+                    onClick={() => setEditing(true)}
+                    className="flex items-center gap-2 px-4 py-2 bg-slate-50 text-slate-500 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-900 hover:text-white transition-all shadow-sm active:scale-95"
                     >
-                      {cause}
-                    </span>
-                  ))
-                  : <p className="font-medium text-gray-800">—</p>}
-              </div>
-            </div>
-            {donorProfile.bio && (
-              <div className="col-span-2">
-                <p className="text-gray-400 mb-0.5">Bio</p>
-                <p className="font-medium text-gray-800">{donorProfile.bio}</p>
-              </div>
+                    <FiEdit3 className="text-sm" /> Modify
+                    </button>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div className="space-y-1">
+                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Digital Identity</p>
+                        <p className="text-base font-bold text-slate-900 tracking-bespoke">{user?.name || 'Authorized Donor'}</p>
+                    </div>
+                    <div className="space-y-1">
+                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Network Token</p>
+                        <p className="text-sm font-medium text-slate-500 truncate">{user?.email}</p>
+                    </div>
+                    <div className="space-y-1">
+                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Tele-Identity</p>
+                        <p className="text-sm font-medium text-slate-800">{donorProfile.phone || '—'}</p>
+                    </div>
+                    <div className="space-y-1">
+                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Geo-Impact Base</p>
+                        <p className="text-sm font-medium text-slate-800">{donorProfile.address?.city}, {donorProfile.address?.country}</p>
+                    </div>
+                    
+                    <div className="col-span-2 pt-4 border-t border-slate-50">
+                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3">Strategic Interests</p>
+                        <div className="flex flex-wrap gap-2">
+                        {donorProfile.preferredCauses?.length > 0
+                        ? donorProfile.preferredCauses.map((cause) => (
+                            <span key={cause} className="px-3 py-1 bg-slate-50 text-slate-600 text-[10px] font-black uppercase tracking-wider rounded-lg border border-slate-100 capitalize">
+                                {cause}
+                            </span>
+                        ))
+                        : <p className="text-sm text-slate-400 italic">No preferences registered.</p>}
+                        </div>
+                    </div>
+                </div>
+                </div>
+            ) : donorProfile ? (
+                 <div className="bg-white rounded-[40px] border border-slate-100 shadow-sm p-8">
+                    <form onSubmit={handleSubmit} className="space-y-8">
+                        <div className="flex items-center gap-3">
+                            <span className="w-8 h-8 bg-brand-red text-white rounded-xl flex items-center justify-center text-sm"><FiEdit3 /></span>
+                            <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-500">Edit Credentials</h3>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="col-span-2">
+                                <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-2">Primary Phone</label>
+                                <input type="text" name="phone" value={form.phone} onChange={handleChange} className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3 text-sm font-semibold text-slate-800 focus:outline-none focus:ring-4 focus:ring-brand-red/5 transition-all" />
+                            </div>
+                            <div className="col-span-2">
+                                <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-2">Street Access</label>
+                                <input type="text" name="address.street" value={form.address.street} onChange={handleChange} className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3 text-sm font-semibold text-slate-800 focus:outline-none focus:ring-4 focus:ring-brand-red/5 transition-all" />
+                            </div>
+                            <div>
+                                <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-2">Local City</label>
+                                <input type="text" name="address.city" value={form.address.city} onChange={handleChange} className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3 text-sm font-semibold text-slate-800 focus:outline-none focus:ring-4 focus:ring-brand-red/5 transition-all" />
+                            </div>
+                            <div>
+                                <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1.5">Country Code</label>
+                                <input type="text" name="address.country" value={form.address.country} onChange={handleChange} className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3 text-sm font-semibold text-slate-800 focus:outline-none focus:ring-4 focus:ring-brand-red/5 transition-all" />
+                            </div>
+                        </div>
+
+                        <div className="flex gap-3">
+                            <button type="submit" disabled={loading} className="px-8 py-4 bg-brand-red text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-brand-red/90 transition-all shadow-xl shadow-brand-red/20 active:scale-95 disabled:opacity-50">
+                                {loading ? 'Syncing...' : 'Confirm Changes'}
+                            </button>
+                            <button type="button" onClick={() => setEditing(false)} className="px-8 py-4 bg-white border border-slate-100 text-slate-500 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all active:scale-95">
+                                Discard
+                            </button>
+                        </div>
+                    </form>
+                 </div>
+            ) : (
+                <div className="bg-white rounded-[40px] border border-slate-100 p-12 text-center space-y-6 shadow-sm">
+                    <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto text-slate-300">
+                        <FiUser className="text-4xl" />
+                    </div>
+                    <div className="space-y-2">
+                         <h3 className="text-xl font-black text-slate-900 tracking-tight">Mission Setup Required</h3>
+                         <p className="text-slate-500 text-sm font-medium max-w-sm mx-auto">
+                            Complete your registration as a Donor to begin setting up your strategic interests.
+                         </p>
+                    </div>
+                </div>
             )}
-          </div>
         </div>
-      ) : donorProfile ? (
-        <form
-          onSubmit={handleSubmit}
-          className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 space-y-5"
-        >
-          <h3 className="text-base font-semibold text-gray-700">Edit Profile</h3>
-
-          <div className="grid grid-cols-2 gap-4">
-            <PremiumField
-              label="Phone"
-              name="phone"
-              value={form.phone}
-              onChange={handleChange}
-              className="col-span-2"
-            />
-            <PremiumField
-              label="Street Address"
-              name="address.street"
-              value={form.address.street}
-              onChange={handleChange}
-              className="col-span-2"
-            />
-            <PremiumField
-              label="City"
-              name="address.city"
-              value={form.address.city}
-              onChange={handleChange}
-            />
-            <PremiumField
-              label="Country"
-              name="address.country"
-              value={form.address.country}
-              onChange={handleChange}
-            />
-            <PremiumField
-              label="Postal Code"
-              name="address.postalCode"
-              value={form.address.postalCode}
-              onChange={handleChange}
-            />
-            <PremiumField
-              label="Preferred Causes"
-              name="preferredCauses"
-              value={form.preferredCauses}
-              onChange={handleChange}
-              placeholder="education, healthcare"
-              hint="comma separated"
-              className="col-span-2"
-            />
-          </div>
-
-          <div>
-            <label className="block text-xs font-semibold text-[#7C2D12] uppercase tracking-wide mb-1">Bio <span className="font-normal text-gray-400 normal-case">(optional)</span></label>
-            <textarea
-              name="bio"
-              value={form.bio}
-              onChange={handleChange}
-              rows={3}
-              className="w-full border border-orange-200 bg-orange-50/40 rounded-lg px-4 py-2.5 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent resize-none transition"
-            />
-          </div>
-
-          <div className="flex gap-3 pt-1">
-            <button
-              type="submit"
-              disabled={loading}
-              className="px-5 py-2 bg-[#DC2626] hover:bg-red-700 disabled:opacity-60 text-white text-sm font-semibold rounded-lg transition-colors"
-            >
-              {loading ? 'Saving...' : 'Save Changes'}
-            </button>
-            <button
-              type="button"
-              onClick={() => setEditing(false)}
-              className="px-5 py-2 border border-orange-200 hover:bg-orange-50 text-[#7C2D12] text-sm font-medium rounded-lg transition-colors"
-            >
-              Cancel
-            </button>
-          </div>
-        </form>
-      ) : (
-        <LoadingSpinner message="Setting up your profile..." />
-      )}
-
+      </div>
     </div>
   );
 }

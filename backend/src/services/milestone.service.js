@@ -10,17 +10,17 @@ class MilestoneService {
       throw new Error('Cannot add milestone to completed/cancelled agreement');
     }
 
-    const campaign = await Campaign.findById(data.campaignId);
+    const campaignId = data.campaignId || (agreement.campaignId?._id || agreement.campaignId)?.toString();
+    if (!campaignId) throw new Error('A campaign mission linkage is required to create a milestone.');
+
+    const campaign = await Campaign.findById(campaignId);
     if (!campaign || campaign.isDeleted) throw new Error('Campaign not found');
 
-    if (!agreement.campaignId) {
-      throw new Error('Agreement is not linked to a campaign');
-    }
-    if (agreement.campaignId.toString() !== data.campaignId) {
-      throw new Error('Milestone campaignId must match agreement campaignId');
+    if (agreement.campaignId && (agreement.campaignId?._id || agreement.campaignId).toString() !== campaignId) {
+      throw new Error('Milestone mission must match the agreement mission.');
     }
 
-    return await milestoneRepository.create({ ...data, createdBy: user.id });
+    return await milestoneRepository.create({ ...data, campaignId, createdBy: user.id });
   }
 
   async getMilestones({ agreementId, campaignId }, user) {
@@ -65,14 +65,13 @@ class MilestoneService {
     const nextAgreementId = data.agreementId || existing.agreementId?._id?.toString() || existing.agreementId.toString();
     const nextCampaignId = data.campaignId || existing.campaignId?._id?.toString() || existing.campaignId.toString();
 
-    const agreement = await agreementRepository.findById(nextAgreementId);
-    if (!agreement) throw new Error('Agreement not found');
-
-    const campaign = await Campaign.findById(nextCampaignId);
-    if (!campaign || campaign.isDeleted) throw new Error('Campaign not found');
-
-    if (!agreement.campaignId || agreement.campaignId.toString() !== nextCampaignId) {
-      throw new Error('Milestone campaignId must match agreement campaignId');
+    if (nextAgreementId) {
+      const agreement = await agreementRepository.findById(nextAgreementId);
+      if (agreement && nextCampaignId) {
+        if (agreement.campaignId && (agreement.campaignId?._id || agreement.campaignId).toString() !== nextCampaignId) {
+           throw new Error('Milestone mission must match the agreement mission.');
+        }
+      }
     }
 
     if (user.role !== 'admin' && user.role !== 'ngo-admin' && existing.createdBy?.toString() !== user.id) {

@@ -5,15 +5,33 @@ import { usePartner } from '../context/PartnerContext';
 import api from '../api/axios';
 import ErrorAlert from '../components/ErrorAlert';
 
+import { 
+  FiHeart, 
+  FiGlobe, 
+  FiBookOpen, 
+  FiShield, 
+  FiUsers, 
+  FiActivity, 
+  FiDroplet,
+  FiBriefcase,
+  FiX,
+  FiUploadCloud,
+  FiArrowRight,
+  FiCheckCircle,
+  FiAlertTriangle,
+  FiCheck
+} from 'react-icons/fi';
+import { LuPawPrint } from "react-icons/lu";
+
 const CATEGORIES = [
-  { id: 'health', label: 'Healthcare', icon: <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg> },
-  { id: 'environment', label: 'Environment', icon: <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> },
-  { id: 'education', label: 'Education', icon: <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg> },
-  { id: 'animal_welfare', label: 'Animal Welfare', icon: <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5" /></svg>, fallsUnder: 'environment' },
-  { id: 'community_development', label: 'Community', icon: <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg> },
-  { id: 'disaster_relief', label: 'Emergency', icon: <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg> },
-  { id: 'poverty_alleviation', label: 'Poverty & Hunger', icon: <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" /></svg> },
-  { id: 'clean_water', label: 'Clean Water', icon: <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg> }
+  { id: 'health', label: 'Healthcare', icon: <FiActivity className="text-2xl" /> },
+  { id: 'environment', label: 'Environment', icon: <FiGlobe className="text-2xl" /> },
+  { id: 'education', label: 'Education', icon: <FiBookOpen className="text-2xl" /> },
+  { id: 'animal_welfare', label: 'Animal Welfare', icon: <LuPawPrint className="text-2xl" />, fallsUnder: 'environment' },
+  { id: 'community_development', label: 'Community', icon: <FiUsers className="text-2xl" /> },
+  { id: 'disaster_relief', label: 'Emergency', icon: <FiShield className="text-2xl" /> },
+  { id: 'poverty_alleviation', label: 'Poverty & Hunger', icon: <FiHeart className="text-2xl" /> },
+  { id: 'clean_water', label: 'Clean Water', icon: <FiDroplet className="text-2xl" /> }
 ];
 
 const INDUSTRIES = [
@@ -281,7 +299,9 @@ export default function PartnerOnboardingPage() {
                                         </div>
                                     </div>
                                 ) : (
-                                    <svg className="w-8 h-8 group-hover:text-brand-red group-hover:scale-110 transition-all" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                                    <div className="w-16 h-16 rounded-full border-2 border-brand-red p-2 shrink-0 bg-brand-red/5 text-brand-red flex items-center justify-center">
+                                        <FiBriefcase className="text-3xl" />
+                                    </div>
                                 )}
                                 <input type="file" className="hidden" accept="image/*" onChange={handleFileUpload} disabled={isUploading} />
                             </label>
@@ -385,7 +405,7 @@ export default function PartnerOnboardingPage() {
                                     htmlFor="doc-upload" 
                                     className="w-full bg-white border-2 border-dashed border-slate-200 rounded-xl px-4 py-8 flex flex-col items-center justify-center cursor-pointer hover:border-brand-dark/30 hover:bg-slate-50 transition-all group"
                                 >
-                                    <span className="text-2xl mb-2 group-hover:scale-110 transition-transform">{form.verificationDocuments[0].url ? '✅' : '📄'}</span>
+                                    <span className="text-2xl mb-2 group-hover:scale-110 transition-transform">{form.verificationDocuments[0].url ? <FiCheckCircle className="text-emerald-500" /> : <FiUploadCloud className="text-slate-400" />}</span>
                                     <span className="text-sm font-medium text-slate-600">
                                         {form.verificationDocuments[0].url ? 'Document Uploaded' : 'Click to Upload Document'}
                                     </span>
@@ -407,6 +427,7 @@ export default function PartnerOnboardingPage() {
                  {step === 3 && (
                      <div className="space-y-6 animate-fadeIn h-full flex flex-col">
                          <div className="mb-10 shrink-0">
+                             <p className="text-sm font-bold text-slate-800 flex items-center gap-2"><FiUploadCloud className="text-slate-400" /> Compliance Records</p>
                              <h3 className="text-3xl font-black text-slate-900 mb-2 tracking-tight">Sustainable Impact Goals.</h3>
                              <p className="text-slate-500 text-sm font-medium">Choose the causes and funding preferences that align with your institutional values.</p>
                          </div>
@@ -513,7 +534,7 @@ export default function PartnerOnboardingPage() {
                  ) : (
                      <button onClick={handleFinish} disabled={isSubmitting} className="px-8 py-3 bg-brand-red text-white flex items-center gap-3 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-brand-red/90 transition-all shadow-xl shadow-brand-red/30 disabled:opacity-75 active:scale-95">
                          {isSubmitting ? 'Finalizing Profile...' : 'Complete & Enter Pipeline'}
-                         {!isSubmitting && <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>}
+                         {!isSubmitting && <FiArrowRight className="text-lg" />}
                      </button>
                  )}
              </div>

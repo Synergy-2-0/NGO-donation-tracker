@@ -3,8 +3,21 @@ import partnerRepository from '../repository/partner.repository.js';
 import Campaign from '../models/campaign.model.js';
 
 class AgreementService {
+  _extractPartnerId(partnerId) {
+    if (!partnerId) return null;
+    if (typeof partnerId === 'string') return partnerId;
+    if (typeof partnerId === 'object') {
+      if (partnerId._id) return partnerId._id.toString();
+      if (partnerId.id) return partnerId.id.toString();
+    }
+    return null;
+  }
+
   async createAgreement(data, user) {
-    const partner = await partnerRepository.findById(data.partnerId);
+    const normalizedPartnerId = this._extractPartnerId(data.partnerId);
+    if (!normalizedPartnerId) throw new Error('partnerId is required');
+
+    const partner = await partnerRepository.findById(normalizedPartnerId);
     if (!partner) throw new Error('Partner not found');
     if (partner.verificationStatus !== 'verified') throw new Error('Partner must be verified');
 
@@ -21,14 +34,14 @@ class AgreementService {
     if (!campaign || campaign.isDeleted) throw new Error('Campaign not found');
 
     const status = user.role === 'partner' ? 'pending' : (data.status || 'draft');
-    const agreement = await agreementRepository.create({ ...data, status, createdBy: user.id });
-    await this._recalcPartnerHistory(data.partnerId);
+    const agreement = await agreementRepository.create({ ...data, partnerId: normalizedPartnerId, status, createdBy: user.id });
+    await this._recalcPartnerHistory(normalizedPartnerId);
     return agreement;
   }
 
   async getAgreements(filters = {}, user) {
     const query = {};
-    if (filters.partnerId) query.partnerId = filters.partnerId;
+    if (filters.partnerId) query.partnerId = this._extractPartnerId(filters.partnerId);
     if (filters.campaignId) query.campaignId = filters.campaignId;
     if (filters.status) query.status = filters.status;
     if (filters.agreementType) query.agreementType = filters.agreementType;
@@ -44,9 +57,28 @@ class AgreementService {
     const agreement = await agreementRepository.findById(id);
     if (!agreement) throw new Error('Agreement not found');
     
-    if (!['admin', 'ngo-admin'].includes(user.role) && agreement.createdBy.toString() !== user.id) {
+    // Admins and NGO admins see all
+    if (['admin', 'ngo-admin'].includes(user.role)) {
+      return agreement;
+    }
+
+    // Partners can see agreements assigned to them
+    if (user.role === 'partner') {
+      const partner = await partnerRepository.findByUserId(user.id);
+      if (partner) {
+        const partnerIdStr = partner._id.toString();
+        const agreementPartnerIdStr = agreement.partnerId?._id?.toString() || agreement.partnerId?.toString();
+        if (agreementPartnerIdStr === partnerIdStr) {
+          return agreement;
+        }
+      }
+    }
+
+    // Fallback: only the creator can see it
+    if (agreement.createdBy.toString() !== user.id) {
       throw new Error('Unauthorized');
     }
+    
     return agreement;
   }
 
@@ -93,9 +125,10 @@ class AgreementService {
   }
 
   async getPartnerAgreements(partnerId, user) {
+    const normalizedPartnerId = this._extractPartnerId(partnerId);
     // Admin/ngo-admin can see all agreements for a partner
     if (['admin', 'ngo-admin'].includes(user.role)) {
-      return await agreementRepository.findByPartnerId(partnerId);
+      return await agreementRepository.findByPartnerId(normalizedPartnerId);
     }
 
     // Partners can only see agreements for their own account

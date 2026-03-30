@@ -7,8 +7,14 @@ export const authenticate = (req, res, next) => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded; // {id, role}
+    
+    // Explicitly add a fallback to req.userId for legacy controller compatibility
+    req.userId = decoded.id; 
+    
+    console.info(`[Auth Middleware] Authenticated User: ${decoded.id} | Role: ${decoded.role}`);
     next();
-  } catch {
+  } catch (error) {
+    console.error('[Auth Error] Token verification failed:', error.message);
     res.status(401).json({ message: "Invalid token" });
   }
 };

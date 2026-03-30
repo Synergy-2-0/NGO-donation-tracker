@@ -40,9 +40,9 @@ router.get("/:id", getCampaignById);
 // Update campaign (only if it's a draft)
 router.put("/:id", authenticate, authorizeRoles("admin", "ngo-admin"), updateCampaign);
 
-router.delete("/:id", authenticate, authorizeRoles("admin", "ngo-admin"), deleteCampaign);
+router.delete("/:id", authenticate, authorizeRoles("admin"), deleteCampaign);
 
-router.put("/:id/publish", authenticate, authorizeRoles("admin", "ngo-admin"), publishCampaign);
+router.put("/:id/publish", authenticate, authorizeRoles("admin"), publishCampaign);
 
 /* --- progress log routes --- */
 

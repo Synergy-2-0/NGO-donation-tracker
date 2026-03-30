@@ -28,6 +28,7 @@ const budgetRangeSchema = Joi.object({
 });
 
 export const createPartnerSchema = Joi.object({
+  logoUrl: Joi.string().uri().allow('', null).optional(),
   organizationName: Joi.string().trim().min(3).max(100).required(),
   organizationType: Joi.string().valid('corporate', 'foundation', 'government', 'individual').required(),
   industry: Joi.string().trim().required(),
@@ -92,6 +93,7 @@ export const createPartnerSchema = Joi.object({
 });
 
 export const updatePartnerSchema = Joi.object({
+  logoUrl: Joi.string().uri().allow('', null).optional(),
   organizationName: Joi.string().trim().min(3).max(100).optional(),
   organizationType: Joi.string().valid('corporate', 'foundation', 'government', 'individual').optional(),
   industry: Joi.string().trim().optional(),

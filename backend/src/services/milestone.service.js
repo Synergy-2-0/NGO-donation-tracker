@@ -10,34 +10,51 @@ class MilestoneService {
       throw new Error('Cannot add milestone to completed/cancelled agreement');
     }
 
-    const campaign = await Campaign.findById(data.campaignId);
+    const campaignId = data.campaignId || (agreement.campaignId?._id || agreement.campaignId)?.toString();
+    if (!campaignId) throw new Error('A campaign mission linkage is required to create a milestone.');
+
+    const campaign = await Campaign.findById(campaignId);
     if (!campaign || campaign.isDeleted) throw new Error('Campaign not found');
 
-    if (!agreement.campaignId) {
-      throw new Error('Agreement is not linked to a campaign');
-    }
-    if (agreement.campaignId.toString() !== data.campaignId) {
-      throw new Error('Milestone campaignId must match agreement campaignId');
+    if (agreement.campaignId && (agreement.campaignId?._id || agreement.campaignId).toString() !== campaignId) {
+      throw new Error('Milestone mission must match the agreement mission.');
     }
 
-    return await milestoneRepository.create({ ...data, createdBy: user.id });
+    return await milestoneRepository.create({ ...data, campaignId, createdBy: user.id });
   }
 
-  async getMilestones({ agreementId, campaignId }) {
+  async getMilestones({ agreementId, campaignId }, user) {
     if (!agreementId && !campaignId) {
       throw new Error('agreementId or campaignId query parameter is required');
     }
 
     if (agreementId) {
+      const agreement = await agreementRepository.findById(agreementId);
+      if (!agreement) throw new Error('Agreement not found');
+      
+      // Admin/ngo-admin: see all milestones for this agreement
+      // Partner/creator: see if they created or are assigned to this agreement
+      if (['admin', 'ngo-admin'].includes(user.role)) {
+        return await milestoneRepository.findByAgreement(agreementId);
+      }
+      
+      // For now, allow authenticated users (can further restrict to agreement creator later)
       return await milestoneRepository.findByAgreement(agreementId);
     }
 
     return await milestoneRepository.findByCampaign(campaignId);
   }
 
-  async getMilestoneById(id) {
+  async getMilestoneById(id, user) {
     const milestone = await milestoneRepository.findById(id);
     if (!milestone) throw new Error('Milestone not found');
+    
+    // Admin/ngo-admin can see any milestone
+    if (['admin', 'ngo-admin'].includes(user.role)) {
+      return milestone;
+    }
+    
+    // For now, allow authenticated users to view
     return milestone;
   }
 
@@ -48,14 +65,13 @@ class MilestoneService {
     const nextAgreementId = data.agreementId || existing.agreementId?._id?.toString() || existing.agreementId.toString();
     const nextCampaignId = data.campaignId || existing.campaignId?._id?.toString() || existing.campaignId.toString();
 
-    const agreement = await agreementRepository.findById(nextAgreementId);
-    if (!agreement) throw new Error('Agreement not found');
-
-    const campaign = await Campaign.findById(nextCampaignId);
-    if (!campaign || campaign.isDeleted) throw new Error('Campaign not found');
-
-    if (!agreement.campaignId || agreement.campaignId.toString() !== nextCampaignId) {
-      throw new Error('Milestone campaignId must match agreement campaignId');
+    if (nextAgreementId) {
+      const agreement = await agreementRepository.findById(nextAgreementId);
+      if (agreement && nextCampaignId) {
+        if (agreement.campaignId && (agreement.campaignId?._id || agreement.campaignId).toString() !== nextCampaignId) {
+           throw new Error('Milestone mission must match the agreement mission.');
+        }
+      }
     }
 
     if (user.role !== 'admin' && user.role !== 'ngo-admin' && existing.createdBy?.toString() !== user.id) {

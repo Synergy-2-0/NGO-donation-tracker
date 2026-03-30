@@ -15,7 +15,13 @@ export const validateRequest = (schema, source = 'body') => {
       });
     }
 
-    req[source] = value;
+    if (source === 'query') {
+      // req.query is often a read-only getter in some environments, so we Object.assign
+      Object.assign(req.query, value);
+    } else {
+      req[source] = value;
+    }
+    
     next();
   };
 };

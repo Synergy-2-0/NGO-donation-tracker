@@ -20,20 +20,24 @@ export const getMilestones = async (req, res) => {
     const milestones = await milestoneService.getMilestones({
       agreementId: req.query.agreementId,
       campaignId: req.query.campaignId,
-    });
+    }, req.user);
     res.json(milestones);
   } catch (error) {
-    const status = error.message === 'agreementId or campaignId query parameter is required' ? 400 : 500;
+    const status = 
+      error.message === 'agreementId or campaignId query parameter is required' ? 400 : 
+      error.message === 'Unauthorized' ? 403 : 
+      error.message === 'Agreement not found' ? 404 : 500;
     res.status(status).json({ message: error.message });
   }
 };
 
 export const getMilestone = async (req, res) => {
   try {
-    const milestone = await milestoneService.getMilestoneById(req.params.id);
+    const milestone = await milestoneService.getMilestoneById(req.params.id, req.user);
     res.json(milestone);
   } catch (error) {
-    res.status(404).json({ message: error.message });
+    const status = error.message === 'Unauthorized' ? 403 : 404;
+    res.status(status).json({ message: error.message });
   }
 };
 

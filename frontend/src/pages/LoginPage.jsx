@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import LoadingSpinner from '../components/LoadingSpinner';
 
@@ -13,7 +13,7 @@ const NAME_RE  = /^[a-zA-Z\s'-]{2,50}$/;
 const PHONE_RE = /^\+?[1-9]\d{1,14}$/;
 
 const inputCls = (err) =>
-  `w-full bg-slate-50 border ${err ? 'border-red-300 ring-1 ring-red-100' : 'border-slate-200'} rounded-2xl px-6 py-4 text-sm font-semibold text-tf-purple placeholder-slate-300 focus:outline-none focus:border-tf-primary transition-all shadow-sm`;
+  `w-full bg-slate-50 border ${err ? 'border-red-300 ring-1 ring-red-100' : 'border-slate-200'} rounded-2xl px-6 py-4 text-sm font-semibold text-tf-dark placeholder-slate-300 focus:outline-none focus:border-tf-primary transition-all shadow-sm`;
 
 const FieldError = ({ msg }) =>
   msg ? <p className="mt-1.5 ml-4 text-[10px] font-bold text-red-500 uppercase tracking-widest leading-tight">{msg}</p> : null;
@@ -46,8 +46,8 @@ export default function LoginPage() {
   const { login, register, loading } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const [tab, setTab] = useState('signin'); // 'signin' | 'signup'
-  const [step, setStep] = useState(1); // signup wizard step
+  const [tab, setTab] = useState('signin');
+  const [step, setStep] = useState(1);
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
@@ -56,10 +56,8 @@ export default function LoginPage() {
     if (t === 'signup') setTab('signup');
   }, [searchParams]);
 
-  // Sign-in form
   const [signIn, setSignIn] = useState({ email: '', password: '' });
 
-  // Sign-up form
   const [signUp, setSignUp] = useState({
     name: '',
     email: '',
@@ -146,46 +144,50 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 bg-tf-purple relative overflow-hidden font-sans">
+    <div className="min-h-screen flex items-center justify-center p-6 bg-tf-dark relative overflow-hidden font-sans">
        {/* High-Fidelity Cinematic Backdrop */}
        <div className="absolute inset-0 z-0">
-          <img src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&q=80&w=1600" alt="TrustFund Hub" className="w-full h-full object-cover opacity-20 scale-105 blur-sm grayscale" />
-          <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-tf-purple to-transparent" />
-          <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-tf-primary/10 blur-[150px] rounded-full -translate-y-1/2 translate-x-1/2" />
-          <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-tf-green/5 blur-[120px] rounded-full translate-y-1/3 -translate-x-1/3" />
+          <img src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&q=80&w=1600" alt="Backdrop" className="w-full h-full object-cover opacity-10 scale-105 blur-sm grayscale" />
+          <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-tf-dark to-transparent" />
+          <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-tf-primary/10 blur-[150px] rounded-full -translate-y-1/2 translate-x-1/2 opacity-40" />
+          <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-tf-accent/5 blur-[120px] rounded-full translate-y-1/3 -translate-x-1/3 opacity-30" />
        </div>
 
-       <div className="relative z-10 w-full max-w-5xl flex flex-col md:flex-row bg-white rounded-[3.5rem] shadow-2xl overflow-hidden animate-fade-in border border-white/20 backdrop-blur-3xl selection:bg-tf-primary selection:text-white">
+       <div className="relative z-10 w-full max-w-5xl flex flex-col md:flex-row bg-white rounded-[4rem] shadow-5xl overflow-hidden animate-fade-in border border-white/20 backdrop-blur-3xl selection:bg-tf-primary selection:text-white">
           
           {/* Left panel — Brand Story */}
           <div className="hidden lg:flex flex-col justify-center px-16 py-20 bg-slate-900 text-white flex-1 relative overflow-hidden group">
-             <div className="absolute inset-0 bg-tf-primary/5 group-hover:bg-tf-primary/[0.08] transition-all duration-1000" />
-             <div className="relative z-10 space-y-10">
-                <div className="space-y-6">
-                   <h2 className="text-6xl font-black tracking-tight leading-[1.05] italic uppercase tracking-tighter">
+             <div className="absolute inset-0 bg-tf-primary/5 group-hover:bg-tf-primary/10 transition-all duration-1000" />
+             <div className="relative z-10 space-y-12">
+                <div className="space-y-8">
+                   <div className="flex items-center gap-4">
+                      <img src="/heart-logo c.png" alt="TransFund" className="h-10 w-auto" />
+                      <span className="text-2xl font-black italic tracking-tighter uppercase">TransFund</span>
+                   </div>
+                   <h2 className="text-5xl md:text-6xl font-black tracking-tighter leading-[1.05] italic uppercase font-display">
                       Empowering <br />
-                      <span className="text-tf-primary italic underline decoration-white/10 underline-offset-8">Compassion</span>
+                      <span className="text-tf-primary italic underline decoration-white/10 underline-offset-8">Humanity</span>
                    </h2>
                    <p className="text-slate-400 font-medium text-lg leading-relaxed max-w-sm italic">
-                      Welcome to the official TrustFund portal. Join our mission to support local communities through transparent, verified giving.
+                      Welcome to the TransFund Portal. Join thousands of patrons building a transparent future for global aid.
                    </p>
                 </div>
 
-                <div className="flex gap-10">
+                <div className="flex gap-10 border-t border-white/5 pt-10">
                    <div className="space-y-1">
-                      <p className="text-3xl font-black text-white italic tabular-nums tracking-tighter">12K+</p>
-                      <p className="text-[10px] font-bold text-tf-primary uppercase tracking-widest">Active Members</p>
+                      <p className="text-3xl font-black text-white italic tabular-nums tracking-tighter font-display">12K+</p>
+                      <p className="text-[10px] font-black text-tf-primary uppercase tracking-widest italic leading-none">Global Patrons</p>
                    </div>
                    <div className="w-px h-12 bg-white/10" />
                    <div className="space-y-1">
-                      <p className="text-3xl font-black text-white italic tabular-nums tracking-tighter">480+</p>
-                      <p className="text-[10px] font-bold text-tf-primary uppercase tracking-widest">Verified Causes</p>
+                      <p className="text-3xl font-black text-white italic tabular-nums tracking-tighter font-display">480+</p>
+                      <p className="text-[10px] font-black text-tf-primary uppercase tracking-widest italic leading-none">Verified Nodes</p>
                    </div>
                 </div>
 
                 <div className="flex flex-wrap gap-4 pt-4">
-                   {['Verified Aid', 'Real-time Impact', 'Secure Portal'].map((tag) => (
-                      <span key={tag} className="px-5 py-3 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-widest group-hover:border-tf-primary/30 group-hover:bg-tf-primary/5 transition-all italic">
+                   {['Verified Aid', 'Real-time Impact', 'Secure Registry'].map((tag) => (
+                      <span key={tag} className="px-5 py-3 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all italic tracking-tighter shadow-sm">
                          {tag}
                       </span>
                    ))}
@@ -195,34 +197,33 @@ export default function LoginPage() {
 
           {/* Right panel — Interaction Hub */}
           <div className="w-full lg:w-[500px] p-12 md:p-16 flex flex-col justify-center bg-white">
-             <div className="space-y-12">
-                {/* Hub Header */}
+             <div className="space-y-10">
                 <div className="space-y-4">
-                   <p className="text-tf-primary text-[11px] font-black uppercase tracking-[0.4em] italic leading-none">Official Access Point</p>
-                   <h1 className="text-4xl font-black text-tf-purple tracking-tighter italic uppercase underline decoration-tf-primary/20 underline-offset-8">TrustFund Login</h1>
+                   <p className="text-tf-primary text-[11px] font-black uppercase tracking-[0.5em] italic leading-none">Secure Access Point</p>
+                   <h1 className="text-4xl font-black text-tf-dark tracking-tighter italic uppercase font-display underline decoration-tf-primary/20 underline-offset-8">Account Portal</h1>
                 </div>
 
                 {/* Tabs Hub */}
                 <div className="flex gap-10 border-b border-slate-100 pb-px">
                    {[
                       { id: 'signin', label: 'Sign In' },
-                      { id: 'signup', label: 'Create Account' }
+                      { id: 'signup', label: 'Registration' }
                    ].map((t) => (
                       <button
                          key={t.id}
                          onClick={() => { setTab(t.id); setError(''); setStep(1); }}
-                         className={`pb-4 text-[12px] font-black uppercase tracking-[0.2em] transition-all relative italic ${
-                            tab === t.id ? 'text-tf-purple' : 'text-slate-300 hover:text-slate-500'
+                         className={`pb-4 text-[12px] font-black uppercase tracking-[0.3em] transition-all relative italic ${
+                            tab === t.id ? 'text-tf-dark' : 'text-slate-300 hover:text-slate-500'
                          }`}
                       >
                          {t.label}
-                         {tab === t.id && <div className="absolute inset-x-0 bottom-[-1px] h-[3px] bg-tf-primary rounded-full shadow-[0_0_10px_rgba(255,138,0,0.3)]" />}
+                         {tab === t.id && <div className="absolute inset-x-0 bottom-[-1px] h-[3px] bg-tf-primary rounded-full" />}
                       </button>
                    ))}
                 </div>
 
                 {error && (
-                   <div className="bg-red-50 border border-red-100 text-red-500 text-[10px] font-bold uppercase tracking-widest px-6 py-4 rounded-2xl animate-fade-in">
+                   <div className="bg-red-50 border border-red-100 text-red-500 text-[10px] font-black uppercase tracking-widest px-6 py-4 rounded-2xl animate-fade-in shadow-sm">
                       {error}
                    </div>
                 )}
@@ -231,18 +232,18 @@ export default function LoginPage() {
                 {tab === 'signin' ? (
                    <form onSubmit={handleSignIn} className="space-y-8">
                       <div className="space-y-3">
-                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-6">Email Address</label>
+                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-6">Patron Email</label>
                          <input
                             type="email"
                             value={signIn.email}
                             onChange={(e) => setSignIn((f) => ({ ...f, email: e.target.value }))}
                             required
-                            placeholder="your@email.com"
+                            placeholder="patron@transfund.org"
                             className={inputCls(false)}
                          />
                       </div>
                       <div className="space-y-3 relative">
-                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-6">Password</label>
+                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-6">Secure Password</label>
                          <input
                             type={showPassword ? "text" : "password"}
                             value={signIn.password}
@@ -266,21 +267,20 @@ export default function LoginPage() {
                       <button
                          type="submit"
                          disabled={loading}
-                         className="w-full bg-tf-purple hover:bg-slate-900 text-white font-black py-6 rounded-full transition-all text-[12px] uppercase tracking-widest shadow-2xl shadow-tf-purple/20 active:scale-95 mt-4"
+                         className="w-full bg-tf-dark hover:bg-tf-primary text-white font-black py-7 rounded-full transition-all text-[12px] uppercase tracking-[0.4em] shadow-2xl active:scale-95 mt-4"
                       >
-                         {loading ? 'Authenticating…' : 'Secure Login'}
+                         {loading ? 'Authenticating…' : 'Initialize Session'}
                       </button>
                    </form>
                 ) : (
                    <div className="space-y-10">
-                      {/* Step Status */}
                       <div className="flex items-center gap-8">
                          {[1, 2].map(s => (
                             <div key={s} className="flex items-center gap-4">
                                <div className={`w-10 h-10 rounded-2xl flex items-center justify-center text-[11px] font-black transition-all ${
                                   step >= s ? 'bg-tf-primary text-white shadow-xl shadow-tf-primary/30 rotate-3' : 'bg-slate-50 text-slate-300 border border-slate-100'
                                }`}>{s}</div>
-                               <p className={`text-[10px] font-black uppercase tracking-widest italic ${step === s ? 'text-tf-purple' : 'text-slate-300'}`}>
+                               <p className={`text-[10px] font-black uppercase tracking-widest italic ${step === s ? 'text-tf-dark' : 'text-slate-300'}`}>
                                   {s === 1 ? 'Account' : 'Profile'}
                                </p>
                             </div>
@@ -303,24 +303,24 @@ export default function LoginPage() {
                                <FieldError msg={fieldErrors.name} />
                             </div>
                             <div className="space-y-3">
-                               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-6">Email Address</label>
+                               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-6">Patron Email</label>
                                <input
                                   type="email"
                                   value={signUp.email}
                                   onChange={(e) => handleSignUpChange('email', e.target.value)}
                                   onBlur={() => touch('email')}
                                   required
-                                  placeholder="john@example.com"
+                                  placeholder="patron@transfund.org"
                                   className={inputCls(fieldErrors.email)}
-                               />
+                                />
                                <FieldError msg={fieldErrors.email} />
                             </div>
                             <div className="space-y-3">
-                               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-6">I am a...</label>
+                               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-6">Account Designation</label>
                                <select
                                   value={signUp.role}
                                   onChange={(e) => handleSignUpChange('role', e.target.value)}
-                                  className={inputCls(false) + " appearance-none cursor-pointer pr-12"}
+                                  className={inputCls(false) + " appearance-none cursor-pointer pr-12 italic"}
                                >
                                   {ROLES.map((r) => (
                                      <option key={r.value} value={r.value}>{r.label.toUpperCase()}</option>
@@ -335,38 +335,27 @@ export default function LoginPage() {
                                   onChange={(e) => handleSignUpChange('password', e.target.value)}
                                   onBlur={() => touch('password')}
                                   required
-                                  placeholder="Min. 8 Chars"
+                                  placeholder="••••••••"
                                   className={inputCls(fieldErrors.password)}
-                               />
-                               <button 
-                                  type="button" 
-                                  onClick={() => setShowPassword(!showPassword)}
-                                  className="absolute right-6 top-[52px] text-slate-300 hover:text-tf-primary transition-colors"
-                               >
-                                  {showPassword ? (
-                                     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeWidth={2.5} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeWidth={2.5} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
-                                  ) : (
-                                     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeWidth={2.5} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.046m4.51-4.51A9.959 9.959 0 0112 5c4.478 0 8.268 2.943 9.542 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21m-2.101-2.101L3 3m11 8a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" /></svg>
-                                  )}
-                               </button>
+                                />
                                <FieldError msg={fieldErrors.password} />
                             </div>
                             <button
                                type="submit"
-                               className="w-full bg-tf-primary hover:bg-orange-700 text-white font-black py-6 rounded-full transition-all text-[12px] uppercase tracking-widest shadow-2xl shadow-tf-primary/30 active:scale-95"
+                               className="w-full bg-tf-primary hover:bg-tf-dark text-white font-black py-7 rounded-full transition-all text-[12px] uppercase tracking-[0.4em] shadow-2xl active:scale-95"
                             >
-                               Next Step →
+                               Configure Profile →
                             </button>
                          </form>
                       ) : (
                          <form onSubmit={handleStep2} className="space-y-8 animate-slide-in">
                             <div className="space-y-3">
-                               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-6">Phone Number</label>
+                               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-6">Verified Phone</label>
                                <input
                                   type="tel"
                                   value={signUp.phone}
                                   onChange={(e) => handleSignUpChange('phone', e.target.value)}
-                                  onBlur={() => touch('phone')}
+                                  required
                                   placeholder="+94 77 000 0000"
                                   className={inputCls(fieldErrors.phone)}
                                />
@@ -374,7 +363,7 @@ export default function LoginPage() {
                             </div>
                             <div className="grid grid-cols-2 gap-6">
                                <div className="space-y-3">
-                                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-6">City</label>
+                                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-6">City Node</label>
                                   <input
                                      type="text"
                                      value={signUp.city}
@@ -395,31 +384,30 @@ export default function LoginPage() {
                                </div>
                             </div>
                             <div className="space-y-3">
-                               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-6">Preferred Causes</label>
+                               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-6">Mission Focus</label>
                                <input
                                   type="text"
                                   value={signUp.preferredCauses}
                                   onChange={(e) => handleSignUpChange('preferredCauses', e.target.value)}
-                                  placeholder="Education, Healthcare, Relief"
+                                  placeholder="Education, Relief, Nodes"
                                   className={inputCls(false)}
                                 />
-                               <p className="ml-6 mt-1.5 text-[9px] font-black text-slate-300 uppercase tracking-[0.2em] italic">Comma-separated interests</p>
                             </div>
                             <div className="flex gap-6 pt-6">
                                <button
                                   type="button"
                                   onClick={() => setStep(1)}
-                                  className="flex-1 border-2 border-slate-100 text-slate-400 hover:text-tf-purple hover:border-tf-primary font-black py-6 rounded-full text-[11px] uppercase tracking-widest transition-all italic active:scale-95"
+                                  className="flex-1 border-2 border-slate-100 text-slate-400 hover:text-tf-dark hover:border-tf-dark font-black py-7 rounded-full text-[11px] uppercase tracking-widest transition-all italic active:scale-95"
                                >
-                                  Back
-                               </button>
+                                  Registry
+                                </button>
                                <button
                                   type="submit"
                                   disabled={loading}
-                                  className="flex-[2] bg-tf-primary hover:bg-orange-700 text-white font-black py-6 rounded-full transition-all text-[12px] uppercase tracking-widest shadow-2xl shadow-tf-primary/30 active:scale-95"
+                                  className="flex-[2] bg-tf-primary hover:bg-tf-dark text-white font-black py-7 rounded-full transition-all text-[12px] uppercase tracking-[0.4em] shadow-2xl active:scale-95"
                                >
-                                  {loading ? 'Registering…' : 'Complete Account'}
-                               </button>
+                                  {loading ? 'Initializing…' : 'Finalize Account'}
+                                </button>
                             </div>
                          </form>
                       )}

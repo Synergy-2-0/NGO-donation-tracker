@@ -17,7 +17,7 @@ export default function CampaignProgressSection({ campaignId, campaignStatus }) 
     });
 
     useEffect(() => {
-        api.get(`/campaigns/${campaignId}/progress`)
+        api.get(`/api/campaigns/${campaignId}/progress`)
             .then((res) => {
                 setLogs(Array.isArray(res.data) ? res.data : []);
             })
@@ -45,7 +45,7 @@ export default function CampaignProgressSection({ campaignId, campaignStatus }) 
             payload.append('beneficiaries', formData.beneficiaries);
             formData.evidence.forEach((file) => payload.append('evidence', file));
 
-            const res = await api.post(`/campaigns/${campaignId}/progress`, payload, {
+            const res = await api.post(`/api/campaigns/${campaignId}/progress`, payload, {
                 headers: { 'Content-Type': 'multipart/form-data' },
             });
 

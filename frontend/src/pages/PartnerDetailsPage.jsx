@@ -3,24 +3,51 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { usePartner } from '../context/PartnerContext';
 import LoadingSpinner from '../components/LoadingSpinner';
-import ErrorAlert from '../components/ErrorAlert';
 import PartnerFormModal from '../components/PartnerFormModal';
+import { calculatePartnerReadiness, formatSdgLabel, getReadinessLabel } from '../utils/partnerInsights';
+import {
+  FiArrowLeft, FiEdit3, FiTrash2, FiCheckCircle, FiAlertTriangle, FiX,
+  FiBriefcase, FiMapPin, FiPhone, FiMail, FiFileText, FiExternalLink,
+  FiTarget, FiUsers, FiActivity, FiDollarSign, FiClock, FiShield, FiBarChart2, FiArrowRight
+} from 'react-icons/fi';
 
-const badgeColor = {
-  verified: 'bg-emerald-100 text-emerald-700',
-  pending: 'bg-yellow-100 text-yellow-700',
-  rejected: 'bg-red-100 text-red-700',
+const verificationStyle = {
+  verified: { cls: 'bg-emerald-50 text-emerald-600 border-emerald-100', dot: 'bg-emerald-500' },
+  pending:  { cls: 'bg-amber-50 text-amber-600 border-amber-100',   dot: 'bg-amber-500'   },
+  rejected: { cls: 'bg-rose-50 text-rose-600 border-rose-100',      dot: 'bg-rose-500'    },
 };
 
-const toTitle = (value) =>
-  (value || '')
-    .split('_')
-    .join(' ')
-    .split('-')
-    .join(' ')
-    .replace(/\b\w/g, (ch) => ch.toUpperCase());
+const toTitle = (v = '') => v.replace(/[_-]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+const asMoney = v => `LKR ${Number(v || 0).toLocaleString()}`;
 
-const numberText = (value) => `LKR ${Number(value || 0).toLocaleString()}`;
+function SectionCard({ title, icon, children, className = '' }) {
+  return (
+    <div className={`bg-white rounded-3xl border border-slate-100 shadow-sm p-7 text-left ${className}`}>
+      <div className="flex items-center gap-2.5 mb-6">
+        <span className="w-8 h-8 bg-slate-900 text-white rounded-xl flex items-center justify-center text-sm shrink-0">{icon}</span>
+        <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-500">{title}</h3>
+      </div>
+      {children}
+    </div>
+  );
+}
+
+function InfoRow({ label, value }) {
+  return (
+    <div className="mb-4">
+      <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-0.5">{label}</p>
+      <p className="text-sm font-semibold text-slate-800">{value || '—'}</p>
+    </div>
+  );
+}
+
+function TagPill({ value }) {
+  return (
+    <span className="px-3 py-1 bg-slate-100 text-slate-600 text-[10px] font-black uppercase tracking-wider rounded-lg border border-slate-200">
+      {toTitle(String(value))}
+    </span>
+  );
+}
 
 export default function PartnerDetailsPage() {
   const { id } = useParams();
@@ -31,6 +58,8 @@ export default function PartnerDetailsPage() {
   const [editing, setEditing] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
   const [success, setSuccess] = useState('');
+  const readinessScore = useMemo(() => calculatePartnerReadiness(currentPartner), [currentPartner]);
+  const readinessLabel = useMemo(() => getReadinessLabel(readinessScore), [readinessScore]);
 
   useEffect(() => {
     fetchPartnerById(id).catch(() => {});
@@ -38,7 +67,7 @@ export default function PartnerDetailsPage() {
 
   const canMutate = useMemo(() => {
     if (!currentPartner) return false;
-    return user?.role === 'admin' || String(currentPartner.userId) === String(user?.id);
+    return user?.role === 'admin' || user?.role === 'ngo-admin' || String(currentPartner.userId) === String(user?.id);
   }, [currentPartner, user]);
 
   const onUpdate = async (payload) => {
@@ -54,158 +83,280 @@ export default function PartnerDetailsPage() {
   };
 
   const onDelete = async () => {
-    try {
-      await deletePartner(id);
-      navigate('/partners');
-    } catch (err) {
-      setError(err.response?.data?.message || 'Failed to delete partner.');
-    }
+    try { await deletePartner(id); navigate('/partners'); }
+    catch (err) { setError(err.response?.data?.message || 'Failed to delete partner.'); }
   };
 
   const onApprove = async () => {
-    try {
-      await approvePartner(id);
-      setSuccess('Partner approved successfully.');
-      setError('');
-    } catch (err) {
-      setError(err.response?.data?.message || 'Failed to approve partner.');
-    }
+    try { await approvePartner(id); setSuccess('Partner approved.'); setError(''); }
+    catch (err) { setError(err.response?.data?.message || 'Failed to approve.'); }
   };
 
-  if (loading && !currentPartner) return <LoadingSpinner message="Loading partner details..." />;
+  if (loading && !currentPartner) return (
+    <div className="py-20 flex justify-center">
+      <LoadingSpinner message="Loading partner details..." />
+    </div>
+  );
 
-  if (!currentPartner) {
-    return (
-      <div className="space-y-4">
-        <ErrorAlert message={error || 'Partner not found.'} onDismiss={() => setError('')} />
-        <Link to="/partners" className="text-blue-600 hover:underline text-sm">Back to Partners</Link>
+  if (!currentPartner) return (
+    <div className="space-y-4 max-w-md mx-auto py-20 text-center">
+      <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto text-slate-300">
+        <FiBriefcase className="text-2xl" />
       </div>
-    );
-  }
+      <p className="text-slate-600 font-bold">{error || 'Partner not found.'}</p>
+      <Link to="/partners" className="inline-flex items-center gap-2 px-5 py-2.5 bg-slate-900 text-white rounded-xl text-sm font-bold hover:bg-brand-red transition-all">
+        <FiArrowLeft /> Back to Partners
+      </Link>
+    </div>
+  );
+
+  const vStyle = verificationStyle[currentPartner.verificationStatus] || verificationStyle.pending;
+  const readinessPct = readinessScore;
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-800">{currentPartner.organizationName}</h2>
-          <p className="text-sm text-gray-500 mt-1">{toTitle(currentPartner.organizationType)} • {currentPartner.industry}</p>
-          <div className="mt-2 flex gap-2">
-            <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${badgeColor[currentPartner.verificationStatus] || 'bg-gray-100 text-gray-700'}`}>
-              {toTitle(currentPartner.verificationStatus)}
-            </span>
-            <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
-              {toTitle(currentPartner.status)}
-            </span>
+    <div className="max-w-7xl mx-auto space-y-8 pb-16 animate-fadeIn text-left">
+      {/* Back */}
+      <Link to="/partners" className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold text-[10px] uppercase tracking-widest rounded-xl transition-colors">
+        <FiArrowLeft /> Back to Directory
+      </Link>
+
+      {/* Hero */}
+      <div className="relative overflow-hidden bg-slate-900 rounded-[32px] p-8 md:p-10 shadow-2xl">
+        <div className="absolute top-0 right-0 w-80 h-80 bg-brand-red/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3" />
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-brand-orange/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/3" />
+
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="flex items-center gap-5">
+            <div className="w-16 h-16 rounded-2xl bg-white/10 border border-white/10 flex items-center justify-center overflow-hidden shrink-0">
+              {currentPartner.logoUrl
+                ? <img src={currentPartner.logoUrl} alt="logo" className="w-full h-full object-cover" />
+                : <FiBriefcase className="text-2xl text-white/40" />}
+            </div>
+            <div>
+              <div className="flex items-center gap-3 mb-1">
+                <span className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest border ${vStyle.cls}`}>
+                  <span className={`w-1.5 h-1.5 rounded-full ${vStyle.dot}`} />
+                  {toTitle(currentPartner.verificationStatus)}
+                </span>
+                <span className="px-3 py-1 bg-white/10 text-slate-300 border border-white/10 text-[10px] font-black uppercase tracking-widest rounded-lg">
+                  {toTitle(currentPartner.status)}
+                </span>
+              </div>
+              <h1 className="text-2xl md:text-3xl font-black text-white tracking-tight leading-tight">
+                {currentPartner.organizationName}
+              </h1>
+              <p className="text-slate-400 text-sm mt-1">{toTitle(currentPartner.organizationType)} • {currentPartner.industry}</p>
+            </div>
           </div>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          <Link to="/partners" className="px-3 py-2 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg">Back</Link>
-          <Link to={`/partners/${id}/impact`} className="px-3 py-2 text-sm bg-indigo-50 text-indigo-700 hover:bg-indigo-100 rounded-lg">Impact</Link>
-          {canMutate && (
-            <button onClick={() => setEditing(true)} className="px-3 py-2 text-sm bg-amber-50 text-amber-700 hover:bg-amber-100 rounded-lg">
-              Edit
-            </button>
-          )}
-          {canMutate && (
-            <button onClick={() => setShowDelete(true)} className="px-3 py-2 text-sm bg-red-50 text-red-700 hover:bg-red-100 rounded-lg">
-              Delete
-            </button>
-          )}
-          {user?.role === 'admin' && currentPartner.verificationStatus === 'pending' && (
-            <button onClick={onApprove} className="px-3 py-2 text-sm bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-lg">
-              Approve
-            </button>
-          )}
+
+          <div className="flex flex-wrap gap-2">
+            <Link to="/partner/agreements"
+              className="px-4 py-2.5 bg-white/10 hover:bg-white/20 border border-white/10 text-white text-xs font-black uppercase tracking-widest rounded-xl transition-all flex items-center gap-1.5">
+              <FiFileText /> Agreements
+            </Link>
+            <Link to={`/partners/${id}/impact`}
+              className="px-4 py-2.5 bg-white/10 hover:bg-white/20 border border-white/10 text-white text-xs font-black uppercase tracking-widest rounded-xl transition-all flex items-center gap-1.5">
+              <FiActivity /> Impact
+            </Link>
+            {canMutate && (
+              <button onClick={() => setEditing(true)}
+                className="px-4 py-2.5 bg-brand-orange/20 hover:bg-brand-orange/30 border border-brand-orange/30 text-brand-orange text-xs font-black uppercase tracking-widest rounded-xl transition-all flex items-center gap-1.5">
+                <FiEdit3 /> Edit
+              </button>
+            )}
+            {(user?.role === 'admin' || user?.role === 'ngo-admin') && currentPartner.verificationStatus === 'pending' && (
+              <button onClick={onApprove}
+                className="px-4 py-2.5 bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/30 text-emerald-400 text-xs font-black uppercase tracking-widest rounded-xl transition-all flex items-center gap-1.5">
+                <FiCheckCircle /> Approve
+              </button>
+            )}
+            {canMutate && (
+              <button onClick={() => setShowDelete(true)}
+                className="px-4 py-2.5 bg-rose-500/20 hover:bg-rose-500/30 border border-rose-500/30 text-rose-400 text-xs font-black uppercase tracking-widest rounded-xl transition-all flex items-center gap-1.5">
+                <FiTrash2 /> Delete
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
+      {/* Alerts */}
       {(error || success) && (
-        <div className="space-y-2">
-          <ErrorAlert message={error} onDismiss={() => setError('')} />
-          {success && <div className="bg-green-50 border border-green-200 text-green-700 text-sm px-4 py-3 rounded-lg">{success}</div>}
+        <div className="space-y-3">
+          {error && (
+            <div className="flex items-center gap-3 bg-red-50 border border-brand-red/20 text-brand-red px-5 py-4 rounded-2xl">
+              <FiAlertTriangle className="text-xl shrink-0" />
+              <p className="text-sm font-medium">{error}</p>
+              <button onClick={() => setError('')} className="ml-auto"><FiX /></button>
+            </div>
+          )}
+          {success && (
+            <div className="flex items-center gap-3 bg-emerald-50 border border-emerald-200 text-emerald-700 px-5 py-4 rounded-2xl">
+              <FiCheckCircle className="text-xl shrink-0" />
+              <p className="text-sm font-medium">{success}</p>
+              <button onClick={() => setSuccess('')} className="ml-auto"><FiX /></button>
+            </div>
+          )}
         </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <Section title="Contact">
-          <Info label="Name" value={currentPartner.contactPerson?.name} />
-          <Info label="Email" value={currentPartner.contactPerson?.email} />
-          <Info label="Phone" value={currentPartner.contactPerson?.phone} />
-          <Info label="Position" value={currentPartner.contactPerson?.position} />
-        </Section>
+      {/* Main grid */}
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+        {/* Left column */}
+        <div className="space-y-6">
+          <SectionCard title="Contact Information" icon={<FiMail />}>
+            <InfoRow label="Name" value={currentPartner.contactPerson?.name} />
+            <InfoRow label="Position" value={currentPartner.contactPerson?.position} />
+            <InfoRow label="Email" value={currentPartner.contactPerson?.email} />
+            <InfoRow label="Phone" value={currentPartner.contactPerson?.phone} />
+          </SectionCard>
 
-        <Section title="Address">
-          <Info label="Street" value={currentPartner.address?.street} />
-          <Info label="City" value={currentPartner.address?.city} />
-          <Info label="State" value={currentPartner.address?.state || '—'} />
-          <Info label="Country" value={currentPartner.address?.country} />
-          <Info label="Postal" value={currentPartner.address?.postalCode} />
-          <Info
-            label="Coordinates"
-            value={Array.isArray(currentPartner.address?.coordinates?.coordinates)
-              ? currentPartner.address.coordinates.coordinates.join(', ')
-              : 'Auto-geocoded / unavailable'}
-          />
-        </Section>
+          <SectionCard title="Registered Address" icon={<FiMapPin />}>
+            <InfoRow label="Street" value={currentPartner.address?.street} />
+            <InfoRow label="City" value={currentPartner.address?.city} />
+            <InfoRow label="State" value={currentPartner.address?.state} />
+            <InfoRow label="Country" value={currentPartner.address?.country} />
+            <InfoRow label="Postal Code" value={currentPartner.address?.postalCode} />
+          </SectionCard>
 
-        <Section title="Verification & Trust">
-          <Info label="Verification Status" value={toTitle(currentPartner.verificationStatus)} />
-          <Info label="Verified At" value={currentPartner.verifiedAt ? new Date(currentPartner.verifiedAt).toLocaleString() : '—'} />
-          <Info label="Documents" value={String(currentPartner.verificationDocuments?.length || 0)} />
-          <div className="mt-2">
-            {(currentPartner.verificationDocuments || []).map((doc, index) => (
-              <a key={`${doc.url}-${index}`} href={doc.url} target="_blank" rel="noreferrer" className="block text-sm text-blue-600 hover:underline">
-                {toTitle(doc.documentType)}
-              </a>
-            ))}
+          <SectionCard title="Compliance & Verification" icon={<FiShield />}>
+            <InfoRow label="Status" value={toTitle(currentPartner.verificationStatus)} />
+            <InfoRow label="Verified At" value={currentPartner.verifiedAt ? new Date(currentPartner.verifiedAt).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }) : '—'} />
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Documents</p>
+              {currentPartner.verificationDocuments?.length > 0 ? (
+                <div className="space-y-2">
+                  {currentPartner.verificationDocuments.map((doc, i) => (
+                    <a key={i} href={doc.url} target="_blank" rel="noreferrer"
+                      className="flex items-center gap-2 p-3 bg-slate-50 border border-slate-100 hover:border-brand-red/30 hover:bg-red-50/30 rounded-xl text-sm font-semibold text-slate-700 group transition-all">
+                      <FiFileText className="text-slate-400 group-hover:text-brand-red transition-colors" />
+                      {toTitle(doc.documentType || 'Document')}
+                      <FiExternalLink className="ml-auto text-slate-300 group-hover:text-brand-red" />
+                    </a>
+                  ))}
+                </div>
+              ) : <p className="text-sm text-slate-400 italic">No documents</p>}
+            </div>
+          </SectionCard>
+        </div>
+
+        {/* Middle column */}
+        <div className="space-y-6">
+          <SectionCard title="SDG & CSR Focus" icon={<FiTarget />}>
+            {currentPartner.csrFocus?.length > 0 ? (
+              <div className="flex flex-wrap gap-2 mb-5">
+                {currentPartner.csrFocus.map(f => <TagPill key={f} value={f} />)}
+              </div>
+            ) : <p className="text-sm text-slate-400 italic mb-5">No CSR focus set</p>}
+            {currentPartner.sdgGoals?.length > 0 && (
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">SDG Goals</p>
+                <div className="flex flex-wrap gap-2">
+                  {currentPartner.sdgGoals.map(g => (
+                    <span key={g} className="px-3 py-1 bg-brand-red/5 text-brand-red border border-brand-red/15 text-[10px] font-black uppercase tracking-wider rounded-lg">
+                      SDG {g}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+          </SectionCard>
+
+          <SectionCard title="Partnership Preferences" icon={<FiActivity />}>
+            <div className="grid grid-cols-2 gap-3 mb-5">
+              <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Min Budget</p>
+                <p className="text-base font-black text-slate-800">{asMoney(currentPartner.partnershipPreferences?.budgetRange?.min)}</p>
+              </div>
+              <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Max Budget</p>
+                <p className="text-base font-black text-slate-800">{asMoney(currentPartner.partnershipPreferences?.budgetRange?.max)}</p>
+              </div>
+            </div>
+            <InfoRow label="Preferred Duration" value={toTitle(currentPartner.partnershipPreferences?.duration || '')} />
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Partnership Types</p>
+              <div className="flex flex-wrap gap-2">
+                {currentPartner.partnershipPreferences?.partnershipTypes?.length > 0
+                  ? currentPartner.partnershipPreferences.partnershipTypes.map(t => <TagPill key={t} value={t} />)
+                  : <p className="text-sm text-slate-400 italic">Not set</p>}
+              </div>
+            </div>
+          </SectionCard>
+
+          <SectionCard title="Partnership History" icon={<FiClock />}>
+            <div className="grid grid-cols-2 gap-3">
+              {[
+                { label: 'Total', value: currentPartner.partnershipHistory?.totalPartnerships ?? 0 },
+                { label: 'Active', value: currentPartner.partnershipHistory?.activePartnerships ?? 0 },
+                { label: 'Completed', value: currentPartner.partnershipHistory?.completedPartnerships ?? 0 },
+                { label: 'Contributed', value: asMoney(currentPartner.partnershipHistory?.totalContributed) },
+              ].map(({ label, value }) => (
+                <div key={label} className="bg-slate-50 p-4 rounded-2xl border border-slate-100 text-center">
+                  <p className="text-lg font-black text-slate-800">{value}</p>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mt-1">{label}</p>
+                </div>
+              ))}
+            </div>
+          </SectionCard>
+        </div>
+
+        {/* Right column */}
+        <div className="space-y-6">
+          <SectionCard title="Organizational Capabilities" icon={<FiUsers />}>
+            <div className="bg-brand-red/5 border border-brand-red/10 rounded-2xl p-5 mb-4">
+              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Financial Capacity</p>
+              <p className="text-2xl font-black text-brand-red">{asMoney(currentPartner.capabilities?.financialCapacity)}</p>
+            </div>
+            <div className="grid grid-cols-2 gap-3 mb-4">
+              <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 text-center">
+                <p className="text-xl font-black text-slate-800">{currentPartner.capabilities?.employeeCount ?? '—'}</p>
+                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mt-1">Employees</p>
+              </div>
+              <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 text-center">
+                <p className="text-xl font-black text-slate-800">{currentPartner.capabilities?.volunteerHoursAvailable ?? '—'}</p>
+                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mt-1">Vol. Hrs</p>
+              </div>
+            </div>
+            {currentPartner.capabilities?.skillsAvailable?.length > 0 && (
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Skills Available</p>
+                <div className="flex flex-wrap gap-2">
+                  {currentPartner.capabilities.skillsAvailable.map(s => <TagPill key={s} value={s} />)}
+                </div>
+              </div>
+            )}
+          </SectionCard>
+
+          {/* Readiness Score */}
+          <div className="bg-slate-900 rounded-3xl p-7 relative overflow-hidden text-left">
+            <div className="absolute top-0 right-0 w-40 h-40 bg-brand-red/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+            <div className="relative z-10">
+              <div className="flex items-center gap-2 mb-5">
+                <span className="w-8 h-8 bg-white/10 text-white rounded-xl flex items-center justify-center text-sm"><FiBarChart2 /></span>
+                <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400">Readiness Score</h3>
+              </div>
+
+              <div className="flex items-end gap-3 mb-4">
+                <span className="text-5xl font-black text-white">{readinessPct}%</span>
+                <span className="text-sm font-bold text-slate-400 mb-2">{readinessLabel}</span>
+              </div>
+
+              <div className="w-full bg-white/5 rounded-full h-2.5 overflow-hidden mb-5">
+                <div
+                  className="h-2.5 bg-gradient-to-r from-brand-orange to-brand-red rounded-full transition-all duration-1000"
+                  style={{ width: `${readinessPct}%` }}
+                />
+              </div>
+              <p className="text-xs text-slate-500 leading-relaxed">
+                Score considers verification quality, contact completeness, SDG mapping, and contribution signals.
+              </p>
+            </div>
           </div>
-        </Section>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <Section title="CSR & SDG Focus">
-          <TagList values={currentPartner.csrFocus || []} />
-          <div className="mt-3">
-            <p className="text-xs text-gray-500 mb-1">SDG Goals</p>
-            <TagList values={(currentPartner.sdgGoals || []).map((goal) => `SDG ${goal}`)} />
-          </div>
-        </Section>
-
-        <Section title="Partnership Preferences">
-          <Info label="Budget Range" value={`${numberText(currentPartner.partnershipPreferences?.budgetRange?.min)} - ${numberText(currentPartner.partnershipPreferences?.budgetRange?.max)}`} />
-          <Info label="Duration" value={toTitle(currentPartner.partnershipPreferences?.duration)} />
-          <div className="mt-2">
-            <p className="text-xs text-gray-500 mb-1">Partnership Types</p>
-            <TagList values={currentPartner.partnershipPreferences?.partnershipTypes || []} />
-          </div>
-          <div className="mt-2">
-            <p className="text-xs text-gray-500 mb-1">Geographic Focus</p>
-            <TagList values={currentPartner.partnershipPreferences?.geographicFocus || []} />
-          </div>
-        </Section>
-
-        <Section title="Capabilities">
-          <Info label="Financial Capacity" value={numberText(currentPartner.capabilities?.financialCapacity)} />
-          <Info label="Employee Count" value={currentPartner.capabilities?.employeeCount ?? '—'} />
-          <Info label="Volunteer Hours" value={currentPartner.capabilities?.volunteerHoursAvailable ?? '—'} />
-          <div className="mt-2">
-            <p className="text-xs text-gray-500 mb-1">Skills Available</p>
-            <TagList values={currentPartner.capabilities?.skillsAvailable || []} />
-          </div>
-          <div className="mt-2">
-            <p className="text-xs text-gray-500 mb-1">In-kind Offerings</p>
-            <TagList values={currentPartner.capabilities?.inKindOfferings || []} />
-          </div>
-        </Section>
-
-        <Section title="Partnership History">
-          <Info label="Total Partnerships" value={currentPartner.partnershipHistory?.totalPartnerships ?? 0} />
-          <Info label="Active Partnerships" value={currentPartner.partnershipHistory?.activePartnerships ?? 0} />
-          <Info label="Completed Partnerships" value={currentPartner.partnershipHistory?.completedPartnerships ?? 0} />
-          <Info label="Total Contributed" value={numberText(currentPartner.partnershipHistory?.totalContributed)} />
-        </Section>
-      </div>
-
+      {/* Edit modal */}
       {editing && (
         <PartnerFormModal
           partner={currentPartner}
@@ -215,54 +366,28 @@ export default function PartnerDetailsPage() {
         />
       )}
 
+      {/* Delete modal */}
       {showDelete && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl shadow-xl p-6 max-w-sm w-full mx-4">
-            <h4 className="text-base font-semibold text-gray-800 mb-2">Delete Partner?</h4>
-            <p className="text-sm text-gray-500 mb-5">This action marks the partner as inactive.</p>
-            <div className="flex gap-3 justify-end">
-              <button onClick={() => setShowDelete(false)} className="px-4 py-2 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg">Cancel</button>
-              <button onClick={onDelete} disabled={loading} className="px-4 py-2 text-sm text-white bg-red-600 hover:bg-red-700 disabled:bg-red-400 rounded-lg">
-                {loading ? 'Deleting...' : 'Delete'}
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-3xl shadow-2xl p-8 max-w-sm w-full">
+            <div className="w-14 h-14 bg-rose-50 rounded-2xl flex items-center justify-center mx-auto mb-5">
+              <FiTrash2 className="text-2xl text-rose-500" />
+            </div>
+            <h4 className="text-lg font-black text-slate-800 mb-2 text-center">Delete Partner?</h4>
+            <p className="text-sm text-slate-500 text-center mb-7">This marks the partner as inactive. This action cannot be easily reversed.</p>
+            <div className="flex gap-3">
+              <button onClick={() => setShowDelete(false)}
+                className="flex-1 px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-black uppercase tracking-widest rounded-xl transition-colors">
+                Cancel
+              </button>
+              <button onClick={onDelete} disabled={loading}
+                className="flex-1 px-4 py-3 bg-rose-500 hover:bg-rose-600 disabled:opacity-60 text-white text-xs font-black uppercase tracking-widest rounded-xl transition-colors flex items-center justify-center gap-2">
+                <FiTrash2 /> {loading ? 'Deleting...' : 'Delete'}
               </button>
             </div>
           </div>
         </div>
       )}
-    </div>
-  );
-}
-
-function Section({ title, children }) {
-  return (
-    <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
-      <h3 className="text-sm font-semibold text-gray-700 mb-3">{title}</h3>
-      {children}
-    </div>
-  );
-}
-
-function Info({ label, value }) {
-  return (
-    <div className="mb-2">
-      <p className="text-xs text-gray-500">{label}</p>
-      <p className="text-sm text-gray-800">{value || '—'}</p>
-    </div>
-  );
-}
-
-function TagList({ values }) {
-  if (!values || values.length === 0) {
-    return <p className="text-sm text-gray-500">—</p>;
-  }
-
-  return (
-    <div className="flex flex-wrap gap-1.5">
-      {values.map((value) => (
-        <span key={value} className="px-2 py-0.5 rounded-full text-xs bg-gray-100 text-gray-700">
-          {toTitle(String(value))}
-        </span>
-      ))}
     </div>
   );
 }

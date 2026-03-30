@@ -1,6 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from "dotenv";
+dotenv.config();
+
 import './src/config/db.js';
 import router from './src/routes/partners.routes.js';
 import campaignRoutes from "./src/routes/campaign.routes.js";
@@ -11,10 +13,11 @@ import financeRoutes from "./src/routes/finance.routes.js";
 import donorRoutes from './src/routes/donor.routes.js';
 import transparencyRoutes from './src/routes/transparency.routes.js';
 import geoRoutes from './src/routes/geo.routes.js';
-dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3000;
+
+app.use('/public', express.static('public'));
 
 const allowedOrigins = process.env.ALLOWED_ORIGINS
   ? process.env.ALLOWED_ORIGINS.split(',')

@@ -20,7 +20,9 @@ class AgreementRepository {
   }
 
   async findByPartnerId(partnerId) {
-    return await Agreement.find({ partnerId }).sort({ createdAt: -1 });
+    return await Agreement.find({ partnerId })
+      .populate('campaignId', 'title status')
+      .sort({ createdAt: -1 });
   }
 
   async findByCampaignId(campaignId) {

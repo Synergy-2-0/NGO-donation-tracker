@@ -58,6 +58,7 @@ export default function DashboardPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { donorProfile, transactions, pledges, analytics, loading, fetchProfile, fetchTransactions, fetchPledges, fetchAnalytics } = useDonor();
+  const { donorProfile, transactions, pledges, analytics, loading, fetchProfile, fetchTransactions, fetchPledges, fetchAnalytics } = useDonor();
 
   useEffect(() => {
     const load = async () => {

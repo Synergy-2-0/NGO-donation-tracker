@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 
 const partnerSchema = new mongoose.Schema({
   // Organization details
+  logoUrl: { type: String, default: '' },
   organizationName: {
     type: String,
     required: [true, 'Organization name is required'],

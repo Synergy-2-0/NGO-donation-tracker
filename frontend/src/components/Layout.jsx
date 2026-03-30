@@ -7,12 +7,14 @@ export default function Layout() {
     <div className="flex h-screen bg-[#F8FAFC] font-sans selection:bg-orange-500 selection:text-white">
       <Sidebar />
       <div className="flex flex-col flex-1 overflow-hidden relative">
-        {/* Subtle Branding Glows */}
-        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-tf-primary/5 rounded-full blur-[150px] -mr-64 -mt-64 pointer-events-none"></div>
-        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-tf-accent/5 rounded-full blur-[100px] -ml-32 -mb-32 pointer-events-none"></div>
-        
+        {/* Subtle background texture */}
+        <div className="absolute inset-0 pointer-events-none" style={{
+          backgroundImage: `radial-gradient(circle at 80% 0%, rgba(220,38,38,0.03) 0%, transparent 60%),
+                            radial-gradient(circle at 20% 100%, rgba(249,115,22,0.03) 0%, transparent 60%)`
+        }} />
+
         <Navbar />
-        <main className="flex-1 overflow-y-auto p-8 lg:p-12 relative z-10 scroll-smooth">
+        <main className="flex-1 overflow-y-auto p-8 relative z-10 scroll-smooth">
           <Outlet />
         </main>
       </div>

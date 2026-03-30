@@ -63,9 +63,8 @@ export default function AdminDashboardPage() {
     useEffect(() => {
         fetchDonors().catch(() => { });
         fetchSegments().catch(() => { });
-    }, [fetchDonors, fetchSegments]);
-
-    if (loading && donors.length === 0) return <LoadingSpinner />;
+        fetchCampaigns().catch(() => { });
+    }, [fetchDonors, fetchSegments, fetchCampaigns]);
 
     const totalDonors = donors.length;
     const activeDonors = donors.filter((d) => d.status === 'active').length;

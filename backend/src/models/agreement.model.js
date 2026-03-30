@@ -46,9 +46,27 @@ const agreementSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['draft', 'active', 'completed', 'cancelled', 'suspended'],
+    enum: ['draft', 'pending', 'active', 'completed', 'cancelled', 'suspended'],
     default: 'draft',
     index: true
+  },
+  approvedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    default: null
+  },
+  approvedAt: {
+    type: Date,
+    default: null
+  },
+  partnerAcceptedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    default: null
+  },
+  partnerAcceptedAt: {
+    type: Date,
+    default: null
   },
   terms: {
     type: String,

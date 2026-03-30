@@ -30,14 +30,14 @@ function PledgeModal({ pledge, onClose, onSave, loading }) {
   const [form, setForm] = useState(
     pledge
       ? {
-          amount: pledge.amount ?? '',
-          frequency: pledge.frequency ?? 'one-time',
-          campaignId: pledge.campaign ?? '',
-          notes: pledge.notes ?? '',
-          startDate: pledge.startDate
-            ? new Date(pledge.startDate).toISOString().split('T')[0]
-            : new Date().toISOString().split('T')[0],
-        }
+        amount: pledge.amount ?? '',
+        frequency: pledge.frequency ?? 'one-time',
+        campaignId: pledge.campaign ?? '',
+        notes: pledge.notes ?? '',
+        startDate: pledge.startDate
+          ? new Date(pledge.startDate).toISOString().split('T')[0]
+          : new Date().toISOString().split('T')[0],
+      }
       : defaultForm
   );
 
@@ -77,7 +77,7 @@ function PledgeModal({ pledge, onClose, onSave, loading }) {
               <input
                 type="number"
                 value={form.amount}
-                onChange={(e) => setForm({...form, amount: e.target.value})}
+                onChange={handleChange}
                 required
                 placeholder="0.00"
                 className={inputCls}

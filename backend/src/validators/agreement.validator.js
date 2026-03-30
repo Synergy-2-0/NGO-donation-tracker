@@ -45,5 +45,5 @@ export const updateAgreementSchema = Joi.object({
 }).min(1);
 
 export const updateAgreementStatusSchema = Joi.object({
-  status: Joi.string().valid('draft', 'active', 'completed', 'cancelled', 'suspended').required(),
+  status: Joi.string().valid('draft', 'pending', 'active', 'completed', 'cancelled', 'suspended').required(),
 });

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useFinance } from '../context/FinanceContext';
 import api from '../api/axios';
@@ -16,10 +17,16 @@ export default function FinanceDashboard() {
         setNgoProfile(res.data);
         fetchSummary(res.data._id);
       })
-      .catch(err => console.error("Error loading NGO profile:", err));
+      .catch(() => {});
   }, [fetchSummary]);
 
-  if (loading && !summary) return <LoadingSpinner />;
+  if (loading && !summary) return (
+    <div className="py-20 flex justify-center">
+      <LoadingSpinner message="Loading financial overview..." />
+    </div>
+  );
+
+  const netBalance = Number(summary?.totalIncome || 0) - Number(summary?.totalAllocated || 0);
 
   return (
     <div className="space-y-12 pb-24 font-sans selection:bg-tf-primary selection:text-white max-w-7xl mx-auto">

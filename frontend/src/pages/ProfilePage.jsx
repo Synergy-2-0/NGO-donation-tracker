@@ -15,10 +15,10 @@ const defaultForm = {
 
 function PremiumField({ label, name, value, onChange, type = 'text', placeholder, hint, className = '' }) {
   return (
-    <div className={className + " space-y-2"}>
-      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2 group-hover:text-tf-purple transition-colors">
+    <div className={className + " space-y-3 group"}>
+      <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] px-4 group-hover:text-tf-primary transition-colors duration-500">
         {label}
-        {hint && <span className="ml-2 text-slate-300 normal-case italic font-medium">{hint}</span>}
+        {hint && <span className="ml-2 text-slate-300 normal-case italic font-medium tracking-normal">{hint}</span>}
       </label>
       <input
         type={type}
@@ -26,7 +26,7 @@ function PremiumField({ label, name, value, onChange, type = 'text', placeholder
         value={value}
         onChange={onChange}
         placeholder={placeholder}
-        className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-bold text-tf-purple focus:outline-none focus:border-tf-primary transition-all shadow-inner"
+        className="w-full bg-slate-50 border border-slate-100/50 rounded-2xl px-6 py-4 text-sm font-bold text-slate-900 focus:outline-none focus:border-tf-primary focus:ring-4 focus:ring-tf-primary/10 transition-all shadow-inner placeholder:text-slate-200"
       />
     </div>
   );
@@ -88,8 +88,9 @@ export default function ProfilePage() {
       await updateProfile(donorProfile._id, payload);
       setSuccess('Profile updated successfully.');
       setEditing(false);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err) {
-      setLocalError(err.response?.data?.message || err.message || 'Update failed.');
+      setLocalError(err.response?.data?.message || err.message || 'Verification failed.');
     }
   };
 
@@ -239,3 +240,4 @@ export default function ProfilePage() {
     </div>
   );
 }
+

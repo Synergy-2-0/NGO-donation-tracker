@@ -229,6 +229,17 @@ export default function Sidebar() {
           TrustFund &copy; {new Date().getFullYear()}
         </p>
       </div>
+
+      <style>{`
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { 
+          background: rgba(255,255,255,0.05); 
+          border-radius: 10px; 
+          transition: background 0.3s;
+        }
+        .custom-scrollbar:hover::-webkit-scrollbar-thumb { background: rgba(255,138,0,0.1); }
+      `}</style>
     </aside>
   );
 }

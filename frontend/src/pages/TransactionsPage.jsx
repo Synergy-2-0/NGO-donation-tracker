@@ -148,7 +148,7 @@ export default function TransactionsPage() {
                             <FiExternalLink className="text-sm" />
                         </button>
                     </td>
-                  </tr>
+                  </motion.tr>
                 ))
               ) : (
                 <tr>

@@ -19,9 +19,9 @@ const statusBadgeStyle = {
 };
 
 const verificationBadgeStyle = {
-  verified: 'bg-indigo-50 text-indigo-600 border-indigo-100',
-  pending: 'bg-amber-50 text-amber-600 border-amber-100',
-  rejected: 'bg-rose-50 text-rose-600 border-rose-100',
+  verified: 'bg-tf-primary/10 text-tf-primary border-tf-primary/20 shadow-[0_0_10px_rgba(255,138,0,0.1)]',
+  pending: 'bg-amber-500/10 text-amber-500 border-amber-500/20',
+  rejected: 'bg-rose-500/10 text-rose-500 border-rose-500/20',
 };
 
 const toTitle = (value = '') =>

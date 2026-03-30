@@ -236,7 +236,7 @@ export default function CampaignDashboardPage() {
                         </p>
                         <div className="flex items-center gap-2">
                             <button
-                                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                                onClick={() => { setCurrentPage((p) => Math.max(1, p - 1)); window.scrollTo({top:0, behavior:'smooth'}); }}
                                 disabled={currentPage === 1}
                                 className="w-10 h-10 flex items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 disabled:opacity-30 disabled:pointer-events-none transition-all"
                             >
@@ -248,7 +248,7 @@ export default function CampaignDashboardPage() {
                             </div>
 
                             <button
-                                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                                onClick={() => { setCurrentPage((p) => Math.min(totalPages, p + 1)); window.scrollTo({top:0, behavior:'smooth'}); }}
                                 disabled={currentPage === totalPages}
                                 className="w-10 h-10 flex items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 disabled:opacity-30 disabled:pointer-events-none transition-all"
                             >

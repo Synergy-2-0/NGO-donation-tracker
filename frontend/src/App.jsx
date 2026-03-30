@@ -42,6 +42,7 @@ import PublicHowItWorksPage from './pages/PublicHowItWorksPage';
 import PublicImpactPage from './pages/PublicImpactPage';
 import PublicPartnersPage from './pages/PublicPartnersPage';
 import PublicCausesPage from './pages/PublicCausesPage';
+import PublicCampaignDetailPage from './pages/PublicCampaignDetailPage';
 
 import { useAuth } from './context/AuthContext';
 import { PartnerOperationsProvider } from './context/PartnerOperationsContext';
@@ -129,6 +130,7 @@ export default function App() {
                   <Route path="/how-it-works" element={<PublicHowItWorksPage />} />
                   <Route path="/impact" element={<PublicImpactPage />} />
                   <Route path="/causes" element={<PublicCausesPage />} />
+                  <Route path="/causes/:id" element={<PublicCampaignDetailPage />} />
                   <Route path="/partners/list" element={<PublicPartnersPage />} />
 
                   {/* Dashboard / Protected Routes */}

@@ -14,9 +14,9 @@ export default function PublicHowItWorksPage() {
       <section className="pt-48 pb-32 px-8 lg:px-24 bg-tf-secondary bg-gradient-to-b from-slate-50 to-white">
         <div className="max-w-[1400px] mx-auto text-center space-y-10">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-            <p className="text-[12px] font-bold text-tf-primary uppercase tracking-[0.6em] mb-6">Process & Protocols</p>
+            <p className="text-[12px] font-bold text-tf-primary uppercase tracking-[0.6em] mb-6">Our Mission & Process</p>
             <h1 className="text-6xl md:text-9xl font-bold font-display text-tf-dark tracking-tighter uppercase italic leading-[0.85]">
-              The <br /> <span className="text-tf-primary tracking-normal">TransFund</span> <br /> Architecture.
+              The <br /> <span className="text-tf-primary tracking-normal">TransFund</span> <br /> Method.
             </h1>
           </motion.div>
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} className="text-xl text-slate-500 font-serif font-medium italic leading-relaxed max-w-2xl mx-auto">
@@ -28,9 +28,9 @@ export default function PublicHowItWorksPage() {
       {/* Steps Logic */}
       <section className="py-48 max-w-[1400px] mx-auto px-8 grid grid-cols-1 md:grid-cols-3 gap-24 items-start">
          {[
-           { step: '01', title: 'Vetting Registry', desc: 'Every mission on TransFund undergoes a multi-layer verification protocol to ensure local identity, mission viability, and operational auditing structures before listing.' },
-           { step: '02', title: 'Capital Allocation', desc: 'Donors select missions and allocate strategic capital through our secure ledger registry. 100% of the funds are locked for the specific mission endpoint.' },
-           { step: '03', title: 'Telemetry Flow', desc: 'Our protocol tracks the movement of resources through every beneficiary milestone and provides a live audit trail in real-time to each patron.' }
+           { step: '01', title: 'Project Vetting', desc: 'Every project on TransFund undergoes a rigorous verification process to ensure local identity, mission viability, and financial transparency before being listed.' },
+           { step: '02', title: 'Strategic Donations', desc: 'Select projects and make donations through our secure platform. 100% of the funds are dedicated to the specific goals of each project.' },
+           { step: '03', title: 'Impact Tracking', desc: 'Our platform tracks the progress of every project, providing a real-time audit trail and transparent updates to all our supporters.' }
          ].map((item, i) => (
            <motion.div 
              key={item.step}
@@ -57,7 +57,7 @@ export default function PublicHowItWorksPage() {
             <h2 className="text-5xl md:text-8xl font-display font-bold text-white italic tracking-tighter uppercase leading-[0.85]">
               "The New <br /> <span className="text-tf-primary">Standard</span> <br /> for Humanitarian Integrity."
             </h2>
-            <p className="text-tf-primary font-bold text-[10px] uppercase tracking-[0.8em] leading-none">Institutional Protocol v2.4.1</p>
+            <p className="text-tf-primary font-bold text-[10px] uppercase tracking-[0.8em] leading-none">Transparency Standards v2.4.1</p>
          </div>
       </section>
 
@@ -66,8 +66,8 @@ export default function PublicHowItWorksPage() {
          <div className="max-w-4xl mx-auto space-y-12">
             <h3 className="text-4xl md:text-7xl font-display font-medium tracking-tight uppercase leading-[0.9] text-slate-200">Start Your Journey.</h3>
             <div className="pt-6 flex flex-wrap justify-center gap-10">
-               <button onClick={() => navigate('/login?tab=signup')} className="px-20 py-8 bg-tf-primary hover:bg-tf-dark text-white text-[11px] font-bold uppercase tracking-[0.4em] rounded-[2.5rem] shadow-4xl shadow-tf-primary/30 transition-all hover:scale-105 active:scale-95">Support A Node</button>
-               <button onClick={() => navigate('/login')} className="px-20 py-8 border-2 border-slate-100 text-tf-dark font-bold uppercase tracking-[0.4em] rounded-[2.5rem] hover:border-tf-primary transition-all text-[11px]">Mission Access</button>
+               <button onClick={() => navigate('/login?tab=signup')} className="px-20 py-8 bg-tf-primary hover:bg-tf-dark text-white text-[11px] font-bold uppercase tracking-[0.4em] rounded-[2.5rem] shadow-4xl shadow-tf-primary/30 transition-all hover:scale-105 active:scale-95">Join the Mission</button>
+               <button onClick={() => navigate('/login')} className="px-20 py-8 border-2 border-slate-100 text-tf-dark font-bold uppercase tracking-[0.4em] rounded-[2.5rem] hover:border-tf-primary transition-all text-[11px]">Sign In</button>
             </div>
          </div>
       </section>

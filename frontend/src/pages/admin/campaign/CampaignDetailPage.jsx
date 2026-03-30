@@ -206,7 +206,7 @@ export default function CampaignDetailPage() {
                         </>
                     )}
                 </div>
-            </div>
+            </section>
 
             {isLocked && (
                 <div className="bg-amber-50 border border-amber-100 rounded-2xl p-4 flex items-center gap-3 animate-pulse">

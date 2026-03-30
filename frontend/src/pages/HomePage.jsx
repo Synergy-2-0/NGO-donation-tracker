@@ -1,260 +1,370 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import PublicNavbar from '../components/PublicNavbar';
 import PublicFooter from '../components/PublicFooter';
+import api from '../api/axios';
+import { useAuth } from '../context/AuthContext';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 
 const HERO_IMG = "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&q=80&w=2400";
-const TRUST_BANNER_IMG = "https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?auto=format&fit=crop&q=80&w=2000";
-
-const CAMPAIGNS = [
-  { id: 1, title: 'Medical Support for Communities', category: 'Health', location: 'Northern Province', raised: 4500000, target: 12000000, img: "https://images.unsplash.com/photo-1584515933487-779824d29309?auto=format&fit=crop&q=80&w=1200", urgent: true },
-  { id: 2, title: 'Clean Water Infrastructure', category: 'Infrastructure', location: 'Eastern Province', raised: 9800000, target: 10000000, img: "https://images.unsplash.com/photo-1503676260728-1c00da07bb5e?auto=format&fit=crop&q=80&w=1200", urgent: false },
-  { id: 3, title: 'Primary Education Advancement', category: 'Education', location: 'Southern Province', raised: 1200000, target: 5000000, img: "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&q=80&w=1200", urgent: false },
-];
-
-const PARTNERS = [
-  { name: 'Global Health Alliance', logo: 'GHA' },
-  { name: 'Eco-System Council', logo: 'ESC' },
-  { name: 'Humanity First Network', logo: 'HFN' },
-  { name: 'Community Care Group', logo: 'CCG' },
-  { name: 'Relief Hub International', logo: 'RHI' },
-];
-
-const TESTIMONIALS = [
-  { text: "TransFund is bridging the gap between donors and the ground reality with remarkable efficiency and absolute trust.", author: "Ayesha Perera", role: "Local Partner" },
-  { text: "The audit trail feature gives me the confidence to contribute to causes that truly change lives.", author: "Michael Zhang", role: "Humanitarian Donor" },
-  { text: "A benchmark for transparency in the humanitarian sector. TransFund is the future of direct action.", author: "David Wilson", role: "NGO Director" },
-];
-
-function ProgressCircle({ raised, target }) {
-  const percent = Math.min(Math.round((raised / target) * 100), 100);
-  const radius = 30;
-  const circumference = 2 * Math.PI * radius;
-  const offset = circumference - (percent / 100) * circumference;
-  return (
-    <div className="relative w-16 h-16 flex items-center justify-center">
-       <svg className="w-full h-full -rotate-90">
-          <circle cx="32" cy="32" r={radius} fill="transparent" stroke="rgba(255,255,255,0.15)" strokeWidth="4" />
-          <circle cx="32" cy="32" r={radius} fill="transparent" stroke="#FFF" strokeWidth="4" strokeDasharray={circumference} strokeDashoffset={offset} strokeLinecap="round" className="transition-all duration-1000" />
-       </svg>
-       <span className="absolute text-[10px] font-bold text-white tracking-wide">{percent}%</span>
-    </div>
-  );
-}
 
 function CampaignCard({ item }) {
+  const percent = Math.min(Math.round(((item.raisedAmount || 0) / item.goalAmount) * 100), 100);
+  
   return (
-    <div className="group bg-white rounded-[3rem] overflow-hidden border border-slate-100/60 shadow-sm hover:shadow-4xl transition-all duration-700 flex flex-col h-full">
-      <div className="relative aspect-[4/3] overflow-hidden">
-        <img src={item.img} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[2s]" alt={item.title} />
-        <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-700" />
-        <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/80 to-transparent" />
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      className="group bg-white rounded-[2.5rem] overflow-hidden border border-slate-100/80 shadow-sm hover:shadow-2xl transition-all duration-500 flex flex-col h-full"
+    >
+      <div className="relative aspect-[16/10] overflow-hidden">
+        <img 
+          src={item.image ? `${import.meta.env.VITE_API_URL || ''}${item.image}` : "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&q=80&w=1200"} 
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[1.5s]" 
+          alt={item.title} 
+        />
+        <div className="absolute inset-0 bg-slate-900/5 group-hover:bg-transparent transition-colors duration-500" />
         
-        {item.urgent && (
-          <div className="absolute top-8 left-8 px-5 py-2 bg-tf-primary rounded-full text-[10px] font-bold uppercase tracking-widest text-white shadow-xl">
-            Critical Support
+        <div className="absolute top-6 left-6 px-4 py-1.5 bg-white/90 backdrop-blur-md rounded-xl text-[9px] font-bold uppercase tracking-widest text-slate-900 shadow-sm">
+          {item.location?.city || 'Global Mission'}
+        </div>
+        
+        {item.category && (
+          <div className="absolute top-6 right-6 px-4 py-1.5 bg-tf-primary text-white rounded-xl text-[9px] font-bold uppercase tracking-widest shadow-lg">
+             {item.category}
           </div>
         )}
-
-        <div className="absolute inset-x-8 bottom-8 flex items-center justify-between">
-           <div className="space-y-1">
-              <p className="text-[11px] font-bold text-white/60 uppercase tracking-widest leading-none">{item.location}</p>
-              <h4 className="text-2xl font-display font-medium text-white tracking-tight">{item.title}</h4>
-           </div>
-           <ProgressCircle raised={item.raised} target={item.target} />
-        </div>
       </div>
-      <div className="p-12 flex-1 flex flex-col justify-between space-y-10 bg-slate-50/20">
-        <div className="space-y-6">
-           <p className="text-[14px] font-medium text-slate-500 leading-relaxed font-serif italic">
-             This verified humanitarian mission targets local infrastructure improvements to ensure long-term stability in {item.location}.
+      
+      <div className="p-10 flex-1 flex flex-col justify-between space-y-8">
+        <div className="space-y-4">
+           <h4 className="text-xl font-bold text-slate-900 tracking-tight leading-tight group-hover:text-tf-primary transition-colors">{item.title}</h4>
+           <div className="flex items-center gap-2 text-[9px] font-black text-slate-300 uppercase tracking-widest">
+              <span>NGO: {item.ngoId?.organizationName || 'Verified Partner'}</span>
+           </div>
+           <p className="text-sm text-slate-500 line-clamp-3 leading-relaxed">
+             {item.description || "Join this mission to create a sustainable impact in the local community through verified aid flows."}
            </p>
-           <div className="flex justify-between items-baseline pt-6 border-t border-slate-100">
-              <div className="space-y-1">
-                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none">Global Aid Flow</p>
-                 <p className="text-2xl font-display font-bold text-tf-dark">LKR {item.raised.toLocaleString()}</p>
+        </div>
+
+        <div className="space-y-6">
+           <div className="space-y-3">
+              <div className="flex justify-between items-end">
+                 <div className="space-y-1">
+                    <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest leading-none">Capital Flow</p>
+                    <p className="text-lg font-bold text-slate-900 tabular-nums tracking-tighter">LKR {(item.raisedAmount || 0).toLocaleString()}</p>
+                 </div>
+                 <div className="text-right">
+                    <p className="text-2xl font-bold text-tf-primary/80 tabular-nums tracking-tighter leading-none">{percent}%</p>
+                 </div>
               </div>
-              <div className="text-right">
-                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none">Goal Registry</p>
-                 <p className="text-sm font-bold text-tf-primary/70">{item.target.toLocaleString()}</p>
+              <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                 <motion.div 
+                    initial={{ width: 0 }}
+                    whileInView={{ width: `${percent}%` }}
+                    transition={{ duration: 1.5, ease: "easeOut" }}
+                    className="h-full bg-tf-primary rounded-full relative shadow-[0_0_10px_rgba(249,115,22,0.3)]"
+                 />
+              </div>
+              <div className="flex justify-between items-center text-[9px] font-bold text-slate-300 uppercase tracking-widest">
+                 <span>Goal: LKR {item.goalAmount.toLocaleString()}</span>
+                 <span>{item.donationsCount || 0} Backers</span>
               </div>
            </div>
+
+           <Link to={`/causes/${item._id}`} className="w-full py-4 bg-slate-50 border border-slate-100 hover:border-tf-primary hover:bg-tf-primary hover:text-white transition-all text-slate-900 text-[10px] font-bold uppercase tracking-widest rounded-xl text-center flex items-center justify-center gap-3 group/btn">
+             Invest In Impact <span className="group-hover/btn:translate-x-1 transition-transform">→</span>
+           </Link>
         </div>
-        <Link to="/login" className="w-full py-6 bg-white border-2 border-slate-200 group-hover:border-tf-primary group-hover:bg-tf-primary group-hover:text-white transition-all text-tf-dark text-[11px] font-bold uppercase tracking-widest rounded-2xl text-center shadow-sm">
-          Join This Cause
-        </Link>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
 export default function HomePage() {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const [campaigns, setCampaigns] = useState([]);
+  const [loading, setLoading] = useState(true);
   const { scrollYProgress } = useScroll();
-  const scale = useTransform(scrollYProgress, [0, 0.1], [1, 1.05]);
-  const opacity = useTransform(scrollYProgress, [0, 0.05], [1, 0.8]);
+  const opacity = useTransform(scrollYProgress, [0, 0.1], [1, 0.4]);
+  const y = useTransform(scrollYProgress, [0, 0.5], [0, -100]);
+
+  useEffect(() => {
+    const fetchCampaigns = async () => {
+      try {
+        const { data } = await api.get('/api/campaigns');
+        const active = data.filter(c => c.status === 'active');
+        setCampaigns(active.slice(0, 6));
+      } catch (err) {
+        console.error("Failed to fetch campaigns", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCampaigns();
+  }, []);
+
+  const getWelcomeText = () => {
+    if (!user) return <>Global Giving. <br /> <span className="text-tf-primary italic">Absolute</span> Trust.</>;
+    return <>Welcome back, <br /> <span className="text-tf-primary italic">{user.name.split(' ')[0]}.</span></>;
+  };
+
+  const getSubText = () => {
+    if (!user) return "Bridging the gap between global support and direct local action. The industry benchmark for donation transparency.";
+    if (user.role === 'admin') return "System Administrator session active. Universal oversight, partner verification, and global audit tools are authorized.";
+    if (user.role === 'ngo-admin') return "NGO Administrator session active. Mission control, campaign management, and strategic impact tools are authorized.";
+    return "New projects added. Explore verified initiatives and support life-changing operations directly.";
+  };
+
+  const getRoleBadge = () => {
+    if (!user) return "Direct Impact Donation Platform";
+    if (user.role === 'admin') return "SYSTEM ADMINISTRATOR PORTAL";
+    if (user.role === 'ngo-admin') return "NGO ADMINISTRATOR PORTAL";
+    return `${user.role.toUpperCase()} PORTAL ACTIVE`;
+  };
+
+  const adaptiveAdminGates = () => {
+    if (user?.role === 'admin') {
+      return [
+        { t: 'Partner Registry', d: 'Review and authorize institutional partner credentials and verification nodes.', l: '/partners/verification' },
+        { t: 'Member Database', d: 'Comprehensive oversight of the global humanitarian agent community.', l: '/admin/donors' },
+        { t: 'Global Audit Logs', d: 'Universal registry of all immutable capital flows and transactional data.', l: '/finance/transactions' }
+      ];
+    }
+    if (user?.role === 'ngo-admin') {
+      return [
+        { t: 'Mission Control', d: 'Synchronized management of campaign registries and operational milestones.', l: '/admin/campaign-dashboard' },
+        { t: 'Impact Intelligence', d: 'Real-time analysis of supporter commitment and philanthropic growth.', l: '/admin/donor-analytics' },
+        { t: 'Launch New Mission', d: 'Authorize and initialize new humanitarian projects for community support.', l: '/admin/campaigns/create' }
+      ];
+    }
+    return [];
+  };
+
+  const adminGates = adaptiveAdminGates();
 
   return (
     <div className="min-h-screen bg-white font-sans selection:bg-tf-primary selection:text-white pb-0 overflow-x-hidden">
       <PublicNavbar />
 
-      {/* Hero Section */}
-      <section className="relative min-h-[95vh] flex items-center justify-center px-6 overflow-hidden">
-        <motion.div style={{ scale, opacity }} className="absolute inset-0 z-0">
-          <img src={HERO_IMG} className="w-full h-full object-cover brightness-[0.4] grayscale-[10%]" alt="Hero" />
-          <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-black/20" />
+      {/* Hero Section - Elite UI */}
+      <section className="relative min-h-screen flex items-center justify-center px-6 overflow-hidden">
+        <motion.div style={{ opacity, y }} className="absolute inset-0 z-0">
+          <img src={HERO_IMG} className="w-full h-full object-cover brightness-[0.4] scale-105" alt="Hero" />
+          <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-black/30" />
         </motion.div>
 
-        <div className="relative z-10 max-w-[1400px] w-full mx-auto container px-8 md:px-20 text-center space-y-20 mt-20">
-          <div className="space-y-12">
-            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="inline-block px-8 py-2 bg-white/10 backdrop-blur-xl border border-white/10 rounded-full">
-              <p className="text-[11px] font-bold text-white/90 uppercase tracking-[0.6em] leading-none">The TransFund Humanitarian Ecosystem</p>
-            </motion.div>
-            <motion.h1 
-              initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}
-              className="font-display text-[4rem] md:text-[6rem] lg:text-[7rem] font-bold text-white tracking-tight leading-[1] max-w-5xl mx-auto"
+        <div className="relative z-10 max-w-7xl w-full mx-auto text-center space-y-16 mt-20">
+          <div className="space-y-8">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} 
+              className="inline-flex items-center gap-3 px-6 py-2 bg-white/5 backdrop-blur-2xl border border-white/10 rounded-full mx-auto"
             >
-              Building a Transparent Future for <span className="text-tf-primary italic underline decoration-white/10 underline-offset-[15px]">Humanity.</span>
+              <div className="w-2 h-2 bg-tf-primary rounded-full animate-pulse shadow-[0_0_10px_rgba(249,115,22,0.8)]" />
+              <p className="text-[10px] font-black text-white uppercase tracking-[0.5em] leading-none italic">
+                {getRoleBadge()}
+              </p>
+            </motion.div>
+            
+            <motion.h1 
+              initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1, ease: "circOut" }}
+              className="text-[4.5rem] md:text-[7rem] lg:text-[8.5rem] font-extrabold text-white tracking-tighter leading-[0.9] max-w-6xl mx-auto italic lowercase text-stroke-white opacity-95 transition-opacity hover:opacity-100"
+            >
+              {getWelcomeText()}
             </motion.h1>
+            
             <motion.p 
                initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }}
-               className="text-white/70 text-xl font-serif md:text-2xl font-medium max-w-2xl mx-auto italic leading-relaxed"
+               className="text-white/60 text-lg md:text-xl font-medium max-w-2xl mx-auto leading-relaxed border-t border-white/10 pt-8 mt-4 italic"
             >
-              Bridging the gap between global donors and direct local impact. 
-              The industry benchmark for humanitarian asset verification.
+              {getSubText()}
             </motion.p>
           </div>
 
-          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8 }} className="flex flex-wrap justify-center gap-10">
-             <Link to="/causes" className="px-14 py-8 bg-tf-primary hover:bg-tf-dark text-white font-bold text-[12px] uppercase tracking-widest rounded-[2rem] shadow-3xl shadow-tf-primary/30 transition-all active:scale-95 group">
-                Support A Project Now <span className="group-hover:translate-x-2 transition-transform inline-block ml-4">→</span>
-             </Link>
-             <Link to="/about" className="px-14 py-8 bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white text-white hover:text-tf-dark font-bold text-[12px] uppercase tracking-widest rounded-[2rem] transition-all active:scale-95">
-                Learn Our Protocol
-             </Link>
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8 }} 
+            className="flex flex-wrap justify-center gap-8 pt-6"
+          >
+             {user ? (
+               <>
+                 <Link to="/dashboard" className="px-12 py-6 bg-tf-primary hover:bg-white text-white hover:text-slate-900 font-black text-[11px] uppercase tracking-[0.5em] rounded-2xl shadow-2xl transition-all active:scale-95 group italic">
+                    My Strategic Hub <span className="group-hover:translate-x-3 transition-transform inline-block ml-4">→</span>
+                 </Link>
+                 <Link to="/profile" className="px-12 py-6 bg-white/5 backdrop-blur-xl border border-white/10 hover:bg-white text-white hover:text-slate-900 font-black text-[11px] uppercase tracking-[0.5em] rounded-2xl transition-all active:scale-95 italic">
+                    Identity Registry
+                 </Link>
+               </>
+             ) : (
+               <>
+                 <Link to="/causes" className="px-12 py-6 bg-tf-primary hover:bg-white text-white hover:text-slate-900 font-black text-[11px] uppercase tracking-[0.5em] rounded-2xl shadow-2xl transition-all active:scale-95 group italic">
+                    Explore Missions <span className="group-hover:translate-x-3 transition-transform inline-block ml-4">→</span>
+                 </Link>
+                 <Link to="/login" className="px-12 py-6 bg-white/5 backdrop-blur-xl border border-white/10 hover:bg-white text-white hover:text-slate-900 font-black text-[11px] uppercase tracking-[0.5em] rounded-2xl transition-all active:scale-95 italic">
+                    Authorized Access
+                 </Link>
+               </>
+             )}
           </motion.div>
         </div>
       </section>
 
-      {/* Partners Marquee */}
-      <section className="bg-slate-50 py-16 border-b border-slate-100">
-         <div className="max-w-[1400px] mx-auto px-8 flex flex-wrap justify-between items-center gap-12 opacity-50 grayscale group hover:grayscale-0 transition-all duration-1000">
-            {PARTNERS.map(p => (
-              <div key={p.name} className="flex items-center gap-4 cursor-crosshair">
-                <div className="w-10 h-10 bg-slate-200 rounded-lg flex items-center justify-center font-bold text-xs text-slate-500 tracking-tight">{p.logo}</div>
-                <span className="text-[11px] font-bold uppercase tracking-[0.4em] text-slate-500">{p.name}</span>
-              </div>
+      {/* Community Stats Section */}
+      <section className="py-32 px-8 bg-white border-b border-slate-100">
+         <div className="max-w-7xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-16 text-center">
+            {[
+              { val: 'LKR 40M+', label: 'Verified Global Assets' },
+              { val: '500+', label: 'Mission Nodes' },
+              { val: '15k+', label: 'Global Agents' },
+              { val: '100%', label: 'Immutable Integrity' },
+            ].map((stat, i) => (
+              <motion.div 
+                key={i} 
+                initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}
+                className="space-y-4 group"
+              >
+                <h4 className="text-4xl md:text-6xl font-black text-slate-950 tracking-tighter italic group-hover:text-tf-primary transition-colors">{stat.val}</h4>
+                <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.5em] leading-tight italic">{stat.label}</p>
+              </motion.div>
             ))}
          </div>
       </section>
 
-      {/* Stats Section with grounded design */}
-      <section className="relative px-8 lg:px-24 -mt-20">
-         <div className="bg-tf-dark rounded-[4rem] p-16 md:p-24 shadow-5xl relative overflow-hidden group">
-            <img src={TRUST_BANNER_IMG} className="absolute inset-0 w-full h-full object-cover opacity-10 grayscale group-hover:scale-110 transition-transform duration-[30s]" alt="Audits" />
-            <div className="relative z-10 grid grid-cols-2 lg:grid-cols-4 gap-16 md:gap-24 items-center">
-                {[
-                  { val: 'LKR 42.8M', label: 'Verified Capital Flow', color: 'text-white' },
-                  { val: '480+', label: 'Local Support Nodes', color: 'text-tf-primary' },
-                  { val: '12k+', label: 'Registered Donors', color: 'text-white' },
-                  { val: '100%', label: 'Audit Compliance', color: 'text-tf-primary' },
-                ].map((stat, i) => (
-                  <div key={i} className={`space-y-4 ${i === 0 ? 'border-l-2 border-tf-primary pl-10' : 'border-l-2 border-white/5 pl-10'}`}>
-                    <h4 className={`text-4xl md:text-5xl font-display font-bold ${stat.color} tracking-tight`}>{stat.val}</h4>
-                    <p className="text-[10px] font-bold text-white/30 uppercase tracking-[0.4em] leading-tight">{stat.label}</p>
+      {/* Admin Executive Gateways (Conditional) */}
+      {adminGates.length > 0 && (
+        <section className="py-32 px-8 lg:px-24 bg-slate-950 border-y border-white/5 relative overflow-hidden">
+           <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-tf-primary/5 blur-[120px] -mr-60 -mt-60 pointer-events-none" />
+           <div className="max-w-7xl mx-auto space-y-20">
+              <div className="flex flex-col md:flex-row md:items-end justify-between gap-10">
+                 <div className="space-y-6">
+                    <div className="flex items-center gap-4">
+                       <span className="w-4 h-px bg-tf-primary" />
+                       <p className="text-[11px] font-black text-white/30 uppercase tracking-[0.6em] leading-none italic">Institutional Management Hub</p>
+                    </div>
+                    <h2 className="text-4xl md:text-6xl font-black text-white tracking-tighter italic lowercase">Executive <span className="text-tf-primary not-italic">Oversight.</span></h2>
+                 </div>
+                 <p className="text-white/40 font-medium italic text-sm max-w-xs border-l-2 border-white/10 pl-8 leading-relaxed">Authorized access to the synchronized data core and universal administration tools.</p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+                 {adminGates.map((gate, i) => (
+                   <motion.div
+                     key={gate.t}
+                     initial={{ opacity: 0, y: 20 }}
+                     whileInView={{ opacity: 1, y: 0 }}
+                     transition={{ delay: i * 0.1 }}
+                   >
+                     <Link to={gate.l} className="group h-full bg-white/5 border border-white/10 p-12 rounded-[3.5rem] hover:bg-tf-primary hover:border-tf-primary transition-all duration-700 shadow-2xl relative overflow-hidden flex flex-col justify-between">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 blur-3xl group-hover:bg-white/20 transition-all duration-1000" />
+                        <div className="space-y-6 relative z-10">
+                           <h5 className="text-[12px] font-black text-tf-primary group-hover:text-white uppercase tracking-[0.4em] leading-none italic">{gate.t}</h5>
+                           <p className="text-base text-white/40 group-hover:text-white/90 leading-relaxed italic font-medium">{gate.d}</p>
+                        </div>
+                        <div className="pt-8 flex items-center gap-4 text-[10px] font-black text-white/20 group-hover:text-white uppercase tracking-[0.3em] border-t border-white/5 mt-8 italic transition-colors">
+                            Authorization Profile <span className="group-hover:translate-x-3 transition-transform duration-500">→</span>
+                        </div>
+                     </Link>
+                   </motion.div>
+                 ))}
+              </div>
+           </div>
+        </section>
+      )}
+
+      {/* Active Projects Section */}
+      <section id="campaigns" className="py-40 px-8 lg:px-24 bg-white">
+         <div className="max-w-7xl mx-auto space-y-24">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-12">
+               <div className="space-y-6">
+                  <div className="flex items-center gap-3">
+                     <span className="w-1.5 h-1.5 rounded-full bg-tf-primary shadow-[0_0_8px_rgba(255,138,0,1)] animate-pulse" />
+                     <p className="text-[10px] font-black text-tf-primary uppercase tracking-[0.5em] leading-none italic">
+                        {user ? "Personalized Mission Registry" : "Active Global Projects"}
+                     </p>
                   </div>
-                ))}
+                  <h2 className="text-5xl md:text-8xl font-black text-slate-950 tracking-tighter leading-[0.8] italic lowercase">
+                    {user ? "Strategic" : "Live Mission"} <br /> <span className="text-slate-400 not-italic">Protocols.</span>
+                  </h2>
+               </div>
+               <Link to="/causes" className="px-12 py-5 bg-slate-950 text-white hover:bg-tf-primary font-black text-[11px] uppercase tracking-[0.4em] rounded-full transition-all shadow-3xl italic duration-700 active:scale-95">
+                 Explore Catalog Registry →
+               </Link>
             </div>
+
+            {loading ? (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-12 opacity-30">
+                 {[1,2,3].map(i => <div key={i} className="aspect-[16/10] bg-slate-100 rounded-[3rem] animate-pulse" />)}
+              </div>
+            ) : campaigns.length > 0 ? (
+               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+                  {campaigns.map(item => <CampaignCard key={item._id} item={item} />)}
+               </div>
+            ) : (
+               <div className="bg-slate-50 rounded-[4rem] p-32 text-center border border-slate-100 shadow-inner space-y-8">
+                  <div className="w-20 h-20 bg-white border border-slate-100 rounded-[2rem] mx-auto flex items-center justify-center text-slate-200">
+                    <svg className="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                  </div>
+                  <div className="space-y-4">
+                    <p className="text-slate-900 text-2xl font-black italic tracking-tighter uppercase">All units currently funded.</p>
+                    <p className="text-[10px] text-slate-400 font-black uppercase tracking-[0.5em] italic">Awaiting new project synchronization</p>
+                  </div>
+               </div>
+            )}
          </div>
       </section>
 
-      {/* Feature Section -- Why Us */}
-      <section className="py-48 px-8 lg:px-24">
-         <div className="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-32 items-center">
-            <div className="space-y-16">
-               <div className="space-y-6">
-                  <p className="text-tf-primary font-bold uppercase tracking-[0.8em] text-[10px]">The Institutional Advantage</p>
-                  <h2 className="text-5xl md:text-7xl font-display font-medium text-tf-dark tracking-tight leading-[1.05]">
-                    Proven Transparency. <br /> Maximum Local Impact.
+      {/* Direct Impact Section */}
+      <section className="py-48 px-8 bg-slate-950 text-white relative overflow-hidden font-sans border-y border-white/5">
+         <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-tf-primary/5 blur-[180px] -mr-40 -mt-40 pointer-events-none" />
+         <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-tf-accent/5 blur-[120px] -ml-32 -mb-32 pointer-events-none" />
+         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-32 items-center relative z-10">
+            <div className="space-y-20">
+               <div className="space-y-8">
+                  <p className="text-tf-primary font-black uppercase tracking-[0.7em] text-[11px] italic">The Transparency Standard HUB</p>
+                  <h2 className="text-5xl md:text-8xl font-black tracking-tighter leading-[0.9] italic lowercase text-stroke-white opacity-90 transition-opacity hover:opacity-100">
+                    Proven Audits. <br /> Fast <span className="not-italic text-tf-primary">Impact.</span>
                   </h2>
                </div>
-               <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
                   {[
-                    { t: 'Verified Vetting', d: 'Every humanitarian mission undergoes rigorous financial and identity verification before listing.' },
-                    { t: 'Direct Asset Flow', d: 'Removing middle-tier administrative layers to ensure capital reaches ground zero with speed.' },
-                    { t: 'Real-Time Logging', d: 'Follow your donation journey through our immutable public registry of verified node milestones.' },
-                    { t: 'Compliance First', d: 'Adhering to international humanitarian standards and secure data privacy protocols.' }
+                    { t: 'Verified Partners', d: 'Every project mission is reviewed and authorized by our tactical verification team before public cataloging.' },
+                    { t: 'Direct Asset Flow', d: 'Automated capital distribution ensures support resources reach the field objective directly without latency.' },
+                    { t: 'Immutable Tracking', d: 'Track your capital contribution journey through every synchronized field milestone through the ledger.' },
+                    { t: 'Global Security', d: 'Adhering to international institutional standards for data integrity and contribution safety encryption.' }
                   ].map(f => (
-                    <div key={f.t} className="space-y-4">
-                       <h5 className="text-xl font-display font-bold text-tf-dark tracking-tight">{f.t}</h5>
-                       <p className="text-[14px] text-slate-500 font-medium leading-relaxed font-serif italic">{f.d}</p>
+                    <div key={f.t} className="space-y-5 border-l-4 border-tf-primary/10 pl-10 group/feat">
+                       <h5 className="text-xl font-black tracking-tight italic group-hover/feat:text-tf-primary transition-colors">{f.t}</h5>
+                       <p className="text-[15px] text-white/40 leading-relaxed font-medium italic group-hover/feat:text-white/70 transition-colors">{f.d}</p>
                     </div>
                   ))}
                </div>
             </div>
             <div className="relative group">
-               <div className="absolute inset-0 bg-tf-primary/5 blur-[120px] rounded-full -m-32 pointer-events-none opacity-40" />
-               <img src="https://images.unsplash.com/photo-1542810634-71277d95dcbb?auto=format&fit=crop&q=80&w=1200" className="rounded-[4rem] shadow-4xl relative z-10 hover:shadow-tf-primary/10 transition-shadow duration-[1s]" alt="Support" />
+               <div className="absolute -inset-4 bg-tf-primary/10 blur-[80px] rounded-[4rem] group-hover:bg-tf-primary/30 transition-all duration-1000" />
+               <img src="https://images.unsplash.com/photo-1542810634-71277d95dcbb?auto=format&fit=crop&q=80&w=1200" className="rounded-[4rem] shadow-4xl grayscale opacity-50 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-[2s] ring-1 ring-white/10" alt="Verification" />
             </div>
          </div>
       </section>
-
-      {/* Campaign Registry Section */}
-      <section id="campaigns" className="py-48 px-8 lg:px-24 bg-slate-50/50 space-y-32">
-         <div className="flex flex-col md:flex-row md:items-end justify-between gap-12 max-w-[1400px] mx-auto">
-            <div className="space-y-6">
-               <p className="text-tf-primary font-bold uppercase tracking-[0.8em] text-[10px]">Active Project Registry</p>
-               <h2 className="text-5xl md:text-7xl font-display font-medium text-tf-dark tracking-tight leading-[1.05]">
-                 Support Global <br /> <span className="text-tf-primary">Initiatives.</span>
-               </h2>
-            </div>
-            <Link to="/causes" className="px-10 py-5 bg-white border border-slate-200 text-tf-dark hover:bg-tf-primary hover:text-white font-bold text-[11px] uppercase tracking-widest rounded-2xl transition-all shadow-sm">
-              Explore The Registry →
-            </Link>
-         </div>
-
-         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-16 max-w-[1400px] mx-auto">
-            {CAMPAIGNS.map(item => <CampaignCard key={item.id} item={item} />)}
-         </div>
-      </section>
-
-      {/* Testimonials */}
-      <section className="py-48 px-8 lg:px-24 border-b border-slate-100">
-         <div className="max-w-[1400px] mx-auto space-y-24">
-            <div className="text-center space-y-6">
-               <p className="text-tf-primary font-bold uppercase tracking-[0.8em] text-[10px]">Voices From Our Network</p>
-               <h2 className="text-4xl md:text-7xl font-display font-medium text-tf-dark tracking-tight leading-[1.05]">Institutional Trust.</h2>
-            </div>
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-               {TESTIMONIALS.map((t, i) => (
-                 <div key={i} className="bg-white border border-slate-100/60 p-12 rounded-[3.5rem] space-y-10 hover:shadow-2xl transition-all duration-500">
-                    <p className="text-xl font-serif font-medium text-slate-700 leading-relaxed italic">"{t.text}"</p>
-                    <div className="flex items-center gap-6 pt-6 border-t border-slate-50">
-                       <div className="w-14 h-14 bg-tf-primary text-white rounded-2xl flex items-center justify-center font-bold text-xl">{t.author[0]}</div>
-                       <div>
-                          <h6 className="font-display font-bold uppercase tracking-tight text-tf-dark leading-none">{t.author}</h6>
-                          <p className="text-[10px] font-bold text-tf-primary uppercase tracking-widest mt-2">{t.role}</p>
-                       </div>
-                    </div>
-                 </div>
-               ))}
-            </div>
-         </div>
-      </section>
-
-      {/* Final Call to Action Section */}
-      <section className="py-60 px-8 text-center bg-white relative">
-         <div className="relative z-10 space-y-20 max-w-5xl mx-auto">
-            <h3 className="text-[4rem] md:text-[7rem] font-display font-medium text-tf-dark tracking-tighter uppercase leading-[0.9] italic">
-               Be The Change <br /> In <span className="text-tf-primary">Real-Time.</span>
+      
+      {/* CTA Section - Elite Finale */}
+      <section className="py-64 px-8 text-center bg-white relative">
+         <div className="relative z-10 space-y-20 max-w-6xl mx-auto">
+            <h3 className="text-6xl md:text-[9rem] font-black text-slate-950 tracking-tighter uppercase leading-[0.8] italic group">
+               {user ? "Expand Your" : "Join The"} <br /> <span className="text-tf-primary group-hover:scale-105 transition-transform inline-block">{user ? "Tactical Presence." : "Global Intel."}</span>
             </h3>
-            <p className="text-xl md:text-3xl text-slate-400 font-serif font-medium max-w-2xl mx-auto italic leading-relaxed">Join TransFund and operate with absolute integrity, transparency, and direct humanitarian action.</p>
-            <div className="flex flex-wrap justify-center gap-10 pt-10">
-               <Link to="/login?tab=signup" className="px-20 py-8 bg-tf-primary hover:bg-tf-dark text-white text-[13px] font-bold uppercase tracking-[0.5em] rounded-[2.5rem] shadow-4xl transition-all hover:scale-105 active:scale-95 shadow-tf-primary/30">
-                  Global Registration
-               </Link>
-               <Link to="/about" className="px-20 py-8 bg-white border-2 border-slate-100 text-tf-dark text-[13px] font-bold uppercase tracking-[0.5em] rounded-[2.5rem] hover:bg-slate-50 transition-all">
-                  Our Methodology
+            <p className="text-xl md:text-3xl text-slate-400 font-medium max-w-3xl mx-auto leading-relaxed italic pr-4">Engage with immutable transparency, direct field action, and verified community support via the TransFund network.</p>
+            <div className="flex flex-wrap justify-center gap-12 pt-16">
+               {user ? (
+                 <Link to="/dashboard" className="px-20 py-8 bg-slate-950 hover:bg-tf-primary text-white text-[13px] font-black uppercase tracking-[0.6em] rounded-full shadow-3xl transition-all duration-700 active:scale-95 italic">
+                    Access My Dashboard HUB <span className="ml-4">→</span>
+                 </Link>
+               ) : (
+                 <Link to="/login?tab=signup" className="px-20 py-8 bg-slate-950 hover:bg-tf-primary text-white text-[13px] font-black uppercase tracking-[0.6em] rounded-full shadow-3xl transition-all duration-700 active:scale-95 italic">
+                    Initialize Protocol <span className="ml-4">→</span>
+                 </Link>
+               )}
+               <Link to="/about" className="px-12 py-8 text-slate-400 hover:text-slate-950 text-[12px] font-black uppercase tracking-[0.5em] transition-all border-b-2 border-slate-100 hover:border-tf-primary italic font-sans">
+                  The Humanitarian Formula
                </Link>
             </div>
          </div>

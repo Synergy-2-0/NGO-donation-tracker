@@ -5,22 +5,24 @@ import ErrorAlert from '../components/ErrorAlert';
 
 const FREQUENCIES = ['one-time', 'monthly', 'quarterly', 'annually'];
 
-const statusColor = {
-  active: 'bg-green-100 text-green-700',
-  fulfilled: 'bg-orange-100 text-orange-700',
-  cancelled: 'bg-red-100 text-red-700',
-  pending: 'bg-yellow-100 text-yellow-700',
+const statusBadgeStyle = {
+  active: 'bg-tf-green/10 text-tf-green border-tf-green/20 shadow-[0_0_10px_rgba(34,197,94,0.1)]',
+  fulfilled: 'bg-tf-primary/10 text-tf-primary border-tf-primary/20',
+  cancelled: 'bg-slate-100 text-slate-400 border-slate-200',
+  pending: 'bg-amber-100 text-amber-600 border-tf-purple/5',
 };
 
-const defaultForm = {
-  amount: '',
-  frequency: 'one-time',
-  campaignId: '',
-  notes: '',
-  startDate: new Date().toISOString().split('T')[0],
-};
+const inputCls = "w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-bold text-tf-purple focus:outline-none focus:border-tf-primary transition-all shadow-inner placeholder:text-slate-300";
 
 function PledgeModal({ pledge, onClose, onSave, loading }) {
+  const defaultForm = {
+    amount: '',
+    frequency: 'one-time',
+    campaignId: '',
+    notes: '',
+    startDate: new Date().toISOString().split('T')[0],
+  };
+
   const [form, setForm] = useState(
     pledge
       ? {
@@ -34,9 +36,6 @@ function PledgeModal({ pledge, onClose, onSave, loading }) {
       }
       : defaultForm
   );
-
-  const handleChange = (e) =>
-    setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -186,16 +185,16 @@ export default function PledgesPage() {
       }
     };
     load();
-  }, []);
+  }, [donorProfile, fetchProfile, fetchPledges]);
 
   const handleCreate = async (data) => {
     setLocalError('');
     try {
       await createPledge(donorProfile._id, data);
       setShowCreateModal(false);
-      setSuccess('Pledge created successfully.');
+      setSuccess('Your pledge has been successfully registered.');
     } catch (err) {
-      setLocalError(err.response?.data?.message || 'Failed to create pledge.');
+      setLocalError(err.response?.data?.message || 'Deployment failed.');
     }
   };
 
@@ -204,9 +203,9 @@ export default function PledgesPage() {
     try {
       await updatePledge(donorProfile._id, editPledge._id, data);
       setEditPledge(null);
-      setSuccess('Pledge updated successfully.');
+      setSuccess('Pledge amount updated successfully.');
     } catch (err) {
-      setLocalError(err.response?.data?.message || 'Failed to update pledge.');
+      setLocalError(err.response?.data?.message || 'Modification rejected.');
     }
   };
 
@@ -215,9 +214,9 @@ export default function PledgesPage() {
     try {
       await deletePledge(donorProfile._id, pledgeId);
       setConfirmDelete(null);
-      setSuccess('Pledge removed.');
+      setSuccess('Pledge record removed from your profile.');
     } catch (err) {
-      setLocalError(err.response?.data?.message || 'Failed to remove pledge.');
+      setLocalError(err.response?.data?.message || 'Revocation failed.');
     }
   };
 
@@ -236,7 +235,7 @@ export default function PledgesPage() {
         {donorProfile && (
           <button
             onClick={() => { setShowCreateModal(true); setSuccess(''); setLocalError(''); }}
-            className="px-4 py-2 bg-[#DC2626] hover:bg-red-700 text-white text-sm font-semibold rounded-lg transition-colors"
+            className="px-6 py-2.5 bg-gray-900 text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-xl hover:bg-black transition-all shadow-xl active:scale-95 flex items-center gap-2"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 4v16m8-8H4" /></svg>
             Initialize Pledge
@@ -247,6 +246,7 @@ export default function PledgesPage() {
       {(localError || error) && (
         <ErrorAlert message={localError || error} onDismiss={() => setLocalError('')} />
       )}
+      
       {success && (
         <div className="bg-emerald-50 border border-emerald-100 text-emerald-700 text-sm font-bold px-6 py-4 rounded-2xl shadow-sm animate-pulse">
           {success}
@@ -271,11 +271,16 @@ export default function PledgesPage() {
       )}
 
       {donorProfile && pledges.length === 0 && (
-        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-12 text-center">
-          <p className="text-gray-400 text-sm mb-3">You haven&apos;t made any pledges yet.</p>
+        <div className="bg-white rounded-[4rem] border-2 border-dashed border-slate-100 p-32 text-center space-y-12">
+          <div className="w-24 h-24 bg-slate-50 rounded-[2.5rem] flex items-center justify-center mx-auto text-slate-200 shadow-inner rotate-3 hover:rotate-12 transition-transform duration-500">
+             <svg className="w-12 h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeWidth={2.5} d="M12 4v16m8-8H4" /></svg>
+          </div>
+          <p className="text-[12px] font-black text-slate-300 uppercase tracking-[0.4em] max-w-sm mx-auto leading-loose italic">
+             No active pledge commitments found in your record.
+          </p>
           <button
             onClick={() => setShowCreateModal(true)}
-            className="px-4 py-2 bg-[#DC2626] text-white text-sm font-semibold rounded-lg hover:bg-red-700"
+            className="px-12 py-6 bg-slate-900 hover:bg-tf-primary text-white rounded-full text-[12px] font-black uppercase tracking-widest transition-all shadow-2xl active:scale-95"
           >
             Create Your First Pledge
           </button>
@@ -341,20 +346,11 @@ export default function PledgesPage() {
 
       {/* Modals integrated with logic */}
       {showCreateModal && (
-        <PledgeModal
-          onClose={() => setShowCreateModal(false)}
-          onSave={handleCreate}
-          loading={loading}
-        />
+        <PledgeModal onClose={() => setShowCreateModal(false)} onSave={handleCreate} loading={loading} />
       )}
 
       {editPledge && (
-        <PledgeModal
-          pledge={editPledge}
-          onClose={() => setEditPledge(null)}
-          onSave={handleUpdate}
-          loading={loading}
-        />
+        <PledgeModal pledge={editPledge} onClose={() => setEditPledge(null)} onSave={handleUpdate} loading={loading} />
       )}
 
       {confirmDelete && (
@@ -389,6 +385,11 @@ export default function PledgesPage() {
           </div>
         </div>
       )}
+
+      <style>{`
+        @keyframes fade-in { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in { animation: fade-in 1.2s cubic-bezier(0.16, 1, 0.3, 1) both; }
+      `}</style>
     </div>
   );
 }

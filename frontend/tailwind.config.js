@@ -3,13 +3,17 @@ export default {
   content: ['./index.html', './src/**/*.{js,jsx}'],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        display: ['Merriweather', 'serif'],
+      },
       colors: {
-        brand: {
-          red:    '#DC2626',
-          orange: '#FB923C',
-          cream:  '#FFF7ED',
-          brown:  '#7C2D12',
-          dark:   '#1F2937',
+        tf: {
+          primary: '#FF8A00', // Matches new Brand Logo
+          secondary: '#F8FAFC', // Slate 50
+          accent: '#10B981', // Emerald
+          dark: '#0F172A',   // Slate 900
+          slate: '#64748B',  // Slate 500
         },
       },
       backgroundImage: {

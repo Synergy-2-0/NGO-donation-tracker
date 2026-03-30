@@ -223,16 +223,9 @@ export default function Sidebar() {
         ))}
       </nav>
 
-      {/* Footer / Logout */}
+      {/* Footer */}
       <div className="relative px-4 py-4 border-t border-white/5">
-        <button
-          onClick={logout}
-          className="group w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-all text-sm font-medium"
-        >
-          <FiLogOut className="text-lg group-hover:text-rose-400 transition-colors" />
-          <span>Sign Out</span>
-        </button>
-        <p className="text-center text-slate-700 text-[10px] font-bold uppercase tracking-widest mt-3">
+        <p className="text-center text-slate-700 text-[10px] font-bold uppercase tracking-widest">
           TrustFund &copy; {new Date().getFullYear()}
         </p>
       </div>

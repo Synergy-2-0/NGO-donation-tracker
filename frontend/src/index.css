@@ -36,3 +36,16 @@
     }
   }
 }
+
+@layer base {
+  body {
+    @apply antialiased text-tf-dark bg-white selection:bg-tf-primary selection:text-white;
+    font-family: 'Inter', sans-serif;
+  }
+}
+
+@layer utilities {
+  .text-stroke-white {
+    -webkit-text-stroke: 2px white;
+  }
+}

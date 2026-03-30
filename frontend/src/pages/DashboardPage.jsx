@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useDonor } from '../context/DonorContext';
 import LoadingSpinner from '../components/LoadingSpinner';
@@ -20,34 +20,26 @@ function PremiumStatCard({ label, value, icon, color, bg }) {
         <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">{label}</p>
         <h3 className={`text-2xl font-black tracking-tight ${color}`}>{value ?? <span className="text-slate-200">—</span>}</h3>
       </div>
-      <div className={`relative z-10 w-12 h-12 rounded-2xl flex items-center justify-center text-white shadow-lg shrink-0 group-hover:rotate-3 group-hover:scale-110 transition-transform ${bg}`}>
-        <span className="text-lg">{icon}</span>
-      </div>
     </div>
   );
 }
 
 export default function DashboardPage() {
+  const navigate = useNavigate();
   const { user } = useAuth();
-  const {
-    donorProfile,
-    analytics,
-    pledges,
-    fetchProfile,
-    fetchAnalytics,
-    fetchPledges,
-    loading,
-  } = useDonor();
+  const { donorProfile, transactions, pledges, analytics, loading, fetchProfile, fetchTransactions, fetchPledges, fetchAnalytics } = useDonor();
 
   useEffect(() => {
-    fetchProfile()
-      .then((profile) => {
+    const load = async () => {
+      try {
+        const profile = donorProfile || (await fetchProfile());
         if (profile?._id) {
           fetchAnalytics(profile._id).catch(() => { });
           fetchPledges(profile._id).catch(() => { });
         }
-      })
-      .catch(() => { });
+      } catch (e) { }
+    };
+    load();
   }, [fetchProfile, fetchAnalytics, fetchPledges]);
 
   if (loading && !donorProfile) return (

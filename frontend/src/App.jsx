@@ -7,6 +7,8 @@ import { AdminDonorProvider } from './context/AdminDonorContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import RoleProtectedRoute from './components/RoleProtectedRoute';
 import Layout from './components/Layout';
+import HomePage from './pages/HomePage';
+import AboutPage from './pages/AboutPage';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
 import ProfilePage from './pages/ProfilePage';
@@ -20,7 +22,6 @@ import PartnerDashboardPage from './pages/PartnerDashboardPage';
 import PartnerVerificationPage from './pages/PartnerVerificationPage';
 import FinanceDashboard from './pages/FinanceDashboard';
 import TransactionsPage from './pages/TransactionsPage';
-import HomePage from './pages/HomePage';
 import PartnerAgreementsPage from './pages/PartnerAgreementsPage';
 import AgreementMilestonesPage from './pages/AgreementMilestonesPage';
 import CampaignMarketplacePage from './pages/CampaignMarketplacePage';
@@ -35,6 +36,13 @@ import CampaignDashboardPage from './pages/admin/CampaignDashboardPage';
 import { AdminCampaignProvider } from './context/AdminCampaignContext';
 import CreateCampaignPage from './pages/admin/campaign/CreateCampaignPage';
 import CampaignDetailPage from './pages/admin/campaign/CampaignDetailPage';
+
+// Public pages for visitors
+import PublicHowItWorksPage from './pages/PublicHowItWorksPage';
+import PublicImpactPage from './pages/PublicImpactPage';
+import PublicPartnersPage from './pages/PublicPartnersPage';
+import PublicCausesPage from './pages/PublicCausesPage';
+
 import { useAuth } from './context/AuthContext';
 import { PartnerOperationsProvider } from './context/PartnerOperationsContext';
 import PartnerOnboardingGuard from './components/PartnerOnboardingGuard';
@@ -95,9 +103,10 @@ export default function App() {
               <PartnerProvider>
                 <AdminDonorProvider>
                   <AdminCampaignProvider>
-                    <Routes>
-                  {/* Public Routes */}
-                  <Route path="/" element={<HomePage />} />
+                <Routes>
+                    {/* Public Routes */}
+                    <Route path="/" element={<HomePage />} />
+                    <Route path="/about" element={<AboutPage />} />
                   <Route path="/login" element={<LoginPage />} />
 
                   {/* Partner Onboarding (No Layout) */}
@@ -117,6 +126,10 @@ export default function App() {
                       </ProtectedRoute>
                     } 
                   />
+                  <Route path="/how-it-works" element={<PublicHowItWorksPage />} />
+                  <Route path="/impact" element={<PublicImpactPage />} />
+                  <Route path="/causes" element={<PublicCausesPage />} />
+                  <Route path="/partners/list" element={<PublicPartnersPage />} />
 
                   {/* Dashboard / Protected Routes */}
                   <Route
@@ -227,8 +240,8 @@ export default function App() {
                   </Route>
 
                   <Route path="*" element={<Navigate to="/" replace />} />
-                    </Routes>
-                  </AdminCampaignProvider>
+                  </Routes>
+                </AdminCampaignProvider>
                 </AdminDonorProvider>
               </PartnerProvider>
             </DonorProvider>

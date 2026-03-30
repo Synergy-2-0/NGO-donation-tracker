@@ -40,7 +40,7 @@ export default function DonationHistoryPage() {
       }
     };
     load();
-  }, []);
+  }, [donorProfile, fetchProfile, fetchTransactions]);
 
   if (loading && transactions.length === 0) return <LoadingSpinner />;
 

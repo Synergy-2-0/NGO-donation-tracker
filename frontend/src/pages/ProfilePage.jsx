@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useDonor } from '../context/DonorContext';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ErrorAlert from '../components/ErrorAlert';
+import { FiUser, FiActivity, FiArrowRight, FiShield, FiBriefcase, FiEdit3 } from 'react-icons/fi';
 
 const defaultForm = {
   phone: '',
@@ -13,10 +15,10 @@ const defaultForm = {
 
 function PremiumField({ label, name, value, onChange, type = 'text', placeholder, hint, className = '' }) {
   return (
-    <div className={className}>
-      <label className="block text-xs font-semibold text-[#7C2D12] uppercase tracking-wide mb-1">
+    <div className={className + " space-y-2"}>
+      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2 group-hover:text-tf-purple transition-colors">
         {label}
-        {hint && <span className="ml-1 text-gray-400 text-xs font-normal normal-case">{hint}</span>}
+        {hint && <span className="ml-2 text-slate-300 normal-case italic font-medium">{hint}</span>}
       </label>
       <input
         type={type}
@@ -24,7 +26,7 @@ function PremiumField({ label, name, value, onChange, type = 'text', placeholder
         value={value}
         onChange={onChange}
         placeholder={placeholder}
-        className="w-full border border-orange-200 bg-orange-50/40 rounded-lg px-4 py-2.5 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent transition"
+        className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-bold text-tf-purple focus:outline-none focus:border-tf-primary transition-all shadow-inner"
       />
     </div>
   );
@@ -87,7 +89,7 @@ export default function ProfilePage() {
       setSuccess('Profile updated successfully.');
       setEditing(false);
     } catch (err) {
-      setLocalError(err.response?.data?.message || err.message || 'Failed to save profile.');
+      setLocalError(err.response?.data?.message || err.message || 'Update failed.');
     }
   };
 

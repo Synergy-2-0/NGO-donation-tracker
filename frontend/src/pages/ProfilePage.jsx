@@ -160,50 +160,7 @@ export default function ProfilePage() {
              </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-x-8 gap-y-4 text-sm">
-            <div>
-              <p className="text-gray-400 mb-0.5">Name</p>
-              <p className="font-medium text-gray-800">{user?.name || '—'}</p>
-            </div>
-            <div>
-              <p className="text-gray-400 mb-0.5">Email</p>
-              <p className="font-medium text-gray-800">{user?.email || '—'}</p>
-            </div>
-            <div>
-              <p className="text-gray-400 mb-0.5">Phone</p>
-              <p className="font-medium text-gray-800">{donorProfile.phone || '—'}</p>
-            </div>
-            <div>
-              <p className="text-gray-400 mb-0.5">Country</p>
-              <p className="font-medium text-gray-800">{donorProfile.address?.country || '—'}</p>
-            </div>
-            <div>
-              <p className="text-gray-400 mb-0.5">City</p>
-              <p className="font-medium text-gray-800">{donorProfile.address?.city || '—'}</p>
-            </div>
-            {donorProfile.address?.street && (
-              <div className="col-span-2">
-                <p className="text-gray-400 mb-0.5">Street Address</p>
-                <p className="font-medium text-gray-800">{donorProfile.address.street}</p>
-              </div>
-            )}
-            <div className="col-span-2">
-              <p className="text-gray-400 mb-0.5">Preferred Causes</p>
-              <div className="flex flex-wrap gap-2 mt-1">
-                {donorProfile.preferredCauses?.length > 0
-                  ? donorProfile.preferredCauses.map((cause) => (
-                      <span
-                        key={cause}
-                        className="px-2 py-0.5 bg-orange-50 text-[#7C2D12] text-xs rounded-full font-medium"
-                      >
-                        {cause}
-                      </span>
-                    ))
-                  : <p className="font-medium text-gray-800">—</p>}
-              </div>
-            </div>
-
-             <div className="bg-tf-purple rounded-[3rem] p-12 shadow-2xl relative overflow-hidden group border border-white/5">
+          <div className="bg-tf-purple rounded-[3rem] p-12 shadow-2xl relative overflow-hidden group border border-white/5">
                 <div className="absolute top-0 right-0 w-40 h-40 bg-tf-primary/10 blur-[60px]" />
                 <h3 className="text-[10px] font-black text-white/30 uppercase tracking-[0.4em] italic font-sans mb-10 group-hover:text-white/60 transition-colors">Cause Priorities</h3>
                 <div className="flex flex-wrap gap-4">
@@ -218,7 +175,12 @@ export default function ProfilePage() {
                         ))
                      : <p className="text-white/20 text-[10px] font-black uppercase tracking-widest italic leading-loose">No priority areas established yet.</p>}
                 </div>
-             </div>
+                <div className="mt-12">
+                   <h3 className="text-[10px] font-black text-white/30 uppercase tracking-[0.4em] italic font-sans mb-4">Bio / Vision</h3>
+                   <p className="text-slate-300 text-sm italic leading-relaxed">
+                      {donorProfile.bio || 'Sharing a vision for global impact…'}
+                   </p>
+                </div>
           </div>
         </div>
       ) : (
@@ -233,50 +195,54 @@ export default function ProfilePage() {
              <p className="text-slate-400 text-[11px] font-black uppercase tracking-[0.3em] italic">Humanitarian Information Registry</p>
           </div>
 
-        {/* Right Side: Data/Form */}
-        <div className="lg:col-span-2">
-            {!editing && donorProfile ? (
-                 <div className="bg-white/80 backdrop-blur-md p-10 rounded-3xl border border-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] space-y-10">
-                    <div className="flex items-center justify-between border-b border-gray-50 pb-6">
-                        <h3 className="text-lg font-black text-gray-800 tracking-tight uppercase tracking-widest text-[10px]">Registry Information</h3>
-                        <button
-                            onClick={() => setEditing(true)}
-                            className="px-4 py-2 bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-sm"
-                        >
-                            Update Profile
-                        </button>
-                    </div>
-
-             <Field
-               label="Cause Interests"
-               name="preferredCauses"
-               value={form.preferredCauses}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-8">
+             <PremiumField
+               label="Phone Number"
+               name="phone"
+               value={form.phone}
                onChange={handleChange}
-               placeholder="education, health, relief"
-               hint="(Comma-separated)"
+               placeholder="+94 7X XXX XXXX"
              />
-
-                    <div className="pt-8 border-t border-gray-50 flex justify-between items-center">
-                        <p className="text-[10px] font-medium text-gray-400 italic">Careful with sensitive data deletion.</p>
-                        <button
-                            onClick={() => setConfirmDelete(true)}
-                            className="bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm"
-                        >
-                            Delete Registry Record
-                        </button>
-                    </div>
-                </div>
-            ) : (
-                <form
-                    onSubmit={handleSubmit}
-                    className="bg-white/80 backdrop-blur-md p-10 rounded-3xl border border-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] space-y-8"
-                >
-                    <div className="flex items-center justify-between border-b border-gray-50 pb-6">
-                        <h3 className="text-lg font-black text-gray-800 tracking-tight uppercase tracking-widest text-[10px]">
-                            {donorProfile ? 'Update Record' : 'Create Registry'}
-                        </h3>
-                    </div>
-
+             <PremiumField
+               label="City"
+               name="address.city"
+               value={form.address.city}
+               onChange={handleChange}
+               placeholder="Colombo"
+             />
+             <PremiumField
+               label="Country"
+               name="address.country"
+               value={form.address.country}
+               onChange={handleChange}
+               placeholder="Sri Lanka"
+             />
+             <PremiumField
+               label="Postal Code"
+               name="address.postalCode"
+               value={form.address.postalCode}
+               onChange={handleChange}
+               placeholder="00100"
+             />
+             <div className="md:col-span-2">
+               <PremiumField
+                 label="Street Address"
+                 name="address.street"
+                 value={form.address.street}
+                 onChange={handleChange}
+                 placeholder="No. 123, Main Street"
+               />
+             </div>
+             <div className="md:col-span-2">
+               <PremiumField
+                 label="Cause Interests"
+                 name="preferredCauses"
+                 value={form.preferredCauses}
+                 onChange={handleChange}
+                 placeholder="education, health, relief"
+                 hint="(Comma-separated)"
+               />
+             </div>
              <div className="md:col-span-2 space-y-4">
                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-4 leading-none italic">Your Humanitarian Vision</label>
                 <textarea

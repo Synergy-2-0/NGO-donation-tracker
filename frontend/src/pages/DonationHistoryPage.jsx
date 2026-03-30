@@ -116,7 +116,7 @@ export default function DonationHistoryPage() {
                   <td className="px-5 py-3">
                     <span
                       className={`px-2 py-0.5 rounded-full text-xs font-medium ${
-                        statusColor[tx.status] || 'bg-gray-100 text-gray-600'
+                        statusBadgeStyle[tx.status] || 'bg-gray-100 text-gray-600'
                       }`}
                     >
                       {tx.status}
@@ -130,7 +130,7 @@ export default function DonationHistoryPage() {
                     })}
                   </td>
                 </tr>
-              )}
+              ))}
             </tbody>
           </table>
         </div>

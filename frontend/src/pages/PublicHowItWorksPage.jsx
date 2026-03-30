@@ -1,74 +1,78 @@
 import PublicNavbar from '../components/PublicNavbar';
+import PublicFooter from '../components/PublicFooter';
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 
 export default function PublicHowItWorksPage() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-white font-sans selection:bg-tf-primary selection:text-white">
+    <div className="min-h-screen bg-white font-sans selection:bg-tf-primary selection:text-white pb-0 overflow-x-hidden">
       <PublicNavbar />
       
       {/* Hero Header */}
-      <section className="relative pt-40 pb-20 bg-tf-purple overflow-hidden">
-        <div className="absolute inset-0 bg-[url('/karuna-hero.png')] opacity-10 blur-sm scale-110" />
-        <div className="max-w-7xl mx-auto px-6 relative z-10 text-center space-y-6">
-           <span className="text-tf-primary font-black text-[11px] uppercase tracking-[0.4em] italic">System Protocol</span>
-           <h1 className="text-5xl md:text-7xl font-black text-white tracking-tighter">How TrustFund Works</h1>
-           <p className="text-white/60 text-lg max-w-2xl mx-auto font-medium">A transparent, data-driven framework designed to ensure that every humanitarian contribution reaches its intended target with clinical precision.</p>
+      <section className="pt-48 pb-32 px-8 lg:px-24 bg-tf-secondary bg-gradient-to-b from-slate-50 to-white">
+        <div className="max-w-[1400px] mx-auto text-center space-y-10">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+            <p className="text-[12px] font-bold text-tf-primary uppercase tracking-[0.6em] mb-6">Process & Protocols</p>
+            <h1 className="text-6xl md:text-9xl font-bold font-display text-tf-dark tracking-tighter uppercase italic leading-[0.85]">
+              The <br /> <span className="text-tf-primary tracking-normal">TransFund</span> <br /> Architecture.
+            </h1>
+          </motion.div>
+          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} className="text-xl text-slate-500 font-serif font-medium italic leading-relaxed max-w-2xl mx-auto">
+            A transparent, audit-ready framework designed to ensure that every humanitarian contribution reaches its intended target with absolute integrity.
+          </motion.p>
         </div>
       </section>
 
-      {/* Grid Steps */}
-      <section className="py-32 max-w-7xl mx-auto px-6">
-         <div className="grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
-            <div className="space-y-12">
-               {[
-                 { step: '01', title: 'Onboarding & Verification', desc: 'Every cause on TrustFund undergoes a rigorous 48-hour identity and secondary verifying protocol to ensure authenticity and impact potential.' },
-                 { step: '02', title: 'Strategic Allocation', desc: 'Donors select causes and allocate funds through our secure gateway. 100% of the funds are locked for the specific cause.' },
-                 { step: '03', title: 'Real-time Telemetry', desc: 'Our system tracks the movement of resources and provides the donor with a live impact audit trail.' }
-               ].map((item) => (
-                 <div key={item.step} className="flex gap-8 group">
-                    <div className="w-16 h-16 bg-tf-grey group-hover:bg-tf-primary transition-all rounded-[1.5rem] flex items-center justify-center text-tf-purple group-hover:text-white font-black text-xl italic shrink-0">
-                       {item.step}
-                    </div>
-                    <div className="space-y-3 pt-2">
-                       <h3 className="text-2xl font-black text-tf-purple tracking-tight">{item.title}</h3>
-                       <p className="text-slate-500 font-medium leading-relaxed">{item.desc}</p>
-                    </div>
-                 </div>
-               ))}
-            </div>
-            <div className="relative">
-               <div className="bg-tf-grey rounded-[4rem] aspect-square flex items-center justify-center p-20 overflow-hidden shadow-inner">
-                  <div className="w-full h-full bg-white rounded-[3rem] shadow-2xl p-10 flex flex-col justify-between relative group">
-                     <div className="absolute top-10 right-10 w-20 h-20 bg-tf-primary/10 rounded-full blur-2xl" />
-                     <div className="space-y-4">
-                        <div className="w-1/2 h-4 bg-slate-100 rounded-full" />
-                        <div className="w-3/4 h-4 bg-slate-100 rounded-full" />
-                     </div>
-                     <div className="bg-tf-purple h-40 rounded-[2rem] flex items-center justify-center text-white text-4xl group-hover:scale-105 transition-transform duration-700">
-                        🛡️
-                     </div>
-                     <div className="text-[10px] font-black uppercase tracking-widest text-slate-300 text-center">Encrypted Protocol</div>
-                  </div>
-               </div>
-               <div className="absolute -top-10 -right-10 w-48 h-48 bg-tf-primary rounded-[3rem] rotate-12 flex items-center justify-center text-white shadow-2xl shadow-tf-primary/30 animate-pulse">
-                  <span className="text-4xl">✨</span>
-               </div>
+      {/* Steps Logic */}
+      <section className="py-48 max-w-[1400px] mx-auto px-8 grid grid-cols-1 md:grid-cols-3 gap-24 items-start">
+         {[
+           { step: '01', title: 'Vetting Registry', desc: 'Every mission on TransFund undergoes a multi-layer verification protocol to ensure local identity, mission viability, and operational auditing structures before listing.' },
+           { step: '02', title: 'Capital Allocation', desc: 'Donors select missions and allocate strategic capital through our secure ledger registry. 100% of the funds are locked for the specific mission endpoint.' },
+           { step: '03', title: 'Telemetry Flow', desc: 'Our protocol tracks the movement of resources through every beneficiary milestone and provides a live audit trail in real-time to each patron.' }
+         ].map((item, i) => (
+           <motion.div 
+             key={item.step}
+             initial={{ opacity: 0, y: 30 }}
+             whileInView={{ opacity: 1, y: 0 }}
+             transition={{ delay: i * 0.1 }}
+             className="space-y-10 group"
+           >
+              <div className="w-20 h-20 bg-tf-secondary rounded-2xl flex items-center justify-center text-4xl italic font-display font-black text-tf-primary shadow-xl group-hover:bg-tf-primary group-hover:text-white transition-all duration-700">
+                 {item.step}
+              </div>
+              <div className="space-y-6">
+                 <h3 className="text-3xl font-display font-medium italic text-tf-dark transition-all tracking-tight group-hover:text-tf-primary uppercase">{item.title}</h3>
+                 <p className="text-slate-500 font-serif font-medium leading-relaxed italic text-sm max-w-sm">{item.desc}</p>
+              </div>
+           </motion.div>
+         ))}
+      </section>
+
+      {/* Trust Quote */}
+      <section className="py-48 px-8 bg-tf-dark text-white relative overflow-hidden text-center">
+         <div className="absolute inset-0 bg-tf-primary/5 blur-[150px] rounded-full -m-32 pointer-events-none opacity-40 animate-pulse" />
+         <div className="relative z-10 max-w-4xl mx-auto space-y-12">
+            <h2 className="text-5xl md:text-8xl font-display font-bold text-white italic tracking-tighter uppercase leading-[0.85]">
+              "The New <br /> <span className="text-tf-primary">Standard</span> <br /> for Humanitarian Integrity."
+            </h2>
+            <p className="text-tf-primary font-bold text-[10px] uppercase tracking-[0.8em] leading-none">Institutional Protocol v2.4.1</p>
+         </div>
+      </section>
+
+      {/* CTA final Section */}
+      <section className="py-48 px-8 text-center space-y-14 bg-white">
+         <div className="max-w-4xl mx-auto space-y-12">
+            <h3 className="text-4xl md:text-7xl font-display font-medium tracking-tight uppercase leading-[0.9] text-slate-200">Start Your Journey.</h3>
+            <div className="pt-6 flex flex-wrap justify-center gap-10">
+               <button onClick={() => navigate('/login?tab=signup')} className="px-20 py-8 bg-tf-primary hover:bg-tf-dark text-white text-[11px] font-bold uppercase tracking-[0.4em] rounded-[2.5rem] shadow-4xl shadow-tf-primary/30 transition-all hover:scale-105 active:scale-95">Support A Node</button>
+               <button onClick={() => navigate('/login')} className="px-20 py-8 border-2 border-slate-100 text-tf-dark font-bold uppercase tracking-[0.4em] rounded-[2.5rem] hover:border-tf-primary transition-all text-[11px]">Mission Access</button>
             </div>
          </div>
       </section>
 
-      {/* Footer (Simplified) */}
-      <section className="py-20 bg-tf-grey text-center">
-         <div className="max-w-3xl mx-auto space-y-8">
-            <h2 className="text-3xl font-black text-tf-purple">Ready to join the movement?</h2>
-            <div className="flex justify-center gap-6">
-               <button onClick={() => navigate('/login?tab=signup')} className="px-10 py-4 bg-tf-primary text-white rounded-full font-black uppercase text-[12px] tracking-widest shadow-lg shadow-tf-primary/20 transition-all active:scale-95">Start Donating</button>
-               <button onClick={() => navigate('/login')} className="px-10 py-4 border-2 border-tf-purple text-tf-purple rounded-full font-black uppercase text-[12px] tracking-widest transition-all">Start Campaign</button>
-            </div>
-         </div>
-      </section>
+      <PublicFooter />
     </div>
   );
 }

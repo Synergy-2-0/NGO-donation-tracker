@@ -8,6 +8,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import RoleProtectedRoute from './components/RoleProtectedRoute';
 import Layout from './components/Layout';
 import HomePage from './pages/HomePage';
+import AboutPage from './pages/AboutPage';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
 import ProfilePage from './pages/ProfilePage';
@@ -19,7 +20,6 @@ import PartnerImpactPage from './pages/PartnerImpactPage';
 import PartnerVerificationPage from './pages/PartnerVerificationPage';
 import FinanceDashboard from './pages/FinanceDashboard';
 import TransactionsPage from './pages/TransactionsPage';
-import HomePage from './pages/HomePage';
 
 import AdminDonorListPage from './pages/admin/AdminDonorListPage';
 import AdminDonorProfilePage from './pages/admin/AdminDonorProfilePage';
@@ -30,6 +30,13 @@ import CampaignDashboardPage from './pages/admin/CampaignDashboardPage';
 import { AdminCampaignProvider } from './context/AdminCampaignContext';
 import CreateCampaignPage from './pages/admin/campaign/CreateCampaignPage';
 import CampaignDetailPage from './pages/admin/campaign/CampaignDetailPage';
+
+// Public pages for visitors
+import PublicHowItWorksPage from './pages/PublicHowItWorksPage';
+import PublicImpactPage from './pages/PublicImpactPage';
+import PublicPartnersPage from './pages/PublicPartnersPage';
+import PublicCausesPage from './pages/PublicCausesPage';
+
 import { useAuth } from './context/AuthContext';
 
 function RoleBasedDashboard() {
@@ -52,122 +59,101 @@ export default function App() {
         <FinanceProvider>
           <DonorProvider>
             <PartnerProvider>
-              <Routes>
-                {/* Public Routes */}
-                <Route path="/" element={<HomePage />} />
-                <Route path="/login" element={<LoginPage />} />
+              <AdminDonorProvider>
+                <Routes>
+                  {/* Public Routes */}
+                  <Route path="/" element={<HomePage />} />
+                  <Route path="/about" element={<AboutPage />} />
+                  <Route path="/login" element={<LoginPage />} />
+                  <Route path="/how-it-works" element={<PublicHowItWorksPage />} />
+                  <Route path="/impact" element={<PublicImpactPage />} />
+                  <Route path="/causes" element={<PublicCausesPage />} />
+                  <Route path="/partners/list" element={<PublicPartnersPage />} />
 
-                {/* Dashboard / Protected Routes */}
-                <Route
-                  path="/*"
-                  element={
-                    <ProtectedRoute>
-                      <Layout />
-                    </ProtectedRoute>
-                  }
-                >
-                  <Route path="dashboard" element={<DashboardPage />} />
-                  <Route path="profile" element={<ProfilePage />} />
-                  <Route path="pledges" element={<PledgesPage />} />
-                  <Route path="donations" element={<DonationHistoryPage />} />
+                  {/* Dashboard / Protected Routes */}
                   <Route
-                    path="partners"
                     element={
-                      <RoleProtectedRoute roles={['partner', 'admin', 'donor']}>
-                        <PartnersPage />
-                      </RoleProtectedRoute>
+                      <ProtectedRoute>
+                        <Layout />
+                      </ProtectedRoute>
                     }
-                  />
-                  <Route
-                    path="partners/verification"
-                    element={
-                      <RoleProtectedRoute roles={['admin']}>
-                        <PartnerVerificationPage />
-                      </RoleProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="partners/:id"
-                    element={
-                      <RoleProtectedRoute roles={['partner', 'admin', 'donor']}>
-                        <PartnerDetailsPage />
-                      </RoleProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="partners/:id/impact"
-                    element={
-                      <RoleProtectedRoute roles={['partner', 'admin', 'donor']}>
-                        <PartnerImpactPage />
-                      </RoleProtectedRoute>
-                    }
-                  />
-                  {/* Finance Routes */}
-                  <Route
-                    path="finance/dashboard"
-                    element={
-                      <RoleProtectedRoute roles={['ngo-admin', 'partner', 'admin']}>
-                        <FinanceDashboard />
-                      </RoleProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="finance/transactions"
-                    element={
-                      <RoleProtectedRoute roles={['ngo-admin', 'partner', 'admin']}>
-                        <TransactionsPage />
-                      </RoleProtectedRoute>
-                    }
-                  />
-                  {/* Catch-all for subroutes */}
-                  <Route index element={<Navigate to="dashboard" replace />} />
-                </Route>
-                
-                {/* Final Catch-all */}
-                <Route path="*" element={<Navigate to="/" replace />} />
-              </Routes>
+                  >
+                    <Route path="dashboard" element={<RoleBasedDashboard />} />
+                    <Route path="profile" element={<ProfilePage />} />
+                    <Route path="pledges" element={<PledgesPage />} />
+                    <Route path="donations" element={<DonationHistoryPage />} />
+                    
+                    <Route
+                      path="partners"
+                      element={
+                        <RoleProtectedRoute roles={['partner', 'admin', 'donor']}>
+                          <PartnersPage />
+                        </RoleProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="partners/verification"
+                      element={
+                        <RoleProtectedRoute roles={['admin']}>
+                          <PartnerVerificationPage />
+                        </RoleProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="partners/:id"
+                      element={
+                        <RoleProtectedRoute roles={['partner', 'admin', 'donor']}>
+                          <PartnerDetailsPage />
+                        </RoleProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="partners/:id/impact"
+                      element={
+                        <RoleProtectedRoute roles={['partner', 'admin', 'donor']}>
+                          <PartnerImpactPage />
+                        </RoleProtectedRoute>
+                      }
+                    />
+
+                    {/* Finance Routes */}
+                    <Route
+                      path="finance/dashboard"
+                      element={
+                        <RoleProtectedRoute roles={['ngo-admin', 'partner', 'admin']}>
+                          <FinanceDashboard />
+                        </RoleProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="finance/transactions"
+                      element={
+                        <RoleProtectedRoute roles={['ngo-admin', 'partner', 'admin']}>
+                          <TransactionsPage />
+                        </RoleProtectedRoute>
+                      }
+                    />
+
+                    {/* Admin Specific Routes (Nested) */}
+                    <Route path="admin/donors" element={<AdminRoute><AdminDonorListPage /></AdminRoute>} />
+                    <Route path="admin/donors/pledges" element={<AdminRoute><AdminDonorPledgesPage /></AdminRoute>} />
+                    <Route path="admin/donors/:id" element={<AdminRoute><AdminDonorProfilePage /></AdminRoute>} />
+                    <Route path="admin/donor-analytics" element={<AdminRoute><AdminDonorAnalyticsPage /></AdminRoute>} />
+                    <Route path="admin/campaign-dashboard"
+                      element={<AdminRoute><AdminCampaignProvider><CampaignDashboardPage /></AdminCampaignProvider></AdminRoute>} />
+                    <Route path="admin/campaigns/create"
+                      element={<AdminRoute><AdminCampaignProvider><CreateCampaignPage /></AdminCampaignProvider></AdminRoute>} />
+                    <Route path="admin/campaigns/:id"
+                      element={<AdminRoute><AdminCampaignProvider><CampaignDetailPage /></AdminCampaignProvider></AdminRoute>} />
+                  </Route>
+                  
+                  {/* Final Catch-all */}
+                  <Route path="*" element={<Navigate to="/" replace />} />
+                </Routes>
+              </AdminDonorProvider>
             </PartnerProvider>
           </DonorProvider>
         </FinanceProvider>
-        <DonorProvider>
-          <AdminDonorProvider>
-            <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/how-it-works" element={<PublicHowItWorksPage />} />
-              <Route path="/impact" element={<PublicImpactPage />} />
-              <Route path="/partners" element={<PublicPartnersPage />} />
-              <Route path="/causes" element={<PublicCausesPage />} />
-              
-              <Route
-                path="/"
-                element={
-                  <ProtectedRoute>
-                    <Layout />
-                  </ProtectedRoute>
-                }
-              >
-                <Route path="dashboard" element={<RoleBasedDashboard />} />
-                <Route path="profile" element={<ProfilePage />} />
-                <Route path="pledges" element={<PledgesPage />} />
-                <Route path="donations" element={<DonationHistoryPage />} />
-
-                {/* Admin routes */}
-                <Route path="admin/donors" element={<AdminRoute><AdminDonorListPage /></AdminRoute>} />
-                <Route path="admin/donors/pledges" element={<AdminRoute><AdminDonorPledgesPage /></AdminRoute>} />
-                <Route path="admin/donors/:id" element={<AdminRoute><AdminDonorProfilePage /></AdminRoute>} />
-                <Route path="admin/donor-analytics" element={<AdminRoute><AdminDonorAnalyticsPage /></AdminRoute>} />
-                <Route path="admin/campaign-dashboard"
-                  element={<AdminRoute><AdminCampaignProvider><CampaignDashboardPage /></AdminCampaignProvider></AdminRoute>} />
-                <Route path="admin/campaigns/create"
-                  element={<AdminRoute><AdminCampaignProvider><CreateCampaignPage /></AdminCampaignProvider></AdminRoute>} />
-                <Route path="admin/campaigns/:id"
-                  element={<AdminRoute><AdminCampaignProvider><CampaignDetailPage /></AdminCampaignProvider></AdminRoute>} />
-              </Route>
-              <Route path="*" element={<Navigate to="/dashboard" replace />} />
-            </Routes>
-          </AdminDonorProvider>
-        </DonorProvider>
       </AuthProvider>
     </BrowserRouter>
   );

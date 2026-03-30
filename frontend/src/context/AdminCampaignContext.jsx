@@ -56,8 +56,9 @@ export function AdminCampaignProvider({ children }) {
             );
             return res.data;
         } catch (err) {
-            console.error('Failed to publish campaign', err);
-            throw err;
+            const message = err.response?.data?.message || 'Failed to deploy mission to network.';
+            console.error('[Publish Error]', message);
+            throw new Error(message);
         }
     }, []);
     const fetchCampaignById = useCallback(async (id) => {
@@ -85,9 +86,19 @@ export function AdminCampaignProvider({ children }) {
         }
     }, []);
 
+    const deleteCampaign = useCallback(async (id) => {
+        try {
+            await api.delete(`/api/campaigns/${id}`);
+            setCampaigns(prev => prev.filter(c => c._id !== id));
+        } catch (err) {
+            console.error('Failed to delete campaign', err);
+            throw err;
+        }
+    }, []);
+
     return (
         <AdminCampaignContext.Provider
-            value={{ campaigns, loading, fetchCampaigns, fetchCampaignById, publishCampaign, createCampaign, updateCampaign }}
+            value={{ campaigns, loading, fetchCampaigns, fetchCampaignById, publishCampaign, createCampaign, updateCampaign, deleteCampaign }}
         >
             {children}
         </AdminCampaignContext.Provider>

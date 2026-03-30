@@ -1,23 +1,29 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAdminCampaign } from '../../../context/AdminCampaignContext';
-import LoadingSpinner from '../../../components/LoadingSpinner';
+import { useAuth } from '../../../context/AuthContext';
+import { CampaignDetailSkeleton } from '../../../components/Skeleton';
 import CampaignProgressSection from './CampaignProgressSection';
 import CampaignReportSection from './CampaignReportSection';
-
+import ConfirmationModal from '../../../components/ConfirmationModal';
+import { 
+  FiChevronLeft, FiEdit3, FiCheckCircle, FiClock, FiActivity, 
+  FiArchive, FiMapPin, FiCalendar, FiDollarSign, FiType, FiLayers,
+  FiFileText, FiSave, FiX, FiAlertTriangle, FiCheck, FiCpu, FiTarget, FiPlus, FiTrash2
+} from 'react-icons/fi';
 
 const statusConfig = {
-    draft: { label: 'Draft', className: 'bg-gray-100 text-gray-500', dot: 'bg-gray-400' },
-    active: { label: 'Active', className: 'bg-red-100 text-[#DC2626]', dot: 'bg-[#DC2626]' },
-    completed: { label: 'Completed', className: 'bg-green-100 text-green-700', dot: 'bg-green-500' },
-    archived: { label: 'Archived', className: 'bg-orange-100 text-[#7C2D12]', dot: 'bg-orange-500' },
+    draft: { label: 'Proposal', className: 'bg-slate-100 text-slate-500 border-slate-200', icon: <FiClock /> },
+    active: { label: 'Live Mission', className: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20', icon: <FiActivity /> },
+    completed: { label: 'Accomplished', className: 'bg-indigo-500/10 text-indigo-500 border-indigo-500/20', icon: <FiCheckCircle /> },
+    archived: { label: 'Closed', className: 'bg-rose-500/10 text-rose-500 border-rose-500/20', icon: <FiArchive /> },
 };
 
 function StatusBadge({ status }) {
     const cfg = statusConfig[status] ?? statusConfig.draft;
     return (
-        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${cfg.className}`}>
-            <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`} />
+        <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest border transition-all ${cfg.className}`}>
+            {cfg.icon}
             {cfg.label}
         </span>
     );
@@ -26,7 +32,8 @@ function StatusBadge({ status }) {
 export default function CampaignDetailPage() {
     const { id } = useParams();
     const navigate = useNavigate();
-    const { fetchCampaignById, updateCampaign, publishCampaign } = useAdminCampaign();
+    const { user } = useAuth();
+    const { fetchCampaignById, updateCampaign, publishCampaign, deleteCampaign } = useAdminCampaign();
 
     const [campaign, setCampaign] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -34,9 +41,10 @@ export default function CampaignDetailPage() {
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
-    const isLocked =
-        campaign?.status === "active" ||
-        campaign?.status === "completed";
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    
+    const isLocked = campaign?.status === "active" || campaign?.status === "completed";
+    
     const [formData, setFormData] = useState({
         title: '',
         description: '',
@@ -68,7 +76,7 @@ export default function CampaignDetailPage() {
                     },
                 });
             })
-            .catch(() => setError('Failed to load campaign.'))
+            .catch(() => setError('Failed to load mission details.'))
             .finally(() => setLoading(false));
     }, [id, fetchCampaignById]);
 
@@ -95,10 +103,10 @@ export default function CampaignDetailPage() {
             const updated = await updateCampaign(id, formData);
             setCampaign(updated);
             setEditing(false);
-            setSuccess('Campaign updated successfully.');
+            setSuccess('Mission profile synchronized.');
             setTimeout(() => setSuccess(''), 3000);
         } catch {
-            setError('Failed to save changes. Please try again.');
+            setError('Failed to synchronize mission changes.');
         } finally {
             setSaving(false);
         }
@@ -107,303 +115,263 @@ export default function CampaignDetailPage() {
     const handleCancel = () => {
         setEditing(false);
         setError('');
-        setFormData({
-            title: campaign.title || '',
-            description: campaign.description || '',
-            goalAmount: campaign.goalAmount || '',
-            startDate: campaign.startDate?.slice(0, 10) || '',
-            endDate: campaign.endDate?.slice(0, 10) || '',
-            image: null,
-            imagePreview: campaign.image || '',
-            location: {
-                city: campaign.location?.city || '',
-                state: campaign.location?.state || '',
-                country: campaign.location?.country || '',
-            },
-        });
+        resetForm(campaign);
     };
 
     const handlePublish = async () => {
         try {
             await publishCampaign(id);
             setCampaign((prev) => ({ ...prev, status: 'active' }));
-            setSuccess('Campaign published.');
+            setSuccess('Mission live on network.');
             setTimeout(() => setSuccess(''), 3000);
-        } catch {
-            setError('Failed to publish campaign.');
+        } catch (err) {
+            setError(err.message || 'Deployment failed.');
         }
     };
 
-    if (loading) return <LoadingSpinner />;
+    const handleDelete = () => setShowDeleteModal(true);
+    
+    const confirmDelete = async () => {
+        setShowDeleteModal(false);
+        try {
+            await deleteCampaign(id);
+            navigate('/admin/campaign-dashboard');
+        } catch (err) {
+            setError(err.message || 'Abortion failed.');
+        }
+    };
+
+    if (loading) return <CampaignDetailSkeleton />;
     if (!campaign && !loading) return (
-        <div className="min-h-full bg-gray-50 p-8 flex flex-col items-center justify-center gap-3">
-            <p className="text-gray-500 text-sm">Campaign not found.</p>
-            <Link to="/admin/campaign-dashboard" className="text-sm text-[#DC2626] hover:underline">← Back to dashboard</Link>
+        <div className="min-h-[400px] flex flex-col items-center justify-center gap-4 text-left">
+            <FiAlertTriangle className="text-4xl text-brand-red animate-pulse" />
+            <p className="text-slate-400 font-black uppercase tracking-widest">Mission Not Found</p>
+            <Link to="/admin/campaign-dashboard" className="px-6 py-3 bg-slate-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-brand-red transition-all">
+               Return to Registry
+            </Link>
         </div>
     );
 
-    const inputCls = 'w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-800 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-red-200 focus:border-red-400 transition-colors bg-gray-50 hover:bg-white';
-    const labelCls = 'block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1';
-    const viewValueCls = 'text-sm text-gray-800';
-
-    const locationLine = [campaign.location?.city, campaign.location?.state, campaign.location?.country].filter(Boolean).join(', ');
+    const inputCls = 'w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3 text-sm font-semibold text-slate-800 focus:outline-none focus:ring-4 focus:ring-brand-red/5 focus:border-brand-red/20 transition-all placeholder:text-slate-300';
+    const labelCls = 'block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2';
 
     return (
-        <div className="min-h-full bg-gray-50 p-8 space-y-6">
-
-            {/* Header */}
-            <div className="flex items-start justify-between gap-4">
-                <div className="flex items-center gap-3 min-w-0">
-                    <Link
-                        to="/admin/campaign-dashboard"
-                        className="flex items-center justify-center w-8 h-8 bg-white border border-gray-200 rounded-lg text-gray-400 hover:text-gray-600 hover:border-gray-300 transition-colors shadow-sm shrink-0"
-                    >
-                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-                        </svg>
+        <div className="max-w-7xl mx-auto space-y-8 pb-16 animate-fadeIn text-left">
+            
+            {/* Action Header */}
+            <div className="bg-white rounded-[32px] border border-slate-100 p-8 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6 overflow-hidden relative">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-slate-50 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+                
+                <div className="flex items-center gap-6 relative z-10">
+                    <Link to="/admin/campaign-dashboard" className="w-12 h-12 bg-slate-900 flex items-center justify-center rounded-2xl text-white hover:bg-brand-red transition-all shadow-xl shadow-slate-900/10 active:scale-95">
+                        <FiChevronLeft className="text-xl" />
                     </Link>
-                    <div className="min-w-0">
-                        <p className="text-gray-500 text-sm truncate">{campaign.title}</p>
-                        <div className="flex items-center gap-2 mt-0.5">
-                            <p className="text-[10px] text-gray-400 font-medium uppercase tracking-wider">ID: {id?.slice(-8)}</p>
-                            <StatusBadge status={campaign.status} />
+                    <div>
+                        <div className="flex items-center gap-3 mb-2">
+                             <h2 className="text-2xl font-black text-slate-900 tracking-tight">{campaign.title}</h2>
+                             <StatusBadge status={campaign.status} />
                         </div>
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Mission Identity: {id}</p>
                     </div>
                 </div>
 
-                <div className="flex items-center gap-2 shrink-0">
-
-                    {/* publish only when draft */}
-                    {campaign.status === 'draft' && !editing && (
-                        <button
-                            onClick={handlePublish}
-                            className="px-4 py-2 bg-green-50 text-green-700 border border-green-100 rounded-lg text-sm font-medium hover:bg-green-100 transition-colors"
-                        >
-                            Publish
-                        </button>
+                <div className="flex items-center gap-3 relative z-10">
+                    {campaign.status === 'draft' && !editing && user?.role === 'admin' && (
+                        <div className="flex gap-2">
+                             <button onClick={handleDelete} className="p-3 bg-white border border-rose-100 text-rose-500 rounded-full hover:bg-rose-500 hover:text-white transition-all shadow-sm active:scale-95 group" title="Abort Mission">
+                                <FiTrash2 className="text-sm stroke-[3]" />
+                             </button>
+                             <button onClick={handlePublish} className="px-6 py-3 bg-emerald-500 text-white rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-emerald-600 transition-all shadow-lg shadow-emerald-500/20 active:scale-95 flex items-center gap-2">
+                                <FiCheck className="text-sm stroke-[3]" /> Deploy Mission
+                             </button>
+                        </div>
                     )}
 
-                    {/* edit button */}
-                    {!editing && (
-                        <button
+                    {!editing ? (
+                        <button 
                             disabled={isLocked}
                             onClick={() => setEditing(true)}
-                            className={`flex items-center gap-2 px-4 py-2 text-white rounded-lg text-sm font-medium transition-all shadow-sm
-            ${isLocked ? "opacity-50 cursor-not-allowed" : "hover:shadow-md hover:opacity-90"}`}
-                            style={{ background: 'linear-gradient(135deg, #7C2D12 0%, #DC2626 100%)' }}
+                            className={`px-6 py-3 bg-slate-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2 ${isLocked ? 'opacity-30 cursor-not-allowed' : 'hover:bg-brand-red shadow-xl shadow-slate-900/10 active:scale-95'}`}
                         >
-                            Edit
+                            <FiEdit3 className="text-sm" /> Modify Profile
                         </button>
-                    )}
-
-                    {editing && !isLocked && (
+                    ) : (
                         <>
-                            <button
-                                onClick={handleCancel}
-                                className="px-4 py-2 bg-white border border-gray-200 text-gray-500 hover:text-gray-700 hover:border-gray-300 rounded-lg text-sm font-medium transition-colors"
-                            >
-                                Cancel
+                            <button onClick={handleCancel} className="px-6 py-3 bg-white border border-slate-100 text-slate-500 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all flex items-center gap-2">
+                                <FiX className="text-sm stroke-[3]" /> Discard
                             </button>
-
-                            <button
-                                onClick={handleSave}
-                                disabled={saving}
-                                className="flex items-center gap-2 px-5 py-2 text-white rounded-lg text-sm font-medium transition-all shadow-sm hover:shadow-md hover:opacity-90 disabled:opacity-50"
-                                style={{ background: 'linear-gradient(135deg, #7C2D12 0%, #DC2626 100%)' }}
-                            >
-                                {saving ? "Saving..." : "Save Changes"}
+                            <button onClick={handleSave} disabled={saving} className="px-6 py-3 bg-brand-red text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-brand-red/90 transition-all shadow-xl shadow-brand-red/20 active:scale-95 flex items-center gap-2 disabled:opacity-50">
+                                <FiSave className="text-sm" /> {saving ? 'Syncing...' : 'Keep Changes'}
                             </button>
                         </>
                     )}
-
                 </div>
             </div>
 
             {isLocked && (
-                <div className="text-xs text-orange-600 bg-orange-50 border border-orange-100 px-3 py-2 rounded-lg">
-                    This campaign is already published or active. Editing is disabled to maintain transparency.
-                </div>
-            )}
-            {/* Alerts */}
-            {error && (
-                <div className="flex items-center gap-2 px-4 py-3 bg-red-50 border border-red-100 rounded-lg">
-                    <svg className="w-4 h-4 text-[#DC2626] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <p className="text-sm text-[#DC2626] font-medium">{error}</p>
-                </div>
-            )}
-            {success && (
-                <div className="flex items-center gap-2 px-4 py-3 bg-green-50 border border-green-100 rounded-lg">
-                    <svg className="w-4 h-4 text-green-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <p className="text-sm text-green-700 font-medium">{success}</p>
+                <div className="bg-amber-50 border border-amber-100 rounded-2xl p-4 flex items-center gap-3 animate-pulse">
+                    <FiAlertTriangle className="text-amber-600 shrink-0" />
+                    <p className="text-[11px] font-black text-amber-700 uppercase tracking-widest">
+                        Mission Locked: Active or Completed initiatives cannot be modified to ensure audit transparency.
+                    </p>
                 </div>
             )}
 
-            {/* Basic Information */}
-            <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
-                <div className="px-6 py-4 border-b border-gray-100 flex items-center gap-3">
-                    <div className="w-8 h-8 bg-red-50 rounded-lg flex items-center justify-center">
-                        <svg className="w-4 h-4 text-[#DC2626]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                        </svg>
-                    </div>
-                    <h3 className="text-sm font-semibold text-gray-700">Basic Information</h3>
+            {(error || success) && (
+                <div className={`rounded-2xl border p-4 flex items-center gap-3 shadow-sm ${error ? 'bg-rose-50 border-rose-100 text-rose-700' : 'bg-emerald-50 border-emerald-100 text-emerald-700'}`}>
+                    {error ? <FiAlertTriangle className="shrink-0" /> : <FiCheckCircle className="shrink-0" />}
+                    <p className="text-[11px] font-black uppercase tracking-widest">{error || success}</p>
                 </div>
-                <div className="p-6 space-y-5">
+            )}
 
-                    {/* Image */}
-                    <div>
-                        <p className={labelCls}>Campaign Image</p>
-                        {editing ? (
-                            <label className="mt-1 flex flex-col items-center justify-center w-full border-2 border-dashed border-gray-200 rounded-lg cursor-pointer bg-gray-50 hover:bg-red-50/30 hover:border-red-200 transition-colors group">
-                                {formData.imagePreview ? (
-                                    <div className="relative w-full">
-                                        <img src={formData.imagePreview} alt="preview" className="w-full h-48 object-cover rounded-lg" />
-                                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
-                                            <p className="text-white text-xs font-semibold">Click to change image</p>
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                {/* Left Column: Visuals & Core Data */}
+                <div className="lg:col-span-8 space-y-8">
+                    
+                    {/* Visual Media */}
+                    <div className="bg-white rounded-[40px] border border-slate-100 shadow-sm p-12 flex flex-col items-center justify-center space-y-8 animate-soft">
+                        <div className="flex items-center gap-3">
+                            <span className="w-8 h-8 bg-slate-900 text-white rounded-xl flex items-center justify-center text-sm"><FiLayers /></span>
+                            <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-500">Mission Media</h3>
+                        </div>
+
+                        <div className="relative group w-full">
+                            {editing ? (
+                                <label className="flex flex-col items-center justify-center w-full aspect-video border-4 border-dashed border-slate-50 rounded-[48px] cursor-pointer bg-slate-50 hover:bg-brand-red/5 hover:border-brand-red/20 transition-all duration-500">
+                                    {formData.imagePreview ? (
+                                        <div className="relative w-full h-full p-2">
+                                            <img src={formData.imagePreview} className="w-full h-full object-cover rounded-[40px]" alt="preview" />
+                                            <div className="absolute inset-0 bg-slate-900/40 rounded-[40px] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <p className="text-white text-[10px] font-black uppercase tracking-widest text-center px-4">Update Visual</p>
+                                            </div>
                                         </div>
+                                    ) : (
+                                        <div className="flex flex-col items-center gap-4 text-center px-6">
+                                            <div className="w-16 h-16 bg-white rounded-2xl shadow-sm flex items-center justify-center text-slate-200">
+                                                <FiPlus className="text-3xl" />
+                                            </div>
+                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Embed Visual Asset</p>
+                                        </div>
+                                    )}
+                                    <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
+                                </label>
+                            ) : (
+                                <div className="w-full aspect-video bg-slate-50 rounded-[48px] overflow-hidden border-8 border-white shadow-2xl relative group">
+                                    {formData.imagePreview ? (
+                                        <img src={formData.imagePreview} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt={campaign.title} />
+                                    ) : (
+                                        <div className="w-full h-full flex flex-col items-center justify-center text-slate-200 gap-4">
+                                            <FiCpu className="text-6xl" />
+                                            <p className="text-[10px] font-black uppercase tracking-widest opacity-50">No Strategic Assets</p>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Intellectual Property / Details */}
+                    <div className="bg-white rounded-[40px] border border-slate-100 shadow-sm p-8 space-y-8">
+                        <div className="flex items-center gap-3">
+                            <span className="w-8 h-8 bg-brand-red text-white rounded-xl flex items-center justify-center text-sm"><FiFileText /></span>
+                            <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-500">Mission Briefing</h3>
+                        </div>
+
+                        <div className="space-y-6">
+                            <div>
+                                <label className={labelCls}>Initiative Title</label>
+                                {editing ? (
+                                    <input type="text" name="title" value={formData.title} onChange={handleChange} className={inputCls} />
+                                ) : (
+                                    <h1 className="text-3xl font-black text-slate-900 tracking-tight">{campaign.title}</h1>
+                                )}
+                            </div>
+
+                            <div>
+                                <label className={labelCls}>Strategic Description</label>
+                                {editing ? (
+                                    <textarea name="description" value={formData.description} onChange={handleChange} rows={6} className={inputCls} />
+                                ) : (
+                                    <p className="text-slate-600 leading-relaxed font-medium">{campaign.description || 'No strategic briefing available.'}</p>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Right Column: Key Performance Indicators */}
+                <div className="lg:col-span-4 space-y-8">
+                    
+                    {/* Financial & Timeline */}
+                    <div className="bg-slate-900 rounded-[40px] p-8 text-white space-y-8 relative overflow-hidden shadow-2xl">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-brand-red/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+                        
+                        <div className="flex items-center gap-3">
+                            <span className="w-8 h-8 bg-white/5 border border-white/10 text-white rounded-xl flex items-center justify-center text-sm"><FiTarget /></span>
+                            <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400">Mission Parameters</h3>
+                        </div>
+
+                        <div className="space-y-6">
+                            <div className="bg-white/5 rounded-2xl p-5 border border-white/5">
+                                <label className="text-[9px] font-black text-brand-red uppercase tracking-widest block mb-2">Target Goal</label>
+                                {editing ? (
+                                    <input type="number" name="goalAmount" value={formData.goalAmount} onChange={handleChange} className="w-full bg-slate-800 border-none text-white text-xl font-black focus:ring-1 focus:ring-brand-red rounded-xl p-3" />
+                                ) : (
+                                    <p className="text-2xl font-black tracking-tight text-white">LKR {Number(campaign.goalAmount || 0).toLocaleString()}</p>
+                                )}
+                            </div>
+
+                            <div className="grid grid-cols-1 gap-4">
+                                <div className="bg-white/5 rounded-2xl p-5 border border-white/5">
+                                    <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest block mb-2"><FiCalendar className="inline mr-1" /> Deployment</label>
+                                    {editing ? (
+                                        <input type="date" name="startDate" value={formData.startDate} onChange={handleChange} className="w-full bg-slate-800 border-none text-white text-xs font-black rounded-lg p-2" />
+                                    ) : (
+                                        <p className="text-sm font-black text-slate-200">{campaign.startDate ? new Date(campaign.startDate).toLocaleDateString('en-GB') : 'PENDING'}</p>
+                                    )}
+                                </div>
+                                <div className="bg-white/5 rounded-2xl p-5 border border-white/5">
+                                    <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest block mb-2"><FiClock className="inline mr-1" /> Conclusion</label>
+                                    {editing ? (
+                                        <input type="date" name="endDate" value={formData.endDate} onChange={handleChange} className="w-full bg-slate-800 border-none text-white text-xs font-black rounded-lg p-2" />
+                                    ) : (
+                                        <p className="text-sm font-black text-slate-200">{campaign.endDate ? new Date(campaign.endDate).toLocaleDateString('en-GB') : 'PENDING'}</p>
+                                    )}
+                                </div>
+                            </div>
+
+                            <div className="bg-white/5 rounded-2xl p-5 border border-white/5">
+                                <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest block mb-2"><FiMapPin className="inline mr-1" /> Impact Geo</label>
+                                {editing ? (
+                                    <div className="space-y-2 mt-2">
+                                        <input type="text" name="city" value={formData.location.city} onChange={handleChange} className="w-full bg-slate-800 text-white text-xs p-2 rounded-lg border-none" placeholder="City" />
+                                        <input type="text" name="state" value={formData.location.state} onChange={handleChange} className="w-full bg-slate-800 text-white text-xs p-2 rounded-lg border-none" placeholder="State" />
+                                        <input type="text" name="country" value={formData.location.country} onChange={handleChange} className="w-full bg-slate-800 text-white text-xs p-2 rounded-lg border-none" placeholder="Country" />
                                     </div>
                                 ) : (
-                                    <div className="flex flex-col items-center justify-center py-8">
-                                        <div className="w-10 h-10 bg-red-50 rounded-xl flex items-center justify-center mb-3 group-hover:bg-red-100 transition-colors">
-                                            <svg className="w-5 h-5 text-[#DC2626]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                                <path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                            </svg>
-                                        </div>
-                                        <p className="text-sm font-medium text-gray-500 group-hover:text-[#DC2626] transition-colors">Click to upload image</p>
-                                        <p className="text-xs text-gray-400 mt-1">PNG, JPG, WEBP up to 10MB</p>
-                                    </div>
+                                    <p className="text-sm font-black text-slate-200 uppercase tracking-widest">
+                                        {[campaign.location?.city, campaign.location?.country].filter(Boolean).join(' • ') || 'UNDETERMINED'}
+                                    </p>
                                 )}
-                                <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
-                            </label>
-                        ) : (
-                            formData.imagePreview ? (
-                                <img src={formData.imagePreview} alt={campaign.title} className="mt-1 w-full h-48 object-cover rounded-lg border border-gray-100" />
-                            ) : (
-                                <div className="mt-1 w-full h-32 bg-gray-50 border border-gray-100 rounded-lg flex items-center justify-center">
-                                    <p className="text-xs text-gray-300">No image uploaded</p>
-                                </div>
-                            )
-                        )}
+                            </div>
+                        </div>
                     </div>
 
-                    {/* Title */}
-                    <div>
-                        <p className={labelCls}>Title</p>
-                        {editing ? (
-                            <input type="text" name="title" value={formData.title} onChange={handleChange} className={inputCls} placeholder="Campaign title" required />
-                        ) : (
-                            <p className={`${viewValueCls} font-semibold text-gray-900`}>{campaign.title}</p>
-                        )}
-                    </div>
-
-                    {/* Description */}
-                    <div>
-                        <p className={labelCls}>Description</p>
-                        {editing ? (
-                            <textarea name="description" value={formData.description} onChange={handleChange} rows={4} className={inputCls} placeholder="Campaign description..." />
-                        ) : (
-                            <p className={`${viewValueCls} text-gray-600 leading-relaxed`}>{campaign.description || '—'}</p>
-                        )}
-                    </div>
+                    {/* Progress Monitor */}
+                    {campaign.status === 'active' && <CampaignProgressSection campaignId={id} campaignStatus={campaign.status} />}
+                    {campaign.status === 'completed' && <CampaignReportSection campaignId={id} />}
                 </div>
             </div>
 
-            {/* Goal & Timeline */}
-            <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
-                <div className="px-6 py-4 border-b border-gray-100 flex items-center gap-3">
-                    <div className="w-8 h-8 bg-orange-50 rounded-lg flex items-center justify-center">
-                        <svg className="w-4 h-4 text-[#7C2D12]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                    </div>
-                    <h3 className="text-sm font-semibold text-gray-700">Goal & Timeline</h3>
-                </div>
-                <div className="p-6">
-                    <div className="grid grid-cols-3 gap-6">
-                        <div>
-                            <p className={labelCls}>Goal Amount (LKR)</p>
-                            {editing ? (
-                                <input type="number" name="goalAmount" value={formData.goalAmount} onChange={handleChange} className={inputCls} placeholder="0" />
-                            ) : (
-                                <p className="text-lg font-bold text-[#7C2D12]">LKR {Number(campaign.goalAmount || 0).toLocaleString()}</p>
-                            )}
-                        </div>
-                        <div>
-                            <p className={labelCls}>Start Date</p>
-                            {editing ? (
-                                <input type="date" name="startDate" value={formData.startDate} onChange={handleChange} className={inputCls} />
-                            ) : (
-                                <p className={viewValueCls}>{campaign.startDate ? new Date(campaign.startDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '—'}</p>
-                            )}
-                        </div>
-                        <div>
-                            <p className={labelCls}>End Date</p>
-                            {editing ? (
-                                <input type="date" name="endDate" value={formData.endDate} onChange={handleChange} className={inputCls} />
-                            ) : (
-                                <p className={viewValueCls}>{campaign.endDate ? new Date(campaign.endDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '—'}</p>
-                            )}
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {/* Location */}
-            <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
-                <div className="px-6 py-4 border-b border-gray-100 flex items-center gap-3">
-                    <div className="w-8 h-8 bg-red-50 rounded-lg flex items-center justify-center">
-                        <svg className="w-4 h-4 text-[#DC2626]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
-                    </div>
-                    <h3 className="text-sm font-semibold text-gray-700">Location</h3>
-                </div>
-                <div className="p-6">
-                    {editing ? (
-                        <div className="grid grid-cols-3 gap-4">
-                            <div>
-                                <p className={labelCls}>City</p>
-                                <input type="text" name="city" value={formData.location.city} onChange={handleChange} placeholder="Colombo" className={inputCls} />
-                            </div>
-                            <div>
-                                <p className={labelCls}>State / Province</p>
-                                <input type="text" name="state" value={formData.location.state} onChange={handleChange} placeholder="Western" className={inputCls} />
-                            </div>
-                            <div>
-                                <p className={labelCls}>Country</p>
-                                <input type="text" name="country" value={formData.location.country} onChange={handleChange} placeholder="Sri Lanka" className={inputCls} />
-                            </div>
-                        </div>
-                    ) : (
-                        <div className="flex items-center gap-2 text-sm text-gray-600">
-                            <svg className="w-4 h-4 text-[#DC2626] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                            </svg>
-                            {locationLine || <span className="text-gray-300">No location set</span>}
-                        </div>
-                    )}
-                </div>
-            </div>
-
-            {/* Progress Logs — visible for active campaigns */}
-            {campaign.status === 'active' && (
-                <CampaignProgressSection
-                    campaignId={id}
-                    campaignStatus={campaign.status}
-                />
-            )}
-
-            {/* Campaign Report — only for completed campaigns */}
-            {campaign.status === 'completed' && (
-                <CampaignReportSection campaignId={id} />
-            )}
-
+            <ConfirmationModal 
+                isOpen={showDeleteModal}
+                onClose={() => setShowDeleteModal(false)}
+                onConfirm={confirmDelete}
+                title="Abort Strategic Mission?"
+                message="This action will permanently remove this proposal from the mission registry. This cannot be undone."
+                confirmText="Abort Mission"
+                type="danger"
+            />
         </div>
     );
 }

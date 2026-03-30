@@ -8,7 +8,8 @@ const isDevMode = process.env.NODE_ENV !== "production";
  */
 const generateHash = (merchantId, orderId, amount, currency, merchantSecret) => {
     const formattedAmount = parseFloat(amount).toFixed(2);
-    const hashString = `${merchantId}${orderId}${formattedAmount}${currency}${merchantSecret}`;
+    const secretHash = crypto.createHash("md5").update(merchantSecret).digest("hex").toUpperCase();
+    const hashString = `${merchantId}${orderId}${formattedAmount}${currency}${secretHash}`;
     return crypto.createHash("md5").update(hashString).digest("hex").toUpperCase();
 };
 

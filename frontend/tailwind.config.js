@@ -4,17 +4,16 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Poppins', 'system-ui', 'sans-serif'],
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        display: ['Merriweather', 'serif'],
       },
       colors: {
         tf: {
-          primary: '#FF8A00', // The Logo Orange
-          orange: '#FF8A00',
-          pink: '#FF8A00',   // Backwards compat for existing classes
-          purple: '#05010B', // Deepest dark for contrast
-          green: '#10B981', 
-          grey: '#F9FAFB',
-          dark: '#05010B',
+          primary: '#FF8A00', // Matches new Brand Logo
+          secondary: '#F8FAFC', // Slate 50
+          accent: '#10B981', // Emerald
+          dark: '#0F172A',   // Slate 900
+          slate: '#64748B',  // Slate 500
         },
       },
       backgroundImage: {

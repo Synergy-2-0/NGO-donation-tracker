@@ -138,3 +138,9 @@ export const compareTrustScores = async (ngoIds) => {
         validScores: validScores.length,
     };
 };
+/**
+ * Recalculate trust score (wrapper for external services)
+ */
+export const recalculateTrustScore = async (ngoId) => {
+    return await calculateTrustScore(ngoId);
+};

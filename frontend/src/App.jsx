@@ -43,6 +43,7 @@ import PublicImpactPage from './pages/PublicImpactPage';
 import PublicPartnersPage from './pages/PublicPartnersPage';
 import PublicCausesPage from './pages/PublicCausesPage';
 import PublicCampaignDetailPage from './pages/PublicCampaignDetailPage';
+import PublicTransparencyDashboard from './pages/PublicTransparencyDashboard';
 
 import { useAuth } from './context/AuthContext';
 import { PartnerOperationsProvider } from './context/PartnerOperationsContext';
@@ -132,6 +133,7 @@ export default function App() {
                   <Route path="/causes" element={<PublicCausesPage />} />
                   <Route path="/causes/:id" element={<PublicCampaignDetailPage />} />
                   <Route path="/partners/list" element={<PublicPartnersPage />} />
+                  <Route path="/transparency" element={<PublicTransparencyDashboard />} />
 
                   {/* Dashboard / Protected Routes */}
                   <Route

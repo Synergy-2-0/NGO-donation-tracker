@@ -31,29 +31,24 @@ class EmailService {
     }
   }
 
-  async sendAgreementStatusChange(agreement, email, status) {
-    if (!process.env.BREVO_API_KEY) {
-      console.log('[EMAIL MOCK] Agreement status change sent to', email);
-      return;
-    }
+  async sendWelcomeEmail(user) {
+    console.log(`[EMAIL MOCK] Welcome email sent to ${user.email}`);
+  }
 
-    try {
-      const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
-      const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
+  async sendDonationReceipt(donorEmail, transaction) {
+    console.log(`[EMAIL MOCK] Donation receipt for $${transaction.amount} sent to ${donorEmail}`);
+  }
 
-      sendSmtpEmail.subject = `Agreement ${status}`;
-      sendSmtpEmail.htmlContent = `
-        <h3>Agreement Update</h3>
-        <p>Your agreement <strong>${agreement.title}</strong> is now <strong>${status}</strong>.</p>
-      `;
-      sendSmtpEmail.sender = { name: 'NGO Tracker', email: 'luqmanbooso@gmail.com' };
-      sendSmtpEmail.to = [{ email: email }];
+  async sendMilestoneNotification(email, milestone) {
+    console.log(`[EMAIL MOCK] Milestone '${milestone.title}' completed notification sent to ${email}`);
+  }
 
-      await apiInstance.sendTransacEmail(sendSmtpEmail);
-      console.log('[EMAIL] Agreement status sent to', email);
-    } catch (error) {
-      console.error('Email error:', error.message);
-    }
+  async sendPledgeReminder(email, pledge) {
+    console.log(`[EMAIL MOCK] Pledge reminder for $${pledge.amount} sent to ${email}`);
+  }
+
+  async sendCampaignUpdate(email, campaign, message) {
+    console.log(`[EMAIL MOCK] Campaign update for '${campaign.title}' sent to ${email}: ${message}`);
   }
 }
 

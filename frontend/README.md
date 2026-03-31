@@ -1,114 +1,85 @@
-# NGO Donation Tracker - Frontend
+# TransFund - Frontend Platform
 
-React-based Donor Management Portal for the NGO Donation Tracker platform.
+Institutional-grade humanitarian user interface for the **TransFund** ecosystem. Designed with a focus on mission-critical clarity, donor trust, and high-fidelity project oversight.
 
-## Technology Stack
+## 🚀 Experience Hubs
 
-| Technology | Purpose |
-|---|---|
-| React 18 | UI framework |
-| React Router v6 | Client-side routing |
-| Context API | Global state management (Auth + Donor) |
-| Axios | HTTP API communication |
-| Tailwind CSS | Utility-first styling |
-| Vite | Build tool and dev server |
-| JWT + localStorage | Session persistence |
+### 1. Public Transparency Portal (Guest)
+- **Cinematic Landing**: High-contrast Hero section with strategic mission discovery.
+- **Global Reach Map**: Mapbox integration for geospatial impact visualization.
+- **Transparency Dashboard**: Public trust scores and verified NGO leaderboards.
+- **Project Marketplace**: Intuitive mission catalog for immediate capital deployment.
 
-## Setup
+### 2. Donor Influence Center (Donor)
+- **Impact Registry**: Personal donor statistics (Total Donated, Mission Count).
+- **Secure Handling**: Interactive multi-step donation modal with PayHere status sync.
+- **AI Insights**: Personalized donor matching and project recommendations.
 
-1. Install dependencies:
+### 3. High-Trust Dashboard (NGO Admin)
+- **Treasury Overview**: Financial summary charts (Income vs. Allocation).
+- **Mission Management**: Full project lifecycle (Create, Edit, Publish, Milestones).
+- **Audit Logs**: Capital deployment registry for verified fund distribution.
+
+### 4. Strategic Partner Registry (Corporate)
+- **Agreement Hub**: MOU and partnership tracking for high-volume contributors.
+- **Corporate KPIs**: Impact-ready CSR reporting metrics.
+
+---
+
+## 🎨 Design System
+
+### Typography
+- **Heading 01 (Institutional)**: Merriweather (Bold & Italic)
+- **Body & Data (Technical)**: Inter (Precision-tuned Sans-serif)
+
+### Palette (Trust Index)
+- **Primary (Strategic)**: `Dark Slate (#0f172a)`
+- **Accent (Humanity)**: `Brand Orange (#ff8a00)`
+- **Alert (Urgency)**: `Brand Red (#dc2626)`
+
+### Components (Reusable Library)
+- **Premium Surface**: Glassmorphic and depth-based UI containers.
+- **Stat Cards**: Dynamic, animated numeric visualizers.
+- **Interactive Modals**: Multi-step, context-aware functional overlays.
+
+---
+
+## 🛠️ Technical Implementation
+
+### Core Stack
+- **Framework**: React 18+ (Hook-based architecture)
+- **Build**: Vite (Optimized production pipeline)
+- **Styling**: Vanilla CSS + Utility-based layouts.
+- **Motion**: Framer Motion (High-fidelity micro-interactions)
+- **Charts**: Recharts (Financial and Impact visualization)
+
+### Application Architecture
 ```bash
+frontend/
+├── src/
+│   ├── api/             # Axios instance & Interceptors
+│   ├── components/      # Global Layout, UI & Navigation components
+│   ├── context/         # Auth, Finance, Partner, Campaign contexts
+│   ├── pages/           # High-level Role-based Route components
+│   │   ├── admin/       # Management & Oversight pages
+│   │   └── ...          # Public & Donor pages
+│   └── App.jsx          # React Router & Project Root
+└── vite.config.js       # Production-ready bundling config
+```
+
+---
+
+## ⚙️ Local Development
+
+```bash
+# 1. Install development dependencies
 npm install
-```
 
-2. Create a `.env` file from the example:
-```bash
-cp .env.example .env
-```
+# 2. Configure environment
+# VITE_API_URL=http://localhost:3001
 
-```env
-# Point to backend
-VITE_API_URL=http://localhost:3000
-
-# Or hosted server
-# VITE_API_URL=http://44.192.7.89:3000
-```
-
-3. Run the development server:
-```bash
+# 3. Launch development server
 npm run dev
 ```
 
-The app will be available at `http://localhost:5173`.
-
-## Project Structure
-
-```
-frontend/
-├── index.html
-├── vite.config.js
-├── tailwind.config.js
-├── postcss.config.js
-└── src/
-    ├── main.jsx          # Entry point
-    ├── App.jsx           # Routes and providers
-    ├── index.css         # Tailwind base styles
-    ├── api/
-    │   └── axios.js      # Axios instance with auth interceptor
-    ├── context/
-    │   ├── AuthContext.jsx   # Login, logout, JWT session
-    │   └── DonorContext.jsx  # Donor profile, pledges, analytics, transactions
-    ├── components/
-    │   ├── Layout.jsx        # App shell (sidebar + navbar + outlet)
-    │   ├── Navbar.jsx        # Top navigation bar
-    │   ├── Sidebar.jsx       # Left navigation sidebar
-    │   ├── ProtectedRoute.jsx # Auth guard
-    │   ├── LoadingSpinner.jsx
-    │   └── ErrorAlert.jsx
-    └── pages/
-        ├── LoginPage.jsx          # Email/password login
-        ├── DashboardPage.jsx      # Overview: stats, recent pledges
-        ├── ProfilePage.jsx        # Create / view / edit / delete donor profile
-        ├── PledgesPage.jsx        # Full pledge CRUD with modals
-        └── DonationHistoryPage.jsx # Transaction history with summary stats
-```
-
-## Pages and Features
-
-| Page | Route | Description |
-|---|---|---|
-| Login | `/login` | Donor authentication |
-| Dashboard | `/dashboard` | Analytics summary, recent pledges, quick actions |
-| My Profile | `/profile` | Create, view, edit, delete donor profile |
-| Pledges | `/pledges` | Create, edit, delete pledges with modal forms |
-| Donation History | `/donations` | Full transaction history with totals |
-
-## Backend API Integration
-
-All API calls use the configured Axios instance (`src/api/axios.js`) which:
-- Automatically attaches the JWT Bearer token from localStorage
-- Redirects to `/login` on 401 responses
-
-Key endpoints consumed:
-
-| Feature | Method | Endpoint |
-|---|---|---|
-| Login | POST | `/api/users/login` |
-| Get my profile | GET | `/api/donors/me` |
-| Create profile | POST | `/api/donors` |
-| Update profile | PUT | `/api/donors/:id` |
-| Delete profile | DELETE | `/api/donors/:id` |
-| Get pledges | GET | `/api/donors/:id/pledges` |
-| Create pledge | POST | `/api/donors/:id/pledges` |
-| Update pledge | PUT | `/api/donors/:id/pledges/:pledgeId` |
-| Delete pledge | DELETE | `/api/donors/:id/pledges/:pledgeId` |
-| Get analytics | GET | `/api/donors/:id/analytics` |
-| Get transactions | GET | `/api/finance/transactions/donor/:id` |
-
-## Build
-
-```bash
-npm run build
-```
-
-Output is in the `dist/` folder.
+**TransFund Interface | Version 2.0 (Verified)**

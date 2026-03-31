@@ -1,5 +1,9 @@
 import * as transactionRepository from "../repository/transaction.repository.js";
 import * as auditLogRepository from "../repository/auditLog.repository.js";
+import * as campaignRepository from "../repository/campaign.repository.js";
+import * as donorRepository from "../repository/donor.repository.js";
+import * as partnerRepository from "../repository/partner.repository.js";
+import * as trustScoreService from "./trustScore.service.js";
 
 export const createTransaction = async (data, userId = null) => {
     if (!data.donorId || !data.ngoId || !data.amount) {
@@ -94,6 +98,74 @@ export const archiveTransaction = async (id, userId = null) => {
     }
 
     return archivedTransaction;
+};
+
+export const completeDonation = async (transactionId, paymentId, status = "completed") => {
+    const transaction = await transactionRepository.findById(transactionId);
+    if (!transaction) throw new Error("Transaction node not found");
+
+    if (transaction.status === "completed") return transaction;
+
+    const previousStatus = transaction.status;
+    const updatedTransaction = await transactionRepository.updateById(transactionId, {
+        status,
+        paymentId,
+        completedAt: new Date()
+    });
+
+    if (status === "completed") {
+        // Increment Campaign raisedAmount
+        if (transaction.campaignId) {
+            const campaign = await campaignRepository.findById(transaction.campaignId);
+            if (campaign) {
+                await campaignRepository.updateById(campaign._id, {
+                    raisedAmount: (campaign.raisedAmount || 0) + transaction.amount
+                });
+            }
+        }
+
+        // Update Donor totalDonated and analytics
+        if (transaction.donorId) {
+            const donor = await donorRepository.findById(transaction.donorId);
+            if (donor) {
+                const currentDonated = (donor.totalDonated || 0) + transaction.amount;
+                const currentCount = (donor.analytics?.donationCount || 0) + 1;
+                
+                await donorRepository.updateById(donor._id, {
+                    totalDonated: currentDonated,
+                    'analytics.totalDonated': currentDonated,
+                    'analytics.donationCount': currentCount,
+                    'analytics.lastDonationDate': new Date()
+                });
+            }
+        }
+
+        // --- NEW: Sync NGO/Partner total contribution stats ---
+        if (transaction.ngoId) {
+            const partner = await partnerRepository.findById(transaction.ngoId);
+            if (partner) {
+                const totalContributed = (partner.partnershipHistory.totalContributed || 0) + transaction.amount;
+                await partnerRepository.updateById(partner._id, {
+                    'partnershipHistory.totalContributed': totalContributed
+                });
+            }
+        }
+
+        // Trigger Trust Score recalculation for the NGO
+        if (transaction.ngoId) {
+            trustScoreService.recalculateTrustScore(transaction.ngoId).catch(() => {});
+        }
+    }
+
+    await auditLogRepository.create({
+        entityType: "transaction",
+        entityId: transactionId,
+        action: "status_update",
+        previousData: { status: previousStatus },
+        newData: { status }
+    });
+
+    return updatedTransaction;
 };
 
 export const getFinancialSummary = async (ngoId) => {

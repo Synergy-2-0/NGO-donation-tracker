@@ -1,6 +1,7 @@
 import * as fundAllocationRepository from "../repository/fundAllocation.repository.js";
 import * as transactionRepository from "../repository/transaction.repository.js";
 import * as auditLogRepository from "../repository/auditLog.repository.js";
+import * as trustScoreService from "./trustScore.service.js";
 
 export const createAllocation = async (data, userId = null) => {
     if (!data.transactionId || !data.ngoId || !data.amount || !data.category) {
@@ -39,6 +40,11 @@ export const createAllocation = async (data, userId = null) => {
     }
 
     const allocation = await fundAllocationRepository.create(data);
+
+    // Recalculate Trust Score for the NGO
+    if (data.ngoId) {
+        trustScoreService.recalculateTrustScore(data.ngoId).catch(() => {});
+    }
 
     // Create audit log
     if (userId) {

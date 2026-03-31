@@ -7,5 +7,7 @@ const router = express.Router();
 router.get('/partnerships', ctrl.getPublicPartnerships);
 router.get('/agreements/:partnerId', ctrl.getPartnerPublicAgreements);
 router.get('/impact-metrics', ctrl.getImpactMetrics);
+router.get('/donor-stats', ctrl.getPublicDonorStats);
+router.get('/map-data', ctrl.getMapData);
 
 export default router;

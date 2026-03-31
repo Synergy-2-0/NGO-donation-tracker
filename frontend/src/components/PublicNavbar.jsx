@@ -17,21 +17,22 @@ export default function PublicNavbar() {
   }, []);
 
   const navLinks = [
-    { label: 'The Mission', href: '/about' },
-    { label: 'Impact Catalog', href: '/causes' },
-    { label: 'Operational Hub', href: '/how-it-works' },
-    { label: 'Field Evidence', href: '/impact' },
-    { label: 'Partner Network', href: '/partners/list' }
+    { label: 'Our Mission', href: '/about' },
+    { label: 'Causes', href: '/causes' },
+    { label: 'Transparency', href: '/transparency' },
+    { label: 'How it Works', href: '/how-it-works' },
+    { label: 'Impact', href: '/impact' },
+    { label: 'Partners', href: '/partners/list' }
   ];
 
   const isHomePage = location.pathname === '/';
   const logoSrc = (scrolled || !isHomePage) ? '/heart-logo d.png' : '/heart-logo c.png';
 
   const getDashboardLabel = () => {
-    if (!user) return 'Mission Entry';
-    if (user.role === 'admin') return 'System Control';
-    if (user.role === 'ngo-admin') return 'Mission Intelligence';
-    return 'Impact Hub';
+    if (!user) return 'Login';
+    if (user.role === 'admin') return 'Admin Portal';
+    if (user.role === 'ngo-admin') return 'NGO Dashboard';
+    return 'Donor Dashboard';
   };
 
   return (
@@ -90,11 +91,11 @@ export default function PublicNavbar() {
           <div className="flex items-center gap-6">
             <button
               onClick={() => navigate('/login')}
-              className={`hidden md:block text-[9px] font-black uppercase tracking-[0.3em] italic transition-all underline underline-offset-[10px] decoration-tf-primary/20 hover:decoration-tf-primary hover:text-tf-primary ${
+              className={`hidden md:block text-[9px] font-black uppercase tracking-[0.3em] transition-all underline underline-offset-[10px] decoration-tf-primary/20 hover:decoration-tf-primary hover:text-tf-primary ${
                 scrolled || !isHomePage ? 'text-slate-950' : 'text-white'
               }`}
             >
-              Authorize
+              Sign In
             </button>
             <button
               onClick={() => navigate('/login?tab=signup')}

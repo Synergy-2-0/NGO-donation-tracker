@@ -134,9 +134,11 @@ export default function PartnerAgreementsPage() {
             <h2 className="text-3xl md:text-4xl font-black text-white tracking-tight">{isAdmin ? 'Global' : 'My'} <span className="text-brand-red">Agreements</span></h2>
             <p className="text-slate-400 text-sm mt-2 max-w-xl font-medium">Track historical contributions, active partnerships, and ongoing mission commitments.</p>
           </div>
-          <button onClick={() => setShowFormModal(true)} className="px-6 py-3 bg-brand-red text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-brand-red/90 transition-all shadow-xl shadow-brand-red/20 flex items-center gap-2 active:scale-95">
-            <FiPlus className="text-sm stroke-[3]" /> Propose New Agreement
-          </button>
+          {user?.role === 'partner' && (
+            <button onClick={() => setShowFormModal(true)} className="px-6 py-3 bg-brand-red text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-brand-red/90 transition-all shadow-xl shadow-brand-red/20 flex items-center gap-2 active:scale-95">
+              <FiPlus className="text-sm stroke-[3]" /> Propose New Agreement
+            </button>
+          )}
         </div>
       </div>
 
@@ -149,22 +151,28 @@ export default function PartnerAgreementsPage() {
 
       {/* Stats Summary */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-         <div className="bg-white rounded-[32px] border border-slate-100 p-7 flex items-center gap-5 shadow-sm">
-            <div className="w-14 h-14 bg-slate-900 text-white rounded-2xl flex items-center justify-center text-xl shadow-lg"><FiActivity /></div>
+         <div className="bg-white rounded-[32px] border border-slate-100 p-7 flex items-center gap-5 shadow-sm hover:shadow-lg transition-all group">
+            <div className="w-14 h-14 bg-slate-900 text-white rounded-2xl flex items-center justify-center text-xl shadow-lg group-hover:scale-105 transition-transform">
+              <FiActivity className="text-xl" />
+            </div>
             <div>
                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Active Agreements</p>
                <h4 className="text-2xl font-black text-slate-900">{stats.active}</h4>
             </div>
          </div>
-         <div className="bg-white rounded-[32px] border border-slate-100 p-7 flex items-center gap-5 shadow-sm">
-            <div className="w-14 h-14 bg-brand-red text-white rounded-2xl flex items-center justify-center text-xl shadow-lg shadow-brand-red/10"><FiTrendingUp /></div>
+         <div className="bg-white rounded-[32px] border border-slate-100 p-7 flex items-center gap-5 shadow-sm hover:shadow-lg transition-all group">
+            <div className="w-14 h-14 bg-tf-primary text-white rounded-2xl flex items-center justify-center text-xl shadow-lg shadow-orange-500/20 group-hover:scale-105 transition-transform">
+              <FiTrendingUp className="text-xl" />
+            </div>
             <div>
                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Total Commitment</p>
                <h4 className="text-2xl font-black text-slate-900">{asMoney(stats.total)}</h4>
             </div>
          </div>
-         <div className="bg-white rounded-[32px] border border-slate-100 p-7 flex items-center gap-5 shadow-sm">
-            <div className="w-14 h-14 bg-amber-500 text-white rounded-2xl flex items-center justify-center text-xl shadow-lg"><FiClock /></div>
+         <div className="bg-white rounded-[32px] border border-slate-100 p-7 flex items-center gap-5 shadow-sm hover:shadow-lg transition-all group">
+            <div className="w-14 h-14 bg-amber-500 text-white rounded-2xl flex items-center justify-center text-xl shadow-lg shadow-amber-500/20 group-hover:scale-105 transition-transform">
+              <FiClock className="text-xl" />
+            </div>
             <div>
                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Pending Review</p>
                <h4 className="text-2xl font-black text-slate-900">{agreements.filter(a => a.status === 'pending').length}</h4>

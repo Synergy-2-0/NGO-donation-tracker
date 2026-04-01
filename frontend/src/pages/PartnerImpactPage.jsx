@@ -40,7 +40,7 @@ export default function PartnerImpactPage() {
   if (!impactData) {
     return (
       <div className="max-w-md mx-auto py-24 text-center space-y-6">
-        <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto text-slate-200">
+        <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto text-slate-400">
           <FiShield className="text-4xl" />
         </div>
         <div className="space-y-2">

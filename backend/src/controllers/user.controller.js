@@ -30,6 +30,25 @@ export const update = async (req,res) => {
 
 };
 
+export const updateMe = async (req, res) => {
+    try {
+        const user = await userService.updateUser(req.user.id, req.body);
+        res.json(user);
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
+};
+
+export const updateMyPassword = async (req, res) => {
+    try {
+        const { currentPassword, newPassword } = req.body;
+        await userService.updatePassword(req.user.id, currentPassword, newPassword);
+        res.json({ message: 'Password updated successfully' });
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
+};
+
 export const deactivate = async (req,res) => {
     const user = await userService.deactivateUser(req.params.id);
     res.json(user);

@@ -206,6 +206,5 @@ export const completeDonation = async (transactionId, paymentId, status = "compl
 };
 
 export const getFinancialSummary = async (ngoId) => {
-    const summary = await transactionRepository.getFinancialSummaryByNgo(ngoId);
-    return summary.length > 0 ? summary[0] : { totalReceived: 0, transactionCount: 0 };
+    return await transactionRepository.getFinancialSummaryByNgo(ngoId);
 };

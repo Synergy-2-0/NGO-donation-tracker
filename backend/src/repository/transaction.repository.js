@@ -59,16 +59,53 @@ export const archiveById = async (id) => {
 
 export const getFinancialSummaryByNgo = async (ngoId) => {
     const id = typeof ngoId === 'string' ? new mongoose.Types.ObjectId(ngoId) : ngoId;
-    return await Transaction.aggregate([
+    
+    // Aggregating Income Stream Hub
+    const income = await Transaction.aggregate([
         { $match: { ngoId: id, status: "completed", archived: false } },
         {
             $group: {
                 _id: null,
-                totalReceived: { $sum: "$amount" },
+                totalIncome: { $sum: "$amount" },
                 transactionCount: { $sum: 1 },
             },
         },
     ]);
+
+    // Aggregate Allocation Deployment Hub
+    const FundAllocation = (await import('../models/fundAllocation.model.js')).default;
+    const allocations = await FundAllocation.aggregate([
+        { $match: { ngoId: id, isDeleted: false } },
+        {
+            $group: {
+                _id: null,
+                totalAllocated: { $sum: "$amount" },
+            }
+        }
+    ]);
+
+    const allocationsByCategory = await FundAllocation.aggregate([
+        { $match: { ngoId: id, isDeleted: false } },
+        {
+            $group: {
+                _id: "$category",
+                total: { $sum: "$amount" },
+            }
+        },
+        { $sort: { total: -1 } }
+    ]);
+
+    const recentAllocations = await FundAllocation.find({ ngoId: id, isDeleted: false })
+        .sort({ createdAt: -1 })
+        .limit(5);
+
+    return {
+        totalIncome: income.length > 0 ? income[0].totalIncome : 0,
+        transactionCount: income.length > 0 ? income[0].transactionCount : 0,
+        totalAllocated: allocations.length > 0 ? allocations[0].totalAllocated : 0,
+        allocationsByCategory: allocationsByCategory,
+        recentAllocations: recentAllocations
+    };
 };
 
 export const deleteById = async (id) => {

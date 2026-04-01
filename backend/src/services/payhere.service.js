@@ -39,8 +39,17 @@ export const initPayHerePayment = async (paymentData) => {
         country,
     } = paymentData;
 
-    if (!donorId || !ngoId || !amount || !firstName || !lastName || !email || !phone) {
-        throw new Error("Missing required payment fields");
+    let resolvedNgoId = ngoId;
+    
+    // Auto-resolve: If passed ID is a User ID, find associated NGO
+    const NGO = (await import('../models/ngo.model.js')).default;
+    const ngoProfile = await NGO.findOne({ $or: [{ _id: ngoId }, { userId: ngoId }] });
+    if (ngoProfile) {
+        resolvedNgoId = ngoProfile._id;
+    }
+
+    if (!donorId || !resolvedNgoId || !amount || !firstName || !lastName || !email || !phone) {
+        throw new Error("Missing required payment fields Hub");
     }
 
     // Generate unique order ID (Numerical only for maximal compatibility)
@@ -90,7 +99,7 @@ export const initPayHerePayment = async (paymentData) => {
     // Create pending transaction
     const transaction = await transactionService.createTransaction({
         donorId,
-        ngoId,
+        ngoId: resolvedNgoId,
         campaignId,
         amount,
         currency,
@@ -121,7 +130,7 @@ export const initPayHerePayment = async (paymentData) => {
             country: country || 'Sri Lanka',
             hash: hash,
             custom_1: transaction._id.toString(),
-            custom_2: ngoId
+            custom_2: resolvedNgoId.toString()
         },
     };
 };

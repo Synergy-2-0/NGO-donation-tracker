@@ -6,13 +6,15 @@ import { authorizeRoles } from '../middlewares/role.middleware.js';
 const router = express.Router();
 
 router.post('/register', userController.register);
-
 router.post('/login', userController.login);
 
+// Authenticated user settings
+router.put('/me', authenticate, userController.updateMe);
+router.patch('/me/password', authenticate, userController.updateMyPassword);
+
+// Admin only routes
 router.get('/', authenticate, authorizeRoles('admin'), userController.getAll);
-
 router.put('/:id', authenticate, authorizeRoles('admin'), userController.update);
-
 router.delete('/:id', authenticate, authorizeRoles('admin'), userController.deactivate);
 
 export default router;

@@ -6,6 +6,7 @@ import LoadingSpinner from '../components/LoadingSpinner';
 const ROLES = [
   { value: 'donor',   label: 'Donor' },
   { value: 'partner', label: 'Apply for Partnership' },
+  { value: 'ngo-admin', label: 'Register as NGO' },
 ];
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -160,9 +161,8 @@ export default function LoginPage() {
              <div className="absolute inset-0 bg-tf-primary/5 group-hover:bg-tf-primary/10 transition-all duration-1000" />
              <div className="relative z-10 space-y-12">
                 <div className="space-y-8">
-                   <div className="flex items-center gap-4">
-                      <img src="/heart-logo c.png" alt="TransFund" className="h-10 w-auto" />
-                      <span className="text-2xl font-black italic tracking-tighter uppercase">TransFund</span>
+                   <div className="flex items-center">
+                      <img src="/heart-logo c.png" alt="TransFund" className="h-12 w-auto" />
                    </div>
                    <h2 className="text-5xl md:text-6xl font-black tracking-tighter leading-[1.05] italic uppercase font-display">
                       Empowering <br />

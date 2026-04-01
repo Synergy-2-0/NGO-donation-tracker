@@ -12,11 +12,36 @@ export const createCampaign = async (req, res) => {
                 return res.status(400).json({ message: "Invalid location format. Must be valid JSON." });
             }
         }
+
+        let parsedSdg = req.body.sdgAlignment;
+        if (typeof parsedSdg === "string") {
+            try {
+                parsedSdg = JSON.parse(parsedSdg);
+            } catch {
+                parsedSdg = [];
+            }
+        }
+
+        // Parse pledge config from form data
+        let parsedPledgeConfig = null;
+        if (req.body.pledgeConfig && typeof req.body.pledgeConfig === 'string') {
+            try {
+                parsedPledgeConfig = JSON.parse(req.body.pledgeConfig);
+            } catch {
+                parsedPledgeConfig = null;
+            }
+        }
+
         const campaignData = {
             ...req.body,
+            goalAmount: Number(req.body.goalAmount) || 0,
+            targetBeneficiaries: Number(req.body.targetBeneficiaries) || 0,
             location: parsedLocation,
+            sdgAlignment: parsedSdg,
             image: req.file?.path || null,
             createdBy: req.user.id,
+            allowPledges: req.body.allowPledges === 'true',
+            ...(parsedPledgeConfig && { pledgeConfig: parsedPledgeConfig }),
         };
         const campaign = await campaignService.createCampaign(campaignData);
         res.status(201).json(campaign);

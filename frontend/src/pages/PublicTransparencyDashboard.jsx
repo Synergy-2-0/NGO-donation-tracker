@@ -11,18 +11,27 @@ import {
 import api from '../api/axios';
 import MapboxMap from '../components/MapboxMap';
 
-const MetricCard = ({ icon: Icon, label, value, subtext, color = 'orange' }) => (
-  <div className="premium-surface p-6 flex items-start gap-4 animate-slide-up">
-    <div className={`p-4 rounded-2xl bg-${color}-50 text-${color}-600`}>
-      <Icon size={24} />
+const MetricCard = ({ icon: Icon, label, value, subtext, color = 'orange' }) => {
+  const colorStyles = {
+    orange: 'bg-orange-50 text-orange-600',
+    blue: 'bg-blue-50 text-blue-600',
+    green: 'bg-emerald-50 text-emerald-600',
+    amber: 'bg-amber-50 text-amber-600'
+  };
+
+  return (
+    <div className="bg-white p-10 rounded-[3rem] border border-slate-100 shadow-sm hover:shadow-2xl transition-all duration-700 flex flex-col items-center text-center space-y-6 group">
+      <div className={`p-6 rounded-[2rem] ${colorStyles[color] || colorStyles.orange} group-hover:scale-110 transition-transform duration-700 shadow-inner`}>
+        <Icon size={28} />
+      </div>
+      <div className="space-y-2">
+        <h3 className="text-[10px] font-black text-slate-300 uppercase tracking-[0.5em] italic leading-none">{label}</h3>
+        <p className="text-4xl font-black text-slate-950 tracking-tighter italic">{value}</p>
+        {subtext && <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest pt-4 border-t border-slate-50 mt-4 leading-none">{subtext}</p>}
+      </div>
     </div>
-    <div>
-      <h3 className="text-sm font-medium text-slate-500 mb-1">{label}</h3>
-      <p className="text-2xl font-bold text-slate-900 leading-tight">{value}</p>
-      {subtext && <p className="text-xs text-slate-400 mt-1">{subtext}</p>}
-    </div>
-  </div>
-);
+  );
+};
 
 export default function PublicTransparencyDashboard() {
   const [metrics, setMetrics] = useState(null);
@@ -64,46 +73,53 @@ export default function PublicTransparencyDashboard() {
   return (
     <div className="min-h-screen bg-[#FBFBFE] pb-20">
       {/* Header Section */}
-      <section className="pt-20 pb-12 px-6 lg:px-20 bg-mesh relative overflow-hidden">
-        <div className="max-w-7xl mx-auto text-center relative z-10">
-          <span className="px-4 py-1.5 rounded-full bg-orange-100 text-orange-600 font-bold text-[11px] tracking-widest uppercase mb-6 inline-block">
-            Global Transparency Network
-          </span>
-          <h1 className="text-5xl lg:text-6xl font-black text-slate-900 mb-6 tracking-tighter">
-            Real-time Impact <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-amber-500">Analytics</span>
+      <section className="pt-48 pb-32 px-6 lg:px-20 bg-slate-950 relative overflow-hidden group">
+        <div className="absolute inset-0 z-0">
+          <img src="https://images.unsplash.com/photo-1542810634-71277d95dcbb?auto=format&fit=crop&q=80&w=2400" className="w-full h-full object-cover brightness-[0.2] group-hover:scale-105 transition-transform duration-[8s]" alt="Audit" />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
+        </div>
+        
+        <div className="max-w-7xl mx-auto text-center relative z-10 space-y-10">
+          <div className="flex justify-center">
+            <span className="px-6 py-2 rounded-full border border-orange-500/30 bg-orange-500/5 text-orange-500 font-black text-[10px] tracking-[0.5em] uppercase mb-6 inline-flex items-center gap-3 italic">
+              <div className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse shadow-[0_0_10px_rgba(249,115,22,1)]" />
+              Institutional Audit Registry HUB
+            </span>
+          </div>
+          <h1 className="text-6xl lg:text-9xl font-black text-white mb-6 tracking-tighter leading-[0.85] italic uppercase selection:bg-orange-500">
+            Absolute <br /> <span className="text-orange-500 italic">Integrity.</span>
           </h1>
-          <p className="text-lg text-slate-500 max-w-2xl mx-auto mb-12">
-            Every donation is tracked through our proof-of-progress system. 
-            From donor contribution to field deployment, witness total transparency.
+          <p className="text-xl text-slate-400 max-w-3xl mx-auto leading-relaxed italic border-t border-white/5 pt-12 mt-12 font-medium">
+            Bridging global capital with direct local humanitarian impact using a verified proof-of-progress framework. Witness the trajectory of every philanthropic asset.
           </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 pt-12">
             <MetricCard 
               icon={FiHeart} 
-              label="Total Allocated" 
-              value={`$${(metrics?.totalFundsAllocated || 0).toLocaleString()}`} 
+              label="Asset Deployment" 
+              value={`LKR ${(metrics?.totalFundsAllocated || 0).toLocaleString()}`} 
               subtext="To 12+ Active Partners"
               color="orange"
             />
             <MetricCard 
               icon={FiUsers} 
-              label="Lives Transformed" 
+              label="Human Reach" 
               value={(metrics?.totalBeneficiaries || 0).toLocaleString()} 
-              subtext="Across 5 focus areas"
+              subtext="Impacted Regions"
               color="blue"
             />
             <MetricCard 
               icon={FiCheckCircle} 
-              label="Milestones Verified" 
+              label="Field Milestones" 
               value={metrics?.milestonesCompleted || 0} 
-              subtext="Proof-of-Progress verification"
+              subtext="Proof-of-Progress Sync"
               color="green"
             />
             <MetricCard 
               icon={FiShield} 
-              label="Approved Partners" 
+              label="Verified NGOs" 
               value={metrics?.verifiedPartners || 0} 
-              subtext="100% Legitimacy Score"
+              subtext="Institutional Grade"
               color="amber"
             />
           </div>

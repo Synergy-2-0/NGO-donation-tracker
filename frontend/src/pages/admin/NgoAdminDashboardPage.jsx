@@ -1,154 +1,283 @@
-import { useEffect, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { useEffect, useMemo, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useAdminCampaign } from '../../context/AdminCampaignContext';
 import { usePartnerOperations } from '../../context/PartnerOperationsContext';
 import { useFinance } from '../../context/FinanceContext';
+import api from '../../api/axios';
 import LoadingSpinner from '../../components/LoadingSpinner';
-import { DashboardSkeleton } from '../../components/Skeleton';
 import { 
-  FiGrid, FiTarget, FiUsers, FiDollarSign, FiPlus, FiChevronRight, 
-  FiActivity, FiCheckCircle, FiClock, FiTrendingUp, FiFileText 
+  FiTarget, FiShield, FiArrowRight, FiPlus, 
+  FiActivity, FiFileText, FiTrendingUp, FiDollarSign, 
+  FiChevronRight, FiPieChart, FiGlobe, FiInfo, FiUsers
 } from 'react-icons/fi';
 import { LuScale3D } from 'react-icons/lu';
+import { motion, AnimatePresence } from 'framer-motion';
+
+function MetricCard({ label, value, icon, colorClass, sub, delay = 0 }) {
+  return (
+    <motion.div 
+      initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay }}
+      className="bg-white rounded-3xl border border-slate-100 p-8 shadow-sm hover:shadow-xl transition-all group relative overflow-hidden"
+    >
+      <div className={`absolute top-0 right-0 w-32 h-32 ${colorClass} opacity-5 rounded-full blur-3xl -mr-16 -mt-16 transition-opacity`} />
+      <div className="relative z-10 flex flex-col justify-between h-full gap-5">
+        <div className="flex items-center justify-between">
+          <div className={`w-12 h-12 rounded-2xl ${colorClass.replace('bg-', 'text-')} bg-opacity-10 flex items-center justify-center text-xl`}>
+            {icon}
+          </div>
+          <span className="text-[9px] font-black text-slate-300 uppercase tracking-widest italic leading-none group-hover:text-slate-500 transition-colors">Performance Info</span>
+        </div>
+        <div>
+          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{label}</p>
+          <h4 className="text-2xl font-black text-slate-900 tracking-tight italic tabular-nums">{value}</h4>
+          {sub && <p className="text-[9px] font-bold text-slate-400 mt-2 italic">{sub}</p>}
+        </div>
+      </div>
+    </motion.div>
+  );
+}
 
 export default function NgoAdminDashboardPage() {
+    const navigate = useNavigate();
     const { user } = useAuth();
+    const [ngoProfile, setNgoProfile] = useState(null);
     const { campaigns, loading: loadingCampaigns, fetchCampaigns } = useAdminCampaign();
     const { agreements, fetchAllAgreements } = usePartnerOperations();
-    const { stats: financeStats, fetchStats: fetchFinanceStats } = useFinance();
+    const { summary: financeSummary, transactions, fetchNgoMetrics, fetchNgoLedger } = useFinance();
 
     useEffect(() => {
-        fetchCampaigns().catch(() => {});
-        fetchAllAgreements().catch(() => {});
-        if (fetchFinanceStats) fetchFinanceStats().catch(() => {});
-    }, [fetchCampaigns, fetchAllAgreements, fetchFinanceStats]);
+        const load = async () => {
+            try {
+                await Promise.all([
+                    fetchCampaigns(),
+                    fetchAllAgreements(),
+                    fetchNgoMetrics(),
+                    fetchNgoLedger()
+                ]);
+            } catch (err) {
+                console.error("Dashboard sync error:", err);
+            }
+        };
+        load();
+    }, [fetchCampaigns, fetchAllAgreements, fetchNgoMetrics, fetchNgoLedger]);
 
     const stats = useMemo(() => {
-        const activeCampaigns = campaigns.filter(c => c.status === 'active').length;
-        const pendingAgreements = agreements.filter(a => a.status === 'pending').length;
-        const totalImpactValue = agreements.reduce((sum, a) => sum + (Number(a.totalValue) || 0), 0);
+        const activeCount = campaigns.filter(c => c.status === 'active').length;
+        const totalRaised = campaigns.reduce((sum, c) => sum + (c.raisedAmount || 0), 0);
         
         return [
-            { label: 'Active Projects', value: activeCampaigns, icon: <FiTarget />, color: 'bg-brand-red' },
-            { label: 'Pending Reviews', value: pendingAgreements, icon: <FiClock />, color: 'bg-amber-500' },
-            { label: 'Total Impact Value', value: `LKR ${(totalImpactValue / 1000000).toFixed(1)}M`, icon: <FiTrendingUp />, color: 'bg-indigo-600' },
-            { label: 'Financial Liquidity', value: financeStats?.totalBalance?.toLocaleString() || '0', icon: <FiDollarSign />, color: 'bg-emerald-500' },
+            { label: 'Active Projects', value: activeCount, icon: <FiTarget />, colorClass: 'bg-tf-primary', sub: 'Verified operational missions' },
+            { label: 'Trust Rating', value: `${financeSummary?.trustScore || 85}%`, icon: <FiShield />, colorClass: 'bg-orange-600', sub: 'Verified transparency score' },
+            { label: 'Total Raised', value: `LKR ${totalRaised.toLocaleString()}`, icon: <FiTrendingUp />, colorClass: 'bg-slate-900', sub: 'Cumulative intake' },
+            { label: 'Treasury Balance', value: `LKR ${(financeSummary?.availableFunds || 0).toLocaleString()}`, icon: <FiDollarSign />, colorClass: 'bg-emerald-500', sub: 'Allocated for projects Hub' },
         ];
-    }, [campaigns, agreements, financeStats]);
+    }, [financeSummary, campaigns]);
 
     const recentAgreements = useMemo(() => agreements.slice(0, 5), [agreements]);
     const recentCampaigns = useMemo(() => campaigns.slice(0, 4), [campaigns]);
 
-    if (loadingCampaigns && campaigns.length === 0) return <DashboardSkeleton />;
+    if (loadingCampaigns && campaigns.length === 0) return <LoadingSpinner message="Scanning NGO Information Hub..." />;
 
     return (
-        <div className="max-w-7xl mx-auto space-y-8 pb-16 animate-fadeIn text-left">
-            {/* Premium Header */}
-            <div className="relative overflow-hidden bg-slate-900 rounded-[32px] p-8 md:p-10 shadow-2xl">
-                <div className="absolute top-0 right-0 w-96 h-96 bg-brand-red/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3" />
-                <div className="absolute bottom-0 left-0 w-72 h-72 bg-brand-orange/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4" />
+        <div className="max-w-7xl mx-auto space-y-10 pb-20 font-sans animate-soft pt-6">
+            
+            {/* NGO Command Center Header */}
+            <section className="relative overflow-hidden bg-slate-900 rounded-[2.5rem] p-10 md:p-14 shadow-2xl">
+                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-tf-primary/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3" />
+                <div className="absolute bottom-0 left-0 w-80 h-80 bg-orange-600/5 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/4" />
                 
-                <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-                    <div>
-                        <p className="text-[10px] font-black uppercase tracking-[.2em] text-slate-500 mb-2">Administrative Command</p>
-                        <h2 className="text-3xl md:text-4xl font-black text-white tracking-tight">Mission <span className="text-brand-red">Control</span></h2>
-                        <p className="text-slate-400 text-sm mt-2 max-w-xl font-medium">Overseeing humanitarian impact, partner alliances, and project lifecycles across the network.</p>
+                <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-10">
+                    <div className="space-y-6 flex-1 text-left">
+                        <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/5 border border-white/10 rounded-full text-tf-primary text-[10px] font-black uppercase tracking-widest backdrop-blur-md">
+                           <FiActivity className="text-sm shrink-0" /> Organization Control Center
+                        </div>
+                        <h1 className="text-3xl md:text-5xl font-black text-white tracking-tight leading-tight italic">
+                          Welcome, <span className="text-tf-primary not-italic">{user?.name?.split(' ')[0] || 'Administrator'}</span>
+                        </h1>
+                        <p className="text-slate-400 text-lg font-medium leading-relaxed max-w-xl">
+                          Manage your active projects, partner agreements, and monitor your organization's total impact.
+                        </p>
                     </div>
-                    <div className="flex gap-3">
-                        <Link to="/admin/campaigns/create" className="px-6 py-3 bg-brand-red text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-brand-red/90 transition-all shadow-xl shadow-brand-red/20 flex items-center gap-2 active:scale-95">
-                            <FiPlus className="text-sm stroke-[3]" /> Launch New Mission
+                    
+                    <div className="flex flex-wrap gap-4 shrink-0">
+                        <Link to="/admin/campaigns/create" className="px-8 py-4 bg-tf-primary text-white text-[11px] font-black uppercase tracking-widest rounded-2xl hover:bg-orange-600 transition-all shadow-xl shadow-tf-primary/20 active:scale-95 flex items-center gap-3">
+                           <FiPlus size={20} /> Launch New Project
+                        </Link>
+                        <Link to="/finance/dashboard" className="px-8 py-4 bg-white/5 border border-white/10 text-white text-[11px] font-black uppercase tracking-widest rounded-2xl hover:bg-white/10 transition-all active:scale-95">
+                           Financial Info
                         </Link>
                     </div>
                 </div>
-            </div>
+            </section>
 
-            {/* Stats Grid */}
+            {/* Performance Metric Hub */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {stats.map((s, idx) => (
-                    <div key={idx} className="bg-white rounded-[32px] border border-slate-100 p-7 flex items-center gap-5 shadow-sm hover:shadow-md transition-shadow group">
-                        <div className={`w-14 h-14 ${s.color} text-white rounded-2xl flex items-center justify-center text-xl shadow-lg transition-transform group-hover:scale-110`}>{s.icon}</div>
-                        <div className="min-w-0">
-                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 truncate">{s.label}</p>
-                            <h4 className="text-xl font-black text-slate-900 truncate">{s.value}</h4>
-                        </div>
-                    </div>
+                    <MetricCard key={idx} label={s.label} value={s.value} icon={s.icon} colorClass={s.colorClass} sub={s.sub} delay={idx * 0.05} />
                 ))}
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                {/* Recent Mission Milestones */}
-                <div className="lg:col-span-8 space-y-6">
-                    <div className="flex items-center justify-between px-2">
-                        <div className="flex items-center gap-3">
-                            <span className="w-8 h-8 bg-slate-900 text-white rounded-xl flex items-center justify-center text-sm"><LuScale3D /></span>
-                            <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-500">Alliance Activity</h3>
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+                
+                {/* Active Agreements View */}
+                <div className="lg:col-span-8 space-y-8">
+                    {/* Financial Activity Pulse */}
+                    <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden">
+                        <div className="px-10 py-8 border-b border-slate-50 flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 bg-tf-primary/10 text-tf-primary rounded-xl flex items-center justify-center shadow-lg">
+                                    <FiActivity className="text-xl" />
+                                </div>
+                                <div>
+                                    <h3 className="text-lg font-black text-slate-900 tracking-tight">Financial Activity Pulse</h3>
+                                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Real-time contribution resonance</p>
+                                </div>
+                            </div>
+                            <Link to="/finance/transactions" className="px-6 py-2.5 bg-slate-50 text-slate-600 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-slate-900 hover:text-white transition-all shadow-sm">Audit Ledger</Link>
                         </div>
-                        <Link to="/partner/agreements" className="text-[10px] font-black uppercase tracking-widest text-brand-red hover:underline">View Registry</Link>
-                    </div>
-
-                    <div className="bg-white rounded-[40px] border border-slate-100 shadow-sm overflow-hidden">
+                        
                         <div className="divide-y divide-slate-50">
-                            {recentAgreements.length > 0 ? recentAgreements.map((a) => (
-                                <Link key={a._id} to={`/partner/agreements/${a._id}/milestones`} className="flex items-center justify-between p-6 hover:bg-slate-50 transition-colors group">
-                                    <div className="flex items-center gap-5">
-                                        <div className="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 group-hover:text-brand-red group-hover:border-brand-red/20 transition-all">
-                                            <FiFileText className="text-lg" />
+                            {transactions?.length > 0 ? transactions.slice(0, 5).map((ra) => (
+                                <div key={ra._id} className="flex items-center justify-between p-8 hover:bg-slate-50 transition-all group">
+                                    <div className="flex items-center gap-6">
+                                        <div className="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 group-hover:bg-tf-primary group-hover:text-white transition-all">
+                                            <FiDollarSign className="text-lg" />
                                         </div>
                                         <div>
-                                            <p className="text-sm font-extrabold text-slate-800 tracking-tight group-hover:text-brand-red transition-colors">{a.title || 'Institutional Partnership'}</p>
-                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1 capitalize">{a.agreementType} Support • {a.status}</p>
+                                            <p className="text-sm font-black text-slate-950 group-hover:text-tf-primary transition-colors italic leading-none mb-1">{ra.description || 'Campaign Contribution'}</p>
+                                            <div className="flex items-center gap-3">
+                                                <span className="text-[10px] font-black text-tf-primary uppercase tracking-widest italic">{ra.type === 'income' ? 'Contribution' : 'Allocation'}</span>
+                                                <span className="w-1 h-1 bg-slate-300 rounded-full" />
+                                                <span className="text-[10px] font-bold text-slate-300 uppercase tracking-widest">{new Date(ra.date).toLocaleDateString()}</span>
+                                            </div>
                                         </div>
                                     </div>
-                                    <FiChevronRight className="text-slate-300 group-hover:text-brand-red group-hover:translate-x-1 transition-all" />
+                                    <div className="text-right">
+                                        <p className="text-sm font-black text-slate-950 italic tabular-nums leading-none">{ra.type === 'income' ? '+' : '-'}LKR {ra.amount.toLocaleString()}</p>
+                                        <p className="text-[9px] font-bold text-emerald-500 uppercase tracking-widest">Verified</p>
+                                    </div>
+                                </div>
+                            )) : (
+                                <div className="p-20 text-center space-y-4">
+                                    <FiActivity className="mx-auto text-slate-100" size={60} />
+                                    <p className="text-slate-300 font-bold text-xs uppercase tracking-widest italic">Awaiting financial synchronization.</p>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden">
+                        <div className="px-10 py-8 border-b border-slate-50 flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 bg-slate-900 text-white rounded-xl flex items-center justify-center shadow-lg">
+                                    <FiUsers className="text-xl" />
+                                </div>
+                                <div>
+                                    <h3 className="text-lg font-black text-slate-900 tracking-tight">Partner Agreements Hub</h3>
+                                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Formal community partner registry</p>
+                                </div>
+                            </div>
+                            <Link to="/partner/agreements" className="px-6 py-2.5 bg-slate-50 text-slate-600 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-slate-900 hover:text-white transition-all shadow-sm">View Archive</Link>
+                        </div>
+                        
+                        <div className="divide-y divide-slate-50">
+                            {recentAgreements.length > 0 ? recentAgreements.map((a) => (
+                                <Link key={a._id} to={`/partner/agreements/${a._id}/milestones`} className="flex items-center justify-between p-8 hover:bg-slate-50 transition-all group">
+                                    <div className="flex items-center gap-6">
+                                        <div className="w-14 h-14 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 group-hover:bg-tf-primary group-hover:text-white group-hover:border-tf-primary/20 transition-all shadow-inner">
+                                            <FiFileText className="text-xl" />
+                                        </div>
+                                        <div>
+                                            <p className="text-base font-black text-slate-950 group-hover:text-tf-primary transition-colors italic leading-none mb-1">{a.title || 'Institutional Partnership'}</p>
+                                            <div className="flex items-center gap-3">
+                                                <span className="text-[10px] font-black text-tf-primary uppercase tracking-widest italic">{(a.agreementType || 'Mission').toUpperCase()}</span>
+                                                <span className="w-1 h-1 bg-slate-300 rounded-full" />
+                                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{a.status}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <FiChevronRight className="text-slate-300 group-hover:text-tf-primary group-hover:translate-x-1 transition-all" />
                                 </Link>
                             )) : (
-                                <div className="p-12 text-center text-slate-400 font-bold text-sm uppercase tracking-widest">No active alliances detected.</div>
+                                <div className="p-20 text-center space-y-4">
+                                    <FiGlobe className="mx-auto text-slate-100" size={60} />
+                                    <p className="text-slate-300 font-bold text-xs uppercase tracking-widest italic">No agreements found.</p>
+                                </div>
                             )}
                         </div>
                     </div>
                 </div>
 
-                {/* Mission Status Snapshot */}
-                <div className="lg:col-span-4 space-y-6">
-                    <div className="flex items-center justify-between px-2">
-                        <div className="flex items-center gap-3">
-                            <span className="w-8 h-8 bg-brand-red text-white rounded-xl flex items-center justify-center text-sm"><FiTarget /></span>
-                            <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-500">Project Snapshots</h3>
+                {/* Project Progress Overview */}
+                <div className="lg:col-span-4 space-y-8">
+                    <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm p-10 space-y-10 group/projects overflow-hidden relative">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-tf-primary/5 rounded-full blur-3xl -mr-16 -mt-16" />
+                        <div className="flex items-center justify-between relative z-10">
+                            <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic leading-none">Project Funding Status</h3>
+                            <FiTarget className="text-tf-primary" />
+                        </div>
+                        
+                        <div className="space-y-10 relative z-10">
+                            {recentCampaigns.length > 0 ? recentCampaigns.map((c) => (
+                                <div key={c._id} className="space-y-4 group/item">
+                                    <div className="flex justify-between items-end">
+                                        <div className="space-y-1 max-w-[70%]">
+                                           <h4 className="text-sm font-black text-slate-900 group-hover/item:text-tf-primary transition-colors leading-tight italic truncate">{c.title}</h4>
+                                           <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{c.category || 'Humanitarian'}</p>
+                                        </div>
+                                        <span className="text-lg font-black text-slate-950 italic tabular-nums group-hover/item:text-tf-primary transition-colors">{Math.round((c.raisedAmount / c.goalAmount) * 100)}%</span>
+                                    </div>
+                                    <div className="h-2 w-full bg-slate-50 border border-slate-100 rounded-full overflow-hidden shadow-inner p-0.5">
+                                        <motion.div 
+                                            initial={{ width: 0 }} whileInView={{ width: `${Math.min(100, (c.raisedAmount / c.goalAmount) * 100)}%` }} transition={{ duration: 2 }}
+                                            className="h-full bg-tf-primary rounded-full relative overflow-hidden"
+                                        >
+                                           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent translate-x-[-100%] animate-shimmer" />
+                                        </motion.div>
+                                    </div>
+                                </div>
+                            )) : (
+                                <div className="py-20 text-center space-y-4">
+                                    <FiInfo className="mx-auto text-slate-100" size={40} />
+                                    <p className="text-slate-300 font-bold text-[9px] uppercase tracking-widest italic">Awaiting project data synchronization Hub.</p>
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="pt-10 border-t border-slate-50 relative z-10">
+                           <Link to="/admin/campaign-dashboard" className="w-full py-4 bg-slate-900 hover:bg-tf-primary text-white text-[10px] font-black uppercase tracking-widest rounded-2xl flex items-center justify-center gap-3 transition-all active:scale-95 italic shadow-xl shadow-slate-900/10">
+                              Manage Projects <FiActivity className="text-sm" />
+                           </Link>
                         </div>
                     </div>
-
-                    <div className="space-y-4">
-                        {recentCampaigns.length > 0 ? recentCampaigns.map((c) => (
-                            <div key={c._id} className="bg-white rounded-[32px] border border-slate-100 p-6 space-y-4 shadow-sm group hover:-translate-y-1 transition-all">
-                                <div className="flex items-start justify-between">
-                                    <h4 className="text-sm font-black text-slate-800 line-clamp-1">{c.title}</h4>
-                                    <span className={`px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest border ${c.status === 'active' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-amber-50 text-amber-600 border-amber-100'}`}>
-                                        {c.status}
-                                    </span>
-                                </div>
-                                <div className="space-y-2">
-                                    <div className="flex items-center justify-between text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                                        <span>Funding Status</span>
-                                        <span className="text-slate-900">{Math.round((c.raisedAmount / c.goalAmount) * 100)}%</span>
-                                    </div>
-                                    <div className="h-2 bg-slate-50 rounded-full overflow-hidden border border-slate-100">
-                                        <div 
-                                            className="h-full bg-brand-red rounded-full transition-all duration-1000" 
-                                            style={{ width: `${Math.min(100, (c.raisedAmount / c.goalAmount) * 100)}%` }}
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                        )) : (
-                            <div className="bg-white rounded-[32px] border border-slate-100 p-12 text-center text-slate-400 font-bold text-xs uppercase tracking-widest shadow-sm">No missions launched.</div>
-                        )}
-                        <Link to="/admin/campaign-dashboard" className="flex items-center justify-center p-4 bg-slate-50 rounded-2xl border border-slate-100 text-[10px] font-black uppercase tracking-widest text-slate-500 hover:bg-slate-900 hover:text-white hover:border-slate-900 transition-all">
-                            Manage All Projects <FiActivity className="ml-2" />
-                        </Link>
+                    
+                    {/* Information Module */}
+                    <div className="bg-slate-950 rounded-[2.5rem] p-10 text-white relative overflow-hidden text-center lg:text-left">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-tf-primary/10 rounded-full blur-3xl -mr-16 -mt-16" />
+                        <div className="relative z-10 space-y-6">
+                           <div className="flex items-center justify-between">
+                              <h4 className="text-[10px] font-black text-tf-primary uppercase tracking-widest italic flex items-center gap-2">
+                                <FiPieChart /> Funding Allocation
+                              </h4>
+                              <div className="w-2 h-2 bg-emerald-500 rounded-full shadow-[0_0_10px_#10b981] animate-pulse" />
+                           </div>
+                           <p className="text-xs font-medium text-white/50 leading-relaxed italic">System information showing distribution of donor contributions across all active projects Hub.</p>
+                           <button className="text-[10px] font-black text-tf-primary uppercase tracking-widest hover:text-white transition-colors italic">Analyze Flow Reports →</button>
+                        </div>
                     </div>
                 </div>
             </div>
+            
+            <style>{`
+                @keyframes shimmer { 
+                    0% { transform: translateX(-100%); } 
+                    100% { transform: translateX(100%); } 
+                }
+                .animate-shimmer {
+                    animation: shimmer 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+                }
+            `}</style>
         </div>
     );
 }

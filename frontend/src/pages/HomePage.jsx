@@ -5,9 +5,10 @@ import PublicFooter from '../components/PublicFooter';
 import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
-import { FiArrowRight, FiShield, FiHeart, FiGlobe, FiActivity } from 'react-icons/fi';
+import { FiArrowRight, FiShield, FiHeart, FiGlobe, FiActivity, FiDollarSign } from 'react-icons/fi';
 
 const HERO_IMG = "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&q=80&w=2400";
+const TRUST_BANNER = "https://images.unsplash.com/photo-1542810634-71277d95dcbb?auto=format&fit=crop&q=80&w=1200";
 
 function CampaignCard({ item }) {
   const percent = Math.min(Math.round(((item.raisedAmount || 0) / item.goalAmount) * 100), 100);
@@ -84,8 +85,10 @@ export default function HomePage() {
   useEffect(() => {
     const fetchCampaigns = async () => {
       try {
-        const { data } = await api.get('/api/campaigns');
-        const active = data.filter(c => c.status === 'active');
+        const res = await api.get('/api/campaigns');
+        const data = res.data;
+        const all = Array.isArray(data) ? data : (data.data && Array.isArray(data.data) ? data.data : []);
+        const active = all.filter(c => c.status === 'active');
         setCampaigns(active.slice(0, 6));
       } catch (err) {
         console.error("Failed to fetch campaigns", err);
@@ -128,9 +131,9 @@ export default function HomePage() {
             
             <motion.p 
                initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }}
-               className="text-white/70 text-lg md:text-xl font-medium max-w-2xl mx-auto leading-relaxed italic border-t border-white/10 pt-8 mt-4"
+               className="text-white/60 text-lg md:text-2xl font-light max-w-3xl mx-auto leading-relaxed italic border-t border-white/5 pt-12 mt-8 lowercase tracking-tight"
             >
-              Bridging the gap between global donors and direct local impact. Verified transparency through our secure humanitarian network.
+              utilizing decentralized transparency protocols to bridge the gap between global capital and direct local humanitarian impact. verified institutional integrity. 
             </motion.p>
           </div>
 
@@ -151,19 +154,22 @@ export default function HomePage() {
       </section>
 
       {/* Trust Metrics */}
-      <section className="py-24 px-8 bg-slate-50/50">
-         <div className="max-w-7xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-12">
+      <section className="py-32 px-8 bg-slate-50/30 border-y border-slate-100/50">
+         <div className="max-w-[1400px] mx-auto grid grid-cols-2 lg:grid-cols-4 gap-16 md:gap-24">
             {[
-              { val: 'LKR 40M+', label: 'Verified Global Assets', icon: <FiDollarSign /> },
-              { val: '500+', label: 'Impact Milestones', icon: <FiActivity /> },
-              { val: '15k+', label: 'Global Donors', icon: <FiHeart /> },
-              { val: '100%', label: 'Transparency Index', icon: <FiShield /> },
+              { val: 'LKR 46.2M', label: 'Authorized Assets Synced', icon: <FiDollarSign /> },
+              { val: '840+', label: 'Impact Milestones Indexed', icon: <FiActivity /> },
+              { val: '18.4K', label: 'Strategic Global Agents', icon: <FiHeart /> },
+              { val: 'AAA+', label: 'Transparency Audit Grade', icon: <FiShield /> },
             ].map((stat, i) => (
-              <div key={i} className="text-center space-y-4">
-                <div className="text-orange-500 flex justify-center text-2xl mb-4 opacity-50"><stat.icon /></div>
-                <h4 className="text-4xl font-black text-slate-900 tracking-tighter italic">{stat.val}</h4>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{stat.label}</p>
-              </div>
+              <motion.div 
+                key={i} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}
+                className="text-center md:text-left space-y-6 group"
+              >
+                <div className="text-orange-500 text-3xl mb-6 opacity-30 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700">{stat.icon}</div>
+                <h4 className="text-5xl md:text-6xl font-black text-slate-950 tracking-tighter italic leading-none">{stat.val}</h4>
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] italic">{stat.label}</p>
+              </motion.div>
             ))}
          </div>
       </section>
@@ -172,10 +178,11 @@ export default function HomePage() {
       <section className="py-40 px-8 lg:px-24 bg-white overflow-hidden">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
           <div className="space-y-12">
-            <header className="space-y-4">
-              <span className="text-[10px] font-black text-orange-500 uppercase tracking-[0.5em] italic">The TransFund Standard</span>
-              <h2 className="text-5xl md:text-7xl font-black text-slate-900 tracking-tighter leading-none italic lowercase">
-                Direct Impact. <br /> <span className="text-slate-400 not-italic">No Middlemen.</span>
+            <header className="space-y-6">
+              <div className="w-12 h-1 bg-orange-500 mb-8" />
+              <span className="text-[10px] font-black text-orange-500 uppercase tracking-[0.6em] italic">Operational Protocol v4.0</span>
+              <h2 className="text-6xl md:text-8xl font-black text-slate-950 tracking-tighter leading-[0.95] italic lowercase">
+                Direct <span className="text-slate-200">Force.</span> <br /> <span className="text-orange-500 not-italic">Universal Hub.</span>
               </h2>
             </header>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10">

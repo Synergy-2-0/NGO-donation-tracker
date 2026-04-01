@@ -1,15 +1,21 @@
 import { useAuth } from '../context/AuthContext';
-import { FiLogOut, FiChevronRight } from 'react-icons/fi';
+import { FiLogOut, FiGlobe } from 'react-icons/fi';
+import { useTranslation } from 'react-i18next';
 
 export default function Navbar() {
   const { user, logout } = useAuth();
+  const { t, i18n } = useTranslation();
+
+  const changeLanguage = (lng) => {
+    i18n.changeLanguage(lng);
+  };
 
   const pageTitle = {
-    admin: 'Admin Console',
-    'ngo-admin': 'NGO Operations',
-    partner: 'Partner Portal',
-    donor: 'Donor Dashboard',
-  }[user?.role] || 'Dashboard';
+    admin: t('navbar.admin_console', { defaultValue: 'Admin Console' }),
+    'ngo-admin': t('navbar.ngo_ops', { defaultValue: 'NGO Operations' }),
+    partner: t('navbar.partner_portal', { defaultValue: 'Partner Portal' }),
+    donor: t('navbar.donor_dash', { defaultValue: 'Donor Dashboard' }),
+  }[user?.role] || t('navbar.dashboard');
 
   const roleTag = {
     admin: { label: 'System Admin', cls: 'bg-rose-50 text-rose-500 border-rose-100' },
@@ -41,7 +47,31 @@ export default function Navbar() {
           </div>
         </div>
         
-        <div className="h-8 w-[1px] bg-gray-100"></div>
+        {/* Language Switcher */}
+        <div className="flex items-center gap-2 bg-slate-50 p-1.5 rounded-2xl border border-slate-100 shadow-inner">
+          <button
+            onClick={() => changeLanguage('en')}
+            className={`px-3 py-1.5 text-[10px] font-black rounded-xl transition-all ${i18n.language === 'en' ? 'bg-white text-tf-primary shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+          >
+            ENG
+          </button>
+          <div className="w-[1px] h-3 bg-slate-200" />
+          <button
+            onClick={() => changeLanguage('si')}
+            className={`px-3 py-1.5 text-[10px] font-black rounded-xl transition-all ${i18n.language === 'si' ? 'bg-white text-tf-primary shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+          >
+            සිං
+          </button>
+          <div className="w-[1px] h-3 bg-slate-200" />
+          <button
+            onClick={() => changeLanguage('ta')}
+            className={`px-3 py-1.5 text-[10px] font-black rounded-xl transition-all ${i18n.language === 'ta' ? 'bg-white text-tf-primary shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+          >
+            தமி
+          </button>
+        </div>
+
+        <div className="h-8 w-[1px] bg-gray-100 hidden md:block"></div>
 
         <button
           onClick={logout}

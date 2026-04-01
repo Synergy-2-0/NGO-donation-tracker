@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import Transaction from "../models/transaction.model.js";
 
 export const create = async (data) => {
@@ -41,7 +42,7 @@ export const findByCampaignId = async (campaignId) => {
 };
 
 export const findByPayHereOrderId = async (orderId) => {
-    return await Transaction.findOne({ payHereOrderId: orderId });
+    return await Transaction.findOne({ orderId });
 };
 
 export const updateById = async (id, data) => {
@@ -57,8 +58,9 @@ export const archiveById = async (id) => {
 };
 
 export const getFinancialSummaryByNgo = async (ngoId) => {
+    const id = typeof ngoId === 'string' ? new mongoose.Types.ObjectId(ngoId) : ngoId;
     return await Transaction.aggregate([
-        { $match: { ngoId: ngoId, status: "completed", archived: false } },
+        { $match: { ngoId: id, status: "completed", archived: false } },
         {
             $group: {
                 _id: null,

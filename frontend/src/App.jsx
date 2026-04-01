@@ -4,6 +4,7 @@ import { DonorProvider } from './context/DonorContext';
 import { PartnerProvider } from './context/PartnerContext';
 import { FinanceProvider } from './context/FinanceContext';
 import { AdminDonorProvider } from './context/AdminDonorContext';
+import { AdminNgoProvider } from './context/AdminNgoContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import RoleProtectedRoute from './components/RoleProtectedRoute';
 import Layout from './components/Layout';
@@ -36,6 +37,10 @@ import CampaignDashboardPage from './pages/admin/CampaignDashboardPage';
 import { AdminCampaignProvider } from './context/AdminCampaignContext';
 import CreateCampaignPage from './pages/admin/campaign/CreateCampaignPage';
 import CampaignDetailPage from './pages/admin/campaign/CampaignDetailPage';
+import NgoProfilePage from './pages/NgoProfilePage';
+import SettingsPage from './pages/SettingsPage';
+import PaymentSuccessPage from './pages/PaymentSuccessPage';
+import PaymentCancelPage from './pages/PaymentCancelPage';
 
 // Public pages for visitors
 import PublicHowItWorksPage from './pages/PublicHowItWorksPage';
@@ -51,6 +56,8 @@ import PartnerOnboardingGuard from './components/PartnerOnboardingGuard';
 import PartnerOnboardingPage from './pages/PartnerOnboardingPage';
 
 import PartnerPendingApprovalPage from './pages/PartnerPendingApprovalPage';
+import NgoOnboardingPage from './pages/NgoOnboardingPage';
+import NgoOnboardingGuard from './components/NgoOnboardingGuard';
 
 function RoleBasedDashboard() {
   const { user } = useAuth();
@@ -64,7 +71,7 @@ function RoleBasedDashboard() {
 function RoleBasedProfile() {
   const { user } = useAuth();
   if (user?.role === 'partner') return <PartnerProfilePage />;
-  if (user?.role === 'ngo-admin' || user?.role === 'admin') return <Navigate to="/dashboard" replace />;
+  if (user?.role === 'ngo-admin' || user?.role === 'admin') return <NgoProfilePage />;
   return <ProfilePage />;
 }
 
@@ -104,7 +111,8 @@ export default function App() {
             <DonorProvider>
               <PartnerProvider>
                 <AdminDonorProvider>
-                  <AdminCampaignProvider>
+                  <AdminNgoProvider>
+                    <AdminCampaignProvider>
                 <Routes>
                     {/* Public Routes */}
                     <Route path="/" element={<HomePage />} />
@@ -117,6 +125,14 @@ export default function App() {
                     element={
                       <ProtectedRoute>
                         <PartnerOnboardingPage />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route 
+                    path="/onboarding/ngo" 
+                    element={
+                      <ProtectedRoute>
+                        <NgoOnboardingPage />
                       </ProtectedRoute>
                     } 
                   />
@@ -141,23 +157,28 @@ export default function App() {
                     element={
                       <ProtectedRoute>
                         <PartnerOnboardingGuard>
-                          <Layout />
+                          <NgoOnboardingGuard>
+                            <Layout />
+                          </NgoOnboardingGuard>
                         </PartnerOnboardingGuard>
                       </ProtectedRoute>
                     }
                   >
-                    <Route index element={<Navigate to="dashboard" replace />} />
                     <Route path="dashboard" element={<RoleBasedDashboard />} />
                     <Route path="profile" element={<RoleBasedProfile />} />
                     <Route path="pledges" element={<RoleBasedPledges />} />
                     <Route path="donations" element={<RoleBasedDonations />} />
+                    <Route path="settings" element={<SettingsPage />} />
                     
                     <Route path="marketplace" element={<CampaignMarketplacePage />} />
+
+                    <Route path="payment/success" element={<PaymentSuccessPage />} />
+                    <Route path="payment/cancel" element={<PaymentCancelPage />} />
 
                     <Route
                       path="partners"
                       element={
-                        <RoleProtectedRoute roles={['partner', 'admin', 'ngo-admin', 'donor']}>
+                        <RoleProtectedRoute roles={['partner', 'admin', 'ngo-admin']}>
                           <PartnersPage />
                         </RoleProtectedRoute>
                       }
@@ -165,7 +186,7 @@ export default function App() {
                     <Route
                       path="partners/verification"
                       element={
-                        <RoleProtectedRoute roles={['admin', 'ngo-admin', 'partner', 'donor']}>
+                        <RoleProtectedRoute roles={['admin', 'ngo-admin', 'partner']}>
                           <PartnerVerificationPage />
                         </RoleProtectedRoute>
                       }
@@ -173,7 +194,7 @@ export default function App() {
                     <Route
                       path="partners/:id"
                       element={
-                        <RoleProtectedRoute roles={['partner', 'admin', 'donor']}>
+                        <RoleProtectedRoute roles={['partner', 'admin']}>
                           <PartnerDetailsPage />
                         </RoleProtectedRoute>
                       }
@@ -181,7 +202,7 @@ export default function App() {
                     <Route
                       path="partners/:id/impact"
                       element={
-                        <RoleProtectedRoute roles={['partner', 'admin', 'donor']}>
+                        <RoleProtectedRoute roles={['partner', 'admin']}>
                           <PartnerImpactPage />
                         </RoleProtectedRoute>
                       }
@@ -245,7 +266,8 @@ export default function App() {
 
                   <Route path="*" element={<Navigate to="/" replace />} />
                   </Routes>
-                </AdminCampaignProvider>
+                    </AdminCampaignProvider>
+                  </AdminNgoProvider>
                 </AdminDonorProvider>
               </PartnerProvider>
             </DonorProvider>

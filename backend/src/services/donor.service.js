@@ -104,8 +104,8 @@ export const createPledge = async (donorId, pledgeData) => {
 export const getDonorPledges = async (donorId) => {
   const donor = await donorRepo.findById(donorId);
   if (!donor) throw new Error('Donor not found');
-  if (!donor.pledges || donor.pledges.length === 0) throw new Error('No pledges found for this donor');
-  return donor.pledges;
+  // No pledges is a valid state for new/inactive donors.
+  return donor.pledges || [];
 };
 
 /**

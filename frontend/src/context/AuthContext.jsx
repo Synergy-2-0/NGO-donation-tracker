@@ -22,7 +22,6 @@ export function AuthProvider({ children }) {
     setError(null);
     try {
       const { data } = await api.post('/api/users/login', { email, password });
-      // Support both { token, user } and { data: { token, user } } response shapes
       const jwt = data.token || data.data?.token;
       const userData = data.user || data.data?.user || data.data;
       if (!jwt) throw new Error('Invalid server response: missing token.');
@@ -32,10 +31,7 @@ export function AuthProvider({ children }) {
       setUser(userData);
       return userData;
     } catch (err) {
-      const message =
-        err.response?.data?.message ||
-        err.message ||
-        'Login failed. Please check your credentials.';
+      const message = err.response?.data?.message || err.message || 'Login failed.';
       setError(message);
       throw new Error(message);
     } finally {
@@ -43,24 +39,52 @@ export function AuthProvider({ children }) {
     }
   };
 
-  const register = async ({ name, email, password, role, phone, city, country, preferredCauses, bio }) => {
+  const register = async (payload) => {
     setLoading(true);
     setError(null);
     try {
-      const { data } = await api.post('/api/users/register', { name, email, password, role, phone, city, country, preferredCauses, bio });
+      const { data } = await api.post('/api/users/register', payload);
       const jwt = data.token || data.data?.token;
       const userData = data.user || data.data?.user || data.data;
-      if (!jwt) throw new Error('Registration succeeded but no token returned.');
+      if (!jwt) throw new Error('Registration failed: no token returned.');
       localStorage.setItem('token', jwt);
       localStorage.setItem('user', JSON.stringify(userData));
       setToken(jwt);
       setUser(userData);
       return userData;
     } catch (err) {
-      const message =
-        err.response?.data?.message ||
-        err.message ||
-        'Registration failed. Please try again.';
+      const message = err.response?.data?.message || err.message || 'Registration failed.';
+      setError(message);
+      throw new Error(message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateProfile = async (body) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const { data } = await api.put('/api/users/me', body);
+      localStorage.setItem('user', JSON.stringify(data));
+      setUser(data);
+      return data;
+    } catch (err) {
+      const message = err.response?.data?.message || err.message || 'Update failed.';
+      setError(message);
+      throw new Error(message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updatePassword = async (currentPassword, newPassword) => {
+    setLoading(true);
+    setError(null);
+    try {
+      await api.patch('/api/users/me/password', { currentPassword, newPassword });
+    } catch (err) {
+      const message = err.response?.data?.message || err.message || 'Password update failed.';
       setError(message);
       throw new Error(message);
     } finally {
@@ -77,7 +101,7 @@ export function AuthProvider({ children }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, token, loading, error, login, register, logout, isAuthenticated: !!token }}
+      value={{ user, token, loading, error, login, register, logout, updateProfile, updatePassword, isAuthenticated: !!token }}
     >
       {children}
     </AuthContext.Provider>

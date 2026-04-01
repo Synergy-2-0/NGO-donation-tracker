@@ -9,7 +9,7 @@ const transactionSchema = new mongoose.Schema(
         },
         ngoId: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "Partner",
+            ref: "NGO",
             required: true,
         },
         campaignId: {
@@ -36,7 +36,7 @@ const transactionSchema = new mongoose.Schema(
             type: String,
             default: "PayHere",
         },
-        payHereOrderId: {
+        orderId: {
             type: String,
             unique: true,
             sparse: true,
@@ -50,6 +50,11 @@ const transactionSchema = new mongoose.Schema(
         },
         notes: {
             type: String,
+        },
+        type: {
+            type: String,
+            enum: ["one-time", "pledge"],
+            default: "one-time",
         },
     },
     { timestamps: true }

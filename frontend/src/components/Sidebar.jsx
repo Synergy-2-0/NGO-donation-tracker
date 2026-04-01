@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { NavLink, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 import {
   FiGrid,
@@ -43,6 +44,7 @@ const partnerNav = [
     section: 'Account',
     items: [
       { to: '/profile', label: 'My Profile', icon: <FiUser /> },
+      { to: '/settings', label: 'Settings HUB', icon: <FiShield /> },
     ],
   },
 ];
@@ -74,6 +76,7 @@ const adminNav = [
       { to: '/partners', label: 'Partner List', icon: <FiMapPin /> },
       { to: '/partners/verification', label: 'Pending Access', icon: <FiShield /> },
       { to: '/partner/agreements', label: 'Managed Agreements', icon: <LuScale3D /> },
+      { to: '/settings', label: 'Security HUB', icon: <FiShield /> },
     ],
   },
 ];
@@ -99,6 +102,7 @@ const ngoAdminNav = [
       { to: '/partners', label: 'Partner List', icon: <FiUsers /> },
       { to: '/partners/verification', label: 'Pending Access', icon: <FiShield /> },
       { to: '/partner/agreements', label: 'Active Agreements', icon: <LuScale3D /> },
+      { to: '/settings', label: 'Security HUB', icon: <FiShield /> },
     ],
   },
 ];
@@ -119,15 +123,10 @@ const donorNav = [
     ],
   },
   {
-    section: 'Partners',
-    items: [
-      { to: '/partners', label: 'Partners Directory', icon: <FiUsers /> },
-    ],
-  },
-  {
     section: 'Account',
     items: [
       { to: '/profile', label: 'My Profile', icon: <FiUser /> },
+      { to: '/settings', label: 'Settings HUB', icon: <FiShield /> },
     ],
   },
 ];
@@ -139,21 +138,138 @@ function getNavByRole(role) {
   return donorNav;
 }
 
-function getRoleTag(role) {
+function getRoleTag(role, t) {
   const map = {
-    admin: { label: 'System Admin', color: 'bg-rose-50/5 text-rose-400 border-rose-500/20' },
-    'ngo-admin': { label: 'Administrator', color: 'bg-white/5 text-slate-300 border-white/10' },
-    partner: { label: 'Official Partner', color: 'bg-emerald-50/5 text-emerald-400 border-emerald-500/20' },
-    donor: { label: 'Verified Donor', color: 'bg-sky-50/5 text-sky-400 border-sky-500/20' },
+    admin: { label: t('navbar.roles.admin', { defaultValue: 'System Admin' }), color: 'bg-rose-50/5 text-rose-400 border-rose-500/20' },
+    'ngo-admin': { label: t('navbar.roles.ngo_admin', { defaultValue: 'Administrator' }), color: 'bg-white/5 text-slate-300 border-white/10' },
+    partner: { label: t('navbar.roles.partner', { defaultValue: 'Official Partner' }), color: 'bg-emerald-50/5 text-emerald-400 border-emerald-500/20' },
+    donor: { label: t('navbar.roles.donor', { defaultValue: 'Verified Donor' }), color: 'bg-sky-50/5 text-sky-400 border-sky-500/20' },
   };
   return map[role] || { label: role, color: 'bg-slate-500/5 text-slate-400 border-slate-500/20' };
 }
 
 export default function Sidebar() {
   const { user, logout } = useAuth();
+  const { t } = useTranslation();
   const role = user?.role;
+
+  const partnerNav = [
+    {
+      section: t('navbar.overview'),
+      items: [
+        { to: '/dashboard', label: t('navbar.dashboard'), icon: <FiGrid /> },
+        { to: '/finance/dashboard', label: t('navbar.finance_summary'), icon: <FiDollarSign /> },
+        { to: '/finance/transactions', label: t('navbar.recent_activity'), icon: <FiRepeat /> },
+      ],
+    },
+    {
+      section: t('navbar.partnerships'),
+      items: [
+        { to: '/partner/agreements', label: t('navbar.my_agreements'), icon: <LuScale3D /> },
+        { to: '/partners', label: t('navbar.partner_list'), icon: <FiUsers /> },
+        { to: '/marketplace', label: t('navbar.campaigns'), icon: <FiShoppingBag /> },
+      ],
+    },
+    {
+      section: t('navbar.account'),
+      items: [
+        { to: '/profile', label: t('navbar.profile'), icon: <FiUser /> },
+        { to: '/settings', label: t('navbar.settings'), icon: <FiShield /> },
+      ],
+    },
+  ];
+
+  const adminNav = [
+    {
+      section: t('navbar.overview'),
+      items: [
+        { to: '/dashboard', label: t('navbar.dashboard'), icon: <FiGrid /> },
+      ],
+    },
+    {
+      section: t('navbar.donors'),
+      items: [
+        { to: '/admin/donors', label: t('navbar.donor_list'), icon: <FiUsers /> },
+        { to: '/admin/donors/pledges', label: t('navbar.all_pledges'), icon: <FiCheckSquare /> },
+        { to: '/admin/donor-analytics', label: t('navbar.donor_data'), icon: <FiBarChart2 /> },
+      ],
+    },
+    {
+      section: t('navbar.missions'),
+      items: [
+        { to: '/admin/campaign-dashboard', label: t('navbar.mission_registry'), icon: <FiTarget /> },
+      ],
+    },
+    {
+      section: t('navbar.partners'),
+      items: [
+        { to: '/partners', label: t('navbar.partner_list'), icon: <FiMapPin /> },
+        { to: '/partners/verification', label: t('navbar.pending_access'), icon: <FiShield /> },
+        { to: '/partner/agreements', label: t('navbar.managed_agreements'), icon: <LuScale3D /> },
+        { to: '/settings', label: t('navbar.security_hub'), icon: <FiShield /> },
+      ],
+    },
+  ];
+
+  const ngoAdminNav = [
+    {
+      section: t('navbar.overview'),
+      items: [
+        { to: '/dashboard', label: t('navbar.dashboard'), icon: <FiGrid /> },
+        { to: '/finance/dashboard', label: t('navbar.finance_summary'), icon: <FiDollarSign /> },
+        { to: '/finance/transactions', label: t('navbar.recent_activity'), icon: <FiRepeat /> },
+      ],
+    },
+    {
+      section: t('navbar.campaigns'),
+      items: [
+        { to: '/admin/campaign-dashboard', label: t('navbar.manage_projects'), icon: <FiTarget /> },
+      ],
+    },
+    {
+      section: t('navbar.partners'),
+      items: [
+        { to: '/partners', label: t('navbar.partner_list'), icon: <FiUsers /> },
+        { to: '/partners/verification', label: t('navbar.pending_access'), icon: <FiShield /> },
+        { to: '/partner/agreements', label: t('navbar.active_agreements'), icon: <LuScale3D /> },
+        { to: '/settings', label: t('navbar.security_hub'), icon: <FiShield /> },
+      ],
+    },
+  ];
+
+  const donorNav = [
+    {
+      section: t('navbar.overview'),
+      items: [
+        { to: '/dashboard', label: t('navbar.dashboard'), icon: <FiGrid /> },
+      ],
+    },
+    {
+      section: t('navbar.giving'),
+      items: [
+        { to: '/marketplace', label: t('navbar.campaigns'), icon: <FiShoppingBag /> },
+        { to: '/pledges', label: t('navbar.pledges'), icon: <FiCheckSquare /> },
+        { to: '/donations', label: t('navbar.history'), icon: <FiClock /> },
+      ],
+    },
+    {
+      section: t('navbar.account'),
+      items: [
+        { to: '/profile', label: t('navbar.profile'), icon: <FiUser /> },
+        { to: '/settings', label: t('navbar.settings'), icon: <FiShield /> },
+      ],
+    },
+  ];
+
+  function getNavByRole(r) {
+    if (r === 'admin') return adminNav;
+    if (r === 'ngo-admin') return ngoAdminNav;
+    if (r === 'partner') return partnerNav;
+    return donorNav;
+  }
+
   const navSections = getNavByRole(role);
-  const roleTag = getRoleTag(role);
+  const roleTag = getRoleTag(role, t);
 
   const linkCls = ({ isActive }) =>
     `group flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 relative ${

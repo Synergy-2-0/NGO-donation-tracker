@@ -70,6 +70,8 @@ export const payHereInitSchema = Joi.object({
     address: Joi.string().optional(),
     city: Joi.string().optional(),
     country: Joi.string().optional(),
+    type: Joi.string().valid("one-time", "pledge").optional(),
+    frequency: Joi.string().allow("", null).optional(),
 });
 
 // Audit log validator

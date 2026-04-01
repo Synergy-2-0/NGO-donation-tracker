@@ -15,6 +15,10 @@ export default {
           dark: '#0F172A',   // Slate 900
           slate: '#64748B',  // Slate 500
         },
+        brand: {
+          red: '#E53E3E',    // Vibrant red for CTAs and accents
+          orange: '#FF8A00', // Primary brand orange
+        },
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(ellipse at center, var(--tw-gradient-stops))',

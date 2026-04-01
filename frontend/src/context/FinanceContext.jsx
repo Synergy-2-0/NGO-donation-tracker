@@ -81,10 +81,39 @@ export function FinanceProvider({ children }) {
     }
   };
 
+  const fetchNgoMetrics = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const { data } = await api.get('/api/ngos/finance/metrics');
+      setSummary(data);
+      return data;
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to fetch NGO metrics');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const fetchNgoLedger = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const { data } = await api.get('/api/ngos/finance/ledger');
+      setTransactions(data);
+      return data;
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to fetch NGO ledger');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   return (
     <FinanceContext.Provider value={{
       transactions, allocations, auditLogs, summary, loading, error,
-      fetchTransactions, fetchAllocations, fetchSummary, fetchAuditLogs, createAllocation
+      fetchTransactions, fetchAllocations, fetchSummary, fetchAuditLogs, createAllocation,
+      fetchNgoMetrics, fetchNgoLedger
     }}>
       {children}
     </FinanceContext.Provider>

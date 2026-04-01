@@ -1,12 +1,19 @@
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useTranslation } from 'react-i18next';
+import { FiGlobe } from 'react-icons/fi';
 
 export default function PublicNavbar() {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout } = useAuth();
+  const { t, i18n } = useTranslation();
   const [scrolled, setScrolled] = useState(false);
+
+  const changeLanguage = (lng) => {
+    i18n.changeLanguage(lng);
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -17,22 +24,22 @@ export default function PublicNavbar() {
   }, []);
 
   const navLinks = [
-    { label: 'Our Mission', href: '/about' },
-    { label: 'Causes', href: '/causes' },
-    { label: 'Transparency', href: '/transparency' },
-    { label: 'How it Works', href: '/how-it-works' },
-    { label: 'Impact', href: '/impact' },
-    { label: 'Partners', href: '/partners/list' }
+    { label: t('public_navbar.mission'), href: '/about' },
+    { label: t('public_navbar.causes'), href: '/causes' },
+    { label: t('public_navbar.transparency'), href: '/transparency' },
+    { label: t('public_navbar.how_it_works'), href: '/how-it-works' },
+    { label: t('public_navbar.impact_hub'), href: '/impact' },
+    { label: t('public_navbar.partner_list'), href: '/partners/list' }
   ];
 
   const isHomePage = location.pathname === '/';
   const logoSrc = (scrolled || !isHomePage) ? '/heart-logo d.png' : '/heart-logo c.png';
 
   const getDashboardLabel = () => {
-    if (!user) return 'Login';
-    if (user.role === 'admin') return 'Admin Portal';
-    if (user.role === 'ngo-admin') return 'NGO Dashboard';
-    return 'Donor Dashboard';
+    if (!user) return t('public_navbar.login');
+    if (user.role === 'admin') return t('public_navbar.admin_portal');
+    if (user.role === 'ngo-admin') return t('public_navbar.ngo_dashboard');
+    return t('public_navbar.donor_dashboard');
   };
 
   return (
@@ -70,6 +77,27 @@ export default function PublicNavbar() {
 
       {/* Strategic Entry Points */}
       <div className="flex-1 flex items-center justify-end gap-6">
+        {/* Language Switcher */}
+        <div className={`flex items-center gap-1.5 p-1 rounded-full border transition-all ${
+          scrolled || !isHomePage ? 'bg-slate-50 border-slate-100' : 'bg-white/10 border-white/10'
+        }`}>
+          {['en', 'si', 'ta'].map((lng) => (
+            <button
+              key={lng}
+              onClick={() => changeLanguage(lng)}
+              className={`px-3 py-1.5 text-[9px] font-black uppercase rounded-full transition-all ${
+                i18n.language === lng 
+                  ? 'bg-tf-primary text-white shadow-lg shadow-tf-primary/20' 
+                  : (scrolled || !isHomePage ? 'text-slate-400 hover:text-slate-600' : 'text-white/40 hover:text-white')
+              }`}
+            >
+              {lng === 'en' ? 'EN' : lng === 'si' ? 'සිං' : 'தமி'}
+            </button>
+          ))}
+        </div>
+
+        <div className={`h-6 w-[1px] ${scrolled || !isHomePage ? 'bg-slate-100' : 'bg-white/10'}`} />
+
         {user ? (
           <div className="flex items-center gap-6">
              <button
@@ -78,7 +106,7 @@ export default function PublicNavbar() {
                  scrolled || !isHomePage ? 'text-slate-300' : 'text-white/30'
                }`}
              >
-               Discard
+               {t('public_navbar.discard')}
              </button>
              <button
                onClick={() => navigate('/dashboard')}
@@ -95,13 +123,13 @@ export default function PublicNavbar() {
                 scrolled || !isHomePage ? 'text-slate-950' : 'text-white'
               }`}
             >
-              Sign In
+              {t('public_navbar.sign_in')}
             </button>
             <button
               onClick={() => navigate('/login?tab=signup')}
               className="px-8 py-3.5 bg-tf-primary hover:bg-slate-950 text-white text-[10px] font-black uppercase tracking-[0.3em] rounded-full transition-all shadow-xl shadow-tf-primary/20 active:scale-95 italic whitespace-nowrap"
             >
-              Get Started
+              {t('public_navbar.get_started')}
             </button>
           </div>
         )}

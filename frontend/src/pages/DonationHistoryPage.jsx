@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useDonor } from '../context/DonorContext';
+import { Link, useNavigate } from 'react-router-dom';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ErrorAlert from '../components/ErrorAlert';
 import { motion, AnimatePresence } from 'framer-motion';
+import { FiTrendingUp } from 'react-icons/fi';
 
 const statusBadgeStyle = {
   completed: 'bg-tf-accent/10 text-tf-accent border-tf-accent/20 shadow-[0_0_10px_rgba(16,185,129,0.15)]',
@@ -26,14 +28,20 @@ const itemVariants = {
 
 export default function DonationHistoryPage() {
   const { user } = useAuth();
-  const { donorProfile, transactions, loading, error, fetchProfile, fetchTransactions } = useDonor();
+  const navigate = useNavigate();
+  const { donorProfile, transactions, pledges, loading, error, fetchProfile, fetchTransactions, fetchPledges } = useDonor();
   const [initialFetchDone, setInitialFetchDone] = useState(false);
 
   useEffect(() => {
     const load = async () => {
       try {
         const profile = donorProfile || (await fetchProfile());
-        if (profile?._id) await fetchTransactions(profile._id);
+        const donorId = profile?._id;
+        const userId = profile?.userId?._id || profile?.userId;
+        if (donorId && userId) {
+          fetchTransactions(userId);
+          fetchPledges(donorId);
+        }
       } catch {
         // quiet
       } finally {
@@ -74,7 +82,7 @@ export default function DonationHistoryPage() {
            <div className="bg-white/5 backdrop-blur-3xl border border-white/10 rounded-[2.5rem] p-10 flex flex-col gap-2 min-w-[300px] group hover:bg-white/10 transition-colors duration-500 shadow-2xl relative overflow-hidden">
               <div className="absolute top-0 right-0 w-24 h-24 bg-white/5 blur-[40px] -mr-12 -mt-12" />
               <p className="text-[10px] font-black text-white/30 uppercase tracking-[0.4em] leading-none italic z-10">Total Impact Made</p>
-              <h4 className="text-3xl font-bold text-white tracking-tight tabular-nums z-10 leading-none">LKR {totalImpact.toLocaleString()}</h4>
+              <h4 className="text-3xl font-bold text-white tracking-tight tabular-nums z-10 leading-none">LKR {Number(transactions.reduce((sum, tx) => tx.status === 'completed' ? sum + Number(tx.amount) : sum, 0)).toLocaleString()}</h4>
               <div className="w-full h-2 bg-white/5 rounded-full mt-6 overflow-hidden relative z-10">
                  <motion.div 
                     initial={{ width: 0 }} 
@@ -113,63 +121,115 @@ export default function DonationHistoryPage() {
            </div>
            <div className="space-y-4">
               <h4 className="text-3xl font-black text-slate-900 tracking-tight italic leading-none">No History Found</h4>
-              <p className="text-[11px] text-slate-500 font-black uppercase tracking-[0.5em] italic leading-relaxed">Historical logging currently offline. You haven't made any donations yet.</p>
+              <p className="text-[11px] text-slate-500 font-black uppercase tracking-[0.5em] italic leading-relaxed">It looks like you haven't made any transactions yet. Your impact will be recorded here.</p>
            </div>
         </motion.div>
       ) : (
-        <motion.div 
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-          className="grid grid-cols-1 gap-6"
-        >
-          {transactions.map((tx) => (
-            <motion.div 
-              key={tx._id}
-              variants={itemVariants}
-              className="bg-white rounded-[2.5rem] p-10 border border-slate-100 shadow-sm hover:shadow-3xl transition-all duration-700 group flex flex-col md:flex-row md:items-center justify-between gap-10 overflow-hidden relative"
-            >
-              <div className="absolute top-0 right-0 w-32 h-32 bg-slate-50 blur-[50px] -mr-16 -mt-16 group-hover:bg-tf-primary/5 transition-colors" />
-              
-              <div className="flex items-center gap-10 relative z-10">
-                 <div className="w-20 h-20 bg-slate-50 rounded-[2rem] flex flex-col items-center justify-center shrink-0 border border-slate-100 shadow-inner group-hover:scale-110 transition-transform duration-700 font-black">
-                    <span className="text-[10px] text-tf-primary uppercase leading-none tracking-widest">{new Date(tx.createdAt).toLocaleDateString(undefined, {month: 'short'})}</span>
-                    <span className="text-2xl text-slate-950 leading-none mt-1 italic">{new Date(tx.createdAt).getDate()}</span>
-                 </div>
-                 <div className="space-y-3">
-                    <div className="flex items-center gap-4">
-                       <span className={`px-5 py-2 rounded-2xl text-[9px] font-black uppercase tracking-[0.2em] border shadow-sm transition-all group-hover:scale-105 ${statusBadgeStyle[tx.status] || 'bg-slate-50 text-slate-400'}`}>
-                          {tx.status || 'Verified'}
-                       </span>
-                       <p className="text-[10px] font-black text-slate-300 font-mono tracking-[0.2em] uppercase italic">Reference ID {tx._id.slice(-8).toUpperCase()}</p>
-                    </div>
-                    <h4 className="text-2xl font-bold text-slate-900 tracking-tight leading-none tabular-nums">LKR {Number(tx.amount).toLocaleString()}</h4>
-                 </div>
-              </div>
+        <div className="space-y-12">
+          {/* Active Commitments (Pledges) */}
+          {pledges.length > 0 && (
+            <section className="space-y-8">
+               <div className="flex items-center gap-4 px-6">
+                  <div className="h-px flex-1 bg-slate-100" />
+                  <h3 className="text-[10px] font-black text-slate-300 uppercase tracking-[0.5em] italic">Active Strategic Commitments</h3>
+                  <div className="h-px flex-1 bg-slate-100" />
+               </div>
 
-              <div className="flex flex-wrap items-center gap-16 relative z-10">
-                 <div className="space-y-2">
-                    <p className="text-[9px] font-black text-slate-300 uppercase tracking-[0.4em] leading-none italic mb-1">Payment Method</p>
-                    <p className="text-base font-black text-slate-700 italic capitalize leading-none tracking-tight">{tx.paymentMethod}</p>
-                 </div>
-                 <div className="space-y-2">
-                    <p className="text-[9px] font-black text-slate-300 uppercase tracking-[0.4em] leading-none italic mb-1">Project Supported</p>
-                    <p className="text-base font-black text-slate-900 italic leading-none tracking-tight">{tx.campaignId?.title || 'General Fund'}</p>
-                 </div>
-              </div>
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {pledges.map((p) => (
+                    <motion.div 
+                      key={p._id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+                      className="bg-slate-50/50 rounded-[2.5rem] p-10 border border-slate-100 shadow-sm relative overflow-hidden group hover:bg-white hover:shadow-xl transition-all duration-700"
+                    >
+                       <div className="absolute top-0 right-0 w-32 h-32 bg-tf-primary/5 blur-[50px] -mr-16 -mt-16" />
+                       <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+                          <div className="space-y-4">
+                             <div className="flex items-center gap-3">
+                                <span className="px-5 py-1.5 bg-tf-primary/10 text-tf-primary border border-tf-primary/20 rounded-xl text-[9px] font-black uppercase tracking-widest leading-none">{p.frequency} Strategy</span>
+                                <p className="text-[9px] font-black text-slate-300 font-mono tracking-widest uppercase">NODE#{p._id.slice(-6).toUpperCase()}</p>
+                             </div>
+                             <h4 className="text-2xl font-black text-slate-900 tracking-tight italic">LKR {Number(p.amount).toLocaleString()}</h4>
+                          </div>
+                          <div className="flex items-center gap-6">
+                             <div className="text-right">
+                                <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest leading-none mb-1">Status</p>
+                                <p className="text-sm font-black text-tf-accent italic uppercase leading-none">Active</p>
+                             </div>
+                             <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-slate-200 border border-slate-100 group-hover:text-tf-primary group-hover:scale-110 transition-all duration-500">
+                                <FiTrendingUp size={20} />
+                             </div>
+                          </div>
+                       </div>
+                    </motion.div>
+                  ))}
+               </div>
+            </section>
+          )}
 
-              <div className="pt-8 md:pt-0 relative z-10 border-t md:border-t-0 border-slate-50 flex items-center justify-between md:justify-end gap-10">
-                 <button className="flex items-center gap-3 text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] hover:text-tf-primary transition-all italic">
-                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-                    Receipt
-                 </button>
-                 <button className="p-5 bg-slate-50 hover:bg-slate-100 rounded-[1.5rem] text-slate-400 hover:text-slate-900 transition-all active:scale-90 border border-slate-100/50">
-                    <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                 </button>
-              </div>
-            </motion.div>
-          ))}
-        </motion.div>
+          {/* Historical Impact Registry (Transactions) */}
+          <section className="space-y-8">
+            <div className="flex items-center gap-4 px-6">
+               <div className="h-px flex-1 bg-slate-100" />
+               <h3 className="text-[10px] font-black text-slate-300 uppercase tracking-[0.5em] italic">Historical Impact Registry</h3>
+               <div className="h-px flex-1 bg-slate-100" />
+            </div>
+
+            <div className="grid grid-cols-1 gap-6">
+              {transactions.map((tx) => (
+                <motion.div 
+                  key={tx._id}
+                  variants={itemVariants}
+                  className="bg-white rounded-[2.5rem] p-10 border border-slate-100 shadow-sm hover:shadow-3xl transition-all duration-700 group flex flex-col md:flex-row md:items-center justify-between gap-10 overflow-hidden relative"
+                >
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-slate-50 blur-[50px] -mr-16 -mt-16 group-hover:bg-tf-primary/5 transition-colors" />
+                  
+                  <div className="flex items-center gap-10 relative z-10">
+                     <div className="w-20 h-20 bg-slate-50 rounded-[2rem] flex flex-col items-center justify-center shrink-0 border border-slate-100 shadow-inner group-hover:scale-110 transition-transform duration-700 font-black">
+                        <span className="text-[10px] text-tf-primary uppercase leading-none tracking-widest">{new Date(tx.createdAt).toLocaleDateString(undefined, {month: 'short'})}</span>
+                        <span className="text-2xl text-slate-950 leading-none mt-1 italic">{new Date(tx.createdAt).getDate()}</span>
+                     </div>
+                     <div className="space-y-3">
+                        <div className="flex items-center gap-4">
+                           <span className={`px-5 py-2 rounded-2xl text-[9px] font-black uppercase tracking-[0.2em] border shadow-sm transition-all group-hover:scale-105 ${statusBadgeStyle[tx.status] || 'bg-slate-50 text-slate-400'}`}>
+                              {tx.status || 'Verified'}
+                           </span>
+                           <p className="text-[10px] font-black text-slate-300 font-mono tracking-[0.2em] uppercase italic">Reference ID {tx._id.slice(-8).toUpperCase()}</p>
+                        </div>
+                        <h4 className="text-2xl font-bold text-slate-900 tracking-tight leading-none tabular-nums">LKR {Number(tx.amount).toLocaleString()}</h4>
+                     </div>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-16 relative z-10">
+                     <div className="space-y-2">
+                        <p className="text-[9px] font-black text-slate-300 uppercase tracking-[0.4em] leading-none italic mb-1">Payment Method</p>
+                        <p className="text-base font-black text-slate-700 italic capitalize leading-none tracking-tight">{tx.paymentMethod}</p>
+                     </div>
+                     <div className="space-y-2">
+                        <p className="text-[9px] font-black text-slate-300 uppercase tracking-[0.4em] leading-none italic mb-1">Project Supported</p>
+                        <p className="text-base font-black text-slate-900 italic leading-none tracking-tight">{tx.campaignId?.title || 'General Fund'}</p>
+                     </div>
+                  </div>
+
+                  <div className="pt-8 md:pt-0 relative z-10 border-t md:border-t-0 border-slate-50 flex items-center justify-between md:justify-end gap-10">
+                     <Link 
+                        to={`/payment/success?transaction_id=${tx._id}`}
+                        className="flex items-center gap-3 text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] hover:text-tf-primary transition-all italic"
+                     >
+                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                        Receipt
+                     </Link>
+                     <Link 
+                        to={tx.campaignId?._id ? `/causes/${tx.campaignId._id}` : '/marketplace'}
+                        className="p-5 bg-slate-50 hover:bg-slate-100 rounded-[1.5rem] text-slate-400 hover:text-slate-900 transition-all active:scale-90 border border-slate-100/50"
+                     >
+                        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                     </Link>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </section>
+        </div>
       )}
     </div>
   );

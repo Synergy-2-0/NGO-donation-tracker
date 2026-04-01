@@ -15,23 +15,44 @@ export default function AboutPage() {
     <div className="min-h-screen bg-white font-sans selection:bg-tf-primary selection:text-white pb-0 overflow-x-hidden">
       <PublicNavbar />
 
-      {/* Hero Section */}
-      <section className="pt-48 pb-32 px-8 lg:px-24 bg-tf-secondary bg-gradient-to-b from-slate-50 to-white">
-        <div className="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
-          <div className="space-y-10">
-            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
-              <p className="text-[12px] font-bold text-tf-primary uppercase tracking-[0.6em] mb-4">Our Heritage & Mission</p>
-              <h1 className="text-5xl md:text-7xl font-display font-bold text-tf-dark tracking-tight leading-[1.05]">
-                Architecting <br /> <span className="text-tf-primary italic underline underline-offset-8 decoration-tf-primary/20">Global Goodwill.</span>
+      <section className="pt-64 pb-32 px-8 lg:px-24 bg-slate-950 relative overflow-hidden group">
+        <div className="absolute inset-0 z-0">
+          <img src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&q=80&w=2400" className="w-full h-full object-cover brightness-[0.2] group-hover:scale-105 transition-transform duration-[10s]" alt="Heritage" />
+          <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent" />
+        </div>
+
+        <div className="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-24 items-center relative z-10">
+          <div className="space-y-12">
+            <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} className="space-y-10">
+              <div className="flex items-center gap-4">
+                 <div className="w-12 h-0.5 bg-tf-primary" />
+                 <p className="text-[10px] font-black text-white/30 uppercase tracking-[0.8em] italic leading-none">Institutional Protocol v1.0</p>
+              </div>
+              <h1 className="text-6xl md:text-9xl font-black text-white tracking-tighter leading-[0.8] italic uppercase">
+                Global <br /> <span className="text-tf-primary italic underline underline-offset-8 decoration-white/10">Architecture.</span>
               </h1>
             </motion.div>
-            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} className="text-xl text-slate-500 font-serif font-medium leading-relaxed max-w-xl italic">
-              Founded on the principles of radical transparency and direct impact, TransFund is a movement to redefine how humanity supports humanity.
+            <motion.p 
+               initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} 
+               className="text-xl text-white/40 font-medium leading-relaxed max-w-xl italic border-t border-white/5 pt-12 mt-12 lowercase tracking-tight"
+            >
+              founded on the principles of absolute decentralized transparency and direct humanitarian impact, transfund represents a global shift toward audited benevolence.
             </motion.p>
           </div>
-          <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className="relative">
-            <div className="absolute inset-0 bg-tf-primary/10 blur-[120px] rounded-full -z-10" />
-            <img src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&q=80&w=1200" className="rounded-[4rem] shadow-4xl grayscale-[30%] hover:grayscale-0 transition-all duration-[2s]" alt="About" />
+          
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.5 }}
+            className="hidden lg:block relative"
+          >
+             <div className="absolute inset-0 bg-tf-primary/20 blur-[150px] rounded-full -z-10" />
+             <div className="p-2 border border-white/10 rounded-[4.5rem]">
+                <div className="bg-slate-900/40 backdrop-blur-2xl p-12 rounded-[4rem] space-y-6">
+                   <p className="text-[10px] font-black text-tf-primary uppercase tracking-[0.4em] italic mb-4">Core Operating Vision_</p>
+                   <p className="text-2xl font-black text-white tracking-tighter italic lowercase leading-tight">
+                      to synchronize the world's capital with its greatest challenges through verified institutional integrity.
+                   </p>
+                </div>
+             </div>
           </motion.div>
         </div>
       </section>

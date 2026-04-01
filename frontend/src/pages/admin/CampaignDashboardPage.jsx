@@ -78,10 +78,10 @@ export default function CampaignDashboardPage() {
         const totalRaised = campaigns.reduce((sum, c) => sum + (c.raisedAmount || 0), 0);
 
         return [
-            { label: 'Network Missions', value: total, icon: <FiTarget />, color: 'bg-brand-red' },
-            { label: 'Active Status', value: live, icon: <FiActivity />, color: 'bg-emerald-500' },
-            { label: 'Pending Drafts', value: drafts, icon: <FiEdit3 />, color: 'bg-amber-500' },
-            { label: 'Cumulative Impact', value: `LKR ${(totalRaised / 1000).toFixed(0)}K`, icon: <FiPieChart />, color: 'bg-indigo-600' },
+            { label: 'Network Missions', value: total, icon: <FiTarget className="text-xl" />, color: 'bg-tf-primary' },
+            { label: 'Active Status', value: live, icon: <FiActivity className="text-xl" />, color: 'bg-emerald-500' },
+            { label: 'Pending Drafts', value: drafts, icon: <FiEdit3 className="text-xl" />, color: 'bg-amber-500' },
+            { label: 'Cumulative Impact', value: `LKR ${(totalRaised / 1000).toFixed(0)}K`, icon: <FiPieChart className="text-xl" />, color: 'bg-indigo-600' },
         ];
     }, [campaigns]);
 
@@ -169,7 +169,7 @@ export default function CampaignDashboardPage() {
                                 <tr key={c._id} className="group hover:bg-slate-50/50 transition-all duration-200">
                                     <td className="px-8 py-6">
                                         <div className="flex items-center gap-5">
-                                            <div className="w-12 h-12 rounded-2xl bg-white border border-slate-100 flex items-center justify-center text-slate-200 group-hover:text-brand-red group-hover:border-brand-red/20 transition-all shadow-sm shrink-0">
+                                            <div className="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 group-hover:text-tf-primary group-hover:border-tf-primary/20 group-hover:bg-orange-50 transition-all shadow-sm shrink-0">
                                                 <FiTarget className="text-xl" />
                                             </div>
                                             <div className="min-w-0">
@@ -217,7 +217,7 @@ export default function CampaignDashboardPage() {
                             )) : (
                                 <tr>
                                     <td colSpan="4" className="px-8 py-20 text-center">
-                                        <div className="w-20 h-20 bg-slate-50 rounded-[28px] flex items-center justify-center mx-auto mb-4 border border-slate-100 text-slate-200">
+                                        <div className="w-20 h-20 bg-slate-50 rounded-[28px] flex items-center justify-center mx-auto mb-4 border border-slate-100 text-slate-400">
                                             <FiTarget className="text-3xl" />
                                         </div>
                                         <p className="text-slate-400 font-black text-sm uppercase tracking-widest">No matching missions identified.</p>

@@ -26,7 +26,7 @@ const pledgeSchema = new mongoose.Schema({
   status: {
     type: String,
     enum: ['pending', 'active', 'fulfilled', 'cancelled'],
-    default: 'pending'
+    default: 'active'
   },
   startDate: { type: Date, default: Date.now },
   endDate: Date,

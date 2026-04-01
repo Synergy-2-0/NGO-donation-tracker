@@ -1,55 +1,141 @@
-import SibApiV3Sdk from 'sib-api-v3-sdk';
+import nodemailer from 'nodemailer';
+import dotenv from 'dotenv';
+dotenv.config();
 
-const defaultClient = SibApiV3Sdk.ApiClient.instance;
-const apiKey = defaultClient.authentications['api-key'];
-apiKey.apiKey = process.env.BREVO_API_KEY;
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+});
 
-class EmailService {
-  async sendPartnerApproval(partner, email) {
-    if (!process.env.BREVO_API_KEY) {
-      console.log('[EMAIL MOCK] Partner approval sent to', email);
-      return;
-    }
+export const sendPaymentConfirmation = async (userEmail, transaction) => {
+  const mailOptions = {
+    from: process.env.EMAIL_FROM,
+    to: userEmail,
+    subject: 'Impact Deployment Confirmed - TransFund',
+    html: `
+      <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #f1f5f9; border-radius: 24px; overflow: hidden; background: #fff;">
+        <div style="background: #0f172a; padding: 40px; text-align: center;">
+          <h1 style="color: #ff8a00; margin: 0; font-size: 24px; letter-spacing: 2px; text-transform: uppercase;">Payment Confirmed</h1>
+          <p style="color: #64748b; margin-top: 10px; font-size: 12px; text-transform: uppercase; letter-spacing: 1px;">Verified Humanitarian Capital Deployment</p>
+        </div>
+        <div style="padding: 40px;">
+          <p style="font-size: 16px; color: #1e293b; line-height: 1.6;">Hello,</p>
+          <p style="font-size: 16px; color: #475569; line-height: 1.6;">Your contribution of <strong>LKR ${transaction.amount.toLocaleString()}</strong> has been successfully processed and verified. Every asset you deploy is tracked through our transparency engine.</p>
+          
+          <div style="background: #f8fafc; padding: 24px; border-radius: 16px; margin: 30px 0;">
+            <p style="margin: 0; font-size: 10px; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px;">Transaction Reference</p>
+            <p style="margin: 5px 0 0 0; font-family: monospace; font-size: 14px; color: #0f172a;">${transaction._id}</p>
+            
+            <p style="margin: 20px 0 0 0; font-size: 10px; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px;">Project Supported</p>
+            <p style="margin: 5px 0 0 0; font-size: 14px; color: #0f172a; font-weight: bold;">${transaction.campaignId?.title || 'General Humanitarian Fund'}</p>
+          </div>
+          
+          <p style="font-size: 14px; color: #64748b; font-style: italic;">Thank you for your commitment to sustainable impact.</p>
+          <hr style="border: 0; border-top: 1px solid #f1f5f9; margin: 30px 0;" />
+          <p style="font-size: 10px; color: #cbd5e1; text-align: center; text-transform: uppercase; letter-spacing: 1px;">TransFund &copy; ${new Date().getFullYear()} - Institutional Grade Philanthropy</p>
+        </div>
+      </div>
+    `,
+  };
 
-    try {
-      const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
-      const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
-
-      sendSmtpEmail.subject = 'Partnership Approved - Welcome!';
-      sendSmtpEmail.htmlContent = `
-        <h1>Congratulations, ${partner.organizationName}!</h1>
-        <p>Your partnership application has been approved.</p>
-        <p>You can now create agreements and start collaborating.</p>
-      `;
-      sendSmtpEmail.sender = { name: 'NGO Tracker', email: 'luqmanbooso@gmail.com' };
-      sendSmtpEmail.to = [{ email: email }];
-
-      await apiInstance.sendTransacEmail(sendSmtpEmail);
-      console.log('[EMAIL] Partner approval sent to', email);
-    } catch (error) {
-      console.error('Email error:', error.message);
-    }
+  try {
+    const info = await transporter.sendMail(mailOptions);
+    console.log('Payment confirmation email sent:', info.messageId);
+    return info;
+  } catch (error) {
+    console.error('Email Error:', error);
   }
+};
 
-  async sendWelcomeEmail(user) {
-    console.log(`[EMAIL MOCK] Welcome email sent to ${user.email}`);
+export const sendPledgeReminder = async (userEmail, pledge, nextDate) => {
+  const mailOptions = {
+    from: process.env.EMAIL_FROM,
+    to: userEmail,
+    subject: 'Upcoming Strategy Cycle Reminder - TransFund',
+    html: `
+      <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #f1f5f9; border-radius: 24px; overflow: hidden; background: #fff;">
+        <div style="background: #0f172a; padding: 40px; text-align: center;">
+          <h1 style="color: #ff8a00; margin: 0; font-size: 24px; letter-spacing: 2px; text-transform: uppercase;">Pledge Reminder</h1>
+          <p style="color: #64748b; margin-top: 10px; font-size: 12px; text-transform: uppercase; letter-spacing: 1px;">Strategic Mission Cycle: 1 Day Notice</p>
+        </div>
+        <div style="padding: 40px;">
+          <p style="font-size: 16px; color: #1e293b; line-height: 1.6;">Hello,</p>
+          <p style="font-size: 16px; color: #475569; line-height: 1.6;">This is a courtesy notice that your scheduled contribution for <strong>${pledge.campaign?.title || 'a Strategic Mission'}</strong> is due tomorrow.</p>
+          
+          <div style="background: #f8fafc; padding: 24px; border-radius: 16px; margin: 30px 0;">
+            <p style="margin: 0; font-size: 10px; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px;">Scheduled Amount</p>
+            <p style="margin: 5px 0 0 0; font-size: 18px; color: #0f172a; font-weight: bold;">LKR ${pledge.amount.toLocaleString()}</p>
+            
+            <p style="margin: 20px 0 0 0; font-size: 10px; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px;">Mission Cycle Date</p>
+            <p style="margin: 5px 0 0 0; font-size: 14px; color: #0f172a;">${nextDate.toLocaleDateString()}</p>
+          </div>
+          
+          <p style="font-size: 14px; color: #64748b; font-style: italic;">Your consistent support ensures high-reliability operations for these vital missions.</p>
+          <div style="text-align: center; margin-top: 40px;">
+            <a href="${process.env.FRONTEND_URL || 'http://localhost:5173'}/pledges" style="background: #0f172a; color: #fff; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-size: 12px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">Manage Support Plan</a>
+          </div>
+          <hr style="border: 0; border-top: 1px solid #f1f5f9; margin: 30px 0;" />
+          <p style="font-size: 10px; color: #cbd5e1; text-align: center; text-transform: uppercase; letter-spacing: 1px;">TransFund &copy; ${new Date().getFullYear()} - Impact Orchestration Engine</p>
+        </div>
+      </div>
+    `,
+  };
+
+  try {
+    const info = await transporter.sendMail(mailOptions);
+    console.log('Pledge reminder email sent:', info.messageId);
+    return info;
+  } catch (error) {
+    console.error('Email Error:', error);
   }
+};
 
-  async sendDonationReceipt(donorEmail, transaction) {
-    console.log(`[EMAIL MOCK] Donation receipt for $${transaction.amount} sent to ${donorEmail}`);
+export const sendPartnerApproval = async (partner, userEmail) => {
+  const mailOptions = {
+    from: process.env.EMAIL_FROM,
+    to: userEmail,
+    subject: 'Institutional Partnership Verified - TransFund',
+    html: `
+      <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #f1f5f9; border-radius: 24px; overflow: hidden; background: #fff;">
+        <div style="background: #0f172a; padding: 40px; text-align: center;">
+          <h1 style="color: #ff8a00; margin: 0; font-size: 24px; letter-spacing: 2px; text-transform: uppercase;">Partnership Approved</h1>
+          <p style="color: #64748b; margin-top: 10px; font-size: 12px; text-transform: uppercase; letter-spacing: 1px;">Official Humanitarian Partner Access Authorized</p>
+        </div>
+        <div style="padding: 40px;">
+          <p style="font-size: 16px; color: #1e293b; line-height: 1.6;">Hello,</p>
+          <p style="font-size: 16px; color: #475569; line-height: 1.6;">We are pleased to inform you that your institutional partnership with TransFund has been verified. You now have full access to our project management and capital distribution framework.</p>
+          
+          <div style="background: #f8fafc; padding: 24px; border-radius: 16px; margin: 30px 0;">
+            <p style="margin: 0; font-size: 10px; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px;">Organization</p>
+            <p style="margin: 5px 0 0 0; font-size: 18px; color: #0f172a; font-weight: bold;">${partner.organizationName}</p>
+          </div>
+          
+          <p style="font-size: 14px; color: #64748b; font-style: italic;">We look forward to collaborating on high-impact humanitarian missions.</p>
+          <div style="text-align: center; margin-top: 40px;">
+            <a href="${process.env.FRONTEND_URL || 'http://localhost:5173'}/dashboard" style="background: #0f172a; color: #fff; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-size: 12px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">Access Dashboard</a>
+          </div>
+          <hr style="border: 0; border-top: 1px solid #f1f5f9; margin: 30px 0;" />
+          <p style="font-size: 10px; color: #cbd5e1; text-align: center; text-transform: uppercase; letter-spacing: 1px;">TransFund &copy; ${new Date().getFullYear()} - Institutional Philanthropy</p>
+        </div>
+      </div>
+    `,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log('Partner approval email sent to:', userEmail);
+  } catch (error) {
+    console.error('Email Error:', error);
   }
+};
 
-  async sendMilestoneNotification(email, milestone) {
-    console.log(`[EMAIL MOCK] Milestone '${milestone.title}' completed notification sent to ${email}`);
-  }
+const emailService = {
+  sendPaymentConfirmation,
+  sendPledgeReminder,
+  sendPartnerApproval
+};
 
-  async sendPledgeReminder(email, pledge) {
-    console.log(`[EMAIL MOCK] Pledge reminder for $${pledge.amount} sent to ${email}`);
-  }
-
-  async sendCampaignUpdate(email, campaign, message) {
-    console.log(`[EMAIL MOCK] Campaign update for '${campaign.title}' sent to ${email}: ${message}`);
-  }
-}
-
-export default new EmailService();
+export default emailService;

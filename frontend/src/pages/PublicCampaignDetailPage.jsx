@@ -6,10 +6,17 @@ import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import LoadingSpinner from '../components/LoadingSpinner';
+import { 
+  FiHeart, FiMapPin, FiShield, FiArrowRight, FiCheckCircle, FiInfo, FiClock, 
+  FiActivity, FiGlobe, FiTarget, FiDollarSign, FiUsers, FiMail, FiTrendingUp, 
+  FiX, FiCalendar, FiRepeat, FiZap, FiAward, FiPieChart, FiExternalLink 
+} from 'react-icons/fi';
 
-function DonationModal({ campaign, user, onClose }) {
+function DonationModal({ campaign, user, onClose, defaultType = 'one-time' }) {
+  const [type, setType] = useState(defaultType);
   const [amount, setAmount] = useState('1000');
   const [customAmount, setCustomAmount] = useState('');
+  const [frequency, setFrequency] = useState('monthly');
   const [loading, setLoading] = useState(false);
   const [donorDetails, setDonorDetails] = useState({
      firstName: user?.name?.split(' ')[0] || '',
@@ -24,14 +31,12 @@ function DonationModal({ campaign, user, onClose }) {
   const finalAmount = amount === 'custom' ? parseFloat(customAmount) || 0 : parseFloat(amount);
   const isValid = finalAmount >= 100 && donorDetails.email && donorDetails.firstName && donorDetails.phone;
 
-  const handlePayHere = async (e) => {
+  const handlePayment = async (e) => {
      e.preventDefault();
-     
      if (!user || !user._id) {
-        alert('SECURE HUB: AUTHENTICATION ERROR. \n\nPersonnel identity node not found. Please re-authenticate your session.');
+        alert('Please log in to continue with your support.');
         return;
      }
-
      if (!isValid || loading) return;
 
      setLoading(true);
@@ -46,18 +51,18 @@ function DonationModal({ campaign, user, onClose }) {
            lastName: donorDetails.lastName,
            email: donorDetails.email,
            phone: donorDetails.phone,
-           address: donorDetails.address || 'Mission Headquarters',
+           address: donorDetails.address || 'Colombo',
            city: donorDetails.city || 'Colombo',
-           country: donorDetails.country || 'Sri Lanka'
+           country: donorDetails.country || 'Sri Lanka',
+           type: type,
+           frequency: type === 'pledge' ? frequency : null
         };
 
         const { data } = await api.post('/api/finance/payhere/init', payload);
-
         if (data.success && data.paymentData) {
            const form = document.createElement('form');
            form.method = 'POST';
            form.action = 'https://sandbox.payhere.lk/pay/checkout';
-
            Object.keys(data.paymentData).forEach(key => {
               const input = document.createElement('input');
               input.type = 'hidden';
@@ -65,183 +70,166 @@ function DonationModal({ campaign, user, onClose }) {
               input.value = data.paymentData[key];
               form.appendChild(input);
            });
-
            document.body.appendChild(form);
            form.submit();
         }
      } catch (err) {
-        const errorMsg = err.response?.data?.message || 'Network protocol disconnected.';
-        const validationErrors = err.response?.data?.errors?.map(e => `${e.field}: ${e.message}`).join('\n');
-        
-        console.error('SECURE GATEWAY ERROR:', err.response?.data || err);
-        alert(`SECURE BYPASS FAILED: ${errorMsg}\n${validationErrors || 'Validation node mismatch detected.'}`);
+        const msg = err.response?.data?.message || err.message;
+        alert(`Payment initialization failed: ${msg}`);
      } finally {
         setLoading(false);
      }
   };
 
   return (
-    <div className="fixed inset-0 z-[1000] overflow-y-auto bg-slate-950/40 backdrop-blur-md">
-       <div className="min-h-screen flex items-center justify-center p-4 md:p-8">
-          <motion.div 
-            initial={{ opacity: 0, y: 20, scale: 0.98 }} 
-            animate={{ opacity: 1, y: 0, scale: 1 }} 
-            className="bg-white w-full max-w-5xl rounded-[2.5rem] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.2)] overflow-hidden flex flex-col lg:flex-row border border-slate-200/50"
-          >
-             {/* Left Column: Branding Node */}
-             <div className="w-full lg:w-[40%] bg-slate-950 p-12 lg:p-16 text-white flex flex-col justify-between relative shrink-0">
-                <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-tf-primary/20 blur-[120px] -mr-48 -mt-48 pointer-events-none" />
-                
-                <div className="space-y-12 relative z-10">
-                   <button onClick={onClose} className="flex items-center gap-3 text-[10px] font-bold text-white/30 uppercase tracking-[0.3em] hover:text-white transition-colors group/back">
-                      <svg className="w-4 h-4 group-hover/back:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
-                      BACK TO REGISTRY
-                   </button>
-                   
-                   <div className="space-y-4">
-                      <div className="inline-flex items-center gap-2 px-3 py-1 bg-tf-primary/10 border border-tf-primary/20 rounded-full">
-                         <div className="w-1.5 h-1.5 rounded-full bg-tf-primary animate-pulse" />
-                         <span className="text-[9px] font-bold text-tf-primary uppercase tracking-[0.2em]">SECURE HANDSHAKE ACTIVE</span>
-                      </div>
-                      <h3 className="text-5xl font-black tracking-tight leading-[1.0] italic">
-                         Global <br/><span className="text-tf-primary italic uppercase tracking-tighter">Impact</span> Node
+    <div className="fixed inset-0 z-[1000] overflow-y-auto bg-slate-950/40 backdrop-blur-3xl flex items-center justify-center p-4">
+       <motion.div 
+         initial={{ opacity: 0, scale: 0.98, y: 10 }} animate={{ opacity: 1, scale: 1, y: 0 }} 
+         className="bg-white w-full max-w-5xl rounded-[2.5rem] shadow-5xl overflow-hidden flex flex-col md:flex-row border border-slate-100"
+       >
+          {/* Left Panel */}
+          <div className="w-full md:w-[35%] bg-slate-900 p-12 text-white relative flex flex-col justify-between overflow-hidden">
+             <div className="relative z-10 space-y-12">
+                <button onClick={onClose} className="w-10 h-10 bg-white/5 hover:bg-white/10 rounded-2xl flex items-center justify-center transition-all">
+                   <FiX className="text-white/40" size={16} />
+                </button>
+                <div className="space-y-6">
+                   <div className="space-y-2">
+                      <p className="text-[10px] font-black uppercase tracking-[0.4em] text-tf-primary italic">Donation</p>
+                      <h3 className="text-4xl font-black italic tracking-tighter leading-none">
+                         {type === 'one-time' ? 'One-time Gift' : 'Impact Pledge'}
                       </h3>
                    </div>
-                   
-                   <div className="space-y-6">
-                      <div className="p-6 bg-white/5 border border-white/10 rounded-2xl">
-                         <p className="text-[9px] font-bold text-white/30 uppercase tracking-[0.4em] mb-2 italic">CAMPAIGN ID_</p>
-                         <p className="text-lg font-bold text-white leading-tight">{campaign.title}</p>
-                      </div>
-                      <p className="text-sm text-white/40 leading-relaxed font-medium italic">
-                        Authorized deployment of humanitarian capital through the verified TransFund strategic HUB network.
-                      </p>
-                   </div>
+                   <p className="text-base text-white/40 font-medium leading-relaxed italic">
+                      {type === 'one-time' 
+                        ? 'Support this cause directly with a one-time cash donation.'
+                        : 'Commit to supporting this cause with a recurring monthly pledge.'}
+                   </p>
                 </div>
-
-                <div className="pt-8 relative z-10 flex items-center justify-between border-t border-white/5">
-                    <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 rounded-xl bg-tf-primary/20 flex items-center justify-center text-tf-primary">
-                           <svg className="w-5 h-5 shadow-lg" fill="none" stroke="currentColor" strokeWidth={3} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
-                        </div>
-                        <div className="space-y-0.5">
-                           <p className="text-[9px] font-black text-white/40 uppercase tracking-[0.2em]">VERIFIED BY</p>
-                           <p className="text-[10px] font-black text-white uppercase tracking-[0.1em]">TRANSFUND SECURITY HUB</p>
-                        </div>
-                    </div>
+                <div className="p-8 bg-white/5 border border-white/10 rounded-3xl space-y-3">
+                   <p className="text-[9px] font-bold text-white/30 uppercase tracking-widest">You are supporting</p>
+                   <p className="text-lg font-black leading-tight italic line-clamp-3">{campaign.title}</p>
                 </div>
              </div>
+             <div className="relative z-10 pt-10 border-t border-white/5 flex items-center gap-4">
+                <div className="w-10 h-10 rounded-2xl bg-white/5 flex items-center justify-center text-tf-primary text-xl"><FiShield /></div>
+                <div className="space-y-0.5">
+                   <p className="text-[9px] font-black text-white/30 uppercase tracking-widest leading-none">100% Secure & Verified</p>
+                   <p className="text-[11px] font-black text-white uppercase tracking-widest">Protected by TransFund</p>
+                </div>
+             </div>
+          </div>
 
-             {/* Right Column: Functional Form */}
-             <div className="flex-1 p-12 lg:p-16 space-y-12 bg-white overflow-y-auto max-h-[90vh] custom-scrollbar">
-                
-                {/* Section 01: Capital */}
-                <div className="space-y-8">
-                   <div className="flex items-end justify-between border-b border-slate-100 pb-6">
-                      <div className="space-y-1">
-                         <p className="text-[10px] font-bold text-slate-300 uppercase tracking-[0.4em] italic">PHASE 01_ ALLOCATION</p>
-                         <h4 className="text-3xl font-black text-slate-900 tracking-tight italic">Select Capital Volume</h4>
-                      </div>
-                      <span className="text-[10px] font-bold text-tf-primary uppercase tracking-[0.2em] italic mb-1">RS / LKR</span>
-                   </div>
-                   
-                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                      {['500', '1000', '5000', 'custom'].map((val) => (
+          {/* Form Side */}
+          <div className="flex-1 p-12 md:p-14 space-y-10 max-h-[90vh] overflow-y-auto text-left">
+             {/* Type Tabs removed to enforce exclusive mode based on campaign config */}
+
+             {/* Amount */}
+             <div className="space-y-6">
+                <div>
+                   <h4 className="text-xl font-black text-slate-950 italic tracking-tight uppercase">Donation Amount</h4>
+                   <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest mt-1">Select an amount in LKR</p>
+                </div>
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                   {(type === 'pledge' ? (campaign.pledgeConfig?.suggestedAmounts?.length ? campaign.pledgeConfig.suggestedAmounts : ['500', '1000', '2500', '5000']) : ['1000', '5000', '10000', '25000']).map((val) => (
+                      <button 
+                         key={val} onClick={() => setAmount(val)}
+                         className={`h-14 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all border-2 ${amount === val ? 'bg-slate-950 text-white border-slate-950 shadow-xl' : 'bg-slate-50 text-slate-400 border-transparent hover:border-tf-primary/30 hover:bg-white hover:text-slate-950'}`}
+                      >
+                         {parseFloat(val).toLocaleString()}
+                      </button>
+                   ))}
+                   <button 
+                      onClick={() => setAmount('custom')}
+                      className={`h-14 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all border-2 ${amount === 'custom' ? 'bg-slate-950 text-white border-slate-950 shadow-xl' : 'bg-slate-50 text-slate-400 border-transparent'}`}
+                   >
+                      Custom
+                   </button>
+                </div>
+                {amount === 'custom' && (
+                   <input 
+                      type="number" placeholder="Enter amount (Min LKR 100)" 
+                      value={customAmount} onChange={(e) => setCustomAmount(e.target.value)}
+                      className="w-full bg-slate-50 border-b-2 border-transparent border-b-slate-100 rounded-2xl px-7 py-5 text-lg font-black text-slate-950 focus:outline-none focus:border-tf-primary"
+                   />
+                )}
+             </div>
+
+             {/* Frequency Info */}
+             {type === 'pledge' && (
+                <div className="p-8 bg-tf-primary/5 border border-tf-primary/10 rounded-[2rem] space-y-4">
+                   <p className="text-[10px] font-black text-tf-primary uppercase tracking-[0.2em] italic flex items-center gap-2"><FiCalendar /> Frequency</p>
+                   <div className="flex gap-3">
+                      {(campaign.pledgeConfig?.frequencies || ['monthly']).map(f => (
                          <button 
-                            key={val} 
-                            onClick={() => setAmount(val)}
-                            className={`h-14 rounded-2xl text-[11px] font-black uppercase tracking-[0.1em] transition-all duration-300 border shadow-sm flex items-center justify-center ${amount === val ? 'bg-slate-950 text-white border-slate-950 shadow-xl' : 'bg-slate-50 text-slate-400 border-slate-100 hover:border-tf-primary/30 hover:bg-white hover:text-slate-900'}`}
+                            key={f} onClick={() => setFrequency(f)}
+                            className={`px-7 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${frequency === f ? 'bg-tf-primary text-white shadow-lg' : 'bg-white text-tf-primary border border-tf-primary/10 hover:bg-tf-primary/5'}`}
                          >
-                            {val === 'custom' ? 'OTHER' : `RS ${val}`}
+                            {f}
                          </button>
                       ))}
                    </div>
-                   
-                   <AnimatePresence mode="wait">
-                      {amount === 'custom' && (
-                         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="relative">
-                            <input 
-                               type="number" 
-                               placeholder="Input custom amount (Min RS 100)" 
-                               value={customAmount}
-                               onChange={(e) => setCustomAmount(e.target.value)}
-                               className="w-full bg-white border-2 border-slate-100 rounded-2xl px-6 py-5 text-lg font-bold text-slate-950 focus:outline-none focus:border-tf-primary/40 focus:ring-4 focus:ring-tf-primary/5 transition-all"
-                            />
-                         </motion.div>
-                      )}
-                   </AnimatePresence>
+                   <p className="text-[9px] text-tf-primary/60 font-bold italic leading-relaxed uppercase">Monthly pledges are commitment-based. You will be notified by email for each payment.</p>
                 </div>
+             )}
 
-                {/* Section 02: Details */}
-                <div className="space-y-10">
-                   <div className="border-b border-slate-100 pb-6">
-                      <p className="text-[10px] font-bold text-slate-300 uppercase tracking-[0.4em] italic">PHASE 02_ IDENTIFICATION</p>
-                      <h4 className="text-3xl font-black text-slate-900 tracking-tight italic">Agent Credentials</h4>
+             {/* Donor Info */}
+             <div className="space-y-8">
+                <h4 className="text-xl font-black text-slate-950 italic tracking-tight uppercase border-b border-slate-50 pb-4">Donor Information</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                   <div className="space-y-2">
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">First Name</label>
+                      <input 
+                         value={donorDetails.firstName} onChange={(e) => setDonorDetails({...donorDetails, firstName: e.target.value})}
+                         className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-bold" placeholder="First Name"
+                      />
                    </div>
-                   
-                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div className="space-y-2">
-                         <label className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] ml-1">GIVEN NAME</label>
-                         <input 
-                            placeholder="e.g. John"
-                            value={donorDetails.firstName} onChange={(e) => setDonorDetails({...donorDetails, firstName: e.target.value})}
-                            className="w-full bg-white border-2 border-slate-100 rounded-2xl px-6 py-4 font-bold text-slate-950 focus:outline-none focus:border-tf-primary/40 transition-all placeholder:text-slate-200 placeholder:font-medium" 
-                         />
-                      </div>
-                      <div className="space-y-2">
-                         <label className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] ml-1">LAST IDENTIFIER</label>
-                         <input 
-                            placeholder="e.g. Doe"
-                            value={donorDetails.lastName} onChange={(e) => setDonorDetails({...donorDetails, lastName: e.target.value})}
-                            className="w-full bg-white border-2 border-slate-100 rounded-2xl px-6 py-4 font-bold text-slate-950 focus:outline-none focus:border-tf-primary/40 transition-all placeholder:text-slate-200" 
-                         />
-                      </div>
-                      <div className="md:col-span-2 space-y-2">
-                         <label className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] ml-1">EMAIL CHANNEL</label>
-                         <input 
-                            type="email" placeholder="agent@transfund.ngo"
-                            value={donorDetails.email} onChange={(e) => setDonorDetails({...donorDetails, email: e.target.value})}
-                            className="w-full bg-white border-2 border-slate-100 rounded-2xl px-6 py-4 font-bold text-slate-950 focus:outline-none focus:border-tf-primary/40 transition-all placeholder:text-slate-200" 
-                         />
-                      </div>
-                      <div className="space-y-2">
-                         <label className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] ml-1">CONTACT NODE (PHONE)</label>
-                         <input 
-                            placeholder="07XXXXXXXX"
-                            value={donorDetails.phone} onChange={(e) => setDonorDetails({...donorDetails, phone: e.target.value})}
-                            className="w-full bg-white border-2 border-slate-100 rounded-2xl px-6 py-4 font-bold text-slate-950 focus:outline-none focus:border-tf-primary/40 transition-all placeholder:text-slate-200" 
-                         />
-                      </div>
-                      <div className="space-y-2">
-                         <label className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] ml-1">GEO CENTER (CITY)</label>
-                         <input 
-                            placeholder="Colombo"
-                            value={donorDetails.city} onChange={(e) => setDonorDetails({...donorDetails, city: e.target.value})}
-                            className="w-full bg-white border-2 border-slate-100 rounded-2xl px-6 py-4 font-bold text-slate-950 focus:outline-none focus:border-tf-primary/40 transition-all placeholder:text-slate-200" 
-                         />
-                      </div>
+                   <div className="space-y-2">
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Last Name</label>
+                      <input 
+                         value={donorDetails.lastName} onChange={(e) => setDonorDetails({...donorDetails, lastName: e.target.value})}
+                         className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-bold" placeholder="Last Name"
+                      />
                    </div>
-                </div>
-
-                {/* Actions */}
-                <div className="flex flex-col sm:flex-row gap-4 pt-10">
-                   <button 
-                      onClick={handlePayHere}
-                      disabled={!isValid || loading}
-                      className="flex-[2] py-6 bg-slate-950 text-white rounded-full text-[11px] font-black uppercase tracking-[0.3em] shadow-2xl hover:bg-tf-primary transition-all duration-500 disabled:opacity-10 italic flex items-center justify-center gap-4 active:scale-95"
-                   >
-                      {loading ? 'Processing Protocol...' : `Authorize RS ${finalAmount.toLocaleString()} Support →`}
-                   </button>
-                   <button onClick={onClose} className="flex-1 py-6 text-[10px] font-bold text-slate-400 uppercase tracking-[0.3em] border border-slate-100 rounded-full hover:bg-slate-50 transition-colors">Discard</button>
-                </div>
-                
-                <div className="flex items-center justify-center gap-4 pt-8 opacity-40">
-                    <div className="w-1.5 h-1.5 rounded-full bg-slate-300" />
-                    <p className="text-[9px] font-bold text-slate-400 uppercase tracking-[0.4em] italic">Encryption protocol authorized and audited</p>
+                   <div className="md:col-span-2 space-y-2">
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Email Address</label>
+                      <input 
+                         value={donorDetails.email} onChange={(e) => setDonorDetails({...donorDetails, email: e.target.value})}
+                         className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-bold" placeholder="your@email.com"
+                      />
+                   </div>
+                   <div className="space-y-2">
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Phone Number</label>
+                      <input 
+                         value={donorDetails.phone} onChange={(e) => setDonorDetails({...donorDetails, phone: e.target.value})}
+                         className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-bold" placeholder="07XXXXXXXX"
+                      />
+                   </div>
+                   <div className="space-y-2">
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">City</label>
+                      <input 
+                         value={donorDetails.city} onChange={(e) => setDonorDetails({...donorDetails, city: e.target.value})}
+                         className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-bold" placeholder="City"
+                      />
+                   </div>
                 </div>
              </div>
-          </motion.div>
-       </div>
+
+             <div className="pt-8 flex flex-col gap-5">
+                <button 
+                   onClick={handlePayment}
+                   disabled={!isValid || loading}
+                   className="w-full py-6 bg-slate-950 text-white rounded-[2rem] text-[11px] font-black uppercase tracking-[0.4em] hover:bg-tf-primary transition-all duration-500 shadow-xl active:scale-95 italic flex items-center justify-center gap-3"
+                >
+                   {loading ? 'Processing...' : `Donate LKR ${finalAmount.toLocaleString()} →`}
+                </button>
+                <div className="flex items-center justify-center gap-4 text-slate-300">
+                   <FiCheckCircle size={14} className="text-emerald-400" />
+                   <p className="text-[10px] font-black uppercase tracking-widest italic leading-none">Your transaction is secure and private</p>
+                </div>
+             </div>
+          </div>
+       </motion.div>
     </div>
   );
 }
@@ -249,134 +237,140 @@ function DonationModal({ campaign, user, onClose }) {
 export default function PublicCampaignDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { user, isAuthenticated } = useAuth();
+  const { user } = useAuth();
   const [campaign, setCampaign] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [showModal, setShowModal] = useState(false);
+  const [modalType, setModalType] = useState('one-time');
 
   useEffect(() => {
-    const fetch = async () => {
+    const fetchCampaign = async () => {
       try {
         const { data } = await api.get(`/api/campaigns/${id}`);
         setCampaign(data);
       } catch (err) {
-        setError('Mission registry offline or authorization restricted HUB.');
+        setError('Cause information unavailable.');
       } finally {
         setLoading(false);
       }
     };
-    fetch();
+    fetchCampaign();
   }, [id]);
 
-  if (loading) return <LoadingSpinner />;
+  if (loading) return <LoadingSpinner message="Searching for cause..." />;
   if (error || !campaign) return (
-    <div className="min-h-screen bg-white flex flex-col items-center justify-center space-y-16 font-sans p-8 pt-4">
-       <div className="w-32 h-32 bg-white border border-slate-100 rounded-[3rem] flex items-center justify-center text-slate-100 rotate-12 transition-all duration-1000 hover:rotate-0 shadow-inner italic font-black text-5xl">?</div>
-       <div className="text-center space-y-8">
-         <div className="space-y-4">
-            <p className="text-slate-950 font-black uppercase tracking-[0.8em] italic text-sm">{error || 'Node Synchronization Failure HUB'}</p>
-            <p className="text-[11px] text-slate-400 font-black uppercase tracking-[0.5em] italic">Mission Registry Node [SEC_NA_REF] detected HUB</p>
-         </div>
-         <button onClick={() => navigate('/causes')} className="inline-block px-16 py-8 bg-slate-950 text-white rounded-full text-[12px] font-black uppercase tracking-[0.6em] italic hover:bg-tf-primary transition-all duration-1000 shadow-5xl active:scale-95 mt-10">Return to Catalog Registry HUB Index</button>
-       </div>
-    </div>
+     <div className="min-h-screen bg-white flex flex-col items-center justify-center p-8 text-center space-y-8">
+        <div className="w-20 h-20 bg-slate-50 rounded-3xl flex items-center justify-center text-slate-200 text-5xl font-black italic shadow-inner">!</div>
+        <div className="space-y-4">
+           <h2 className="text-2xl font-black text-slate-950 italic uppercase tracking-tight">Information Missing</h2>
+           <p className="text-[11px] font-black text-slate-400 uppercase tracking-[0.4em] italic leading-none">{error || 'Cause not found'}</p>
+        </div>
+        <button onClick={() => navigate('/causes')} className="px-10 py-5 bg-slate-900 text-white rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-tf-primary shadow-xl italic">Back to Causes</button>
+     </div>
   );
 
   const pct = Math.min(100, Math.round(((campaign.raisedAmount || 0) / campaign.goalAmount) * 100));
 
   return (
-    <div className="min-h-screen bg-white font-sans selection:bg-tf-primary selection:text-white">
+    <div className="min-h-screen bg-white font-sans selection:bg-tf-primary selection:text-white pb-0 overflow-x-hidden pt-12">
       <PublicNavbar />
       
-      {/* Cinematic Identity Header HUB Deployment */}
-      <section className="relative pt-48 pb-40 px-8 overflow-hidden group/hero">
+      {/* Header Section */}
+      <section className="relative pt-48 pb-32 px-8 overflow-hidden group/hero">
          <div className="absolute inset-0 z-0">
             <img 
-               src={campaign.image ? `${import.meta.env.VITE_API_URL || ''}${campaign.image}` : "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&q=80&w=2400"} 
-               className="w-full h-full object-cover brightness-[0.25] group-hover/hero:scale-125 transition-transform duration-[8000ms] ease-out" 
+               src={campaign.image ? (campaign.image.startsWith('http') ? campaign.image : `${import.meta.env.VITE_API_URL || ''}${campaign.image}`) : "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&q=80&w=2400"} 
+               className="w-full h-full object-cover brightness-[0.2] transition-transform duration-[20s] scale-110 group-hover/hero:scale-100" 
                alt={campaign.title} 
             />
             <div className="absolute inset-0 bg-gradient-to-t from-white via-white/80 to-transparent" />
-            <div className="absolute inset-0 bg-gradient-to-r from-white/30 to-transparent" />
          </div>
 
-         <div className="relative z-10 max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <div className="space-y-12">
-               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-4">
-                  <div className="w-2 h-2 rounded-full bg-tf-primary shadow-[0_0_15px_rgba(255,138,0,0.6)]" />
-                  <span className="text-[11px] font-bold text-slate-500 uppercase tracking-[0.4em] leading-none">Sector: {campaign.category?.toUpperCase() || 'HUMANITARIAN AID'}</span>
+         <div className="relative z-10 max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-16">
+            <div className="flex-1 text-left space-y-10">
+               <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} className="inline-flex items-center gap-3 px-5 py-2 bg-slate-950 text-white rounded-full text-[11px] font-black italic uppercase tracking-[0.2em] shadow-xl border border-white/5">
+                  <FiAward className="text-tf-primary" size={14} /> Category: {campaign.category || 'Humanitarian'}
                </motion.div>
-               <div className="space-y-10">
+               <div className="space-y-6">
                   <motion.h1 
-                     initial={{ opacity: 0, y: 30 }} 
-                     animate={{ opacity: 1, y: 0 }} 
-                     transition={{ duration: 0.8 }} 
-                     className="text-5xl md:text-7xl lg:text-8xl font-black text-slate-900 tracking-tight leading-[0.95] italic"
+                     initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} 
+                     className="text-7xl md:text-8xl lg:text-9xl font-black text-slate-950 tracking-tighter leading-[0.8] italic lowercase"
                   >
                      {campaign.title}
                   </motion.h1>
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} className="flex flex-wrap items-center gap-12 pt-8 border-t border-slate-100">
-                   <div className="space-y-2">
-                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.3em]">GEOGRAPHIC NODE</p>
-                      <p className="text-2xl font-bold text-slate-900 tracking-tight italic">{campaign.location?.city}, {campaign.location?.country || 'Sri Lanka'}</p>
-                   </div>
-                   <div className="h-12 w-px bg-slate-100 hidden sm:block" />
-                   <div className="space-y-2">
-                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.3em]">STRATEGIC PARTNER</p>
-                      <p className="text-2xl font-bold text-slate-900 tracking-tight italic">{campaign.createdBy?.organizationName || campaign.createdBy?.name || 'TransFund Global'}</p>
-                   </div>
-                </motion.div>
-             </div>
-          </div>
+                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }} className="flex flex-wrap items-center gap-10 pt-10 border-t border-slate-100">
+                     <div className="space-y-1">
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic leading-none mb-1">Impact Location</p>
+                        <p className="text-2xl font-black text-slate-950 tracking-tight italic flex items-center gap-2">
+                           <FiMapPin className="text-tf-primary" /> {campaign.location?.city}, {campaign.location?.country || 'LK'}
+                        </p>
+                     </div>
+                     <div className="w-px h-12 bg-slate-100 hidden md:block" />
+                     <div className="space-y-1">
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic leading-none mb-1">Managed By</p>
+                        <p className="text-2xl font-black text-slate-950 tracking-tight italic flex items-center gap-2">
+                           <FiGlobe className="text-tf-primary" /> {campaign.createdBy?.organizationName || 'Verified NGO'}
+                        </p>
+                     </div>
+                  </motion.div>
+               </div>
+            </div>
 
             <motion.div 
-               initial={{ opacity: 0, y: 40 }} 
-               animate={{ opacity: 1, y: 0 }} 
-               transition={{ delay: 0.3 }} 
-               className="bg-white border border-slate-100 rounded-[3rem] p-16 shadow-[0_32px_80px_-16px_rgba(0,0,0,0.1)] space-y-12 relative overflow-hidden group/card"
+               initial={{ opacity: 0, y: 40, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ delay: 0.5, duration: 0.7 }} 
+               className="w-full lg:w-[480px] bg-white rounded-[3.5rem] p-16 shadow-5xl border border-slate-50 space-y-12 text-left relative overflow-hidden"
             >
                <div className="space-y-10 relative z-10">
-                  <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
-                     <div className="space-y-4">
-                        <p className="text-[11px] font-bold text-tf-primary uppercase tracking-[0.4em] italic mb-2">CAPITAL MOBILIZED_</p>
-                        <div className="flex items-baseline gap-4">
-                           <span className="text-3xl font-medium text-slate-400">RS</span>
-                           <p className="text-7xl font-black text-slate-950 tracking-tighter tabular-nums">
-                              {(campaign.raisedAmount || 0).toLocaleString()}
-                           </p>
+                  <div className="flex items-end justify-between">
+                     <div className="space-y-2">
+                        <p className="text-[11px] font-black text-tf-primary uppercase tracking-[0.4em] italic leading-none">Raised So Far</p>
+                        <div className="flex items-baseline gap-2">
+                           <span className="text-5xl md:text-6xl font-black text-slate-900 tracking-tighter italic">LKR {(campaign.raisedAmount || 0).toLocaleString()}</span>
                         </div>
                      </div>
-                     <div className="text-left md:text-right bg-slate-50 px-8 py-4 rounded-3xl border border-slate-100">
-                        <p className="text-4xl font-black text-tf-primary tracking-tighter leading-none italic">{pct}%</p>
-                        <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-2">SECURED</p>
+                     <div className="bg-slate-950 text-white px-7 py-3.5 rounded-2xl shadow-xl">
+                        <p className="text-2xl font-black text-tf-primary tracking-tighter leading-none italic">{pct}%</p>
                      </div>
                   </div>
-                  <div className="h-4 bg-slate-50 rounded-full overflow-hidden relative border border-slate-100 p-[2px]">
-                     <motion.div 
-                        initial={{ width: 0 }} 
-                        animate={{ width: `${pct}%` }} 
-                        transition={{ duration: 2, ease: "easeOut" }} 
-                        className="h-full bg-slate-950 rounded-full relative"
-                     />
+                  
+                  <div className="space-y-4">
+                     <div className="flex items-center justify-between text-[13px] font-black text-slate-900 uppercase tracking-widest italic">
+                        <span>Funded Progress</span>
+                        <span className="text-tf-primary">{campaign.donationsCount || 0} Backers</span>
+                     </div>
+                     <div className="h-4 bg-slate-50 border border-slate-100 rounded-full overflow-hidden p-[1px]">
+                        <motion.div 
+                           initial={{ width: 0 }} animate={{ width: `${pct}%` }} transition={{ duration: 2, ease: "easeOut" }} 
+                           className="h-full bg-slate-950 rounded-full relative"
+                        >
+                           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent w-full animate-shimmer" />
+                        </motion.div>
+                     </div>
+                     <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest text-right italic leading-none">Goal: LKR {campaign.goalAmount.toLocaleString()}</p>
                   </div>
-                  <div className="flex justify-between items-center text-[11px] font-bold text-slate-400 uppercase tracking-[0.2em] italic">
-                     <span>Target Goal: RS {campaign.goalAmount.toLocaleString()}</span>
-                     <span>{campaign.donationsCount || 0} Strategic Backers</span>
+                  
+                  <div className="grid grid-cols-1 gap-4">
+                     {campaign.allowPledges ? (
+                        <button 
+                           onClick={() => { setModalType('pledge'); setShowModal(true); }}
+                           className="w-full py-6 bg-slate-950 text-white rounded-2xl text-[11px] font-black uppercase tracking-[0.4em] hover:bg-tf-primary transition-all shadow-xl active:scale-95 italic flex items-center justify-center gap-3"
+                        >
+                           Monthly Pledge <FiRepeat size={14} className="text-tf-primary" />
+                        </button>
+                     ) : (
+                        <button 
+                           onClick={() => { setModalType('one-time'); setShowModal(true); }}
+                           className="w-full py-6 bg-slate-950 text-white rounded-2xl text-[11px] font-black uppercase tracking-[0.4em] hover:bg-tf-primary transition-all shadow-xl active:scale-95 italic flex items-center justify-center gap-3"
+                        >
+                           One-time Gift <FiZap size={14} className="text-tf-primary animate-pulse" />
+                        </button>
+                     )}
                   </div>
-               </div>
-
-               <button 
-                  onClick={() => setShowModal(true)}
-                  className="w-full py-8 bg-slate-950 text-white rounded-full text-sm font-black uppercase tracking-[0.4em] hover:bg-tf-primary transition-all duration-500 shadow-2xl hover:shadow-tf-primary/20 active:scale-95 flex items-center justify-center gap-6 group/btn italic"
-               >
-                  Authorize Support <span className="group-hover/btn:translate-x-3 transition-transform">→</span>
-               </button>
-
-               <div className="pt-10 flex flex-wrap items-center justify-center gap-10 border-t border-slate-50">
-                  <div className="flex items-center gap-3">
-                     <div className="w-5 h-5 text-tf-primary"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div>
-                     <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest italic">LIVE FIELD DATA</span>
+                  
+                  <div className="pt-6 border-t border-slate-50 flex items-center justify-center gap-8 text-slate-400">
+                     <FiShield className="text-tf-primary" size={14} />
+                     <span className="text-[10px] font-black uppercase tracking-widest italic leading-none">Verified Transparency</span>
                   </div>
                </div>
             </motion.div>
@@ -384,154 +378,102 @@ export default function PublicCampaignDetailPage() {
       </section>
 
       <AnimatePresence>
-         {showModal && <DonationModal campaign={campaign} user={user} onClose={() => setShowModal(false)} />}
+         {showModal && <DonationModal campaign={campaign} user={user} onClose={() => setShowModal(false)} defaultType={modalType} />}
       </AnimatePresence>
 
-      {/* Mission Execution Roadmap */}
-      <section className="py-48 max-w-[1400px] mx-auto px-12 grid grid-cols-1 lg:grid-cols-3 gap-32 relative">
-         <div className="absolute top-1/2 left-0 w-px h-[500px] bg-gradient-to-b from-transparent via-tf-primary/20 to-transparent pointer-events-none" />
-         
-         <div className="lg:col-span-2 space-y-28">
-            <div className="space-y-12 group/intel">
-               <div className="flex items-center gap-8">
-                  <div className="w-20 h-1 bg-tf-primary" />
-                  <h3 className="text-4xl md:text-5xl font-black text-slate-950 tracking-tighter italic leading-none">Mission <span className="text-slate-400">Context</span></h3>
+      {/* Main Content Section */}
+      <section className="py-32 max-w-7xl mx-auto px-8 grid grid-cols-1 lg:grid-cols-12 gap-20">
+         <div className="lg:col-span-8 space-y-24 text-left">
+            {/* Context */}
+            <div className="space-y-12">
+               <div className="flex items-center gap-6">
+                  <div className="w-12 h-0.5 bg-tf-primary rounded-full shadow-lg" />
+                  <h3 className="text-3xl font-black text-slate-900 italic uppercase tracking-tight">Our Mission</h3>
                </div>
-               <div className="text-xl text-slate-500 leading-relaxed space-y-12 font-medium italic pr-12 xl:pr-32">
-                  <p className="first-letter:text-7xl first-letter:font-black first-letter:text-tf-primary first-letter:mr-6 first-letter:float-left first-letter:leading-none">
-                    {campaign.description || "Every authorized mission project represents a strategic opportunity for verified positive humanitarian change. Through direct supporter mobilization, we target the provision of essential aid and sustainable infrastructure."}
+               <div className="text-2xl text-slate-600 leading-relaxed font-medium italic pr-0 md:pr-16 lg:pr-24 space-y-10">
+                  <p className="first-letter:text-8xl first-letter:font-black first-letter:text-tf-primary first-letter:float-left first-letter:mr-5 first-letter:leading-[0.8] first-letter:mt-2">
+                     {campaign.description || "Every cause we support represents a critical opportunity to make a lasting difference in the lives of individuals and communities."}
                   </p>
-                  <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="border-l-4 border-tf-primary pl-12 py-8 bg-slate-50 rounded-r-3xl text-lg text-slate-600">
-                    Our commitment to transparency ensures that every contribution reaches its intended objective, verified through field reports and real-time updates.
-                    <div className="mt-6 flex items-center gap-4">
-                       <span className="text-[10px] font-bold text-tf-primary uppercase tracking-widest">Verified Transparency Protocol</span>
-                    </div>
-                  </motion.div>
+                  <p className="opacity-80">Our organization works directly with local partners on the ground to ensure that resources are deployed where they are needed most. Through careful planning and transparent reporting, we guarantee that every donation makes a real difference in the field.</p>
                </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-16 pt-24 border-t border-slate-100 border-dashed">
-               {[
-                  { t: 'Verified Impact', d: 'Every contribution is tracked through tactical audit registries accessible to verified mission personnel.' },
-                  { t: 'Regional Coordination', d: 'Collaborating directly with regional humanitarian agents for maximum operational efficiency.' },
-                  { t: 'Governance Standards', d: 'Adhering to global standards for capital safety and philanthropic synchronization.' },
-                  { t: 'Real-time Intelligence', d: 'Supporters receive synchronized updates directly from the point of impact deployment.' }
-               ].map((pillar, i) => (
-                  <motion.div 
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: i * 0.1 }}
-                    key={pillar.t} 
-                    className="space-y-4"
-                  >
-                     <p className="text-xs font-bold text-tf-primary uppercase tracking-widest flex items-center gap-3">
-                        <span className="w-2 h-2 rounded-full bg-tf-primary/20" />
-                        {pillar.t}
-                     </p>
-                     <p className="text-base text-slate-400 font-medium leading-relaxed italic">{pillar.d}</p>
-                  </motion.div>
-               ))}
+            {/* Impact Cards */}
+            <div className="space-y-12">
+               <div className="flex items-center gap-6">
+                  <div className="w-12 h-0.5 bg-tf-primary rounded-full shadow-lg" />
+                  <h3 className="text-3xl font-black text-slate-900 italic uppercase tracking-tight">Project Impact</h3>
+               </div>
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  {[
+                     { icon: <FiActivity />, val: `${campaign.impactPercentage || 100}%`, t: 'Efficiency', d: 'Ratio of donation reaching final destinations in the field.' },
+                     { icon: <FiUsers />, val: (campaign.targetBeneficiaries || 0).toLocaleString(), t: 'People Served', d: 'Total number of individuals this project aims to support.' },
+                     { icon: <FiAward />, val: `Goal ${campaign.sdgAlignment?.[0] || '1'}`, t: 'SDG Goal', d: 'Direct alignment with Sustainable Development Goals.' },
+                     { icon: <FiPieChart />, val: `LKR ${(campaign.costPerBeneficiary || 0).toLocaleString()}`, t: 'Cost Per Unit', d: 'Average cost required to assist one individual.' }
+                  ].map((item, i) => (
+                     <motion.div 
+                        initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}
+                        key={i} className="p-10 bg-slate-50 rounded-[3rem] border border-slate-100 hover:border-tf-primary/30 transition-all group"
+                     >
+                        <div className="w-14 h-14 bg-white text-slate-950 rounded-2xl flex items-center justify-center text-xl shadow-lg mb-8 group-hover:bg-slate-950 group-hover:text-white transition-all duration-500">{item.icon}</div>
+                        <div className="space-y-2">
+                           <p className="text-3xl font-black italic tracking-tighter text-slate-950">{item.val}</p>
+                           <h4 className="text-[11px] font-black text-tf-primary italic uppercase tracking-[0.2em] mb-1">{item.t}</h4>
+                           <p className="text-sm font-medium text-slate-400 italic">{item.d}</p>
+                        </div>
+                     </motion.div>
+                  ))}
+               </div>
             </div>
          </div>
 
          {/* Sidebar Stats */}
-         <div className="space-y-12">
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} className="bg-slate-50 rounded-3xl p-12 border border-slate-100 space-y-10">
-               <h4 className="text-xs font-bold text-slate-900 uppercase tracking-widest italic">Mission Timeline</h4>
-               <div className="space-y-8">
-                  <div className="flex items-center gap-8">
-                     <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-slate-200 border border-slate-100 font-black text-xl italic shadow-sm">
-                        IN
-                     </div>
-                     <div className="space-y-1">
-                        <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Initialization</p>
-                        <p className="text-lg font-bold text-slate-900">{new Date(campaign.startDate).toLocaleDateString()}</p>
-                     </div>
+         <aside className="lg:col-span-4 space-y-8">
+            <div className="bg-slate-950 rounded-[3.5rem] p-12 text-white space-y-12 relative overflow-hidden shadow-5xl border border-white/5">
+               <div className="absolute top-0 right-0 w-32 h-32 bg-tf-primary/10 rounded-full blur-[80px] -mr-16 -mt-16" />
+               <div className="relative z-10 space-y-10 text-left">
+                  <div className="space-y-2">
+                     <p className="text-[10px] font-black text-tf-primary uppercase tracking-[0.4em] italic leading-none">Mission Info</p>
+                     <h4 className="text-3xl font-black italic tracking-tighter">Current Status</h4>
                   </div>
-                  <div className="flex items-center gap-8">
-                     <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-slate-200 border border-slate-100 font-black text-xl italic shadow-sm">
-                        EX
-                     </div>
-                     <div className="space-y-1">
-                        <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Expected Completion</p>
-                        <p className="text-lg font-bold text-slate-900">{new Date(campaign.endDate).toLocaleDateString()}</p>
-                     </div>
+                  
+                  <div className="space-y-8">
+                     {[
+                        { icon: <FiUsers />, val: `${campaign.donationsCount || 0} Donors`, label: 'Support Group', color: 'text-tf-primary' },
+                        { icon: <FiTrendingUp />, val: 'Active Cause', label: 'Status', color: 'text-emerald-400' },
+                        { icon: <FiClock />, val: new Date(campaign.endDate).toLocaleDateString(), label: 'Completion Date', color: 'text-tf-primary' },
+                        { icon: <FiTarget />, val: 'Direct Aid', label: 'Method', color: 'text-white' }
+                     ].map((stat, i) => (
+                        <div key={i} className="flex items-center gap-6">
+                           <div className="w-14 h-14 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center text-xl shadow-inner"><div className={stat.color}>{stat.icon}</div></div>
+                           <div className="space-y-0.5">
+                              <p className="text-[9px] font-bold text-white/20 uppercase tracking-widest leading-none mb-1">{stat.label}</p>
+                              <p className={`text-xl font-black tracking-tight italic ${stat.color}`}>{stat.val}</p>
+                           </div>
+                        </div>
+                     ))}
+                  </div>
+                  
+                  <div className="pt-8 border-t border-white/5 flex items-center gap-4 group cursor-pointer" onClick={() => { setModalType('one-time'); setShowModal(true); }}>
+                     <div className="w-2 h-2 rounded-full bg-tf-primary animate-pulse" />
+                     <span className="text-[10px] font-black text-tf-primary uppercase tracking-[0.2em] group-hover:text-white transition-colors italic">Donate to this cause now →</span>
                   </div>
                </div>
-            </motion.div>
+            </div>
 
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} className="bg-tf-dark rounded-3xl p-12 text-white space-y-8 border border-white/5">
-               <h4 className="text-[10px] font-bold text-tf-primary uppercase tracking-widest">Status Report</h4>
-               <p className="text-lg text-white/50 leading-relaxed italic font-medium">
-                  Confirmed project state: <span className="text-white font-black uppercase">Active Deployment</span>. Resources are allocated on fixed authorization cycles based on verified field milestones.
-               </p>
-               <div className="flex items-center gap-4 pt-6 border-t border-white/10">
-                  <div className="w-3 h-3 bg-tf-accent rounded-full animate-pulse shadow-[0_0_10px_currentColor]" />
-                  <span className="text-xs font-bold text-tf-accent uppercase tracking-widest">Surveillance: Active</span>
+            <div className="bg-slate-50 rounded-[3.5rem] p-10 border border-slate-100 flex flex-col items-center text-center space-y-6 group transition-all hover:shadow-2xl">
+               <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-tf-primary text-xl shadow-xl"><FiShield /></div>
+               <div className="space-y-2">
+                  <h4 className="text-sm font-black text-slate-950 italic uppercase tracking-[0.2rem]">Transparent Giving</h4>
+                  <p className="text-[10px] font-bold text-slate-400 leading-relaxed uppercase tracking-tight italic">We use direct reporting tools to ensure every donation is spent exactly where it is needed.</p>
                </div>
-            </motion.div>
-         </div>
-      </section>
-
-      {/* Impact Matrix */}
-      <section className="py-48 px-8 lg:px-24 bg-tf-dark text-white relative overflow-hidden font-sans border-y border-white/5">
-         <div className="max-w-[1400px] mx-auto space-y-32 relative z-10">
-            <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-16">
-               <div className="space-y-8">
-                  <div className="flex items-center gap-4">
-                     <div className="w-16 h-0.5 bg-tf-primary" />
-                     <p className="text-xs font-bold text-tf-primary uppercase tracking-widest">Impact Strategy Matrix</p>
-                  </div>
-                  <h2 className="text-5xl md:text-7xl font-black tracking-tighter leading-tight italic">
-                     Strategic <span className="text-tf-primary italic">Intelligence</span>
-                  </h2>
-               </div>
-               <p className="max-w-md text-white/40 font-medium italic text-xl border-l-4 border-tf-primary/20 pl-10 leading-relaxed">
-                 High-fidelity data points documenting the verified success of our global network and field agents.
-               </p>
+               <Link to="/transparency" className="text-[10px] font-black text-tf-primary uppercase tracking-widest hover:text-slate-950 transition-colors italic flex items-center gap-2">View Audit Reports <FiExternalLink size={10} /></Link>
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-               {[
-                  { label: 'Personnel Reached', value: '1,200+', detail: 'Verified families and regional cohorts in direct coordination.', icon: '👥' },
-                  { label: 'Integrity Protocol', value: '100%', detail: 'Total capital audit trail synchronization for all intake nodes.', icon: '🛡️' },
-                  { label: 'Deployment Velocity', value: '48h', detail: 'Tactical deployment cycle for critical resource allocation.', icon: '⚡' }
-               ].map((stat) => (
-                  <div key={stat.label} className="bg-white/[0.03] border border-white/5 rounded-3xl p-12 space-y-8 hover:bg-white/[0.06] transition-all">
-                     <div className="flex justify-between items-center">
-                        <p className="text-[10px] font-bold text-white/30 uppercase tracking-widest">{stat.label}</p>
-                        <span className="text-3xl grayscale opacity-30">{stat.icon}</span>
-                     </div>
-                     <h4 className="text-6xl font-black text-tf-primary tracking-tighter italic lowercase">{stat.value}</h4>
-                     <p className="text-sm text-white/30 font-medium italic leading-relaxed pl-4 border-l border-white/10">{stat.detail}</p>
-                  </div>
-               ))}
-            </div>
-         </div>
-      </section>
-
-      {/* Final CTA */}
-      <section className="py-48 bg-white relative overflow-hidden text-center">
-         <div className="max-w-4xl mx-auto px-12 space-y-16 relative z-10">
-            <h3 className="text-5xl md:text-7xl font-black text-slate-950 tracking-tighter uppercase italic leading-tight">
-               Ready To <span className="text-tf-primary">Empower?</span>
-            </h3>
-            <p className="text-slate-400 text-2xl leading-relaxed italic font-medium">Join an elite network of global agents dedicated to verified field impact and community transformation.</p>
-            
-            <div className="pt-12 flex flex-col md:flex-row items-center justify-center gap-8">
-               <button onClick={() => setShowModal(true)} className="px-16 py-6 bg-slate-950 text-white rounded-full text-sm font-bold uppercase tracking-widest hover:bg-tf-primary transition-all shadow-xl min-w-[300px]">
-                  Initialize Support Now →
-               </button>
-               <Link to="/causes" className="text-slate-400 hover:text-slate-950 text-sm font-bold uppercase tracking-widest transition-all italic border-b border-slate-100 hover:border-tf-primary py-2">
-                  Return to Active Causes
-               </Link>
-            </div>
-         </div>
+         </aside>
       </section>
 
       <PublicFooter />
-      
+
       <style>{`
          @keyframes shimmer { 
             0% { transform: translateX(-100%); } 
@@ -539,9 +481,6 @@ export default function PublicCampaignDetailPage() {
          }
          .animate-shimmer {
             animation: shimmer 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-         }
-         .backdrop-blur-4xl {
-            backdrop-filter: blur(80px);
          }
       `}</style>
     </div>

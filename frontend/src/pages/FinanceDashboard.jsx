@@ -12,12 +12,14 @@ export default function FinanceDashboard() {
   const [ngoProfile, setNgoProfile] = useState(null);
 
   useEffect(() => {
-    api.get('/api/partners/me/profile')
+    api.get('/api/ngos/profile')
       .then(res => {
         setNgoProfile(res.data);
-        fetchSummary(res.data._id);
+        if (res.data?._id) fetchSummary(res.data._id);
       })
-      .catch(() => {});
+      .catch(err => {
+        console.error('NGO Profile fetch error on Finance Dashboard:', err);
+      });
   }, [fetchSummary]);
 
   if (loading && !summary) return (
@@ -111,7 +113,7 @@ export default function FinanceDashboard() {
             })
           ) : (
             <div className="py-20 text-center flex flex-col items-center">
-              <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4 text-slate-200">
+              <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4 text-slate-400">
                 <FiPieChart size={32} />
               </div>
               <p className="text-sm font-medium text-slate-400 italic">No allocation data available for this cycle.</p>
@@ -166,7 +168,7 @@ export default function FinanceDashboard() {
                 <tr>
                   <td colSpan="4" className="px-8 py-20 text-center">
                     <div className="space-y-4">
-                      <FiActivity className="mx-auto text-slate-100" size={48} />
+                      <FiActivity className="mx-auto text-slate-400" size={48} />
                       <p className="text-[10px] font-black uppercase tracking-widest text-slate-300">Waiting for initial capital deployment...</p>
                     </div>
                   </td>

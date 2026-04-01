@@ -70,6 +70,17 @@ export const updateUser = async (id, data) => {
   return user;
 };
 
+export const updatePassword = async (id, currentPassword, newPassword) => {
+  const user = await userRepo.findUserById(id);
+  if (!user) throw new Error('User not found');
+
+  const isMatch = await bcrypt.compare(currentPassword, user.password);
+  if (!isMatch) throw new Error('Current password does not match.');
+
+  const hashed = await bcrypt.hash(newPassword, 10);
+  return await userRepo.updateUser(id, { password: hashed });
+};
+
 export const deactivateUser = async (id) => {
   const user = await userRepo.deactivateUser(id);
   if (!user) throw new Error('User not found');

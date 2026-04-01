@@ -3,7 +3,9 @@ import * as auditLogRepository from "../repository/auditLog.repository.js";
 import * as campaignRepository from "../repository/campaign.repository.js";
 import * as donorRepository from "../repository/donor.repository.js";
 import * as partnerRepository from "../repository/partner.repository.js";
+import * as ngoRepository from "../repository/ngo.repository.js";
 import * as trustScoreService from "./trustScore.service.js";
+import { sendPaymentConfirmation } from "./email.service.js";
 
 export const createTransaction = async (data, userId = null) => {
     if (!data.donorId || !data.ngoId || !data.amount) {
@@ -126,7 +128,7 @@ export const completeDonation = async (transactionId, paymentId, status = "compl
 
         // Update Donor totalDonated and analytics
         if (transaction.donorId) {
-            const donor = await donorRepository.findById(transaction.donorId);
+            const donor = await donorRepository.findByUserId(transaction.donorId);
             if (donor) {
                 const currentDonated = (donor.totalDonated || 0) + transaction.amount;
                 const currentCount = (donor.analytics?.donationCount || 0) + 1;
@@ -137,17 +139,40 @@ export const completeDonation = async (transactionId, paymentId, status = "compl
                     'analytics.donationCount': currentCount,
                     'analytics.lastDonationDate': new Date()
                 });
+
+                // --- PLEDGE ACTIVATION ---
+                // If this is a pledge transaction, find the pending pledge for this campaign and activate it
+                if (transaction.type === 'pledge') {
+                    const pledgeIndex = donor.pledges.findIndex(p => 
+                        p.status === 'pending' && 
+                        p.campaign?.toString() === transaction.campaignId?.toString()
+                    );
+                    
+                    if (pledgeIndex !== -1) {
+                        donor.pledges[pledgeIndex].status = 'active';
+                        donor.pledges[pledgeIndex].startDate = new Date();
+                        await donor.save();
+                    }
+                }
             }
         }
 
         // --- NEW: Sync NGO/Partner total contribution stats ---
         if (transaction.ngoId) {
-            const partner = await partnerRepository.findById(transaction.ngoId);
-            if (partner) {
-                const totalContributed = (partner.partnershipHistory.totalContributed || 0) + transaction.amount;
-                await partnerRepository.updateById(partner._id, {
-                    'partnershipHistory.totalContributed': totalContributed
+            const ngo = await ngoRepository.findById(transaction.ngoId);
+            if (ngo) {
+                await ngoRepository.update(ngo._id, {
+                    totalFundsRaised: (ngo.totalFundsRaised || 0) + transaction.amount,
+                    availableFunds: (ngo.availableFunds || 0) + transaction.amount
                 });
+            } else {
+                const partner = await partnerRepository.findById(transaction.ngoId);
+                if (partner) {
+                    const totalContributed = (partner.partnershipHistory.totalContributed || 0) + transaction.amount;
+                    await partnerRepository.updateById(partner._id, {
+                        'partnershipHistory.totalContributed': totalContributed
+                    });
+                }
             }
         }
 
@@ -164,6 +189,18 @@ export const completeDonation = async (transactionId, paymentId, status = "compl
         previousData: { status: previousStatus },
         newData: { status }
     });
+    
+    // Send Email Confirmation
+    if (updatedTransaction.status === 'completed' && updatedTransaction.donorId) {
+        donorRepository.findByUserId(updatedTransaction.donorId).then(donor => {
+            if (donor) {
+                const userEmail = donor.userId?.email || donor.email;
+                if (userEmail) {
+                    sendPaymentConfirmation(userEmail, updatedTransaction).catch(err => console.error('Email failed:', err));
+                }
+            }
+        }).catch(err => console.error('Donor fetch for email failed:', err));
+    }
 
     return updatedTransaction;
 };

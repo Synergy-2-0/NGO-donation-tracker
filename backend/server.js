@@ -14,6 +14,9 @@ import donorRoutes from './src/routes/donor.routes.js';
 import transparencyRoutes from './src/routes/transparency.routes.js';
 import geoRoutes from './src/routes/geo.routes.js';
 import aiRoutes from './src/routes/ai.routes.js';
+import ngoRoutes from './src/routes/ngo.routes.js';
+import ngoFinanceRoutes from './src/routes/ngoFinance.routes.js';
+import { initReminderJob } from './src/services/reminder.service.js';
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -52,6 +55,8 @@ app.use("/api/finance", financeRoutes);
 app.use('/api/public', transparencyRoutes);
 app.use('/api/geo', geoRoutes);
 app.use('/api/ai', aiRoutes);
+app.use('/api/ngos', ngoRoutes);
+app.use('/api/ngos/finance', ngoFinanceRoutes);
 
 app.get('/', (req, res) => {
   res.status(200).send('NGO Donation Tracker API is running');
@@ -59,4 +64,5 @@ app.get('/', (req, res) => {
 
 app.listen(port, () => {
   console.log(`Server is listening on port ${port}`);
+  initReminderJob();
 });

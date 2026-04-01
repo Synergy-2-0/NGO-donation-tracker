@@ -12,12 +12,14 @@ export const findAll = async (filters = {}) => {
 
 export const findById = async (id) => {
   return await Donor.findOne({ _id: id, status: { $ne: 'deleted' } })
-    .populate('userId', 'name email role');
+    .populate('userId', 'name email role')
+    .populate('pledges.campaign', 'title');
 };
 
 export const findByUserId = async (userId) => {
   return await Donor.findOne({ userId, status: { $ne: 'deleted' } })
-    .populate('userId', 'name email role');
+    .populate('userId', 'name email role')
+    .populate('pledges.campaign', 'title');
 };
 
 export const updateById = async (id, data) => {

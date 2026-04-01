@@ -82,9 +82,74 @@ const campaignSchema = new mongoose.Schema(
                 },
             },
         },
+        sdgAlignment: {
+            type: [Number],
+            validate: {
+                validator: function(arr) {
+                    return arr.every(num => num >= 1 && num <= 17);
+                },
+                message: 'SDG goals must be between 1 and 17'
+            },
+            index: true
+        },
+        targetBeneficiaries: {
+            type: Number,
+            default: 0
+        },
+        reachedBeneficiaries: {
+            type: Number,
+            default: 0
+        },
+        costPerBeneficiary: {
+            type: Number,
+            default: 0
+        },
+        roiEstimation: {
+            type: Number,
+            default: 0
+        },
+        impactPercentage: {
+            type: Number,
+            default: 0
+        },
+        evidence: [{
+            title: String,
+            url: String,
+            uploadedAt: { type: Date, default: Date.now }
+        }],
         isDeleted: {
             type: Boolean,
             default: false,
+        },
+        allowPledges: {
+            type: Boolean,
+            default: false,
+        },
+        pledgeConfig: {
+            frequencies: {
+                type: [String],
+                enum: ['monthly', 'quarterly', 'yearly'],
+                default: ['monthly'],
+            },
+            minimumAmount: {
+                type: Number,
+                default: 500,
+                min: [0, 'Minimum pledge amount cannot be negative'],
+            },
+            suggestedAmounts: {
+                type: [Number],
+                default: [],
+            },
+            maxDurationMonths: {
+                type: Number,
+                default: 12,
+            },
+            donorNote: {
+                type: String,
+                trim: true,
+                maxlength: [500, 'Donor note cannot exceed 500 characters'],
+                default: '',
+            },
         },
     },
     { timestamps: true }

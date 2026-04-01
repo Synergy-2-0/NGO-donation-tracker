@@ -4,7 +4,8 @@ import api from '../api/axios';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { 
   FiSearch, FiClock, FiDownload, FiDollarSign, FiRepeat, FiCheckCircle, 
-  FiXCircle, FiMoreVertical, FiExternalLink, FiFilter, FiActivity, FiHash 
+  FiXCircle, FiMoreVertical, FiExternalLink, FiFilter, FiActivity, FiHash,
+  FiUsers
 } from 'react-icons/fi';
 
 const statusBadgeStyle = {
@@ -19,12 +20,16 @@ export default function TransactionsPage() {
   const [search, setSearch] = useState('');
 
   useEffect(() => {
-    api.get('/api/partners/me/profile')
+    api.get('/api/ngos/profile')
       .then(res => {
         setNgoProfile(res.data);
-        fetchTransactions(res.data._id);
+        if (res.data?._id) fetchTransactions(res.data._id);
       })
-      .catch(err => console.error("Error loading NGO profile:", err));
+      .catch(err => {
+         console.error("Error loading NGO profile for transactions:", err);
+         // Fallback for admins: fetch all transactions if no specific NGO profile is found
+         fetchTransactions();
+      });
   }, [fetchTransactions]);
 
   const filtered = transactions.filter(tx => {
@@ -47,7 +52,7 @@ export default function TransactionsPage() {
           <div>
             <p className="text-[10px] font-black uppercase tracking-[.2em] text-slate-400 mb-2">Financial Ledger</p>
             <h2 className="text-3xl md:text-4xl font-black text-white tracking-tight">
-              Transaction <span className="text-brand-red">Audit</span>
+              Transaction <span className="text-tf-primary">Audit</span>
             </h2>
             <p className="text-slate-400 text-sm mt-2 max-w-xl font-medium">
                Detailed record of all inbound funds, financial flows, and finalized verification events in your treasury.
@@ -90,6 +95,7 @@ export default function TransactionsPage() {
             <thead>
               <tr className="text-left text-[10px] text-slate-400 uppercase tracking-[.2em] font-black border-b border-slate-50 bg-slate-50/50">
                 <th className="px-10 py-6">Identity Hash</th>
+                <th className="px-10 py-6">Mission / Donor</th>
                 <th className="px-10 py-6">Timeline</th>
                 <th className="px-10 py-6">Liquidity Inbound</th>
                 <th className="px-10 py-6">Mode of Exchange</th>
@@ -103,7 +109,7 @@ export default function TransactionsPage() {
                   <tr key={tx._id} className="group hover:bg-slate-50/30 transition-colors">
                     <td className="px-10 py-6">
                         <div className="flex items-center gap-3">
-                           <div className="w-9 h-9 bg-slate-100 rounded-xl flex items-center justify-center text-slate-400 font-serif group-hover:bg-brand-red group-hover:text-white transition-all scale-95 group-hover:scale-100">
+                           <div className="w-9 h-9 bg-slate-100 rounded-xl flex items-center justify-center text-slate-500 font-serif group-hover:bg-tf-primary group-hover:text-white transition-all scale-95 group-hover:scale-100">
                               <FiHash />
                            </div>
                            <div>
@@ -112,6 +118,14 @@ export default function TransactionsPage() {
                               </p>
                               <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-0.5 font-serif">Registry Entry</p>
                            </div>
+                        </div>
+                    </td>
+                    <td className="px-10 py-6">
+                        <div className="space-y-1">
+                           <p className="text-sm font-black text-slate-950 italic line-clamp-1">{tx.campaignId?.title || 'Emergency Fund'}</p>
+                           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                              <FiUsers className="text-tf-primary" size={12} /> {tx.donorId?.name || 'Anonymous Donor'}
+                           </p>
                         </div>
                     </td>
                     <td className="px-10 py-6 whitespace-nowrap">
@@ -152,8 +166,8 @@ export default function TransactionsPage() {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="6" className="px-10 py-32 text-center">
-                        <div className="w-20 h-20 bg-slate-50 rounded-[30px] flex items-center justify-center mx-auto mb-5 border border-slate-100 text-slate-200 font-serif">
+                  <td colSpan="7" className="px-10 py-32 text-center">
+                        <div className="w-20 h-20 bg-slate-50 rounded-[30px] flex items-center justify-center mx-auto mb-5 border border-slate-100 text-slate-400 font-serif">
                              <FiRepeat className="text-4xl" />
                         </div>
                         <h3 className="text-slate-400 font-black text-sm uppercase tracking-widest">Zero Intelligence Detected.</h3>

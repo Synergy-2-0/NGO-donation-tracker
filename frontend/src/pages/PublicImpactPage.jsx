@@ -10,17 +10,26 @@ export default function PublicImpactPage() {
     <div className="min-h-screen bg-white font-sans selection:bg-tf-primary selection:text-white pb-0 overflow-x-hidden">
       <PublicNavbar />
       
-      {/* Hero Header */}
-      <section className="pt-48 pb-32 px-8 lg:px-24 bg-tf-secondary bg-gradient-to-b from-slate-50 to-white">
-        <div className="max-w-[1400px] mx-auto text-center space-y-10">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-            <p className="text-[12px] font-bold text-tf-primary uppercase tracking-[0.6em] mb-6">Our Global Impact</p>
-            <h1 className="text-6xl md:text-9xl font-bold font-display text-tf-dark tracking-tighter uppercase italic leading-[0.85]">
-              Real <br /> <span className="text-tf-primary tracking-normal">Humanitarian</span> <br /> Outcomes.
+      <section className="pt-64 pb-32 px-8 lg:px-24 bg-slate-950 relative overflow-hidden group">
+        <div className="absolute inset-0 z-0">
+           <img src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&q=80&w=2400" className="w-full h-full object-cover brightness-[0.2] group-hover:scale-105 transition-transform duration-[10s]" alt="Impact" />
+           <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent" />
+        </div>
+
+        <div className="max-w-[1400px] mx-auto text-center space-y-12 relative z-10">
+          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} className="space-y-10">
+            <div className="flex justify-center">
+               <span className="px-6 py-2 rounded-full border border-orange-500/30 bg-orange-500/5 text-orange-500 font-black text-[10px] tracking-[0.6em] uppercase mb-6 inline-flex items-center gap-3 italic">
+                  <div className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse" />
+                  Verified Global Impact Feed
+               </span>
+            </div>
+            <h1 className="text-6xl md:text-9xl font-black text-white tracking-tighter uppercase italic leading-[0.8] selection:bg-orange-500">
+               Real <br /> <span className="text-tf-primary italic underline underline-offset-8 decoration-white/10">Humanitarian</span> <br /> Outcomes.
             </h1>
           </motion.div>
-          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} className="text-xl text-slate-500 font-serif font-medium leading-relaxed max-w-2xl mx-auto italic">
-            Every contribution through TransFund is a direct investment into community resilience. We track every outcome with precision.
+          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="text-xl text-white/40 font-medium italic leading-relaxed max-w-3xl mx-auto border-t border-white/5 pt-12 mt-12 lowercase tracking-tight">
+            every philanthropic asset deployed via transfund is a direct investment in global resilience. we track and verify outcomes with absolute precision.
           </motion.p>
         </div>
       </section>

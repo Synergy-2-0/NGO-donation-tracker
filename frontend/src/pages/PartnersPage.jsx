@@ -258,7 +258,7 @@ export default function PartnersPage() {
                     <td className="px-8 py-6">
                       <div className="flex items-center gap-4">
                         <div className="w-12 h-12 rounded-2xl bg-white border border-slate-100 flex items-center justify-center shadow-sm overflow-hidden group-hover:scale-105 transition-transform shrink-0 font-serif">
-                          {partner.logoUrl ? <img src={partner.logoUrl} className="w-full h-full object-cover" /> : <FiBriefcase className="text-slate-200 text-xl" />}
+                          {partner.logoUrl ? <img src={partner.logoUrl} className="w-full h-full object-cover" /> : <FiBriefcase className="text-slate-400 text-xl" />}
                         </div>
                         <div>
                           <p className="font-black text-slate-800 tracking-tight leading-none mb-1.5">{partner.organizationName}</p>
@@ -303,7 +303,7 @@ export default function PartnersPage() {
                 )) : (
                   <tr>
                     <td colSpan="5" className="px-8 py-20 text-center">
-                      <div className="w-20 h-20 bg-slate-50 rounded-[28px] flex items-center justify-center mx-auto mb-4 border border-slate-100 text-slate-200">
+                      <div className="w-20 h-20 bg-slate-50 rounded-[28px] flex items-center justify-center mx-auto mb-4 border border-slate-100 text-slate-400">
                         <FiSearch className="text-3xl" />
                       </div>
                       <p className="text-slate-400 font-black text-sm uppercase tracking-widest">No entities detected.</p>

@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 import { useDonor } from '../context/DonorContext';
 import LoadingSpinner from '../components/LoadingSpinner';
@@ -77,7 +78,7 @@ function PledgeModal({ pledge, onClose, onSave, loading }) {
               <input
                 type="number"
                 value={form.amount}
-                onChange={handleChange}
+                onChange={(e) => setForm({...form, amount: e.target.value})}
                 required
                 placeholder="0.00"
                 className={inputCls}
@@ -160,7 +161,8 @@ function PledgeModal({ pledge, onClose, onSave, loading }) {
 export default function PledgesPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { donorProfile, pledges, loading, fetchProfile, fetchPledges, createPledge, updatePledge, deletePledge } = useDonor();
+  const { t } = useTranslation();
+  const { donorProfile, pledges, transactions, loading, fetchProfile, fetchTransactions, fetchPledges, createPledge, updatePledge, deletePledge } = useDonor();
   const [modal, setModal] = useState({ open: false, data: null });
   const [localError, setLocalError] = useState('');
   const [success, setSuccess] = useState('');
@@ -170,7 +172,11 @@ export default function PledgesPage() {
     const load = async () => {
       try {
         const profile = donorProfile || (await fetchProfile());
-        if (profile?._id) await fetchPledges(profile._id);
+        if (profile?._id) {
+          await fetchPledges(profile._id);
+          const userId = profile.userId?._id || profile.userId;
+          if (userId) await fetchTransactions(userId);
+        }
       } catch {
         // quiet
       } finally {
@@ -178,7 +184,7 @@ export default function PledgesPage() {
       }
     };
     load();
-  }, [donorProfile, fetchProfile, fetchPledges]);
+  }, [donorProfile, fetchProfile, fetchPledges, fetchTransactions]);
 
   const handleSave = async (data) => {
     setLocalError('');
@@ -231,14 +237,6 @@ export default function PledgesPage() {
                  Manage your ongoing support for humanitarian causes. Every contribution is tracked through our <span className="text-white/60">Verified Transparency Standards.</span>
               </p>
            </div>
-           {donorProfile && (
-             <button
-               onClick={() => { setModal({ open: true, data: null }); setSuccess(''); setLocalError(''); }}
-               className="px-14 py-7 bg-tf-primary text-white text-[11px] font-black uppercase tracking-[0.5em] rounded-[2rem] hover:bg-white hover:text-slate-950 transition-all duration-500 shadow-[0_20px_50px_rgba(255,138,0,0.25)] active:scale-95 group"
-             >
-                New Support Plan <span className="inline-block group-hover:translate-x-2 transition-transform ml-2">→</span>
-             </button>
-           )}
         </div>
       </div>
 
@@ -291,74 +289,103 @@ export default function PledgesPage() {
           </div>
           <div className="space-y-4">
             <p className="text-3xl font-black text-slate-900 tracking-tight italic leading-none">No Active Pledges</p>
-            <p className="text-[11px] text-slate-500 font-black uppercase tracking-[0.5em] italic leading-relaxed max-w-md mx-auto">You haven't set up any donation plans yet. Support your first project today.</p>
+            <p className="text-[11px] text-slate-500 font-black uppercase tracking-[0.5em] italic leading-relaxed max-w-md mx-auto">Explore campaigns to start supporting your first verified humanitarian project.</p>
           </div>
-          <button
-            onClick={() => setModal({ open: true, data: null })}
-            className="px-14 py-6 bg-tf-primary text-white rounded-[2rem] text-[11px] font-black uppercase tracking-[0.5em] shadow-2xl shadow-tf-primary/20 hover:bg-slate-950 transition-all active:scale-95"
-          >
-            Start My First Pledge
-          </button>
         </motion.div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
           <AnimatePresence>
-            {pledges.map((pledge) => (
-              <motion.div 
-                layout
-                initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
-                key={pledge._id} 
-                className="bg-white rounded-[3.5rem] border border-slate-100 p-12 hover:shadow-3xl transition-all duration-700 group relative overflow-hidden flex flex-col"
-              >
-                <div className="absolute top-0 right-0 w-32 h-32 bg-tf-primary/5 blur-[50px] -mr-16 -mt-16 group-hover:bg-tf-primary/10 transition-colors" />
-                <div className="space-y-10 relative z-10 flex-1 flex flex-col">
-                  <div className="flex justify-between items-start">
-                     <span className={`px-6 py-2.5 rounded-2xl text-[9px] font-black uppercase tracking-[0.3em] border transition-all shadow-sm ${statusBadgeStyle[pledge.status] || 'bg-slate-50 text-slate-400 border-slate-100'}`}>
-                        {pledge.status}
-                     </span>
-                     <p className="text-[10px] font-black text-slate-300 font-mono tracking-widest uppercase italic">ID: {pledge._id.slice(-6)}</p>
-                  </div>
-                  
-                  <div className="space-y-3">
-                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.5em] leading-none">Pledge Amount</p>
-                     <h3 className="text-3xl font-bold text-slate-950 tracking-tight tabular-nums leading-none">LKR {Number(pledge.amount).toLocaleString()}</h3>
-                  </div>
+            {pledges.map((pledge) => {
+              const pledgeTxs = (transactions || []).filter(tx => 
+                tx.status === 'completed' && 
+                (tx.campaignId?._id === pledge.campaign?._id || tx.campaignId === pledge.campaign) &&
+                Number(tx.amount) === Number(pledge.amount)
+              );
+              const totalImpact = pledgeTxs.reduce((sum, tx) => sum + Number(tx.amount), 0);
+              const donePaymentsCount = pledgeTxs.length;
 
-                  <div className="grid grid-cols-2 gap-8 pt-8 border-t border-slate-50">
-                     <div className="space-y-2">
-                        <p className="text-[9px] font-black text-slate-300 uppercase tracking-[0.3em] leading-none">Frequency</p>
-                        <p className="text-base font-black text-slate-900 italic capitalize leading-none tracking-tight">{pledge.frequency}</p>
-                     </div>
-                     <div className="space-y-2">
-                        <p className="text-[9px] font-black text-slate-300 uppercase tracking-[0.3em] leading-none">Status</p>
-                        <p className="text-base font-black text-slate-900 italic leading-none tracking-tight">Active</p>
-                     </div>
-                  </div>
+              const nextDueDate = (() => {
+                if (pledge.status !== 'active' && pledge.status !== 'pending') return null;
+                
+                const months = pledge.frequency === 'monthly' ? 1 : pledge.frequency === 'quarterly' ? 3 : pledge.frequency === 'annually' ? 12 : 0;
+                if (!months) return null;
 
-                  {pledge.notes && (
-                    <div className="pt-6">
-                       <p className="text-[9px] font-black text-slate-300 uppercase tracking-[0.3em] mb-2 leading-none italic">Message</p>
-                       <p className="text-[13px] text-slate-500 font-medium italic leading-relaxed line-clamp-2">{pledge.notes}</p>
+                if (pledgeTxs.length > 0) {
+                  const sortedTxs = [...pledgeTxs].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                  const latest = new Date(sortedTxs[0].createdAt);
+                  latest.setMonth(latest.getMonth() + months);
+                  return latest;
+                }
+                
+                // FALLBACK: Anchor to start date
+                return new Date(pledge.startDate || pledge.createdAt);
+              })();
+
+              return (
+                <motion.div 
+                  layout
+                  initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
+                  key={pledge._id} 
+                  className="bg-white rounded-[3.5rem] border border-slate-100 p-12 hover:shadow-3xl transition-all duration-700 group relative overflow-hidden flex flex-col"
+                >
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-tf-primary/5 blur-[50px] -mr-16 -mt-16 group-hover:bg-tf-primary/10 transition-colors" />
+                  <div className="space-y-8 relative z-10 flex-1 flex flex-col">
+                    <div className="flex justify-between items-start">
+                       <span className={`px-6 py-2.5 rounded-2xl text-[9px] font-black uppercase tracking-[0.3em] border transition-all shadow-sm ${statusBadgeStyle[pledge.status] || 'bg-slate-50 text-slate-400 border-slate-100'}`}>
+                          {pledge.status}
+                       </span>
+                       <p className="text-[10px] font-black text-slate-300 font-mono tracking-widest uppercase italic">ID: {pledge._id.slice(-6)}</p>
                     </div>
-                  )}
+                    
+                    <div className="space-y-2">
+                       <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.5em] leading-none mb-1">Pledge Support</p>
+                       <h3 className="text-3xl font-bold text-slate-950 tracking-tight tabular-nums leading-none">LKR {Number(pledge.amount).toLocaleString()}</h3>
+                       <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic">{pledge.frequency} MISSION CYCLE</p>
+                    </div>
 
-                  <div className="flex gap-4 pt-10 mt-auto">
-                    <button
-                      onClick={() => handleArchive(pledge._id)}
-                      className="flex-1 py-5 bg-slate-50 hover:bg-rose-50 text-slate-400 hover:text-rose-600 border border-slate-100 hover:border-rose-100 rounded-[1.5rem] text-[10px] font-black uppercase tracking-[0.4em] transition-all duration-500 active:scale-95"
-                    >
-                      Stop Pledge
-                    </button>
-                    <button
-                      onClick={() => setModal({ open: true, data: pledge })}
-                      className="p-5 bg-slate-50 border border-slate-100 rounded-[1.5rem] text-slate-400 hover:text-tf-primary hover:bg-tf-primary/5 transition-all duration-500 active:scale-90"
-                    >
-                       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
-                    </button>
+                    <div className="grid grid-cols-2 gap-8 pt-8 border-t border-slate-50">
+                       <div className="space-y-2">
+                          <p className="text-[9px] font-black text-slate-300 uppercase tracking-[0.3em] leading-none mb-1">Gifts Verified</p>
+                          <p className="text-base font-black text-tf-accent italic leading-none tracking-tight">{donePaymentsCount} Payments</p>
+                       </div>
+                       <div className="space-y-2 text-right">
+                          <p className="text-[9px] font-black text-slate-300 uppercase tracking-[0.3em] leading-none mb-1">Total Given</p>
+                          <p className="text-base font-black text-slate-900 italic leading-none tracking-tight">LKR {totalImpact.toLocaleString()}</p>
+                       </div>
+                    </div>
+
+                    <div className={`${pledge.status === 'pending' ? 'bg-amber-50' : 'bg-slate-50'} rounded-2xl p-6 space-y-2 group-hover:bg-tf-primary/5 transition-colors`}>
+                       <p className="text-[9px] font-black text-slate-300 uppercase tracking-[0.3em] leading-none">Next Support Date</p>
+                       <p className={`text-[13px] font-black italic flex items-center gap-2 ${pledge.status === 'pending' ? 'text-amber-600' : 'text-slate-900'}`}>
+                          <svg className="w-4 h-4 text-tf-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                          {nextDueDate ? nextDueDate.toLocaleDateString(undefined, {month: 'long', day: 'numeric', year: 'numeric'}) : (pledge.status === 'active' ? 'Payment Due' : 'Completed Plan')}
+                       </p>
+                    </div>
+
+                    {pledge.notes && (
+                      <div className="pt-2">
+                         <p className="text-[13px] text-slate-400 font-medium italic leading-relaxed line-clamp-2 italic">"{pledge.notes}"</p>
+                      </div>
+                    )}
+
+                    <div className="flex gap-4 pt-8 mt-auto">
+                      <button
+                        onClick={() => handleArchive(pledge._id)}
+                        className="flex-1 py-5 bg-slate-50 hover:bg-rose-50 text-slate-400 hover:text-rose-600 border border-slate-100 hover:border-rose-100 rounded-[1.5rem] text-[10px] font-black uppercase tracking-[0.4em] transition-all duration-500 active:scale-95"
+                      >
+                        Stop Pledge
+                      </button>
+                      <button
+                        onClick={() => setModal({ open: true, data: pledge })}
+                        className="px-6 bg-slate-50 border border-slate-100 rounded-[1.5rem] text-slate-400 hover:text-tf-primary hover:bg-tf-primary/5 transition-all duration-500 active:scale-90"
+                      >
+                         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+                      </button>
+                    </div>
                   </div>
-                </div>
-              </motion.div>
-            ))}
+                </motion.div>
+              );
+            })}
           </AnimatePresence>
         </div>
       )}

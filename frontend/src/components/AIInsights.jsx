@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { FiCpu, FiTrendingUp, FiTarget, FiZap, FiInfo } from 'react-icons/fi';
+import api from '../api/axios';
+import { FiTrendingUp, FiTarget, FiZap, FiInfo, FiCpu } from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
+import LoadingSpinner from './LoadingSpinner';
 
 export default function AIInsights() {
   const [insights, setInsights] = useState([]);
@@ -10,10 +11,8 @@ export default function AIInsights() {
   useEffect(() => {
     async function fetchInsights() {
       try {
-        const res = await axios.get('http://localhost:3000/api/ai/donor-insights', {
-          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-        });
-        setInsights(res.data.insights);
+        const res = await api.get('/api/ai/donor-insights');
+        setInsights(res.data.insights || []);
       } catch (err) {
         console.error('AI Insights fetch failed:', err);
       } finally {
@@ -24,70 +23,76 @@ export default function AIInsights() {
   }, []);
 
   if (loading) return (
-    <div className="premium-surface p-8 flex flex-col items-center justify-center min-h-[300px]">
-      <FiCpu className="text-orange-500 animate-spin mb-4" size={32} />
-      <p className="text-sm font-medium text-slate-400">Processing behavioral analytics...</p>
+    <div className="bg-white rounded-[2rem] border border-slate-100 p-10 flex items-center justify-center shadow-sm">
+      <LoadingSpinner message="Generating community insights Hub..." size="sm" />
     </div>
   );
 
   return (
-    <div className="premium-surface overflow-hidden group">
-      <div className="p-8 bg-slate-950 text-white relative">
-        <div className="absolute top-0 right-0 w-32 h-32 bg-orange-500/20 blur-3xl rounded-full -mr-16 -mt-16" />
-        <div className="relative z-10 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-orange-500 rounded-lg shadow-lg shadow-orange-500/20">
-              <FiCpu size={20} />
+    <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden group">
+      <div className="p-10 bg-slate-900 text-white relative">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-tf-primary/20 blur-3xl rounded-full -mr-16 -mt-16" />
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="flex items-center gap-4">
+            <div className="p-3 bg-tf-primary rounded-2xl shadow-lg shadow-tf-primary/20">
+               <FiCpu className="text-white text-xl" />
             </div>
             <div>
-              <h3 className="font-bold text-lg tracking-tight">AI Humanitarian Insights</h3>
-              <p className="text-[10px] uppercase font-bold tracking-[0.2em] text-white/50">Personalized Analytics Hub</p>
+              <h3 className="font-black text-xl tracking-tight leading-none mb-1">Donor Insights</h3>
+              <p className="text-[10px] uppercase font-black tracking-widest text-white/40 italic">Community Information Hub</p>
             </div>
           </div>
-          <div className="flex items-center gap-1.5 px-3 py-1 bg-white/10 rounded-full border border-white/5 text-[11px] font-bold">
-            <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
-            LIVE ANALYSIS
+          <div className="flex items-center gap-2 px-4 py-1.5 bg-white/5 border border-white/10 rounded-full text-[10px] font-black uppercase tracking-widest italic backdrop-blur-md">
+            <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse shadow-[0_0_8px_#34d399]" />
+            Live Analysis
           </div>
         </div>
       </div>
 
-      <div className="p-4 space-y-3">
+      <div className="p-6 space-y-4">
         <AnimatePresence>
-          {insights.map((item, idx) => (
+          {insights.length > 0 ? insights.map((item, idx) => (
             <motion.div
-              key={item.id}
-              initial={{ opacity: 0, x: -20 }}
+              key={item.id || idx}
+              initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: idx * 0.1 }}
-              className="p-5 rounded-2xl bg-white border border-slate-100 hover:border-orange-500/20 hover:shadow-xl hover:shadow-orange-500/5 transition-all duration-300 group/item flex gap-4"
+              className="p-6 rounded-[1.5rem] bg-slate-50/50 border border-slate-50 hover:border-tf-primary/20 hover:bg-white hover:shadow-xl transition-all duration-500 group/item flex gap-5"
             >
-              <div className="p-3 rounded-xl bg-orange-50 text-orange-600 transition-colors group-hover/item:bg-orange-500 group-hover/item:text-white h-fit">
+              <div className="p-3 rounded-2xl bg-white border border-slate-100 text-slate-400 group-hover/item:bg-slate-900 group-hover/item:text-white group-hover/item:rotate-12 transition-all shadow-sm h-fit shrink-0">
                 {item.type === 'prediction' ? <FiTrendingUp /> : item.type === 'recommendation' ? <FiTarget /> : <FiZap />}
               </div>
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
-                    {item.type} insight
+              <div className="space-y-2">
+                <div className="flex flex-wrap items-center gap-3">
+                  <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 italic">
+                    {item.type} Hub
                   </span>
-                  <div className="flex items-center gap-1 px-1.5 py-0.5 bg-green-50 text-[9px] font-bold text-green-600 rounded">
-                    {Math.round(item.confidence * 100)}% Match
-                  </div>
+                  {item.confidence && (
+                    <div className="px-2 py-0.5 bg-emerald-50 text-[9px] font-black text-emerald-600 rounded-lg border border-emerald-100 uppercase tracking-widest">
+                      {Math.round(item.confidence * 100)}% Match
+                    </div>
+                  )}
                 </div>
-                <p className="text-sm font-medium text-slate-700 leading-relaxed">
+                <p className="text-sm font-bold text-slate-700 leading-relaxed italic">
                   {item.insight}
                 </p>
               </div>
             </motion.div>
-          ))}
+          )) : (
+            <div className="py-20 text-center space-y-4 bg-slate-50/50 rounded-[2rem] border border-dashed border-slate-100 italic">
+               <FiInfo className="mx-auto text-slate-200" size={40} />
+               <p className="text-slate-400 font-bold text-xs uppercase tracking-widest">No donor insights available for the selected registry.</p>
+            </div>
+          )}
         </AnimatePresence>
       </div>
 
-      <div className="px-8 py-5 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
-        <div className="flex items-center gap-1.5 text-xs text-slate-400 font-medium italic">
-          <FiInfo size={14} className="not-italic" /> High confidence models active
+      <div className="px-10 py-6 bg-slate-50/50 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="flex items-center gap-2 text-[10px] text-slate-400 font-black uppercase tracking-widest italic leading-none">
+          <FiInfo size={14} className="not-italic text-tf-primary" /> Active Synchronization Protocols Hub
         </div>
-        <button className="text-xs font-bold text-orange-500 hover:text-orange-600 transition-colors">
-          RECALIBRATE →
+        <button className="text-[10px] font-black text-tf-primary hover:text-slate-900 transition-colors uppercase tracking-widest underline decoration-2 underline-offset-8 decoration-tf-primary/30">
+          RECALIBRATERegistry →
         </button>
       </div>
     </div>

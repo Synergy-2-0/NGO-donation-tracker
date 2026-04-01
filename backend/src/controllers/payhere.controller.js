@@ -59,3 +59,23 @@ export const getConfig = async (req, res) => {
         });
     }
 };
+
+/**
+ * Manually verify a payment was successful (Success Page Fallback)
+ * Route: POST /api/finance/payhere/verify/:transactionId
+ */
+export const verifyPaymentSuccess = async (req, res) => {
+    try {
+        const { transactionId } = req.params;
+        const transaction = await payHereService.manualVerify(transactionId);
+        res.status(200).json({
+            success: true,
+            transaction
+        });
+    } catch (error) {
+        res.status(400).json({
+            success: false,
+            message: error.message
+        });
+    }
+};

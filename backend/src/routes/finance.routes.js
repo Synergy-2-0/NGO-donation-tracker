@@ -23,6 +23,8 @@ router.post("/payhere/callback", payHereController.handleCallback);
 
 router.get("/payhere/config", payHereController.getConfig);
 
+router.post("/payhere/verify/:transactionId", protect, payHereController.verifyPaymentSuccess);
+
 // ==================== Transaction Routes ====================
 router.post(
     "/transactions",

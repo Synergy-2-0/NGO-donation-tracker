@@ -77,33 +77,37 @@ export default function PartnerDashboardPage() {
            label="Active Agreements" 
            value={activeAgreements.length} 
            sub="Partnerships in progress"
-           icon={<FiActivity />} 
+           icon={<FiActivity className="text-xl" />} 
            color="text-emerald-600" 
-           bg="bg-emerald-50" 
+           bg="bg-emerald-500" 
+           iconBg="bg-emerald-500"
          />
          <MetricCard 
            label="Pending Requests" 
            value={pendingAgreements.length} 
            sub="Awaiting review"
-           icon={<FiClock />} 
+           icon={<FiClock className="text-xl" />} 
            color="text-amber-600" 
-           bg="bg-amber-50" 
+           bg="bg-amber-500" 
+           iconBg="bg-amber-500"
          />
          <MetricCard 
            label="Total Contributions" 
            value={asMoney(partner?.partnershipHistory?.totalContributed)} 
            sub="Lifetime donation total"
-           icon={<FiTrendingUp />} 
-           color="text-brand-red" 
-           bg="bg-red-50" 
+           icon={<FiTrendingUp className="text-xl" />} 
+           color="text-tf-primary" 
+           bg="bg-tf-primary" 
+           iconBg="bg-tf-primary"
          />
          <MetricCard 
            label="Organization Health" 
            value={partner?.verificationStatus === 'verified' ? 'Excellent' : 'Pending'} 
            sub="Verification level"
-           icon={<FiShield />} 
+           icon={<FiShield className="text-xl" />} 
            color="text-slate-900" 
-           bg="bg-slate-100" 
+           bg="bg-slate-900" 
+           iconBg="bg-slate-900"
          />
       </div>
 
@@ -205,13 +209,13 @@ export default function PartnerDashboardPage() {
   );
 }
 
-function MetricCard({ label, value, sub, icon, color, bg }) {
+function MetricCard({ label, value, sub, icon, color, iconBg }) {
   return (
     <div className="bg-white rounded-[32px] border border-slate-100 shadow-sm p-7 space-y-3 hover:shadow-xl transition-all group text-left relative overflow-hidden">
       <div className="absolute -right-6 -top-6 w-24 h-24 rounded-full bg-slate-50 group-hover:bg-slate-100 transition-colors opacity-50" />
       <div className="flex items-center justify-between relative z-10">
         <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{label}</p>
-        <span className={`w-10 h-10 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110 ${bg} ${color}`}>
+        <span className={`w-12 h-12 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110 text-white shadow-lg ${iconBg || 'bg-slate-800'}`}>
           {icon}
         </span>
       </div>

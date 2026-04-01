@@ -7,9 +7,16 @@ const isDevMode = process.env.NODE_ENV !== "production";
  * Generate MD5 hash for PayHere
  */
 const generateHash = (merchantId, orderId, amount, currency, merchantSecret) => {
+    // PayHere requires exactly 2 decimal places for the amount in the hash
     const formattedAmount = parseFloat(amount).toFixed(2);
-    const secretHash = crypto.createHash("md5").update(merchantSecret).digest("hex").toUpperCase();
-    const hashString = `${merchantId}${orderId}${formattedAmount}${currency}${secretHash}`;
+    
+    // Trim to avoid whitespace issues from .env
+    const mid = merchantId.toString().trim();
+    const msec = merchantSecret.toString().trim();
+    
+    const secretHash = crypto.createHash("md5").update(msec).digest("hex").toUpperCase();
+    const hashString = `${mid}${orderId}${formattedAmount}${currency}${secretHash}`;
+    
     return crypto.createHash("md5").update(hashString).digest("hex").toUpperCase();
 };
 
@@ -36,19 +43,49 @@ export const initPayHerePayment = async (paymentData) => {
         throw new Error("Missing required payment fields");
     }
 
-    // Generate unique order ID
-    const orderId = `TXN-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    // Generate unique order ID (Numerical only for maximal compatibility)
+    const orderId = `${Date.now()}`;
 
     // Get PayHere credentials from environment
     const merchantId = process.env.PAYHERE_MERCHANT_ID;
     const merchantSecret = process.env.PAYHERE_MERCHANT_SECRET;
 
     if (!merchantId || !merchantSecret) {
-        throw new Error("PayHere credentials not configured");
+        throw new Error("PayHere credentials not configured Hub");
     }
 
-    // Generate hash
+    // Generate hash Hub
     const hash = generateHash(merchantId, orderId, amount, currency, merchantSecret);
+
+    // If it's a pledge, store it in the donor profile
+    if (paymentData.type === 'pledge') {
+        try {
+            const Donor = (await import('../models/donor.model.js')).default;
+            let donor = await Donor.findOne({ userId: donorId });
+            
+            const pledgeData = {
+                amount: parseFloat(amount),
+                frequency: paymentData.frequency || 'monthly',
+                campaign: campaignId,
+                status: 'pending',
+                notes: `Success: Pledge Hub`
+            };
+
+            if (!donor) {
+                await Donor.create({
+                    userId: donorId,
+                    phone: phone,
+                    address: { street: address || 'Colombo', city: city || 'Colombo', country: 'Sri Lanka' },
+                    pledges: [pledgeData]
+                });
+            } else {
+                donor.pledges.push(pledgeData);
+                await donor.save();
+            }
+        } catch (pledgeErr) {
+            console.error("Pledge registration error Hub:", pledgeErr.message);
+        }
+    }
 
     // Create pending transaction
     const transaction = await transactionService.createTransaction({
@@ -58,8 +95,9 @@ export const initPayHerePayment = async (paymentData) => {
         amount,
         currency,
         status: "pending",
-        payHereOrderId: orderId,
+        orderId: orderId,
         paymentMethod: "PayHere",
+        type: paymentData.type || "one-time",
     });
 
     // Return PayHere payment initialization data
@@ -67,23 +105,23 @@ export const initPayHerePayment = async (paymentData) => {
         transactionId: transaction._id,
         paymentData: {
             merchant_id: merchantId,
-            return_url: process.env.PAYHERE_RETURN_URL || "http://localhost:3000/payment/return",
-            cancel_url: process.env.PAYHERE_CANCEL_URL || "http://localhost:3000/payment/cancel",
-            notify_url: process.env.PAYHERE_NOTIFY_URL || "http://localhost:3000/api/finance/payhere/callback",
+            return_url: `${process.env.FRONTEND_URL || 'http://localhost:5173'}/payment/success?order_id=${orderId}&transaction_id=${transaction._id}`,
+            cancel_url: `${process.env.FRONTEND_URL || 'http://localhost:5173'}/payment/cancel`,
+            notify_url: `${process.env.BACKEND_URL || 'http://localhost:3001'}/api/finance/payhere/callback`,
             order_id: orderId,
-            items: `Donation to NGO`,
+            items: "MissionGift",
             currency,
             amount: parseFloat(amount).toFixed(2),
             first_name: firstName,
             last_name: lastName,
-            email,
-            phone,
-            address: address || "",
-            city: city || "",
-            country: country || "Sri Lanka",
-            hash,
-            custom_1: transaction._id.toString(), // Store transaction ID
-            custom_2: ngoId,
+            email: email,
+            phone: phone,
+            address: address || 'Colombo',
+            city: city || 'Colombo',
+            country: country || 'Sri Lanka',
+            hash: hash,
+            custom_1: transaction._id.toString(),
+            custom_2: ngoId
         },
     };
 };
@@ -101,7 +139,10 @@ const verifyPayHereSignature = (
     merchantSecret
 ) => {
     const formattedAmount = parseFloat(amount).toFixed(2);
-    const hashString = `${merchantId}${orderId}${formattedAmount}${currency}${statusCode}${merchantSecret}`;
+    const msec = merchantSecret.toString().trim();
+    const secretHash = crypto.createHash("md5").update(msec).digest("hex").toUpperCase();
+    
+    const hashString = `${merchantId}${orderId}${formattedAmount}${currency}${statusCode}${secretHash}`;
     const localHash = crypto
         .createHash("md5")
         .update(hashString)
@@ -109,6 +150,25 @@ const verifyPayHereSignature = (
         .toUpperCase();
 
     return localHash === md5sig;
+};
+
+/**
+ * Manual verification for Dev/Sandbox (when localhost is unreachable by webhook)
+ */
+export const manualVerify = async (transactionId) => {
+    const transaction = await transactionRepository.findById(transactionId);
+    if (!transaction) throw new Error("Transaction not found");
+    
+    // Only verify if still pending
+    if (transaction.status === 'pending') {
+        const transactionService = await import('./transaction.service.js');
+        return await transactionService.completeDonation(
+            transactionId, 
+            'MANUAL_DEV_VERIFY_' + Date.now(), 
+            'completed'
+        );
+    }
+    return transaction;
 };
 
 /**

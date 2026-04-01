@@ -1,5 +1,6 @@
 import * as transactionRepository from "../repository/transaction.repository.js";
 import * as fundAllocationRepository from "../repository/fundAllocation.repository.js";
+import * as ngoRepository from "../repository/ngo.repository.js";
 import mongoose from "mongoose";
 
 /**
@@ -142,5 +143,9 @@ export const compareTrustScores = async (ngoIds) => {
  * Recalculate trust score (wrapper for external services)
  */
 export const recalculateTrustScore = async (ngoId) => {
-    return await calculateTrustScore(ngoId);
+    const scoreData = await calculateTrustScore(ngoId);
+    if (scoreData && !scoreData.error) {
+        await ngoRepository.update(ngoId, { trustScore: scoreData.trustScore });
+    }
+    return scoreData;
 };

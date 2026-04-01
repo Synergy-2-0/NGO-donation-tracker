@@ -15,7 +15,7 @@ class AIService {
       {
         id: 1,
         type: 'prediction',
-        insight: `With your RS ${totalDonated.toLocaleString()} impact history, you're 40% more likely to support 'Education' projects this month.`,
+        insight: `With your LKR ${totalDonated.toLocaleString()} impact history, you're 40% more likely to support 'Education' projects this month.`,
         confidence: 0.85
       },
       {

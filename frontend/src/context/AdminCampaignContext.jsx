@@ -38,6 +38,17 @@ export function AdminCampaignProvider({ children }) {
             if (campaignData.location) {
                 formData.append('location', JSON.stringify(campaignData.location));
             }
+            if (campaignData.sdgAlignment) {
+                formData.append('sdgAlignment', JSON.stringify(campaignData.sdgAlignment));
+            }
+            if (campaignData.targetBeneficiaries) {
+                formData.append('targetBeneficiaries', campaignData.targetBeneficiaries);
+            }
+            // Pledge configuration
+            formData.append('allowPledges', campaignData.allowPledges ? 'true' : 'false');
+            if (campaignData.allowPledges && campaignData.pledgeConfig) {
+                formData.append('pledgeConfig', JSON.stringify(campaignData.pledgeConfig));
+            }
 
             const res = await api.post('/api/campaigns', formData);
             setCampaigns((prev) => [res.data, ...prev]);

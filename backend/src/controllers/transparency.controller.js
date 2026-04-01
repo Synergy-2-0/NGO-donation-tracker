@@ -27,3 +27,21 @@ export const getImpactMetrics = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+export const getPublicDonorStats = async (req, res) => {
+  try {
+    const stats = await transparencyService.getPublicDonorStats();
+    res.json(stats);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const getMapData = async (req, res) => {
+  try {
+    const mapData = await transparencyService.getMapData();
+    res.json(mapData);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

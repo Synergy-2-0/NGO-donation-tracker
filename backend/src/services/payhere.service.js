@@ -8,7 +8,8 @@ const isDevMode = process.env.NODE_ENV !== "production";
  */
 const generateHash = (merchantId, orderId, amount, currency, merchantSecret) => {
     const formattedAmount = parseFloat(amount).toFixed(2);
-    const hashString = `${merchantId}${orderId}${formattedAmount}${currency}${merchantSecret}`;
+    const secretHash = crypto.createHash("md5").update(merchantSecret).digest("hex").toUpperCase();
+    const hashString = `${merchantId}${orderId}${formattedAmount}${currency}${secretHash}`;
     return crypto.createHash("md5").update(hashString).digest("hex").toUpperCase();
 };
 
@@ -170,18 +171,17 @@ export const handlePayHereCallback = async (callbackData) => {
         newStatus = "failed";
     }
 
-    // Update transaction
-    const updatedTransaction = await transactionRepository.updateById(transaction._id, {
-        status: newStatus,
-        paymentId: payment_id,
-        notes: `PayHere status code: ${status_code} ${isDevMode ? "(Dev: signature skipped)" : ""}`,
-    });
-
+    // Handle transaction completion logic (campaign updates, donor stats, trust scores)
+    const finalizedTransaction = await transactionService.completeDonation(
+        transaction._id,
+        payment_id,
+        newStatus
+    );
 
     return {
         success: true,
-        transaction: updatedTransaction,
-        status: newStatus,
+        transaction: finalizedTransaction,
+        status: finalizedTransaction.status,
     };
 };
 

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAdminDonor } from '../../context/AdminDonorContext';
+import { useAdminCampaign } from '../../context/AdminCampaignContext';
 import { useAuth } from '../../context/AuthContext';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -57,7 +58,8 @@ function StatCard({ label, value, color, sub, icon, delay }) {
 
 export default function AdminDashboardPage() {
     const { user } = useAuth();
-    const { donors, segments, loading, fetchDonors, fetchSegments } = useAdminDonor();
+    const { donors, segments, loading: loadingDonors, fetchDonors, fetchSegments } = useAdminDonor();
+    const { campaigns, loading: loadingCampaigns, fetchCampaigns } = useAdminCampaign();
     const navigate = useNavigate();
 
     useEffect(() => {

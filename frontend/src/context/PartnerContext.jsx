@@ -32,7 +32,8 @@ export function PartnerProvider({ children }) {
     setError(null);
     setCurrentPartner(null);
     try {
-      const { data } = await api.get(`/api/partners/${id}`);
+      const url = id === 'me' ? '/api/partners/me/profile' : `/api/partners/${id}`;
+      const { data } = await api.get(url);
       setCurrentPartner(data);
       return data;
     } catch (err) {

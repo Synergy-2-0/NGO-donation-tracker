@@ -1,6 +1,8 @@
 # TransFund: NGO Donation & Transparency Tracker
 
-![TransFund Banner](https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&q=80&w=2400)
+<div align="center">
+  <img src="frontend/public/heart-logo d.png" width="450" alt="TransFund Logo">
+</div>
 
 **TransFund** is an institutional-grade humanitarian platform designed to bridge the trust gap between global donors and NGOs. By integrating atomic financial transparency with real-time impact tracking, TransFund ensures that every contribution is verified, every mission is audited, and every cent is accounted for.
 

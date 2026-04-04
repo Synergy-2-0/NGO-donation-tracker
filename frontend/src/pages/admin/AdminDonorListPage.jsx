@@ -17,7 +17,7 @@ const StatusBadge = ({ status }) => {
     deleted:  'bg-rose-50 text-rose-600 border-rose-100 shadow-sm',
   };
   return (
-    <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all duration-500 ${cls[status] || 'bg-slate-50 text-slate-300 border-slate-100'}`}>
+    <span className={`px-4 py-1.5 rounded-full text-[10px] font-extrabold uppercase tracking-widest border transition-all duration-500 ${cls[status] || 'bg-slate-50 text-slate-600 border-slate-100'}`}>
       {status || 'unknown'}
     </span>
   );
@@ -76,10 +76,10 @@ export default function AdminDonorListPage() {
         
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-10">
           <div className="space-y-4 flex-1">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/5 border border-white/10 rounded-full text-tf-primary text-[10px] font-black uppercase tracking-widest backdrop-blur-md">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/5 border border-white/10 rounded-full text-tf-primary text-[10px] font-extrabold uppercase tracking-widest backdrop-blur-md">
                <FiUsers /> Donor Management Hub
             </div>
-            <h1 className="text-3xl md:text-5xl font-black text-white tracking-tight leading-tight">
+            <h1 className="text-3xl md:text-5xl font-extrabold text-white tracking-tight leading-tight">
               Donor <span className="text-tf-primary">Registry</span>
             </h1>
             <p className="text-slate-400 text-base md:text-lg font-medium leading-relaxed max-w-2xl">
@@ -89,12 +89,12 @@ export default function AdminDonorListPage() {
           
           <div className="flex gap-4 shrink-0">
              <div className="bg-white/5 border border-white/10 backdrop-blur-xl px-8 py-6 rounded-2xl space-y-1">
-                <p className="text-[10px] font-black text-white/30 uppercase tracking-widest">Total Donors</p>
-                <p className="text-4xl font-black text-tf-primary tabular-nums">{donors.length}</p>
+                <p className="text-[10px] font-extrabold text-white/30 uppercase tracking-widest">Total Donors</p>
+                <p className="text-4xl font-extrabold text-tf-primary tabular-nums">{donors.length}</p>
              </div>
              <div className="bg-white/5 border border-white/10 backdrop-blur-xl px-8 py-6 rounded-2xl space-y-1">
-                <p className="text-[10px] font-black text-white/30 uppercase tracking-widest">Active Members</p>
-                <p className="text-4xl font-black text-emerald-500 tabular-nums">{donors.filter(d => d.status === 'active').length}</p>
+                <p className="text-[10px] font-extrabold text-white/30 uppercase tracking-widest">Active Members</p>
+                <p className="text-4xl font-extrabold text-emerald-500 tabular-nums">{donors.filter(d => d.status === 'active').length}</p>
              </div>
           </div>
         </div>
@@ -129,7 +129,7 @@ export default function AdminDonorListPage() {
                   
                   <button 
                     onClick={() => fetchDonors().catch(() => {})}
-                    className="h-14 px-6 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-tf-primary transition-all flex items-center gap-2 active:scale-95 shadow-lg shadow-slate-950/10"
+                    className="h-14 px-6 bg-slate-900 text-white rounded-xl text-[10px] font-extrabold uppercase tracking-widest hover:bg-tf-primary transition-all flex items-center gap-2 active:scale-95 shadow-lg shadow-slate-950/10"
                   >
                     <FiRefreshCw className="text-sm" /> Refresh Data
                   </button>
@@ -143,12 +143,12 @@ export default function AdminDonorListPage() {
             <div className="overflow-x-auto relative z-10">
               <table className="w-full">
                 <thead>
-                  <tr className="text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-50">
-                    <th className="px-6 pb-4 text-left font-black">Donor Info</th>
-                    <th className="px-6 pb-4 text-left font-black">Contact Details</th>
-                    <th className="px-6 pb-4 text-left font-black">Total Contributions</th>
-                    <th className="px-6 pb-4 text-center font-black">Status</th>
-                    <th className="px-6 pb-4 text-right font-black">Manage</th>
+                  <tr className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 border-b border-slate-50">
+                    <th className="px-6 pb-4 text-left font-extrabold">Donor Info</th>
+                    <th className="px-6 pb-4 text-left font-extrabold">Contact Details</th>
+                    <th className="px-6 pb-4 text-left font-extrabold">Total Contributions</th>
+                    <th className="px-6 pb-4 text-center font-extrabold">Status</th>
+                    <th className="px-6 pb-4 text-right font-extrabold">Manage</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-50">
@@ -160,11 +160,11 @@ export default function AdminDonorListPage() {
                     >
                       <td className="px-6 py-5">
                         <div className="flex items-center gap-4">
-                          <div className="w-12 h-12 bg-slate-100 text-slate-500 rounded-xl flex items-center justify-center font-black text-sm group-hover:bg-tf-primary group-hover:text-white transition-all">
+                          <div className="w-12 h-12 bg-slate-100 text-slate-500 rounded-xl flex items-center justify-center font-extrabold text-sm group-hover:bg-tf-primary group-hover:text-white transition-all">
                              {donor.userId?.name?.charAt(0) || 'D'}
                           </div>
                           <div>
-                            <p className="text-base font-black text-slate-900 group-hover:text-tf-primary transition-colors leading-tight mb-0.5">{donor.userId?.name || 'Authorized Member'}</p>
+                            <p className="text-base font-extrabold text-slate-900 group-hover:text-tf-primary transition-colors leading-tight mb-0.5">{donor.userId?.name || 'Authorized Member'}</p>
                             <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">ID: {donor._id.slice(-6)}</p>
                           </div>
                         </div>
@@ -181,7 +181,7 @@ export default function AdminDonorListPage() {
                       </td>
                       <td className="px-6 py-5">
                          <div className="space-y-0.5">
-                            <p className="text-lg font-black text-slate-950 tracking-tight tabular-nums group-hover:text-tf-primary transition-colors leading-none">
+                            <p className="text-lg font-extrabold text-slate-950 tracking-tight tabular-nums group-hover:text-tf-primary transition-colors leading-none">
                                LKR {Number(donor.analytics?.totalDonated || 0).toLocaleString()}
                             </p>
                             <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
@@ -196,7 +196,7 @@ export default function AdminDonorListPage() {
                          <div className="flex items-center justify-end gap-2">
                             <button 
                               onClick={() => navigate(`/admin/donors/${donor._id}`)}
-                              className="px-4 py-2.5 bg-white border border-slate-100 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-500 hover:bg-slate-900 hover:text-white hover:border-slate-900 transition-all shadow-sm active:scale-95 flex items-center gap-2"
+                              className="px-4 py-2.5 bg-white border border-slate-100 rounded-xl text-[10px] font-extrabold uppercase tracking-widest text-slate-500 hover:bg-slate-900 hover:text-white hover:border-slate-900 transition-all shadow-sm active:scale-95 flex items-center gap-2"
                             >
                                Details <FiExternalLink className="text-xs" />
                             </button>
@@ -216,7 +216,7 @@ export default function AdminDonorListPage() {
                          <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-slate-100 text-slate-200">
                             <FiUsers size={32} />
                          </div>
-                         <h4 className="text-sm font-black text-slate-900 uppercase tracking-widest">No donors found</h4>
+                         <h4 className="text-sm font-extrabold text-slate-900 uppercase tracking-widest">No donors found</h4>
                          <p className="text-xs text-slate-400 font-bold uppercase tracking-widest mt-1">Try adjusting your search or filters Hub.</p>
                       </td>
                     </tr>
@@ -234,16 +234,16 @@ export default function AdminDonorListPage() {
                 <div className="flex items-center gap-3">
                    <button 
                      disabled={page === 1} onClick={() => setPage(p => p - 1)}
-                     className="px-5 py-2.5 border border-slate-100 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-500 hover:bg-slate-900 hover:text-white disabled:opacity-20 transition-all active:scale-95"
+                     className="px-5 py-2.5 border border-slate-100 rounded-xl text-[10px] font-extrabold uppercase tracking-widest text-slate-500 hover:bg-slate-900 hover:text-white disabled:opacity-20 transition-all active:scale-95"
                    >
                      Prev
                    </button>
-                   <div className="w-10 h-10 bg-slate-900 text-white rounded-xl flex items-center justify-center font-black text-sm">
+                   <div className="w-10 h-10 bg-slate-900 text-white rounded-xl flex items-center justify-center font-extrabold text-sm">
                       {page}
                    </div>
                    <button 
                      disabled={page === totalPages} onClick={() => setPage(p => p + 1)}
-                     className="px-5 py-2.5 border border-slate-100 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-500 hover:bg-slate-900 hover:text-white disabled:opacity-20 transition-all active:scale-95"
+                     className="px-5 py-2.5 border border-slate-100 rounded-xl text-[10px] font-extrabold uppercase tracking-widest text-slate-500 hover:bg-slate-900 hover:text-white disabled:opacity-20 transition-all active:scale-95"
                    >
                      Next
                    </button>
@@ -263,16 +263,16 @@ export default function AdminDonorListPage() {
                      <FiAlertTriangle />
                   </div>
                   <div className="space-y-2">
-                     <h2 className="text-2xl font-black text-slate-900 tracking-tight">Delete Donor Record?</h2>
+                     <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight">Delete Donor Record?</h2>
                      <p className="text-slate-500 font-medium leading-relaxed text-sm px-4">
                         Are you sure you want to delete this donor? This action cannot be undone and will remove all their information from the registry.
                      </p>
                   </div>
                   <div className="flex flex-col sm:flex-row gap-4">
-                     <button onClick={handleDelete} className="flex-[2] py-4 bg-rose-600 hover:bg-rose-700 text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all active:scale-95 shadow-lg shadow-rose-600/20">
+                     <button onClick={handleDelete} className="flex-[2] py-4 bg-rose-600 hover:bg-rose-700 text-white text-[10px] font-extrabold uppercase tracking-widest rounded-xl transition-all active:scale-95 shadow-lg shadow-rose-600/20">
                         Confirm Delete Hub
                      </button>
-                     <button onClick={() => setConfirmDelete(null)} className="flex-1 py-4 bg-slate-50 text-slate-500 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-100 transition-all active:scale-95">
+                     <button onClick={() => setConfirmDelete(null)} className="flex-1 py-4 bg-slate-50 text-slate-500 rounded-xl text-[10px] font-extrabold uppercase tracking-widest hover:bg-slate-100 transition-all active:scale-95">
                         Cancel
                      </button>
                   </div>
@@ -285,7 +285,7 @@ export default function AdminDonorListPage() {
       <AnimatePresence>
         {success && (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[100]">
-             <div className="bg-slate-950 text-emerald-400 px-8 py-4 rounded-full shadow-2xl flex items-center gap-3 font-black uppercase tracking-widest text-[10px]">
+             <div className="bg-slate-950 text-emerald-400 px-8 py-4 rounded-full shadow-2xl flex items-center gap-3 font-extrabold uppercase tracking-widest text-[10px]">
                 <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_8px_#10b981]" />
                 {success}
              </div>

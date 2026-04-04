@@ -26,8 +26,8 @@ function Section({ title, children, actions, description }) {
       <div className="absolute top-0 right-0 w-64 h-64 bg-tf-primary/5 blur-3xl -mr-32 -mt-32 pointer-events-none group-hover:opacity-100 transition-opacity opacity-0" />
       <div className="flex flex-col md:flex-row md:items-center justify-between relative z-10 gap-6">
          <div className="space-y-1">
-            <h3 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-3">{title}</h3>
-            {description && <p className="text-[10px] text-slate-300 font-black uppercase tracking-widest leading-none">{description}</p>}
+            <h3 className="text-xl font-extrabold text-slate-900 tracking-tight flex items-center gap-3">{title}</h3>
+            {description && <p className="text-[10px] text-slate-300 font-extrabold uppercase tracking-widest leading-none">{description}</p>}
          </div>
          <div className="shrink-0">{actions}</div>
       </div>
@@ -151,7 +151,7 @@ export default function AdminDonorProfilePage() {
     }
   };
 
-  const inputCls = 'w-full bg-slate-50/50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-bold text-slate-900 placeholder-slate-200 focus:outline-none focus:border-tf-primary focus:bg-white transition-all shadow-inner italic';
+  const inputCls = 'w-full bg-slate-50/50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-bold text-slate-900 placeholder-slate-200 focus:outline-none focus:border-tf-primary focus:bg-white transition-all shadow-inner ';
 
   if (loading && !donor) return <LoadingSpinner message="Loading profile..." />;
   if (!donor && !loading) return (
@@ -160,9 +160,9 @@ export default function AdminDonorProfilePage() {
           <FiInfo size={40} />
        </div>
        <div className="space-y-4 text-center">
-         <h3 className="text-2xl font-black text-slate-900 tracking-tight">Donor record not found</h3>
+         <h3 className="text-2xl font-extrabold text-slate-900 tracking-tight">Donor record not found</h3>
          <p className="text-sm text-slate-400 font-bold uppercase tracking-widest leading-none">Record missing or unavailable Hub</p>
-         <button onClick={() => navigate('/admin/donors')} className="px-8 py-4 bg-slate-950 text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-tf-primary transition-all shadow-xl active:scale-95 italic mt-6">Return to Donor List</button>
+         <button onClick={() => navigate('/admin/donors')} className="px-8 py-4 bg-slate-950 text-white rounded-xl text-xs font-extrabold uppercase tracking-widest hover:bg-tf-primary transition-all shadow-xl active:scale-95  mt-6">Return to Donor List</button>
        </div>
     </div>
   );
@@ -176,7 +176,7 @@ export default function AdminDonorProfilePage() {
         <div className="absolute bottom-0 left-0 w-80 h-80 bg-orange-600/5 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/4" />
         
         <div className="relative z-10 w-full space-y-10">
-           <button onClick={() => navigate('/admin/donors')} className="flex items-center gap-3 text-[10px] font-black text-white/30 uppercase tracking-widest hover:text-tf-primary transition-all group/back italic">
+           <button onClick={() => navigate('/admin/donors')} className="flex items-center gap-3 text-[10px] font-extrabold text-white/30 uppercase tracking-widest hover:text-tf-primary transition-all group/back ">
               <FiArrowLeft className="group-hover:-translate-x-1 transition-transform" /> Back to All Donors Hub
            </button>
            
@@ -184,21 +184,21 @@ export default function AdminDonorProfilePage() {
               <div className="space-y-4 flex-1">
                  <div className="flex items-center gap-3">
                     <span className="w-2.5 h-2.5 rounded-full bg-tf-primary shadow-[0_0_10px_#ff8a00] animate-pulse" />
-                    <p className="text-[10px] font-black text-white/40 uppercase tracking-widest italic decoration-tf-primary/30 decoration-2 underline underline-offset-[8px]">Donor Member Profile HUB</p>
+                    <p className="text-[10px] font-extrabold text-white/40 uppercase tracking-widest  decoration-tf-primary/30 decoration-2 underline underline-offset-[8px]">Donor Member Profile HUB</p>
                  </div>
-                 <h2 className="text-3xl lg:text-6xl font-black tracking-tight leading-tight italic">
+                 <h2 className="text-3xl lg:text-6xl font-extrabold tracking-tight leading-tight ">
                     {donor?.userId?.name || 'Authorized Member'}
                  </h2>
-                 <p className="text-slate-400 text-lg font-medium leading-relaxed max-w-xl italic">{donor?.userId?.email}</p>
+                 <p className="text-slate-400 text-lg font-medium leading-relaxed max-w-xl ">{donor?.userId?.email}</p>
               </div>
               
               <div className="flex gap-4 relative z-10">
                  {!editing ? (
-                    <button onClick={() => setEditing(true)} className="px-8 py-4 bg-tf-primary text-white text-[10px] font-black uppercase tracking-widest rounded-2xl hover:bg-orange-600 transition-all shadow-xl shadow-tf-primary/20 active:scale-95 flex items-center gap-2">
+                    <button onClick={() => setEditing(true)} className="px-8 py-4 bg-tf-primary text-white text-[10px] font-extrabold uppercase tracking-widest rounded-2xl hover:bg-orange-600 transition-all shadow-xl shadow-tf-primary/20 active:scale-95 flex items-center gap-2">
                        <FiEdit3 /> Edit Profile
                     </button>
                  ) : (
-                    <button onClick={() => setEditing(false)} className="px-8 py-4 bg-white/5 border border-white/10 text-white text-[10px] font-black uppercase tracking-widest rounded-2xl hover:bg-white/10 transition-all active:scale-95">
+                    <button onClick={() => setEditing(false)} className="px-8 py-4 bg-white/5 border border-white/10 text-white text-[10px] font-extrabold uppercase tracking-widest rounded-2xl hover:bg-white/10 transition-all active:scale-95">
                        Cancel Edit
                     </button>
                  )}
@@ -232,8 +232,8 @@ export default function AdminDonorProfilePage() {
                     <div key={i} className="bg-slate-50/50 rounded-2xl p-6 space-y-3 group/stat border border-slate-100 hover:bg-white hover:shadow-lg transition-all duration-500">
                        <div className={`w-10 h-10 rounded-xl ${stat.color} text-white flex items-center justify-center text-lg`}>{stat.icon}</div>
                        <div>
-                          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{stat.label}</p>
-                          <p className="text-xl font-black text-slate-950 italic tabular-nums leading-none mt-1">{stat.value}</p>
+                          <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">{stat.label}</p>
+                          <p className="text-xl font-extrabold text-slate-950  tabular-nums leading-none mt-1">{stat.value}</p>
                        </div>
                     </div>
                  ))}
@@ -246,27 +246,27 @@ export default function AdminDonorProfilePage() {
                  <form onSubmit={handleUpdate} className="space-y-8">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                        <div className="space-y-2">
-                          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Contact Phone</label>
+                          <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-1">Contact Phone</label>
                           <input type="text" name="phone" value={form.phone} onChange={(e) => setForm({...form, phone: e.target.value})} className={inputCls} />
                        </div>
                        <div className="space-y-2">
-                          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Preferred Social Causes (separated by comma)</label>
+                          <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-1">Preferred Social Causes (separated by comma)</label>
                           <input type="text" value={form.preferredCauses} onChange={(e) => setForm({...form, preferredCauses: e.target.value})} className={inputCls} />
                        </div>
                     </div>
                     <div className="space-y-2">
-                       <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Membership Bio / Description</label>
+                       <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-1">Membership Bio / Description</label>
                        <textarea value={form.bio} onChange={(e) => setForm({...form, bio: e.target.value})} className={`${inputCls} min-h-[150px] resize-none py-6`} />
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-6 pt-6 border-t border-slate-50">
                        {['street', 'city', 'country', 'postalCode'].map(field => (
                           <div key={field} className="space-y-2">
-                             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">{field}</label>
+                             <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-1">{field}</label>
                              <input type="text" value={form.address?.[field]} onChange={(e) => setForm({...form, address: {...form.address, [field]: e.target.value}})} className={inputCls} />
                           </div>
                        ))}
                     </div>
-                    <button type="submit" disabled={loading} className="w-full py-5 bg-slate-900 text-white rounded-2xl text-xs font-black uppercase tracking-[0.4em] hover:bg-tf-primary transition-all duration-700 shadow-xl active:scale-95 italic">
+                    <button type="submit" disabled={loading} className="w-full py-5 bg-slate-900 text-white rounded-2xl text-xs font-extrabold uppercase tracking-[0.4em] hover:bg-tf-primary transition-all duration-700 shadow-xl active:scale-95 ">
                        {loading ? 'Saving Changes...' : 'Save Updated Profile Hub'}
                     </button>
                  </form>
@@ -275,15 +275,15 @@ export default function AdminDonorProfilePage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                        <div className="space-y-6">
                           <div className="space-y-1">
-                             <p className="text-[9px] font-black text-tf-primary uppercase tracking-[0.3em] italic">Official Bio Hub</p>
-                             <p className="text-base text-slate-600 font-medium leading-relaxed italic">{donor.bio || 'This donor has not provided a community bio Hub.'}</p>
+                             <p className="text-[9px] font-extrabold text-tf-primary uppercase tracking-[0.3em] ">Official Bio Hub</p>
+                             <p className="text-base text-slate-600 font-medium leading-relaxed ">{donor.bio || 'This donor has not provided a community bio Hub.'}</p>
                           </div>
                           <div className="space-y-1">
-                             <p className="text-[9px] font-black text-tf-primary uppercase tracking-[0.3em] italic">Preferred Causes Hub</p>
+                             <p className="text-[9px] font-extrabold text-tf-primary uppercase tracking-[0.3em] ">Preferred Causes Hub</p>
                              <div className="flex flex-wrap gap-2 pt-2">
                                 {donor.preferredCauses?.length > 0 ? donor.preferredCauses.map((c, i) => (
-                                   <span key={i} className="px-4 py-2 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase tracking-widest italic">{c}</span>
-                                )) : <span className="text-slate-400 font-bold text-xs uppercase tracking-widest italic">None specified Hub</span>}
+                                   <span key={i} className="px-4 py-2 bg-slate-900 text-white rounded-xl text-[10px] font-extrabold uppercase tracking-widest ">{c}</span>
+                                )) : <span className="text-slate-400 font-bold text-xs uppercase tracking-widest ">None specified Hub</span>}
                              </div>
                           </div>
                        </div>
@@ -291,7 +291,7 @@ export default function AdminDonorProfilePage() {
                           <div className="space-y-4">
                              <div className="flex items-center gap-4">
                                 <FiMapPin className="text-tf-primary shrink-0" />
-                                <p className="text-sm font-bold text-slate-700 italic">
+                                <p className="text-sm font-bold text-slate-700 ">
                                    {donor.address?.street && `${donor.address.street}, `}
                                    {donor.address?.city && `${donor.address.city}, `}
                                    {donor.address?.country || 'No country provided'}
@@ -299,7 +299,7 @@ export default function AdminDonorProfilePage() {
                              </div>
                              <div className="flex items-center gap-4">
                                 <FiPhone className="text-tf-primary shrink-0" />
-                                <p className="text-sm font-bold text-slate-700 italic">{donor.phone || 'No phone number HUB'}</p>
+                                <p className="text-sm font-bold text-slate-700 ">{donor.phone || 'No phone number HUB'}</p>
                              </div>
                           </div>
                        </div>
@@ -318,18 +318,18 @@ export default function AdminDonorProfilePage() {
                              <FiZap />
                           </div>
                           <div>
-                             <p className="text-lg font-black text-slate-950 italic tabular-nums leading-none mb-1">LKR {Number(p.amount).toLocaleString()} <span className="text-xs text-slate-400 not-italic font-bold">/ {p.frequency}</span></p>
-                             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic">{p.campaignId?.title || 'Unknown Project'}</p>
+                             <p className="text-lg font-extrabold text-slate-950  tabular-nums leading-none mb-1">LKR {Number(p.amount).toLocaleString()} <span className="text-xs text-slate-400 not- font-bold">/ {p.frequency}</span></p>
+                             <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ">{p.campaignId?.title || 'Unknown Project'}</p>
                           </div>
                        </div>
-                       <div className="mt-6 md:mt-0 px-6 py-2 border border-slate-100 rounded-full text-[10px] font-black uppercase tracking-widest italic group-hover/pledge:bg-tf-primary group-hover/pledge:text-white transition-all">
+                       <div className="mt-6 md:mt-0 px-6 py-2 border border-slate-100 rounded-full text-[10px] font-extrabold uppercase tracking-widest  group-hover/pledge:bg-tf-primary group-hover/pledge:text-white transition-all">
                           {p.status} Commitment Hub
                        </div>
                     </div>
                  )) : (
                     <div className="py-20 text-center space-y-4 bg-slate-50 border border-slate-100 rounded-[2rem] border-dashed">
                        <FiZap className="mx-auto text-slate-200" size={48} />
-                       <p className="text-slate-400 font-bold text-sm uppercase tracking-widest italic">No pledge commitments identified Hub.</p>
+                       <p className="text-slate-400 font-bold text-sm uppercase tracking-widest ">No pledge commitments identified Hub.</p>
                     </div>
                  )}
               </div>
@@ -354,13 +354,13 @@ export default function AdminDonorProfilePage() {
                       onSubmit={handleAddInteraction} className="space-y-6 pb-10 border-b border-slate-50 mb-10 overflow-hidden"
                     >
                        <div className="grid grid-cols-2 gap-4">
-                          <select value={interactionForm.type} onChange={(e) => setInteractionForm({...interactionForm, type: e.target.value})} className="bg-slate-50 border border-slate-100 rounded-xl px-5 py-3 text-[10px] font-black uppercase tracking-widest focus:outline-none focus:border-tf-primary appearance-none cursor-pointer">
+                          <select value={interactionForm.type} onChange={(e) => setInteractionForm({...interactionForm, type: e.target.value})} className="bg-slate-50 border border-slate-100 rounded-xl px-5 py-3 text-[10px] font-extrabold uppercase tracking-widest focus:outline-none focus:border-tf-primary appearance-none cursor-pointer">
                              {INTERACTION_TYPES.map(t => <option key={t} value={t}>{t.toUpperCase()}</option>)}
                           </select>
-                          <input type="date" value={interactionForm.date} onChange={(e) => setInteractionForm({...interactionForm, date: e.target.value})} className="bg-slate-50 border border-slate-100 rounded-xl px-5 py-3 text-[10px] font-black uppercase tracking-widest focus:outline-none focus:border-tf-primary" />
+                          <input type="date" value={interactionForm.date} onChange={(e) => setInteractionForm({...interactionForm, date: e.target.value})} className="bg-slate-50 border border-slate-100 rounded-xl px-5 py-3 text-[10px] font-extrabold uppercase tracking-widest focus:outline-none focus:border-tf-primary" />
                        </div>
                        <textarea value={interactionForm.notes} onChange={(e) => setInteractionForm({...interactionForm, notes: e.target.value})} placeholder="Notes about message..." className="w-full bg-slate-50 border border-slate-100 rounded-xl px-5 py-4 text-xs font-bold focus:outline-none focus:border-tf-primary min-h-[120px] resize-none" required />
-                       <button type="submit" className="w-full py-4 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-500 transition-all active:scale-95 italic">Save Information Hub</button>
+                       <button type="submit" className="w-full py-4 bg-slate-900 text-white rounded-xl text-[10px] font-extrabold uppercase tracking-widest hover:bg-emerald-500 transition-all active:scale-95 ">Save Information Hub</button>
                     </motion.form>
                  )}
               </AnimatePresence>
@@ -373,18 +373,18 @@ export default function AdminDonorProfilePage() {
                        <div className="space-y-3">
                           <div className="flex items-center justify-between">
                              <div className="flex items-center gap-3">
-                                <span className="text-[10px] font-black text-tf-primary uppercase tracking-[0.2em] italic">{i.type} INFO</span>
-                                <span className="text-[10px] font-bold text-slate-300 italic">{new Date(i.date).toLocaleDateString()}</span>
+                                <span className="text-[10px] font-extrabold text-tf-primary uppercase tracking-[0.2em] ">{i.type} INFO</span>
+                                <span className="text-[10px] font-bold text-slate-300 ">{new Date(i.date).toLocaleDateString()}</span>
                              </div>
                              <button onClick={() => handleDeleteInteraction(i._id)} className="text-slate-200 hover:text-rose-500 transition-colors opacity-0 group-hover/log:opacity-100"><FiTrash2 size={12} /></button>
                           </div>
-                          <p className="text-xs text-slate-500 font-medium leading-relaxed italic">{i.notes}</p>
+                          <p className="text-xs text-slate-500 font-medium leading-relaxed ">{i.notes}</p>
                        </div>
                     </div>
                  )) : (
                     <div className="py-20 text-center space-y-4 bg-slate-50/50 rounded-3xl border border-white">
                        <FiActivity className="mx-auto text-slate-100" size={40} />
-                       <p className="text-slate-300 font-bold text-[9px] uppercase tracking-widest italic">No messages logged Hub.</p>
+                       <p className="text-slate-300 font-bold text-[9px] uppercase tracking-widest ">No messages logged Hub.</p>
                     </div>
                  )}
               </div>
@@ -394,11 +394,11 @@ export default function AdminDonorProfilePage() {
            <div className="bg-slate-950 rounded-[2.5rem] p-8 text-white relative overflow-hidden group/dock">
               <div className="absolute top-0 right-0 w-32 h-32 bg-tf-primary/10 rounded-full blur-3xl -mr-16 -mt-16 group-hover/dock:opacity-100 transition-opacity opacity-0" />
               <div className="relative z-10 space-y-6 text-center lg:text-left">
-                 <p className="text-[10px] font-black text-tf-primary uppercase tracking-[0.3em] italic">Information Protocol Hub</p>
-                 <p className="text-xs font-medium text-white/50 leading-relaxed italic">Synchronized community data for authorized members Hub. All actions are logged and verified Hub.</p>
+                 <p className="text-[10px] font-extrabold text-tf-primary uppercase tracking-[0.3em] ">Information Protocol Hub</p>
+                 <p className="text-xs font-medium text-white/50 leading-relaxed ">Synchronized community data for authorized members Hub. All actions are logged and verified Hub.</p>
                  <div className="flex gap-4">
-                    <button className="flex-1 py-3 bg-white/10 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-white/20 transition-all italic">Report Access</button>
-                    <button className="flex-1 py-3 bg-white/10 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-white/20 transition-all italic">Log Export Hub</button>
+                    <button className="flex-1 py-3 bg-white/10 rounded-xl text-[9px] font-extrabold uppercase tracking-widest hover:bg-white/20 transition-all ">Report Access</button>
+                    <button className="flex-1 py-3 bg-white/10 rounded-xl text-[9px] font-extrabold uppercase tracking-widest hover:bg-white/20 transition-all ">Log Export Hub</button>
                  </div>
               </div>
            </div>
@@ -414,12 +414,12 @@ export default function AdminDonorProfilePage() {
                     <FiAlertTriangle />
                  </div>
                  <div className="space-y-4">
-                    <h3 className="text-3xl font-black text-slate-900 tracking-tight italic uppercase">Destroy Member Record Map?</h3>
-                    <p className="text-slate-400 font-medium leading-relaxed italic text-base px-6">Warning: Deleting this member Hub will permanently remove all community contributions and information from our system Hub.</p>
+                    <h3 className="text-3xl font-extrabold text-slate-900 tracking-tight  uppercase">Destroy Member Record Map?</h3>
+                    <p className="text-slate-400 font-medium leading-relaxed  text-base px-6">Warning: Deleting this member Hub will permanently remove all community contributions and information from our system Hub.</p>
                  </div>
                  <div className="flex flex-col sm:flex-row gap-6">
-                    <button onClick={handleDelete} className="flex-[2] py-5 bg-rose-600 hover:bg-slate-950 text-white text-[11px] font-black uppercase tracking-[0.5em] rounded-2xl transition-all shadow-4xl shadow-rose-600/30 active:scale-95 italic">Authorize Deletion Map Hub</button>
-                    <button onClick={() => setConfirmDelete(false)} className="flex-1 py-5 bg-slate-50 text-slate-400 rounded-2xl text-[10px] font-black uppercase tracking-[0.5em] hover:text-slate-950 transition-all italic underline decoration-transparent hover:decoration-slate-900 underline-offset-8">Abort Cycle Hub</button>
+                    <button onClick={handleDelete} className="flex-[2] py-5 bg-rose-600 hover:bg-slate-950 text-white text-[11px] font-extrabold uppercase tracking-[0.5em] rounded-2xl transition-all shadow-4xl shadow-rose-600/30 active:scale-95 ">Authorize Deletion Map Hub</button>
+                    <button onClick={() => setConfirmDelete(false)} className="flex-1 py-5 bg-slate-50 text-slate-400 rounded-2xl text-[10px] font-extrabold uppercase tracking-[0.5em] hover:text-slate-950 transition-all  underline decoration-transparent hover:decoration-slate-900 underline-offset-8">Abort Cycle Hub</button>
                  </div>
               </motion.div>
            </motion.div>
@@ -429,7 +429,7 @@ export default function AdminDonorProfilePage() {
       <AnimatePresence>
         {success && (
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[100]">
-             <div className="bg-slate-950 text-emerald-400 px-10 py-5 rounded-full shadow-5xl backdrop-blur-2xl flex items-center gap-4 italic font-black uppercase tracking-widest text-[10px] border border-white/10">
+             <div className="bg-slate-950 text-emerald-400 px-10 py-5 rounded-full shadow-5xl backdrop-blur-2xl flex items-center gap-4  font-extrabold uppercase tracking-widest text-[10px] border border-white/10">
                 <div className="w-2.5 h-2.5 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_10px_#10b981]" />
                 {success}
              </div>

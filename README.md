@@ -9,6 +9,7 @@ To create a high-trust philanthropic ecosystem through:
 - **Financial Verifiability**: Direct integration with payment gateways and bank-grade auditing.
 - **Radical Transparency**: Real-time public dashboards showcasing fund allocation and trust scores.
 - **AI-Driven Impact**: Predictive analytics for donor matching and campaign health monitoring.
+- **Global Inclusivity**: Comprehensive multi-language support (English, Sinhala, Tamil) to decentralize humanitarian access.
 
 ---
 
@@ -42,12 +43,14 @@ To create a high-trust philanthropic ecosystem through:
 - **Runtime**: Node.js (ESM Modules)
 - **Framework**: Express.js (v5 Architecture)
 - **Database**: MongoDB + Mongoose (Atomic Transactions)
-- **Intelligence**: Integrated AI heuristic service for impact analytics.
+- **Intelligence**: Integrated AI heuristic service (OpenRouter/Gemini) for impact analytics.
 - **Security**: JWT Identity Hub + bcryptjs encryption.
+- **Testing**: Playwright End-to-End Suite for API and UI consistency.
 
 ### Frontend (The Interface)
 - **Library**: React + Vite (Optimized production bundling)
-- **Styling**: Vanilla CSS + Framer Motion (High-fidelity cinemations)
+- **Styling**: Vanilla CSS + Tailwind + Framer Motion (High-fidelity cinemations)
+- **Localization**: react-i18next (English, Sinhala, Tamil support)
 - **Visualization**: Recharts (Financial & Impact trend analysis)
 - **Mapping**: Mapbox GL JS (Geospatial reach visualization)
 
@@ -57,12 +60,13 @@ To create a high-trust philanthropic ecosystem through:
 
 ```bash
 NGO-donation-tracker/
-├── backend/             # Node.js Express Server
-│   ├── src/             # Source code (Services, Repositories, Controllers)
-│   └── server.js        # Entry point
+├── backend/             # Node.js Express Server & E2E Tests
+│   ├── src/             # API Core (Services, Repositories, Controllers)
+│   ├── tests/           # Playwright Test Suite (.spec.js)
+│   └── playwright.config.js # Global Testing Configuration
 ├── frontend/            # React Client
-│   ├── src/             # Source code (Pages, Components, Context)
-│   └── vite.config.js   # Build optimization
+│   ├── src/             # UI Components (Pages, Context, Hooks)
+│   └── vite.config.js   # Proxy & Build optimization
 └── README.md            # Project Master Documentation
 ```
 
@@ -73,13 +77,14 @@ NGO-donation-tracker/
 ### 1. Prerequisite Environments
 - Node.js v18+
 - MongoDB Instance
+- OpenRouter API Key (for AI insights)
 - PayHere Merchant Account (Sandbox/Production)
 
 ### 2. Backend Orchestration
 ```bash
 cd backend
 npm install
-# Configure .env with JWT_SECRET, MONGODB_URI, and PAYHERE_CREDENTIALS
+# Configure .env based on .env.example
 npm run dev
 ```
 
@@ -90,16 +95,24 @@ npm install
 npm run dev
 ```
 
+### 4. Running Tests
+```bash
+cd backend
+npx playwright install
+npx playwright test
+```
+
 ---
 
 ## 📈 Security & Integrity
-- **Role-Based Access Control (RBAC)**: Strict separation of privileges via `protect` and `restrictTo` middlewares.
-- **Trust Scores**: Calculated dynamically via the ratio of `Total Allocated Funds` vs `Total Received Funds`.
-- **Audit Logs**: Every financial transaction and status change is logged in an immutable archive for administrative oversight.
+- **Role-Based Access Control (RBAC)**: Strict separation of privileges (Donor, NGO, Admin, Corporate).
+- **Trust Scores**: Calculated dynamically via the ratio of `Received Funds` vs `Allocated Impact`.
+- **Audit Logs**: Immutable registry of all financial movements and status transitions.
+- **CI/CD Integration**: Automated Playwright validation on every deployment pipeline.
 
 ---
 
 ## 💎 Design Language
-TransFund uses a professional **Blue/Orange/Red** palette with **Merriweather** (Institutional Serif) and **Inter** (Technical Sans) typography to balance warmth with geometric precision.
+TransFund uses a professional **Deep Slate/Impact Orange** palette with **Open Sans** typography to ensure accessibility and project authority.
 
 **TrustFund &copy; 2026 | Empowering Global Humanitarian Excellence**

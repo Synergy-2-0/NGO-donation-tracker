@@ -15,9 +15,33 @@ Institutional-grade RESTful API for managing high-trust humanitarian workflows, 
 - **Impact Metrics**: Aggregated real-time data across global geocoded reach.
 
 ### 3. Mission & Milestone Management
-- **Lifecycle Ops**: Draft → Published → Completed → Archived.
+- **Lifecycle Ops**: Draft → Pending → Active → Completed → Archived.
 - **Evidence Logs**: Documentation-backed milestones for verified field work.
 - **Geocoding Hub**: Geocoded campaign locations for geospatial transparency.
+
+---
+
+## 🧪 Automated Testing (E2E)
+
+TransFund uses **Playwright** for comprehensive end-to-end testing of both the API and core navigation flows.
+
+### Running Tests
+```bash
+# Install browsers (first time only)
+npx playwright install
+
+# Run all tests (spec files)
+npx playwright test
+
+# Run a specific suite
+npx playwright test tests/fixtures-lifecycle.spec.js
+```
+
+### Test Structure
+- **Assertions**: Web-first verification of API responses and UI visibility.
+- **BDD**: Multi-step user journeys (e.g., Donor viewing campaign metrics).
+- **Fixtures**: Automated state management (creating/cleaning up test admins, NGOs, and campaigns).
+- **Mocking**: Strategic intercepting of third-party payment gateways (PayHere).
 
 ---
 
@@ -34,14 +58,13 @@ Institutional-grade RESTful API for managing high-trust humanitarian workflows, 
 ```bash
 backend/
 ├── src/
-│   ├── config/          # Environment & Database connections
 │   ├── controllers/     # HTTP Request/Response handlers
 │   ├── middlewares/     # Auth (JWT), Validation, Roles, Upload
 │   ├── models/          # Data schemas (TransFund schemas)
 │   ├── repository/      # High-performance DB query layer
 │   ├── routes/          # Express endpoint registry
-│   ├── services/        # Atomic business logic layer
-│   └── utils/           # Shared utility helpers (Email, Cache)
+│   └── services/        # Atomic business logic layer
+├── tests/               # Playwright specs (.spec.js)
 └── server.js            # Unified orchestrator
 ```
 
@@ -53,28 +76,32 @@ backend/
 - `POST /api/users/register`: Direct role-based registration.
 - `POST /api/users/login`: Secure access grant.
 
+### NGO Onboarding & Management
+- `POST /api/ngos/register`: Submit an organization for verification.
+- `PATCH /api/ngos/:id/approve`: (Admin Only) Approve an NGO for platform operations.
+- `GET /api/ngos/public`: List of all verified humanitarian partners.
+
 ### Finance & Treasury registry
 - `POST /api/finance/payhere/init`: Initiate philanthropic capital intake.
 - `POST /api/finance/payhere/callback`: Asynchronous payment synchronization.
 - `GET /api/finance/summary/ngo/:id`: NGO gross performance data.
-- `GET /api/finance/trust-score/:ngoId`: Real-time transparency ranking.
 
 ### Mission Control
 - `POST /api/campaigns`: Initialize new humanitarian project.
-- `PUT /api/campaigns/:id/publish`: Deploy project to public network.
-- `GET /api/campaigns/metrics`: Global network impact aggregation.
+- `PUT /api/campaigns/:id/publish`: (Admin Only) Deploy project to public network.
+- `PUT /api/campaigns/:id/submit`: (NGO Admin) Submit proposal for review.
 
 ---
 
 ## ⚙️ Environment Configuration
 
 ```env
-PORT=3001
-MONGODB_URI=mongodb://...
+PORT=3001 # Falls back to 3000 if unset
+MONGODB_URI=mongodb+srv://...
 JWT_SECRET=...
+OPENROUTER_API_KEY=...
 PAYHERE_MERCHANT_ID=...
-PAYHERE_MERCHANT_SECRET=...
-ALLOWED_ORIGINS=http://localhost:5173
+ALLOWED_ORIGINS=http://localhost:5173,http://localhost:3000
 ```
 
-**TransFund Backend Node | Version 2.0 (Stable)**
+**TransFund Backend Node | Version 2.1 (Verified)**

@@ -4,67 +4,62 @@ Institutional-grade humanitarian user interface for the **TransFund** ecosystem.
 
 ## 🚀 Experience Hubs
 
-### 1. Public Transparency Portal (Guest)
-- **Cinematic Landing**: High-contrast Hero section with strategic mission discovery.
-- **Global Reach Map**: Mapbox integration for geospatial impact visualization.
+### 1. Multi-Language Inclusivity
+- **Localization Suite**: Integrated `react-i18next` for seamless switching between **English**, **Sinhala**, and **Tamil**.
+- **Contextual Translation**: Dynamic content and UI labels optimized for regional philanthropic accessibility.
+
+### 2. Public Transparency Portal
+- **Cinematic Landing**: High-contrast Hero section with strategic mission discovery and glassmorphic UI.
+- **Global Reach Map**: Mapbox GL integration for geospatial impact visualization.
 - **Transparency Dashboard**: Public trust scores and verified NGO leaderboards.
-- **Project Marketplace**: Intuitive mission catalog for immediate capital deployment.
 
-### 2. Donor Influence Center (Donor)
-- **Impact Registry**: Personal donor statistics (Total Donated, Mission Count).
-- **Secure Handling**: Interactive multi-step donation modal with PayHere status sync.
-- **AI Insights**: Personalized donor matching and project recommendations.
+### 3. Donor Influence Center (Donor)
+- **Impact Registry**: Personal donor statistics (Total Donated, Mission Count, Active Pledges).
+- **AI Intelligence**: Personalized project recommendations (OpenRouter integration) and predictive impact analytics.
+- **Strategic Pledges**: Lifecycle management for recurring humanitarian commitments.
 
-### 3. High-Trust Dashboard (NGO Admin)
-- **Treasury Overview**: Financial summary charts (Income vs. Allocation).
-- **Mission Management**: Full project lifecycle (Create, Edit, Publish, Milestones).
-- **Audit Logs**: Capital deployment registry for verified fund distribution.
-
-### 4. Strategic Partner Registry (Corporate)
-- **Agreement Hub**: MOU and partnership tracking for high-volume contributors.
-- **Corporate KPIs**: Impact-ready CSR reporting metrics.
+### 4. High-Trust Dashboard (NGO Admin)
+- **Treasury Overview**: Real-time financial analytics (Total Raised, Available Funds, Allocation trends).
+- **Mission Lifecycle**: Comprehensive project management (Drafting, Submission for Review, Milestone Tracking).
+- **Organization Onboarding**: Institutional registration and verification document management.
 
 ---
 
 ## 🎨 Design System
 
 ### Typography
-- **Heading 01 (Institutional)**: Merriweather (Bold & Italic)
-- **Body & Data (Technical)**: Inter (Precision-tuned Sans-serif)
+- **Core Font**: **Open Sans** (Standardized for high legibility across all weights/italics).
+- **Sizing**: Atomic scale for technical precision and data-heavy interfaces.
 
 ### Palette (Trust Index)
-- **Primary (Strategic)**: `Dark Slate (#0f172a)`
-- **Accent (Humanity)**: `Brand Orange (#ff8a00)`
-- **Alert (Urgency)**: `Brand Red (#dc2626)`
+- **Impact Orange**: `#F97316` (Action-oriented accent)
+- **Trust Navy**: `#0F172A` (Stability and authority)
+- **Clean Neutral**: `#FBFBFE` (Accessibility-first surfaces)
 
-### Components (Reusable Library)
-- **Premium Surface**: Glassmorphic and depth-based UI containers.
-- **Stat Cards**: Dynamic, animated numeric visualizers.
-- **Interactive Modals**: Multi-step, context-aware functional overlays.
+### Interactive Elements
+- **Glassmorphic Cards**: Depth-layered containers with `backdrop-blur` for a premium, modern feel.
+- **Animated States**: Micro-interactions powered by `Framer Motion` and custom CSS keyframes.
 
 ---
 
 ## 🛠️ Technical Implementation
 
 ### Core Stack
-- **Framework**: React 18+ (Hook-based architecture)
-- **Build**: Vite (Optimized production pipeline)
-- **Styling**: Vanilla CSS + Utility-based layouts.
-- **Motion**: Framer Motion (High-fidelity micro-interactions)
-- **Charts**: Recharts (Financial and Impact visualization)
+- **Framework**: React 18+ (Vite-optimized)
+- **Styling**: Vanilla CSS + Tailwind Utility Layer.
+- **Localization**: i18next + react-i18next.
+- **Visualization**: Recharts (Financial and Impact analytics).
 
 ### Application Architecture
 ```bash
 frontend/
 ├── src/
-│   ├── api/             # Axios instance & Interceptors
-│   ├── components/      # Global Layout, UI & Navigation components
-│   ├── context/         # Auth, Finance, Partner, Campaign contexts
-│   ├── pages/           # High-level Role-based Route components
-│   │   ├── admin/       # Management & Oversight pages
-│   │   └── ...          # Public & Donor pages
-│   └── App.jsx          # React Router & Project Root
-└── vite.config.js       # Production-ready bundling config
+│   ├── components/      # Global Layout & Reusable UI modules
+│   ├── context/         # Auth, Donor, & Theme state providers
+│   ├── i18n/            # Localization registry (EN, SI, TA)
+│   ├── pages/           # Role-based route components (Admin, Donor, Guest)
+│   └── hooks/           # Custom functional logic (useAuth, useDonor, etc.)
+└── vite.config.js       # Strategic proxy and production bundling
 ```
 
 ---
@@ -82,4 +77,4 @@ npm install
 npm run dev
 ```
 
-**TransFund Interface | Version 2.0 (Verified)**
+**TransFund Interface | Version 2.2 (Institutional Tech)**

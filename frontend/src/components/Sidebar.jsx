@@ -319,7 +319,7 @@ export default function Sidebar() {
       <nav className="flex-1 overflow-y-auto px-4 py-3 space-y-4 scrollbar-none">
         {navSections.map((section) => (
           <div key={section.section} className="mb-4">
-            <p className="text-[9px] font-black text-slate-600 uppercase tracking-[0.2em] px-4 mb-2">
+            <p className="text-[9px] font-extrabold text-slate-600 uppercase tracking-[0.2em] px-4 mb-2">
               {section.section}
             </p>
             <div className="space-y-0.5">

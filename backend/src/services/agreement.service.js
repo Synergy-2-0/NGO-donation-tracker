@@ -1,5 +1,6 @@
 import agreementRepository from '../repository/agreement.repository.js';
 import partnerRepository from '../repository/partner.repository.js';
+import * as ngoRepository from '../repository/ngo.repository.js';
 import Campaign from '../models/campaign.model.js';
 
 class AgreementService {
@@ -11,6 +12,15 @@ class AgreementService {
       if (partnerId.id) return partnerId.id.toString();
     }
     return null;
+  }
+
+  // Strategic Institutional Guard Hub
+  async _ensureNgoApproved(userId) {
+    const ngo = await ngoRepository.findByUserId(userId);
+    if (!ngo || ngo.status !== 'approved') {
+        throw new Error("Your organization is currently awaiting verification. Institutional partnerships are locked until approval Sync!");
+    }
+    return ngo;
   }
 
   async createAgreement(data, user) {
@@ -33,9 +43,14 @@ class AgreementService {
     const campaign = await Campaign.findById(data.campaignId);
     if (!campaign || campaign.isDeleted) throw new Error('Campaign not found');
 
+    // Institutional integrity check Hub
+    if (user.role === 'ngo-admin') {
+      await this._ensureNgoApproved(user.id);
+    }
+
     const status = user.role === 'partner' ? 'pending' : (data.status || 'draft');
     const agreement = await agreementRepository.create({ ...data, partnerId: normalizedPartnerId, status, createdBy: user.id });
-    await this._recalcPartnerHistory(normalizedPartnerId);
+    this._recalcPartnerHistory(normalizedPartnerId); // Run in background Hub
     return agreement;
   }
 
@@ -46,8 +61,18 @@ class AgreementService {
     if (filters.status) query.status = filters.status;
     if (filters.agreementType) query.agreementType = filters.agreementType;
 
-    if (!['admin', 'ngo-admin'].includes(user.role)) {
-      query.createdBy = user.id;
+    // Enforce isolation while maintaining mission visibility Hub Hub Hub
+    if (user.role === 'partner') {
+        const partner = await partnerRepository.findByUserId(user.id);
+        query.partnerId = partner?._id;
+    } else if (user.role === 'ngo-admin') {
+        const myCampaigns = await Campaign.find({ createdBy: user.id }).select('_id');
+        const campaignIds = myCampaigns.map(c => c._id);
+        
+        query.$or = [
+            { createdBy: user.id },
+            { campaignId: { $in: campaignIds } }
+        ];
     }
 
     return await agreementRepository.findAll(query);
@@ -57,8 +82,8 @@ class AgreementService {
     const agreement = await agreementRepository.findById(id);
     if (!agreement) throw new Error('Agreement not found');
     
-    // Admins and NGO admins see all
-    if (['admin', 'ngo-admin'].includes(user.role)) {
+    // Global Admins see all mission agreements Hub
+    if (user.role === 'admin') {
       return agreement;
     }
 
@@ -74,8 +99,16 @@ class AgreementService {
       }
     }
 
-    // Fallback: only the creator can see it
-    if (agreement.createdBy.toString() !== user.id) {
+    // All other administrative roles (like ngo-admin) only see their own initialized data Hub
+    // However, NGO admins should also see agreements related to their own campaigns
+    if (user.role === 'ngo-admin') {
+      const campaign = await Campaign.findById(agreement.campaignId);
+      if (campaign && campaign.createdBy.toString() === user.id) {
+        return agreement;
+      }
+    }
+
+    if (agreement.createdBy?.toString() !== user.id) {
       throw new Error('Unauthorized');
     }
     
@@ -86,7 +119,17 @@ class AgreementService {
     const agreement = await agreementRepository.findById(id);
     if (!agreement) throw new Error('Agreement not found');
 
-    if (!['admin', 'ngo-admin'].includes(user.role) && agreement.createdBy.toString() !== user.id) {
+    let isAuthorized = false;
+    if (user.role === 'admin') isAuthorized = true;
+    else if (agreement.createdBy.toString() === user.id) isAuthorized = true;
+    else if (user.role === 'ngo-admin') {
+      const campaign = await Campaign.findById(agreement.campaignId);
+      if (campaign && campaign.createdBy.toString() === user.id) {
+        isAuthorized = true;
+      }
+    }
+
+    if (!isAuthorized) {
       throw new Error('Unauthorized');
     }
 
@@ -99,7 +142,8 @@ class AgreementService {
     }
 
     const updated = await agreementRepository.update(id, data);
-    await this._recalcPartnerHistory(agreement.partnerId.toString());
+    const partnerId = agreement.partnerId?._id || agreement.partnerId;
+    this._recalcPartnerHistory(partnerId.toString());
     return updated;
   }
 
@@ -107,7 +151,7 @@ class AgreementService {
     const agreement = await agreementRepository.findById(id);
     if (!agreement) throw new Error('Agreement not found');
 
-    if (!['admin', 'ngo-admin'].includes(user.role) && agreement.createdBy.toString() !== user.id) {
+    if (user.role !== 'admin' && agreement.createdBy.toString() !== user.id) {
       throw new Error('Unauthorized');
     }
     if (agreement.status === 'active') {
@@ -119,16 +163,22 @@ class AgreementService {
       m.default.deleteByAgreement(id)
     );
 
-    const partnerId = agreement.partnerId.toString();
+    const partnerId = agreement.partnerId?._id || agreement.partnerId;
     await agreementRepository.delete(id);
-    await this._recalcPartnerHistory(partnerId);
+    this._recalcPartnerHistory(partnerId);
   }
 
   async getPartnerAgreements(partnerId, user) {
     const normalizedPartnerId = this._extractPartnerId(partnerId);
-    // Admin/ngo-admin can see all agreements for a partner
-    if (['admin', 'ngo-admin'].includes(user.role)) {
+    // Admin can see all Hub
+    if (user.role === 'admin') {
       return await agreementRepository.findByPartnerId(normalizedPartnerId);
+    }
+    
+    // NGO Admins only see agreements they personally initialized Hub
+    if (user.role === 'ngo-admin') {
+      const agreements = await agreementRepository.findByPartnerId(normalizedPartnerId);
+      return agreements.filter(a => a.createdBy.toString() === user.id);
     }
 
     // Partners can only see agreements for their own account
@@ -148,8 +198,15 @@ class AgreementService {
     const campaign = await Campaign.findById(campaignId);
     if (!campaign || campaign.isDeleted) throw new Error('Campaign not found');
     
-    // Admin/ngo-admin see all agreements for the campaign
-    if (user.role === 'admin' || user.role === 'ngo-admin') {
+    // Global Admin sees all Hub
+    if (user.role === 'admin') {
+      return await agreementRepository.findByCampaignId(campaignId);
+    }
+
+    // NGO admins see mission agreements if they authorized the mission Hub
+    if (user.role === 'ngo-admin') {
+      const isOwner = campaign.createdBy.toString() === user.id;
+      if (!isOwner) throw new Error('Unauthorized Access Hub');
       return await agreementRepository.findByCampaignId(campaignId);
     }
     
@@ -165,7 +222,7 @@ class AgreementService {
   async updateStatus(id, status, user) {
     const agreement = await agreementRepository.findById(id);
     if (!agreement) throw new Error('Agreement not found');
-    if (!['admin', 'ngo-admin'].includes(user.role) && agreement.createdBy.toString() !== user.id) {
+    if (user.role !== 'admin' && agreement.createdBy.toString() !== user.id) {
       throw new Error('Unauthorized');
     }
 
@@ -183,12 +240,13 @@ class AgreementService {
     }
 
     const updated = await agreementRepository.update(id, { status });
-    await this._recalcPartnerHistory(agreement.partnerId.toString());
+    const partnerId = agreement.partnerId?._id || agreement.partnerId;
+    this._recalcPartnerHistory(partnerId.toString());
     return updated;
   }
 
   async approveAgreement(id, user) {
-    if (!['admin', 'ngo-admin'].includes(user.role)) {
+    if (user.role !== 'admin' && user.role !== 'ngo-admin') {
       throw new Error('Unauthorized');
     }
 
@@ -203,7 +261,36 @@ class AgreementService {
       approvedBy: user.id,
       approvedAt: new Date(),
     });
-    await this._recalcPartnerHistory(agreement.partnerId.toString());
+    const partnerId = agreement.partnerId?._id || agreement.partnerId;
+    this._recalcPartnerHistory(partnerId.toString());
+    return updated;
+  }
+
+  async acceptAgreement(id, user) {
+    if (user.role !== 'partner') {
+      throw new Error('Unauthorized Hub');
+    }
+
+    const agreement = await agreementRepository.findById(id);
+    if (!agreement) throw new Error('Agreement not found');
+
+    const partner = await partnerRepository.findByUserId(user.id);
+    if (!partner || (agreement.partnerId?._id?.toString() || agreement.partnerId?.toString()) !== partner._id.toString()) {
+        throw new Error('Unauthorized Access Hub');
+    }
+
+    const updated = await agreementRepository.update(id, {
+      partnerAcceptedBy: user.id,
+      partnerAcceptedAt: new Date(),
+      status: 'signed'
+    });
+
+    // If already approved by admin, we can auto-activate Hub Hub
+    if (updated.approvedAt) {
+        await agreementRepository.update(id, { status: 'active' });
+    }
+
+    this._recalcPartnerHistory(partner._id.toString());
     return updated;
   }
 

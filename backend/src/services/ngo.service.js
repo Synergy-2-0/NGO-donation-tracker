@@ -70,6 +70,7 @@ export const getNGOMetrics = async (userId) => {
 
     return {
         trustScore: ngo.trustScore || 0,
+        status: ngo.status,
         activeProjects,
         totalRaised,
         availableFunds,

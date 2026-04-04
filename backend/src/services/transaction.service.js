@@ -36,10 +36,21 @@ export const getTransactionById = async (id) => {
     const transaction = await transactionRepository.findById(id);
 
     if (!transaction) {
-        throw new Error("Transaction not found");
+        throw new Error("Transaction not found Hub");
     }
 
     return transaction;
+};
+
+export const getTransactionByOrderId = async (orderId) => {
+    const transaction = await transactionRepository.findByPayHereOrderId(orderId);
+    
+    // We must populate this correctly for the success page Hub
+    if (transaction) {
+        return await transactionRepository.findById(transaction._id);
+    }
+    
+    return null;
 };
 
 export const getTransactionsByNgoId = async (ngoId) => {

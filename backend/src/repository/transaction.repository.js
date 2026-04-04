@@ -95,6 +95,31 @@ export const getFinancialSummaryByNgo = async (ngoId) => {
         { $sort: { total: -1 } }
     ]);
 
+    const allocationsByCampaign = await FundAllocation.aggregate([
+        { $match: { ngoId: id, isDeleted: false, campaignId: { $exists: true } } },
+        {
+            $group: {
+                _id: "$campaignId",
+                totalAllocated: { $sum: "$amount" },
+            }
+        },
+        {
+            $lookup: {
+                from: "campaigns",
+                localField: "_id",
+                foreignField: "_id",
+                as: "campaign"
+            }
+        },
+        { $unwind: "$campaign" },
+        {
+            $project: {
+                title: "$campaign.title",
+                totalAllocated: 1
+            }
+        }
+    ]);
+
     const recentAllocations = await FundAllocation.find({ ngoId: id, isDeleted: false })
         .sort({ createdAt: -1 })
         .limit(5);
@@ -104,6 +129,7 @@ export const getFinancialSummaryByNgo = async (ngoId) => {
         transactionCount: income.length > 0 ? income[0].transactionCount : 0,
         totalAllocated: allocations.length > 0 ? allocations[0].totalAllocated : 0,
         allocationsByCategory: allocationsByCategory,
+        allocationsByCampaign: allocationsByCampaign,
         recentAllocations: recentAllocations
     };
 };

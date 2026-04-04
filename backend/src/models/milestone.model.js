@@ -28,6 +28,14 @@ const milestoneSchema = new mongoose.Schema({
     enum: ['pending', 'in-progress', 'completed'],
     default: 'pending'
   },
+  budget: {
+    type: Number,
+    default: 0
+  },
+  amount: {
+    type: Number,
+    default: 0
+  },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',

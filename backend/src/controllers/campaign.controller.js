@@ -38,7 +38,7 @@ export const createCampaign = async (req, res) => {
             targetBeneficiaries: Number(req.body.targetBeneficiaries) || 0,
             location: parsedLocation,
             sdgAlignment: parsedSdg,
-            image: req.file?.path || null,
+            image: req.file?.path?.replace(/\\/g, '/') || null,
             createdBy: req.user.id,
             allowPledges: req.body.allowPledges === 'true',
             ...(parsedPledgeConfig && { pledgeConfig: parsedPledgeConfig }),
@@ -106,6 +106,18 @@ export const getMyCampaigns = async (req, res) => {
     try {
         const campaigns = await campaignService.getMyCampaigns(req.query, req.user);
         res.json(campaigns);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
+
+/**
+ * Submit a campaign for approval.
+ */
+export const submitCampaign = async (req, res) => {
+    try {
+        const campaign = await campaignService.submitCampaign(req.params.id, req.user);
+        res.json(campaign);
     } catch (error) {
         res.status(400).json({ message: error.message });
     }

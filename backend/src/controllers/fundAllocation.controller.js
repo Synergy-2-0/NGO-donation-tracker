@@ -1,4 +1,16 @@
 import * as fundAllocationService from "../services/fundAllocation.service.js";
+import * as ngoService from "../services/ngo.service.js";
+
+// Helper to enforce NGO isolation Hub
+const getAuthorizedNgoId = async (req) => {
+    if (req.user.role === 'admin') return req.params.id;
+    if (req.user.role === 'ngo-admin') {
+        const ngo = await ngoService.getNGOProfile(req.user.id);
+        if (!ngo) throw new Error('NGO profile not found Hub');
+        return ngo._id.toString();
+    }
+    throw new Error('Unauthorized operational access Hub');
+};
 
 // Create fund allocation (ngo-admin)
 export const createAllocation = async (req, res) => {
@@ -39,12 +51,11 @@ export const getAllocationById = async (req, res) => {
 // Get fund allocations by NGO ID (ngo-admin)
 export const getAllocationsByNgoId = async (req, res) => {
     try {
-        const allocations = await fundAllocationService.getAllocationsByNgoId(
-            req.params.id
-        );
+        const ngoId = await getAuthorizedNgoId(req);
+        const allocations = await fundAllocationService.getAllocationsByNgoId(ngoId);
         res.json(allocations);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(error.message === 'NGO profile not found Hub' ? 404 : 403).json({ message: error.message });
     }
 };
 
@@ -89,21 +100,21 @@ export const deleteAllocation = async (req, res) => {
 // Get allocations by category (ngo-admin)
 export const getAllocationsByCategory = async (req, res) => {
     try {
-        const allocations = await fundAllocationService.getAllocationsByCategory(
-            req.params.id
-        );
+        const ngoId = await getAuthorizedNgoId(req);
+        const allocations = await fundAllocationService.getAllocationsByCategory(ngoId);
         res.json(allocations);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(error.message === 'NGO profile not found Hub' ? 404 : 403).json({ message: error.message });
     }
 };
 
 // Get total allocated amount by NGO
 export const getTotalAllocated = async (req, res) => {
     try {
-        const total = await fundAllocationService.getTotalAllocated(req.params.id);
+        const ngoId = await getAuthorizedNgoId(req);
+        const total = await fundAllocationService.getTotalAllocated(ngoId);
         res.json({ totalAllocated: total });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(error.message === 'NGO profile not found Hub' ? 404 : 403).json({ message: error.message });
     }
 };

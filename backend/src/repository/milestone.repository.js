@@ -33,7 +33,7 @@ class MilestoneRepository {
   }
 
   async update(id, data) {
-    return await Milestone.findByIdAndUpdate(id, data, { new: true, runValidators: true })
+    return await Milestone.findByIdAndUpdate(id, data, { returnDocument: 'after', runValidators: true })
       .populate('agreementId', 'title status campaignId')
       .populate('campaignId', 'title status');
   }

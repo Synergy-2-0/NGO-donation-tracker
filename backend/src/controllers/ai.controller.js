@@ -35,3 +35,14 @@ export const analyzeCampaignHealth = async (req, res, next) => {
     next(error);
   }
 };
+/**
+ * Generate a campaign report summary based on campaign data
+ */
+export const generateCampaignSummary = async (req, res, next) => {
+  try {
+    const summary = await aiService.generateCampaignSummary(req.params.id);
+    res.json({ success: true, summary });
+  } catch (error) {
+    next(error);
+  }
+};

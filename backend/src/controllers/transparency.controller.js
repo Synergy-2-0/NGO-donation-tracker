@@ -21,8 +21,12 @@ export const getPartnerPublicAgreements = async (req, res) => {
 
 export const getImpactMetrics = async (req, res) => {
   try {
-    const data = await transparencyService.getImpactMetrics();
-    res.json(data);
+    const [metrics, trends, leaderboard] = await Promise.all([
+        transparencyService.getImpactMetrics(),
+        transparencyService.getTrends(),
+        transparencyService.getLeaderboard()
+    ]);
+    res.json({ ...metrics, trends, leaderboard });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -41,6 +45,15 @@ export const getMapData = async (req, res) => {
   try {
     const mapData = await transparencyService.getMapData();
     res.json(mapData);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const getCampaignPublicPartners = async (req, res) => {
+  try {
+    const data = await transparencyService.getCampaignPublicPartners(req.params.campaignId);
+    res.json(data);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

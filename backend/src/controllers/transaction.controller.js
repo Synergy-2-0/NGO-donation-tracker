@@ -1,4 +1,16 @@
 import * as transactionService from "../services/transaction.service.js";
+import * as ngoService from "../services/ngo.service.js";
+
+// Helper to enforce NGO isolation Hub
+const getAuthorizedNgoId = async (req) => {
+    if (req.user.role === 'admin') return req.params.id;
+    if (req.user.role === 'ngo-admin') {
+        const ngo = await ngoService.getNGOProfile(req.user.id);
+        if (!ngo) throw new Error('NGO profile not found Hub');
+        return ngo._id.toString();
+    }
+    throw new Error('Unauthorized operational access Hub');
+};
 
 // Create transaction (system use only)
 export const createTransaction = async (req, res) => {
@@ -17,6 +29,11 @@ export const createTransaction = async (req, res) => {
 // Get all transactions (admin only)
 export const getAllTransactions = async (req, res) => {
     try {
+        const { orderId } = req.query;
+        if (orderId) {
+            const transaction = await transactionService.getTransactionByOrderId(orderId);
+            return res.json(transaction);
+        }
         const transactions = await transactionService.getAllTransactions();
         res.json(transactions);
     } catch (error) {
@@ -39,12 +56,11 @@ export const getTransactionById = async (req, res) => {
 // Get transactions by NGO ID (ngo-admin)
 export const getTransactionsByNgoId = async (req, res) => {
     try {
-        const transactions = await transactionService.getTransactionsByNgoId(
-            req.params.id
-        );
+        const ngoId = await getAuthorizedNgoId(req);
+        const transactions = await transactionService.getTransactionsByNgoId(ngoId);
         res.json(transactions);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(error.message === 'NGO profile not found Hub' ? 404 : 403).json({ message: error.message });
     }
 };
 
@@ -104,11 +120,10 @@ export const archiveTransaction = async (req, res) => {
 // Get financial summary by NGO
 export const getFinancialSummary = async (req, res) => {
     try {
-        const summary = await transactionService.getFinancialSummary(
-            req.params.id
-        );
+        const ngoId = await getAuthorizedNgoId(req);
+        const summary = await transactionService.getFinancialSummary(ngoId);
         res.json(summary);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(error.message === 'NGO profile not found Hub' ? 404 : 403).json({ message: error.message });
     }
 };

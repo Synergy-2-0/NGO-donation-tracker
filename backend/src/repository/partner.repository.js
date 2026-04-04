@@ -18,7 +18,7 @@ class PartnerRepository {
 
   // Update partner
   async update(id, data) {
-    return await Partnership.findByIdAndUpdate(id, data, { new: true, runValidators: true });
+    return await Partnership.findByIdAndUpdate(id, data, { returnDocument: 'after', runValidators: true });
   }
 
   // Approve partner verification
@@ -26,13 +26,13 @@ class PartnerRepository {
     return await Partnership.findByIdAndUpdate(
       id,
       { verificationStatus: 'verified', verifiedAt: new Date(), verifiedBy: adminId },
-      { new: true }
+      { returnDocument: 'after' }
     );
   }
 
   // Soft delete by setting status to inactive
   async softDelete(id) {
-    return await Partnership.findByIdAndUpdate(id, { status: 'inactive' }, { new: true });
+    return await Partnership.findByIdAndUpdate(id, { status: 'inactive' }, { returnDocument: 'after' });
   }
 
   // Find only verified and active partners

@@ -16,8 +16,8 @@ const agreementSchema = new mongoose.Schema({
   },
   description: {
     type: String,
-    required: [true, 'Description is required'],
-    trim: true
+    trim: true,
+    default: ''
   },
   agreementType: {
     type: String,
@@ -46,7 +46,7 @@ const agreementSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['draft', 'pending', 'active', 'completed', 'cancelled', 'suspended'],
+    enum: ['draft', 'pending', 'active', 'completed', 'cancelled', 'suspended', 'signed'],
     default: 'draft',
     index: true
   },
@@ -90,6 +90,21 @@ const agreementSchema = new mongoose.Schema({
     ref: 'Campaign',
     default: null,
     index: true
+  },
+  initialMilestones: [{
+    title: String,
+    description: String,
+    budget: Number,
+    dueDate: Date,
+    status: { type: String, default: 'pending' },
+    evidence: {
+      url: String,
+      uploadedAt: Date
+    }
+  }],
+  milestones: {
+    type: Array,
+    default: []
   }
 }, {
   timestamps: true

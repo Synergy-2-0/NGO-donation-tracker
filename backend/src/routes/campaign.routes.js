@@ -8,7 +8,8 @@ import {
     updateCampaign,
     deleteCampaign,
     publishCampaign,
-    getCampaignMetrics
+    getCampaignMetrics,
+    submitCampaign
 } from "../controllers/campaign.controller.js";
 
 import {
@@ -43,6 +44,7 @@ router.put("/:id", authenticate, authorizeRoles("admin", "ngo-admin"), updateCam
 router.delete("/:id", authenticate, authorizeRoles("admin"), deleteCampaign);
 
 router.put("/:id/publish", authenticate, authorizeRoles("admin"), publishCampaign);
+router.put("/:id/submit", authenticate, authorizeRoles("ngo-admin"), submitCampaign);
 
 /* --- progress log routes --- */
 

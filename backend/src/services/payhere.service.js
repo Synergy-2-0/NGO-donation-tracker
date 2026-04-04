@@ -171,13 +171,15 @@ export const manualVerify = async (transactionId) => {
     // Only verify if still pending
     if (transaction.status === 'pending') {
         const transactionService = await import('./transaction.service.js');
-        return await transactionService.completeDonation(
+        await transactionService.completeDonation(
             transactionId, 
             'MANUAL_DEV_VERIFY_' + Date.now(), 
             'completed'
         );
     }
-    return transaction;
+    
+    // Always return a fully populated document for the UI Hub
+    return await transactionRepository.findById(transactionId);
 };
 
 /**

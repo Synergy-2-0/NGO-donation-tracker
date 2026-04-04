@@ -13,8 +13,7 @@ export const createPartnership = async (req, res) => {
 // Get all partners
 export const getPartners = async (req, res) => {
   try {
-    const isAdmin = req.user?.role === 'admin' || req.user?.role === 'ngo-admin';
-    const partners = await partnerService.getPartners(req.query, isAdmin);
+    const partners = await partnerService.getPartners(req.query, req.user);
     res.json(partners);
   } catch (err) {
     res.status(500).json({ message: err.message });

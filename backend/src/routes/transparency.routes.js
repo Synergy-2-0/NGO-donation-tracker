@@ -9,5 +9,6 @@ router.get('/agreements/:partnerId', ctrl.getPartnerPublicAgreements);
 router.get('/impact-metrics', ctrl.getImpactMetrics);
 router.get('/donor-stats', ctrl.getPublicDonorStats);
 router.get('/map-data', ctrl.getMapData);
+router.get('/campaign-partners/:campaignId', ctrl.getCampaignPublicPartners);
 
 export default router;

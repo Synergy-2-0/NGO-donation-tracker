@@ -1,7 +1,17 @@
 import * as fundAllocationRepository from "../repository/fundAllocation.repository.js";
 import * as transactionRepository from "../repository/transaction.repository.js";
+import * as ngoRepository from "../repository/ngo.repository.js";
 import * as auditLogRepository from "../repository/auditLog.repository.js";
 import * as trustScoreService from "./trustScore.service.js";
+
+// Strategic Institutional Guard Hub
+const ensureNgoApproved = async (ngoId) => {
+    const ngo = await ngoRepository.findById(ngoId);
+    if (!ngo || ngo.status !== 'approved') {
+        throw new Error("Your organization is currently awaiting verification. Treasury allocation is locked until approval Sync!");
+    }
+    return ngo;
+};
 
 export const createAllocation = async (data, userId = null) => {
     if (!data.transactionId || !data.ngoId || !data.amount || !data.category) {
@@ -9,6 +19,9 @@ export const createAllocation = async (data, userId = null) => {
             "Transaction ID, NGO ID, amount, and category are required"
         );
     }
+
+    // Institutional integrity check Hub
+    await ensureNgoApproved(data.ngoId);
 
     // Verify transaction exists
     const transaction = await transactionRepository.findById(data.transactionId);
@@ -37,6 +50,11 @@ export const createAllocation = async (data, userId = null) => {
                 transaction.amount - totalAllocated
             }, Requested: ${data.amount}`
         );
+    }
+
+    // Inherit Campaign context Hub
+    if (transaction.campaignId) {
+        data.campaignId = transaction.campaignId;
     }
 
     const allocation = await fundAllocationRepository.create(data);

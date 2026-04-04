@@ -40,7 +40,7 @@ function CampaignCard({ item }) {
       <div className="p-10 flex-1 flex flex-col justify-between space-y-8">
         <div className="space-y-4">
            <h4 className="text-xl font-bold text-slate-900 tracking-tight leading-tight group-hover:text-orange-500 transition-colors">{item.title}</h4>
-           <div className="flex items-center gap-2 text-[9px] font-black text-slate-300 uppercase tracking-widest">
+           <div className="flex items-center gap-2 text-[9px] font-extrabold text-slate-300 uppercase tracking-widest">
               <span>NGO: {item.createdBy?.organizationName || 'Verified Partner'}</span>
            </div>
            <p className="text-sm text-slate-500 line-clamp-3 leading-relaxed">
@@ -133,7 +133,7 @@ export default function HomePage() {
       <section className="relative min-h-screen flex items-center justify-center px-6 overflow-hidden">
         <motion.div style={{ opacity }} className="absolute inset-0 z-0">
           <img src={HERO_IMG} className="w-full h-full object-cover brightness-[0.3]" alt="Hero" />
-          <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-slate-950/40" />
+          <div className="absolute inset-0 bg-gradient-to-b from-slate-950/80 via-slate-950/40 to-slate-950/95" />
         </motion.div>
 
         <div className="relative z-10 max-w-7xl w-full mx-auto text-center space-y-16 mt-20">
@@ -143,14 +143,14 @@ export default function HomePage() {
               className="inline-flex items-center gap-3 px-6 py-2 bg-white/5 backdrop-blur-2xl border border-white/10 rounded-full mx-auto"
             >
               <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(249,115,22,0.8)]" />
-              <p className="text-[10px] font-black text-white uppercase tracking-[0.5em] italic">
+              <p className="text-[10px] font-extrabold text-white uppercase tracking-[0.5em]">
                 {user ? t('home.hero.badge_active', { role: user.role.toUpperCase() }) : t('home.hero.badge_verified')}
               </p>
             </motion.div>
             
             <motion.h1 
               initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1 }}
-              className="text-5xl md:text-8xl lg:text-9xl font-extrabold text-white tracking-tighter leading-[0.9] font-serif"
+              className="text-5xl md:text-8xl lg:text-9xl font-extrabold text-white tracking-tighter leading-[0.9]"
             >
               {user ? <>{t('home.hero.title_welcome')} <br /> <span className="text-orange-500">{user.name.split(' ')[0]}</span></> : <>{t('home.hero.title_main_1')} <br /> <span className="text-orange-500">{t('home.hero.title_main_2')}</span></>}
             </motion.h1>
@@ -167,11 +167,11 @@ export default function HomePage() {
             initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8 }} 
             className="flex flex-wrap justify-center gap-6 pt-6"
           >
-             <Link to="/causes" className="px-12 py-5 bg-orange-500 hover:bg-white text-white hover:text-slate-900 font-black text-[11px] uppercase tracking-[0.4em] rounded-2xl shadow-2xl transition-all flex items-center gap-3 group">
+             <Link to="/causes" className="px-12 py-5 bg-orange-500 hover:bg-white text-white hover:text-slate-900 font-extrabold text-[11px] uppercase tracking-[0.4em] rounded-2xl shadow-2xl transition-all flex items-center gap-3 group">
                 {t('home.hero.explore_button')} <FiArrowRight className="group-hover:translate-x-2 transition-transform" />
              </Link>
              {!user && (
-               <Link to="/login" className="px-12 py-5 bg-white/5 backdrop-blur-xl border border-white/10 hover:bg-white text-white hover:text-slate-900 font-black text-[11px] uppercase tracking-[0.4em] rounded-2xl transition-all">
+               <Link to="/login" className="px-12 py-5 bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white text-white hover:text-slate-900 font-extrabold text-[11px] uppercase tracking-[0.4em] rounded-2xl transition-all shadow-xl">
                   {t('home.hero.join_button')}
                </Link>
              )}
@@ -193,7 +193,7 @@ export default function HomePage() {
                 className="text-center md:text-left space-y-6 group"
               >
                 <div className="text-orange-500 text-3xl mb-6 opacity-30 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700">{stat.icon}</div>
-                <h4 className="text-5xl md:text-6xl font-extrabold text-slate-950 tracking-tighter leading-none">{stat.val}</h4>
+                <h3 className="text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tighter leading-tight">{stat.val}</h3>
                 <p className="text-[10px] font-extrabold text-slate-500 uppercase tracking-[0.4em] group-hover:text-orange-500 transition-colors">{stat.label}</p>
               </motion.div>
             ))}
@@ -206,8 +206,8 @@ export default function HomePage() {
           <div className="space-y-12">
             <header className="space-y-6">
               <div className="w-12 h-1 bg-orange-500 mb-8" />
-              <span className="text-[10px] font-black text-orange-500 uppercase tracking-[0.6em] italic">{t('home.features.badge')}</span>
-              <h2 className="text-6xl md:text-8xl font-black text-slate-950 tracking-tighter leading-[0.95] italic lowercase">
+              <span className="text-[10px] font-extrabold text-orange-500 uppercase tracking-[0.6em]">{t('home.features.badge')}</span>
+              <h2 className="text-6xl md:text-8xl font-extrabold text-slate-950 tracking-tighter leading-[0.95]">
                 {t('home.features.title_1')} <span className="text-slate-200">{t('home.features.title_2')}</span>
               </h2>
             </header>
@@ -219,8 +219,8 @@ export default function HomePage() {
                 { t: t('home.features.feature_4_t'), d: t('home.features.feature_4_d') }
               ].map((f, i) => (
                 <div key={i} className="space-y-3 group">
-                   <h5 className="font-bold text-slate-900 italic transition-colors group-hover:text-orange-500">{f.t}</h5>
-                   <p className="text-sm text-slate-500 leading-relaxed italic">{f.d}</p>
+                   <h5 className="font-bold text-slate-900 transition-colors group-hover:text-orange-500">{f.t}</h5>
+                   <p className="text-sm text-slate-500 leading-relaxed">{f.d}</p>
                 </div>
               ))}
             </div>
@@ -237,8 +237,8 @@ export default function HomePage() {
          <div className="max-w-7xl mx-auto space-y-20">
             <header className="flex flex-col md:flex-row md:items-end justify-between gap-10 border-b border-slate-200 pb-12">
                <div className="space-y-4">
-                  <h3 className="text-[10px] font-black text-orange-500 uppercase tracking-[0.5em] italic">{t('home.causes.badge')}</h3>
-                  <h2 className="text-5xl md:text-7xl font-black text-slate-900 tracking-tighter italic lowercase leading-none">{t('home.causes.title')}</h2>
+                  <h3 className="text-sm font-extrabold text-orange-500 uppercase tracking-[0.4em] mb-4">{t('home.causes.badge')}</h3>
+                  <h2 className="text-5xl md:text-7xl font-extrabold text-slate-900 tracking-tighter leading-none">{t('home.causes.title')}</h2>
                </div>
                <Link to="/causes" className="text-xs font-bold text-orange-500 uppercase tracking-widest border-b-2 border-orange-500/20 hover:border-orange-500 transition-all pb-1">{t('home.causes.view_all')}</Link>
             </header>
@@ -259,11 +259,11 @@ export default function HomePage() {
       <section className="py-64 text-center bg-slate-950 text-white relative overflow-hidden">
          <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 via-transparent to-transparent" />
          <div className="relative z-10 max-w-4xl mx-auto px-12 space-y-12">
-            <h2 className="text-6xl md:text-8xl font-black tracking-tighter uppercase italic leading-none">{t('home.cta.title')}</h2>
-            <p className="text-white/50 text-xl md:text-2xl font-medium leading-relaxed italic max-w-2xl mx-auto">{t('home.cta.subtitle')}</p>
+            <h2 className="text-6xl md:text-8xl font-extrabold tracking-tighter uppercase leading-none">{t('home.cta.title')}</h2>
+            <p className="text-white/50 text-xl md:text-2xl font-medium leading-relaxed max-w-2xl mx-auto">{t('home.cta.subtitle')}</p>
             <div className="pt-10 flex flex-wrap justify-center gap-8">
-               <Link to="/login?tab=signup" className="px-16 py-6 bg-orange-500 hover:bg-white text-white hover:text-slate-900 font-black text-[11px] uppercase tracking-[0.5em] rounded-full transition-all shadow-3xl italic active:scale-95">{t('home.hero.initialize_profile')}</Link>
-               <Link to="/about" className="px-16 py-6 border border-white/10 hover:bg-white text-white hover:text-slate-900 font-black text-[11px] uppercase tracking-[0.5em] rounded-full transition-all italic active:scale-95">{t('home.hero.methodology')}</Link>
+               <Link to="/login?tab=signup" className="px-16 py-6 bg-orange-500 hover:bg-white text-white hover:text-slate-900 font-extrabold text-[11px] uppercase tracking-[0.5em] rounded-full transition-all shadow-3xl active:scale-95">{t('home.hero.initialize_profile')}</Link>
+               <Link to="/about" className="px-16 py-6 border border-white/10 hover:bg-white text-white hover:text-slate-900 font-extrabold text-[11px] uppercase tracking-[0.5em] rounded-full transition-all active:scale-95">{t('home.hero.methodology')}</Link>
             </div>
          </div>
       </section>

@@ -46,7 +46,7 @@ class AppNavigation {
 
 export const test = base.extend({
     authenticatedContext: async ({ playwright, baseURL }, use) => {
-        const target = baseURL ?? 'http://127.0.0.1:3000';
+        const target = baseURL ?? `http://127.0.0.1:${process.env.PORT || 3001}`;
         const requestContext = await playwright.request.newContext({
             baseURL: target,
         });
@@ -117,7 +117,7 @@ export const test = base.extend({
     },
 
     navigation: async ({ page, baseURL }, use) => {
-        const target = baseURL ?? 'http://127.0.0.1:3000';
+        const target = baseURL ?? `http://127.0.0.1:${process.env.PORT || 3001}`;
         const navigation = new AppNavigation(page, target);
         await navigation.gotoLogin();
         await use(navigation);

@@ -1,5 +1,6 @@
 import * as campaignRepository from "../repository/campaign.repository.js";
 import * as ngoRepository from "../repository/ngo.repository.js";
+import User from "../models/user.model.js";
 import Progress from "../models/progressLog.model.js";
 import geocodingService from './geocoding.service.js';
 
@@ -60,7 +61,10 @@ export const createCampaign = async (data) => {
 
     // Institutional integrity check Hub
     if (data.createdBy) {
-        await ensureNgoApproved(data.createdBy);
+        const creator = await User.findById(data.createdBy);
+        if (creator && creator.role !== 'admin') {
+            await ensureNgoApproved(data.createdBy);
+        }
     }
 
     if (data.location && !hasCoordinates(data.location)) {
@@ -255,6 +259,9 @@ export const submitCampaign = async (id, actor) => {
 
     // Locked action check Hub
     if (actor.role === 'ngo-admin') {
+        await ensureNgoApproved(actor.id);
+    } else if (actor.role !== 'admin') {
+        // Fallback for other roles if any
         await ensureNgoApproved(actor.id);
     }
 

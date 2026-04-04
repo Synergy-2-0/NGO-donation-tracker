@@ -9,6 +9,8 @@ export const createMilestoneSchema = Joi.object({
   description: Joi.string().allow('', null).optional(),
   dueDate: Joi.date().required(),
   status: Joi.string().valid('pending', 'in-progress', 'completed').optional(),
+  budget: Joi.number().min(0).optional(),
+  amount: Joi.number().min(0).optional(),
   completedAt: Joi.date().optional(),
   evidence: Joi.object({
     url: Joi.string().uri().required(),
@@ -23,6 +25,8 @@ export const updateMilestoneSchema = Joi.object({
   description: Joi.string().allow('', null).optional(),
   dueDate: Joi.date().optional(),
   status: Joi.string().valid('pending', 'in-progress', 'completed').optional(),
+  budget: Joi.number().min(0).optional(),
+  amount: Joi.number().min(0).optional(),
   completedAt: Joi.date().optional(),
   evidence: Joi.object({
     url: Joi.string().uri().required(),
@@ -33,4 +37,4 @@ export const updateMilestoneSchema = Joi.object({
 export const milestoneQuerySchema = Joi.object({
   agreementId: objectId.optional(),
   campaignId: objectId.optional(),
-}).or('agreementId', 'campaignId');
+});

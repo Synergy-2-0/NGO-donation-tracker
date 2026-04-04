@@ -1,23 +1,37 @@
-import * as partnerRepository from '../repository/partner.repository.js';
-import * as agreementRepository from '../repository/agreement.repository.js';
+import partnerRepository from '../repository/partner.repository.js';
+import agreementRepository from '../repository/agreement.repository.js';
+import Campaign from '../models/campaign.model.js';
+import Milestone from '../models/milestone.model.js';
+import Transaction from '../models/transaction.model.js';
+import Partner from '../models/partner.model.js';
+import NGO from '../models/ngo.model.js';
 import { getCache, setCache } from '../utils/cache.js';
 
 function sanitizePartner(partner) {
   return {
+    _id: partner._id,
     organizationName: partner.organizationName,
     organizationType: partner.organizationType,
+    industry: partner.industry,
     csrFocus: partner.csrFocus,
-    totalContributed: partner.partnershipHistory.totalContributed || 0,
-    activePartnerships: partner.partnershipHistory.activePartnerships || 0,
-    completedPartnerships: partner.partnershipHistory.completedPartnerships || 0,
-    trustScore: partner.trustScore || 85 // Fallback to a default if not calculated
+    totalContributed: partner.partnershipHistory?.totalContributed || 0,
+    activePartnerships: partner.partnershipHistory?.activePartnerships || 0,
+    completedPartnerships: partner.partnershipHistory?.completedPartnerships || 0,
+    trustScore: partner.trustScore || 85,
+    contactPerson: {
+      name: partner.contactPerson?.name,
+      email: partner.contactPerson?.email,
+      phone: partner.contactPerson?.phone,
+      position: partner.contactPerson?.position
+    },
+    address: partner.address,
+    verificationStatus: partner.verificationStatus
   };
 }
 
 class TransparencyService {
   /**
    * Returns sanitized public list of verified active partners.
-   * Cached for 1 hour.
    */
   async getPublicDashboard() {
     const cacheKey = 'transparency:dashboard';
@@ -30,116 +44,204 @@ class TransparencyService {
     return result;
   }
 
-  /**
-   * Returns active/completed agreements for a verified partner (no sensitive fields).
-   * Cached for 1 hour.
-   */
-  async getPartnerPublicAgreements(partnerId) {
-    const partner = await partnerRepository.findById(partnerId);
-    if (!partner || partner.verificationStatus !== 'verified') {
-      throw new Error('Partner not found');
-    }
-
-    const cacheKey = `transparency:partner:${partnerId}:agreements`;
-    const cached = getCache(cacheKey);
-    if (cached) return cached;
-
-    const agreements = await agreementRepository.findByPartnerId(partnerId);
-    const result = agreements
-      .filter(a => ['active', 'completed'].includes(a.status))
-      .map(a => ({
-        title: a.title,
-        agreementType: a.agreementType,
-        totalValue: a.totalValue,
-        status: a.status,
-        startDate: a.startDate,
-        endDate: a.endDate,
-      }));
-
-    setCache(cacheKey, result, 3600);
-    return result;
-  }
-
-  /**
-   * Returns aggregated impact metrics across all verified partners.
-   * Cached for 1 hour.
-   */
   async getImpactMetrics() {
-    const cacheKey = 'transparency:impact-metrics';
-    const cached = getCache(cacheKey);
-    if (cached) return cached;
+    // Aggregation of Mission Critical Impact Hub
+    const [partners, campaigns, completedMilestones] = await Promise.all([
+      partnerRepository.findPublic(),
+      Campaign.find({ isDeleted: false }),
+      Milestone.countDocuments({ status: 'completed' })
+    ]);
 
-    const partners = await partnerRepository.findPublic();
-
-    const totalPartnerships = partners.reduce(
-      (s, p) => s + p.partnershipHistory.totalPartnerships, 0
-    );
     const totalFundsAllocated = partners.reduce(
-      (s, p) => s + p.partnershipHistory.totalContributed, 0
+      (s, p) => s + (p.partnershipHistory?.totalContributed || 0), 0
     );
 
-    const activeAgreements = partners.reduce(
-      (s, p) => s + p.partnershipHistory.activePartnerships, 0
-    );
-    const completedProjects = partners.reduce(
-      (s, p) => s + p.partnershipHistory.completedPartnerships, 0
+    const totalBeneficiaries = campaigns.reduce(
+      (s, c) => s + (c.reachedBeneficiaries || 0), 0
     );
 
-    const metrics = {
-      totalPartnerships,
+    return {
       totalFundsAllocated,
-      activeAgreements,
-      completedProjects,
+      totalBeneficiaries: totalBeneficiaries || 0,
+      milestonesCompleted: completedMilestones,
       verifiedPartners: partners.length,
-      totalBeneficiaries: 12500, // Simulated for now
-      milestonesCompleted: 42,   // Simulated
       globalReachCities: [...new Set(partners.map(p => p.address?.city).filter(Boolean))].length
     };
-
-    setCache(cacheKey, metrics, 3600);
-    return metrics;
   }
 
-  /**
-   * Get public donor leaderboard / statistics
-   */
   async getPublicDonorStats() {
-    const cacheKey = 'transparency:donor-stats';
-    const cached = getCache(cacheKey);
-    if (cached) return cached;
+    // Market Dynamics Aggregation Hub
+    const transactions = await Transaction.aggregate([
+      { $match: { status: 'completed', archived: false } },
+      {
+        $group: {
+          _id: null,
+          totalAmount: { $sum: '$amount' },
+          count: { $sum: 1 },
+          donors: { $addToSet: '$donorId' }
+        }
+      }
+    ]);
 
-    // Simulated data for demo purposes - usually would aggregate transaction models
-    const stats = {
-      totalDonors: 1450,
-      activeDonors: 890,
-      topCauses: ['Education', 'Healthcare', 'Environment'],
-      donorGrowthRate: 15.4,
-      avgDonationAmount: 250
+    const statsGroup = transactions[0] || { totalAmount: 0, count: 0, donors: [] };
+
+    // Find top SDG Alignments from active campaigns Hub
+    const topCategories = await Campaign.aggregate([
+      { $match: { status: 'active', isDeleted: false, sdgAlignment: { $exists: true, $ne: [] } } },
+      { $unwind: '$sdgAlignment' },
+      { $group: { _id: '$sdgAlignment', count: { $sum: 1 } } },
+      { $sort: { count: -1 } },
+      { $limit: 3 }
+    ]);
+    
+    // SDG Mapper Hub
+    const sdgMap = {
+      1: 'No Poverty', 2: 'Zero Hunger', 3: 'Good Health', 4: 'Quality Education', 
+      5: 'Gender Equality', 6: 'Clean Water', 7: 'Clean Energy', 8: 'Economy & Work', 
+      9: 'Infrastructure', 10: 'Reduced Inequalities', 11: 'Sustainable Cities', 
+      12: 'Responsible Consumption', 13: 'Climate Action', 14: 'Life Below Water', 
+      15: 'Life on Land', 16: 'Peace & Justice', 17: 'Partnerships'
     };
 
-    setCache(cacheKey, stats, 3600);
-    return stats;
+    // Trends calculation 
+    const recentTxCount = await Transaction.countDocuments({ 
+      status: 'completed', 
+      createdAt: { $gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) } 
+    });
+
+    const previousTxCount = await Transaction.countDocuments({ 
+      status: 'completed', 
+      createdAt: { 
+        $gte: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000),
+        $lt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+      } 
+    });
+
+    let growthRate = 0;
+    if (previousTxCount > 0) {
+      growthRate = ((recentTxCount - previousTxCount) / previousTxCount) * 100;
+    } else if (recentTxCount > 0) {
+      growthRate = 100;
+    }
+
+    return {
+      totalDonors: statsGroup.donors.length,
+      activeDonors: statsGroup.donors.length,
+      topCauses: topCategories.length > 0 ? topCategories.map(c => sdgMap[c._id] || `SDG ${c._id}`) : ['Humanitarian Aid', 'Education', 'Social Welfare'], 
+      donorGrowthRate: growthRate.toFixed(1), 
+      avgDonationAmount: statsGroup.count > 0 ? Math.round(statsGroup.totalAmount / statsGroup.count) : 0
+    };
   }
 
-  /**
-   * Returns data for GeoJSON/Mapbox public map
-   */
+
   async getMapData() {
-    const partners = await partnerRepository.findPublic();
+    const [partners, campaigns] = await Promise.all([
+      partnerRepository.findPublic(),
+      Campaign.find({ isDeleted: false, "location.coordinates": { $exists: true } }).populate('createdBy')
+    ]);
+
+    // Fetch NGOs to map userId to trustScore
+    const ngos = await NGO.find({ status: 'approved' });
+    const ngoMap = ngos.reduce((acc, n) => {
+      acc[n.userId.toString()] = n.trustScore || 0;
+      return acc;
+    }, {});
     
-    return {
-      type: 'FeatureCollection',
-      features: partners.map(p => ({
+    const partnerFeatures = partners.map(p => ({
+      type: 'Feature',
+      properties: {
+        name: p.organizationName,
+        type: 'Institutional Partner Hub',
+        city: p.address?.city || 'Verified Hub',
+        focus: p.csrFocus?.join(', ') || 'Global Impact Hub',
+        trustScore: p.trustScore || 85
+      },
+      geometry: p.address?.coordinates
+    })).filter(f => f.geometry);
+
+    const campaignFeatures = campaigns.map(c => {
+      const creatorId = c.createdBy?._id || c.createdBy;
+      const score = ngoMap[creatorId?.toString()] || 0;
+      
+      return {
         type: 'Feature',
         properties: {
-          name: p.organizationName,
-          type: p.organizationType,
-          city: p.address.city,
-          focus: p.csrFocus,
-          trustScore: p.trustScore || 85
+          name: c.title,
+          type: 'Active Social Mission Hub',
+          city: c.location?.city || 'Global Hub',
+          focus: c.description?.slice(0, 70) + '...',
+          trustScore: score || 75 // Default 75 if NGO not found but campaign is active
         },
-        geometry: p.address.coordinates
-      }))
+        geometry: c.location?.coordinates?.coordinates ? c.location.coordinates : null
+      };
+    }).filter(f => f.geometry && Array.isArray(f.geometry.coordinates) && f.geometry.coordinates.length >= 2);
+
+    return {
+      type: 'FeatureCollection',
+      features: [...partnerFeatures, ...campaignFeatures]
+    };
+  }
+
+  async getLeaderboard() {
+      // NGO Trust Leaderboard Hub Hub Hub
+      const ngos = await NGO.find({ status: 'approved', isPublic: true })
+          .sort({ trustScore: -1 })
+          .limit(5);
+
+      return ngos.map(n => ({
+          name: n.organizationName,
+          score: n.trustScore || 0,
+          level: (n.trustScore || 0) >= 90 ? 'Excellent' : 'Verified Hub'
+      }));
+  }
+
+  async getTrends() {
+      // Fund Allocation Trends (Last 6 Months) Hub Hub Hub
+      const trends = await Transaction.aggregate([
+          { $match: { status: 'completed', archived: false } },
+          {
+              $group: {
+                  _id: { $month: "$createdAt" },
+                  val: { $sum: "$amount" }
+              }
+          },
+          { $sort: { "_id": 1 } }
+      ]);
+
+      const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+      const months = Array.from({ length: 6 }, (_, i) => {
+          const d = new Date();
+          d.setMonth(d.getMonth() - (5 - i));
+          return monthNames[d.getMonth()];
+      });
+
+      return months.map(m => {
+          const match = trends.find(t => monthNames[t._id - 1] === m);
+          return { name: m, val: match ? match.val : 0 };
+      });
+  }
+
+  async getCampaignPublicPartners(campaignId) {
+    const agreements = await agreementRepository.findAll({ 
+      campaignId, 
+      status: { $in: ['active', 'completed'] } 
+    });
+    
+    // Calculate total pledged by institutional partners Hub
+    const totalPledged = agreements.reduce((sum, a) => sum + (a.totalValue || 0), 0);
+
+    const partnerIds = [...new Set(agreements.map(a => (a.partnerId?._id || a.partnerId).toString()))];
+    
+    if (partnerIds.length === 0) return { partners: [], totalPledged: 0 };
+
+    const partners = await Partner.find({ 
+      _id: { $in: partnerIds },
+      verificationStatus: 'verified'
+    });
+    
+    return {
+      partners: partners.map(sanitizePartner),
+      totalPledged
     };
   }
 }

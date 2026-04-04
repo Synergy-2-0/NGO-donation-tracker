@@ -12,6 +12,11 @@ const fundAllocationSchema = new mongoose.Schema(
             ref: "Partner",
             required: true,
         },
+        campaignId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Campaign",
+            required: false,
+        },
         category: {
             type: String,
             required: true,
@@ -45,6 +50,7 @@ const fundAllocationSchema = new mongoose.Schema(
 
 // Index for efficient queries
 fundAllocationSchema.index({ transactionId: 1 });
+fundAllocationSchema.index({ campaignId: 1 });
 fundAllocationSchema.index({ ngoId: 1, isDeleted: 1 });
 
 export default mongoose.model("FundAllocation", fundAllocationSchema);

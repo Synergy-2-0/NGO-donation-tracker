@@ -55,8 +55,9 @@ app.use("/api/finance", financeRoutes);
 app.use('/api/public', transparencyRoutes);
 app.use('/api/geo', geoRoutes);
 app.use('/api/ai', aiRoutes);
-app.use('/api/ngos', ngoRoutes);
+// Prioritize finance sub-routes Hub
 app.use('/api/ngos/finance', ngoFinanceRoutes);
+app.use('/api/ngos', ngoRoutes);
 
 app.get('/', (req, res) => {
   res.status(200).send('NGO Donation Tracker API is running');

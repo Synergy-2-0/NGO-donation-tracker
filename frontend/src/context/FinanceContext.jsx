@@ -11,11 +11,17 @@ export function FinanceProvider({ children }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const fetchTransactions = useCallback(async (ngoId) => {
+  const fetchTransactions = useCallback(async (queryParam) => {
     setLoading(true);
     setError(null);
     try {
-      const url = ngoId ? `/api/finance/transactions/ngo/${ngoId}` : '/api/finance/transactions';
+      let url = '/api/finance/transactions';
+      if (typeof queryParam === 'string' && queryParam.startsWith('donor/')) {
+         url = `/api/finance/transactions/${queryParam}`;
+      } else if (queryParam) {
+         url = `/api/finance/transactions/ngo/${queryParam}`;
+      }
+      
       const { data } = await api.get(url);
       setTransactions(Array.isArray(data) ? data : (data.data || []));
     } catch (err) {

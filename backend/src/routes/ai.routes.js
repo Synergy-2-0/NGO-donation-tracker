@@ -22,4 +22,10 @@ router.get('/campaign-health/:id',
   ctrl.analyzeCampaignHealth
 );
 
+router.get('/generate-summary/:id',
+  restrictTo('ngo-admin', 'admin'),
+  ctrl.generateCampaignSummary
+);
+
+
 export default router;

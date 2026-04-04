@@ -18,10 +18,10 @@ export default function Navbar() {
   }[user?.role] || t('navbar.dashboard');
 
   const roleTag = {
-    admin: { label: 'System Admin', cls: 'bg-rose-50 text-rose-500 border-rose-100' },
-    'ngo-admin': { label: 'Administrator', cls: 'bg-slate-50 text-slate-500 border-slate-200' },
-    partner: { label: 'Official Partner', cls: 'bg-emerald-50 text-emerald-500 border-emerald-100' },
-    donor: { label: 'Verified Donor', cls: 'bg-sky-50 text-sky-600 border-sky-100' },
+    admin: { label: t('navbar.roles.admin'), cls: 'bg-rose-50 text-rose-500 border-rose-100' },
+    'ngo-admin': { label: t('navbar.roles.ngo_admin'), cls: 'bg-slate-50 text-slate-500 border-slate-200' },
+    partner: { label: t('navbar.roles.partner'), cls: 'bg-emerald-50 text-emerald-500 border-emerald-100' },
+    donor: { label: t('navbar.roles.donor'), cls: 'bg-sky-50 text-sky-600 border-sky-100' },
   }[user?.role] || { label: user?.role || 'User', cls: 'bg-slate-50 text-slate-500 border-slate-100' };
 
   return (
@@ -53,7 +53,7 @@ export default function Navbar() {
             onClick={() => changeLanguage('en')}
             className={`px-3 py-1.5 text-[10px] font-black rounded-xl transition-all ${i18n.language === 'en' ? 'bg-white text-tf-primary shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
           >
-            ENG
+            EN
           </button>
           <div className="w-[1px] h-3 bg-slate-200" />
           <button
@@ -75,12 +75,10 @@ export default function Navbar() {
 
         <button
           onClick={logout}
-          className="text-[10px] font-bold text-tf-primary hover:text-orange-700 uppercase tracking-widest transition-all hover:translate-x-1"
+          className="text-[10px] font-bold text-tf-primary hover:text-orange-700 uppercase tracking-widest transition-all hover:translate-x-1 flex items-center gap-2"
         >
-          <span className="text-xs font-black uppercase tracking-widest">Logout</span>
-          <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-          </svg>
+          <span className="text-xs font-black uppercase tracking-widest">{t('navbar.logout')}</span>
+          <FiLogOut className="w-4 h-4" />
         </button>
       </div>
     </header>

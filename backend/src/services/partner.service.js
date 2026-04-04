@@ -21,12 +21,29 @@ class PartnerService {
     return await partnerRepository.create({ ...data, userId });
   }
 
-  // Get partners with role-based filtering
-  async getPartners(filters = {}, isAdmin = false) {
-    if (!isAdmin) {
+  // Get partners with institutional isolation Hub
+  async getPartners(filters = {}, user) {
+    if (!user || user.role === 'donor') {
       return await partnerRepository.findPublic();
     }
-    return await partnerRepository.findAll(filters);
+    
+    // Global Admin sees ALL partners in the registry Hub
+    if (user.role === 'admin') {
+      return await partnerRepository.findAll(filters);
+    }
+    
+    // NGO Administrators only see:
+    // 1. All VERIFIED partners (to browse/invite)
+    // 2. ONLY those PENDING partners they themselves initialized Hub
+    if (user.role === 'ngo-admin') {
+      const allPartners = await partnerRepository.findAll(filters);
+      return allPartners.filter(p => 
+        p.verificationStatus === 'verified' || 
+        p.userId?.toString() === user.id
+      );
+    }
+
+    return await partnerRepository.findPublic();
   }
 
   // Get single partner with authorization check

@@ -5,10 +5,12 @@ import { usePartnerOperations } from '../context/PartnerOperationsContext';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ErrorAlert from '../components/ErrorAlert';
 import PartnershipFormModal from '../components/PartnershipFormModal';
+import { useTranslation } from 'react-i18next';
 import { 
   FiFileText, FiPlus, FiChevronRight, FiClock, FiCheckCircle, 
-  FiAlertCircle, FiTrendingUp, FiLayers, FiActivity, FiX, FiSearch
+  FiAlertCircle, FiTrendingUp, FiLayers, FiActivity, FiX, FiSearch, FiArrowRight, FiShield
 } from 'react-icons/fi';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const statusBadgeStyle = {
   active: 'bg-emerald-50 text-emerald-600 border-emerald-100',
@@ -16,11 +18,15 @@ const statusBadgeStyle = {
   pending: 'bg-amber-50 text-amber-600 border-amber-100',
   rejected: 'bg-rose-50 text-rose-600 border-rose-100',
   draft: 'bg-slate-50 text-slate-400 border-slate-100',
+  signed: 'bg-tf-primary/10 text-tf-primary border-tf-primary/20',
+  accepted: 'bg-emerald-50 text-emerald-600 border-emerald-100',
 };
 
 const asMoney = (val) => `LKR ${Number(val || 0).toLocaleString()}`;
 
 export default function PartnerAgreementsPage() {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
   const { user } = useAuth();
   const location = useLocation();
   const { 
@@ -29,12 +35,11 @@ export default function PartnerAgreementsPage() {
     error,
     setError,
     fetchAllAgreements,
-    currentAgreement,
     fetchMyPartnerAgreements, 
     createAgreement, 
     fetchPartnerProfile,
     acceptAgreement,
-    approveAgreement
+    approveAgreement,
   } = usePartnerOperations();
   
   const [partner, setPartner] = useState(null);
@@ -52,234 +57,258 @@ export default function PartnerAgreementsPage() {
             if (p?._id) {
               fetchMyPartnerAgreements();
             } else {
-              setError('Partner profile not found. Please complete onboarding.');
+              setError(t('institutional_agreements.error.onboarding'));
             }
           })
           .catch(() => {
             setPartner(null);
-            setError('Failed to load partner profile.');
+            setError(t('institutional_agreements.error.load'));
           });
     } else if (isAdmin) {
         fetchAllAgreements();
     }
     
-    // Auto-open if redirected from Marketplace
     if (location.state?.prefillCampaignId) {
         setShowFormModal(true);
     }
-  }, [fetchPartnerProfile, fetchMyPartnerAgreements, fetchAllAgreements, location.state, user?.role, isAdmin]);
-
-  const stats = useMemo(() => {
-    const active = agreements.filter(a => a.status === 'active').length;
-    const total = agreements.reduce((sum, a) => sum + (Number(a.totalValue) || 0), 0);
-    return { active, total };
-  }, [agreements]);
+  }, [fetchPartnerProfile, fetchMyPartnerAgreements, fetchAllAgreements, location.state, user?.role, isAdmin, t]);
 
   const onAccept = async (id) => {
     try {
+        // Formalize the agreement (Signing phase)
         await acceptAgreement(id);
-        setSuccess('Agreement formalized and signed.');
-        if (user?.role === 'partner') fetchMyPartnerAgreements();
-        else fetchAllAgreements();
+        
+        setSuccess(t('institutional_agreements.success.formalized'));
     } catch (err) {
-        setError(err.response?.data?.message || 'Acceptance signature failed.');
+        setError(err.response?.data?.message || t('institutional_agreements.error.sign'));
     }
   };
 
   const onApprove = async (id) => {
     try {
         await approveAgreement(id);
-        setSuccess('Agreement verified and activated.');
-        if (user?.role === 'partner') fetchMyPartnerAgreements();
-        else fetchAllAgreements();
+        setSuccess(t('institutional_agreements.success.activated'));
     } catch (err) {
-        setError(err.response?.data?.message || 'Activation failed.');
+        setError(err.response?.data?.message || t('institutional_agreements.error.activate'));
     }
   };
-
-  const filtered = agreements.filter(a => {
-    const term = search.toLowerCase();
-    const campaignTitle = a.campaignId?.title || a.title || '';
-    const type = a.partnershipType || a.agreementType || '';
-    
-    return campaignTitle.toLowerCase().includes(term) || 
-           type.toLowerCase().includes(term) ||
-           a._id.toLowerCase().includes(term);
-  });
 
   const onSave = async (payload) => {
     try {
-        await createAgreement({ ...payload, partnerId: partner._id });
-        setSuccess('Agreement created successfully.');
+        const pId = user.role === 'partner' ? partner?._id : payload.partnerId;
+        await createAgreement({ ...payload, partnerId: pId });
         setShowFormModal(false);
+        setSuccess('Strategic partnership proposal successfully initialized.');
         if (user?.role === 'partner') fetchMyPartnerAgreements();
         else fetchAllAgreements();
     } catch (err) {
-        setError(err.response?.data?.message || 'Failed to create agreement.');
+        setError(err.response?.data?.message || 'Proposal initialization failure Hub.');
     }
   };
 
-  if (loading && !partner && user?.role === 'partner') return <LoadingSpinner message="Loading agreements..." />;
+  const filteredAgreements = useMemo(() => {
+    return agreements.filter(a => 
+       a.campaignId?.title?.toLowerCase().includes(search.toLowerCase()) ||
+       a.partnerId?.organizationName?.toLowerCase().includes(search.toLowerCase())
+    );
+  }, [agreements, search]);
+
+  if (loading && agreements.length === 0) return <LoadingSpinner message={t('marketplace.loading')} />;
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8 pb-16 animate-fadeIn text-left">
-      {/* Header */}
-      <div className="relative overflow-hidden bg-slate-900 rounded-[32px] p-8 md:p-10 shadow-2xl">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-brand-red/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3" />
-        <div className="absolute bottom-0 left-0 w-72 h-72 bg-brand-orange/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4" />
+    <div className="max-w-7xl mx-auto space-y-12 pb-20 pt-6 animate-fadeIn font-sans selection:bg-tf-primary selection:text-white text-left">
+      
+      {/* Registry Hero */}
+      <section className="relative overflow-hidden bg-slate-900 rounded-[2.5rem] p-10 md:p-14 shadow-2xl">
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-tf-primary/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3" />
+        <div className="absolute bottom-0 left-0 w-80 h-80 bg-orange-600/5 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/4" />
         
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div>
-            <p className="text-[10px] font-black uppercase tracking-[.2em] text-slate-500 mb-2">Management Center</p>
-            <h2 className="text-3xl md:text-4xl font-black text-white tracking-tight">{isAdmin ? 'Global' : 'My'} <span className="text-brand-red">Agreements</span></h2>
-            <p className="text-slate-400 text-sm mt-2 max-w-xl font-medium">Track historical contributions, active partnerships, and ongoing mission commitments.</p>
-          </div>
-          {user?.role === 'partner' && (
-            <button onClick={() => setShowFormModal(true)} className="px-6 py-3 bg-brand-red text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-brand-red/90 transition-all shadow-xl shadow-brand-red/20 flex items-center gap-2 active:scale-95">
-              <FiPlus className="text-sm stroke-[3]" /> Propose New Agreement
-            </button>
-          )}
-        </div>
-      </div>
+        <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-12">
+            <div className="space-y-6 flex-1">
+                <div className="flex items-center gap-4">
+                    <span className="flex items-center gap-2 px-3 py-1 bg-tf-primary/10 border border-tf-primary/20 rounded-full text-tf-primary text-[10px] font-black uppercase tracking-widest backdrop-blur-sm italic">
+                        <FiLayers className="text-sm" /> {t('institutional_agreements.title')}
+                    </span>
+                    <span className="text-[10px] font-black text-white/30 uppercase tracking-[0.5em] italic">REGISTRY NODE</span>
+                </div>
+                
+                <h1 className="text-4xl md:text-6xl font-black text-white tracking-tighter italic leading-none">
+                    Mission <span className="text-tf-primary not-italic">Agreements</span>
+                </h1>
+                <p className="text-white/50 text-base md:text-lg font-medium italic max-w-2xl leading-relaxed">
+                    {t('institutional_agreements.subtitle')}
+                </p>
 
-      {(error || success) && (
-        <div className="space-y-3 px-2">
-          {error && <div className="bg-rose-50 border border-rose-200 text-rose-700 px-6 py-4 rounded-2xl font-bold flex items-center gap-3"><FiAlertCircle /> {error} <FiX className="ml-auto cursor-pointer" onClick={() => setError('')} /></div>}
-          {success && <div className="bg-emerald-50 border border-emerald-200 text-emerald-700 px-6 py-4 rounded-2xl font-bold flex items-center gap-3"><FiCheckCircle /> {success} <FiX className="ml-auto cursor-pointer" onClick={() => setSuccess('')} /></div>}
+                <div className="flex flex-wrap gap-4 pt-2">
+                    <div className="px-6 py-3 bg-white/5 border border-white/10 rounded-2xl flex flex-col italic">
+                        <span className="text-[9px] font-black text-white/30 uppercase tracking-widest italic">{t('dashboard.stats.active_campaigns')}</span>
+                        <span className="text-xl font-black text-white tabular-nums tracking-tighter italic">{agreements.filter(a => a.status === 'active').length}</span>
+                    </div>
+                </div>
+            </div>
+
+            {user?.role === 'partner' && (
+                <button 
+                   onClick={() => setShowFormModal(true)}
+                   className="relative group bg-tf-primary hover:bg-orange-500 text-white rounded-[2rem] p-1 shadow-2xl transition-all active:scale-95 italic"
+                >
+                    <div className="px-10 py-5 bg-slate-900 rounded-[1.8rem] flex items-center gap-4 border border-white/10 group-hover:bg-tf-primary group-hover:border-tf-primary transition-all">
+                       <FiPlus className="text-2xl" />
+                       <div className="text-left">
+                         <p className="text-[10px] font-black uppercase tracking-widest text-white/40 group-hover:text-white/70 transition-colors italic">NEW ALLIANCE</p>
+                         <p className="text-xs font-black uppercase tracking-[0.2em] italic">{t('institutional_agreements.create')}</p>
+                       </div>
+                    </div>
+                </button>
+            )}
         </div>
+      </section>
+
+      {success && (
+        <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="bg-emerald-50 border border-emerald-100 p-6 rounded-[2rem] flex items-center gap-4 text-emerald-700 font-bold italic shadow-sm mx-4">
+          <FiCheckCircle className="text-xl" />
+          {success}
+        </motion.div>
       )}
 
-      {/* Stats Summary */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-         <div className="bg-white rounded-[32px] border border-slate-100 p-7 flex items-center gap-5 shadow-sm hover:shadow-lg transition-all group">
-            <div className="w-14 h-14 bg-slate-900 text-white rounded-2xl flex items-center justify-center text-xl shadow-lg group-hover:scale-105 transition-transform">
-              <FiActivity className="text-xl" />
-            </div>
-            <div>
-               <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Active Agreements</p>
-               <h4 className="text-2xl font-black text-slate-900">{stats.active}</h4>
-            </div>
-         </div>
-         <div className="bg-white rounded-[32px] border border-slate-100 p-7 flex items-center gap-5 shadow-sm hover:shadow-lg transition-all group">
-            <div className="w-14 h-14 bg-tf-primary text-white rounded-2xl flex items-center justify-center text-xl shadow-lg shadow-orange-500/20 group-hover:scale-105 transition-transform">
-              <FiTrendingUp className="text-xl" />
-            </div>
-            <div>
-               <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Total Commitment</p>
-               <h4 className="text-2xl font-black text-slate-900">{asMoney(stats.total)}</h4>
-            </div>
-         </div>
-         <div className="bg-white rounded-[32px] border border-slate-100 p-7 flex items-center gap-5 shadow-sm hover:shadow-lg transition-all group">
-            <div className="w-14 h-14 bg-amber-500 text-white rounded-2xl flex items-center justify-center text-xl shadow-lg shadow-amber-500/20 group-hover:scale-105 transition-transform">
-              <FiClock className="text-xl" />
-            </div>
-            <div>
-               <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Pending Review</p>
-               <h4 className="text-2xl font-black text-slate-900">{agreements.filter(a => a.status === 'pending').length}</h4>
-            </div>
-         </div>
-      </div>
+      {error && <ErrorAlert error={error} onClose={() => setError('')} />}
 
-      {/* Main Filter area */}
-      <div className="bg-white rounded-[40px] border border-slate-100 shadow-sm overflow-hidden flex flex-col">
-        <div className="p-8 pb-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-           <div className="flex items-center gap-3 w-full sm:w-auto">
-              <span className="w-8 h-8 bg-slate-900 text-white rounded-xl flex items-center justify-center text-sm"><FiLayers /></span>
-              <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-500">Agreement Registry</h3>
-           </div>
-           <div className="relative w-full sm:w-80">
-              <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
-              <input 
-                value={search}
-                onChange={e => setSearch(e.target.value)}
-                placeholder="Search campaigns..." 
-                className="w-full bg-slate-50 border border-slate-100 rounded-2xl pl-10 pr-4 py-3 text-sm font-bold focus:outline-none focus:ring-4 focus:ring-brand-red/5 transition-all"
-              />
-           </div>
+      {/* Database Node Controls */}
+      <div className="bg-white rounded-[3rem] border border-slate-100 shadow-sm overflow-hidden text-left italic">
+        <div className="px-10 py-8 border-b border-slate-50 flex flex-col md:flex-row md:items-center justify-between gap-6 bg-slate-50/30 italic">
+            <div className="relative flex-1 max-w-md italic">
+                <FiSearch className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300" />
+                    <input 
+                        type="text" value={search} onChange={(e) => setSearch(e.target.value)}
+                        placeholder={t('institutional_agreements.search')}
+                        className="w-full bg-white border border-slate-100 rounded-2xl pl-14 pr-6 py-5 text-sm font-bold text-slate-900 placeholder:text-slate-300 focus:ring-4 focus:ring-tf-primary/5 focus:border-tf-primary/50 transition-all outline-none italic shadow-sm group-hover:shadow-md"
+                    />
+            </div>
+            <div className="flex items-center gap-2 text-[10px] text-slate-400 font-black uppercase tracking-widest italic">
+                <FiActivity className="text-tf-primary italic" /> Logged Intelligence: {filteredAgreements.length} Nodes
+            </div>
         </div>
 
-        <div className="overflow-x-auto">
-           <table className="w-full">
-             <thead>
-                <tr className="text-left text-[9px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-50">
-                  <th className="px-8 py-5">Campaign Mission</th>
-                  <th className="px-8 py-5">Partnership Type</th>
-                  <th className="px-8 py-5">Contract Value</th>
-                  <th className="px-8 py-5 text-center">Status</th>
-                  <th className="px-8 py-5 text-right">Actions</th>
-                </tr>
-             </thead>
-             <tbody className="divide-y divide-slate-50">
-               {filtered.length > 0 ? filtered.map(a => {
-                  const isAccepted = !!a.partnerAcceptedAt;
-                  const isApproved = !!a.approvedAt;
-                  const isPending = a.status === 'pending';
-                  const isUserPartner = user?.role === 'partner';
-                  const needsPartnerAcceptance = isPending && !isAccepted && isUserPartner;
-                  const needsAdminApproval = isPending && !isApproved && isAdmin;
+        <div className="overflow-x-auto italic">
+            <table className="w-full text-left border-collapse italic">
+                <thead>
+                    <tr className="bg-slate-50/50 italic">
+                        <th className="px-10 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest italic">{t('institutional_agreements.table.mission')}</th>
+                        {isAdmin && <th className="px-10 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest italic">{t('institutional_agreements.table.partner')}</th>}
+                        <th className="px-10 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest italic">{t('institutional_agreements.table.allocation')}</th>
+                        <th className="px-10 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest italic">{t('institutional_agreements.table.state')}</th>
+                        <th className="px-10 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right italic">{t('institutional_agreements.table.action')}</th>
+                    </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-50 italic">
+                    <AnimatePresence mode='popLayout'>
+                        {filteredAgreements.length > 0 ? filteredAgreements.map((a, idx) => (
+                            <motion.tr 
+                                key={a._id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: idx * 0.05 }}
+                                className="group hover:bg-slate-50/50 transition-all cursor-pointer hover:shadow-xl hover:shadow-slate-100 italic"
+                            >
+                                <td className="px-10 py-8 italic">
+                                    <div className="space-y-2 italic">
+                                        <div className="flex items-center gap-2">
+                                           <div className="w-1.5 h-6 bg-tf-primary rounded-full shadow-[0_0_12px_rgba(255,145,0,0.4)]" />
+                                           <h3 className="text-[13px] font-black text-slate-950 italic tracking-tight uppercase leading-none">{a.title || 'Official Partnership Node'}</h3>
+                                        </div>
+                                        <div className="pl-3.5 space-y-1">
+                                            <p className="text-[10px] font-bold text-slate-500 italic tracking-tight">{a.campaignId?.title}</p>
+                                            <p className="text-[8px] text-tf-primary font-black uppercase tracking-[0.4em] italic">MISSION REF: {a.campaignId?._id?.slice(-8)}</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                {isAdmin && (
+                                    <td className="px-10 py-8 italic">
+                                        <div className="flex items-center gap-4 italic group/partner">
+                                            <div className="w-10 h-10 rounded-2xl bg-slate-900 text-white flex items-center justify-center text-xs font-black italic shadow-lg transition-transform group-hover/partner:scale-110 group-hover/partner:bg-tf-primary">
+                                                {a.partnerId?.organizationName?.charAt(0)}
+                                            </div>
+                                            <span className="text-xs font-bold text-slate-700 italic group-hover/partner:text-slate-900">{a.partnerId?.organizationName}</span>
+                                        </div>
+                                    </td>
+                                )}
+                                <td className="px-10 py-8 italic">
+                                    <div className="space-y-2 italic">
+                                        <div className="flex items-center gap-2 italic">
+                                            <span className="text-[9px] font-black text-slate-300 uppercase tracking-widest italic">Allocation Hub</span>
+                                        </div>
+                                        <div className="space-y-1.5 italic">
+                                            <span className="text-[15px] font-black text-slate-950 italic tabular-nums tracking-tighter uppercase">{asMoney(a.amount || a.totalValue)}</span>
+                                            <div className="flex items-center gap-2 italic">
+                                                <div className={`w-1.5 h-1.5 rounded-full ${a.legalCompliance?.verified ? 'bg-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.4)]' : 'bg-slate-200'} italic`} />
+                                                <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest italic">{a.legalCompliance?.verified ? 'Compliance Verified' : 'Compliance Check'}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td className="px-10 py-8 italic">
+                                    <div className="space-y-2 italic">
+                                        <span className="text-[9px] font-black text-slate-300 uppercase tracking-widest italic">Mission State</span>
+                                        <div className="flex italic">
+                                            <div className={`inline-flex items-center gap-2 px-6 py-2.5 rounded-full border text-[9px] font-black uppercase tracking-widest italic shadow-sm transition-all ${statusBadgeStyle[a.status] || statusBadgeStyle.draft}`}>
+                                                <span className="w-1.5 h-1.5 rounded-full bg-current animate-pulse italic" />
+                                                {a.status === 'pending' ? 'Verification Hub' : a.status === 'active' ? 'Active Mission' : a.status.toUpperCase()}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td className="px-10 py-8 italic">
+                                    <div className="flex items-center justify-end gap-3 italic">
+                                        <button 
+                                            onClick={() => navigate(`/partner/milestones/${a._id}`)}
+                                            title="View Roadmap"
+                                            className="w-10 h-10 flex items-center justify-center bg-white border border-slate-100 rounded-xl text-slate-400 hover:text-tf-primary hover:shadow-xl transition-all active:scale-95 italic"
+                                        >
+                                            <FiLayers size={16} />
+                                        </button>
+                                        
+                                        {user?.role === 'partner' && a.status === 'pending' && (
+                                            <button 
+                                                onClick={() => onAccept(a._id)}
+                                                className="px-6 py-3.5 bg-slate-900 text-white rounded-xl text-[9px] font-black uppercase tracking-[0.2em] hover:bg-tf-primary transition-all shadow-xl shadow-slate-900/10 active:scale-95 italic transition-all"
+                                            >
+                                                {t('institutional_agreements.formalize')}
+                                            </button>
+                                        )}
 
-                  return (
-                  <tr key={a._id} className="group hover:bg-slate-50/50 transition-colors">
-                    <td className="px-8 py-6">
-                       <div>
-                          <p className="text-sm font-extrabold text-slate-800 tracking-tight group-hover:text-brand-red transition-colors">{a.campaignId?.title || a.title || 'Unknown Mission'}</p>
-                          <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-1">ID: #{a._id.slice(-8).toUpperCase()}</p>
-                       </div>
-                    </td>
-                    <td className="px-8 py-6">
-                       <span className="text-xs font-bold text-slate-500 capitalize">{(a.partnershipType || a.agreementType || 'Partnership')} Support</span>
-                    </td>
-                    <td className="px-8 py-6 font-black text-slate-900 tracking-tighter">
-                       {asMoney(a.totalValue)}
-                    </td>
-                    <td className="px-8 py-6 text-center">
-                       <div className="flex flex-col items-center gap-1">
-                           <span className={`px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest border ${statusBadgeStyle[a.status] || 'bg-slate-50'}`}>
-                              {a.status}
-                           </span>
-                           {isPending && (
-                               <div className="flex gap-1">
-                                   <div title="Partner Acceptance" className={`w-1.5 h-1.5 rounded-full ${isAccepted ? 'bg-emerald-500' : 'bg-slate-200'}`} />
-                                   <div title="Admin Approval" className={`w-1.5 h-1.5 rounded-full ${isApproved ? 'bg-emerald-500' : 'bg-slate-200'}`} />
-                               </div>
-                           )}
-                       </div>
-                    </td>
-                    <td className="px-8 py-6 text-right">
-                       <div className="flex items-center justify-end gap-2">
-                          {needsPartnerAcceptance && (
-                              <button 
-                                onClick={() => onAccept(a._id)}
-                                className="px-4 py-2 bg-emerald-500 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-600 transition-all shadow-lg shadow-emerald-500/10 active:scale-95"
-                              >
-                                Formalize & Accept
-                              </button>
-                          )}
-                          {needsAdminApproval && (
-                              <button 
-                                onClick={() => onApprove(a._id)}
-                                className="px-4 py-2 bg-brand-red text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-brand-red/90 transition-all shadow-lg shadow-brand-red/10 active:scale-95"
-                              >
-                                Verify & Activate
-                              </button>
-                          )}
-                          <Link to={`/partner/agreements/${a._id}/milestones`} className="inline-flex items-center justify-center w-10 h-10 bg-slate-100 text-slate-400 rounded-xl hover:bg-slate-900 hover:text-white transition-all shadow-sm active:scale-95" title="Execution Matrix">
-                             <FiChevronRight className="text-lg" />
-                          </Link>
-                       </div>
-                    </td>
-                 </tr>
-                 );
-               }) : (
-                 <tr>
-                   <td colSpan="5" className="px-8 py-24 text-center">
-                      <FiFileText className="text-5xl text-slate-100 mx-auto mb-4" />
-                      <p className="text-slate-400 font-black text-xs uppercase tracking-widest">No Agreements Registered.</p>
-                   </td>
-                 </tr>
-               )}
-             </tbody>
-           </table>
+                                        {isAdmin && a.status === 'pending' && (
+                                            <button 
+                                                onClick={() => onApprove(a._id)}
+                                                className="px-6 py-3 bg-tf-primary text-white rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-orange-600 transition-all shadow-lg italic"
+                                            >
+                                                {t('institutional_agreements.activate')}
+                                            </button>
+                                        )}
+
+                                        <button 
+                                            className="p-3 bg-white border border-slate-100 rounded-xl text-slate-400 hover:text-slate-900 hover:shadow-md transition-all italic"
+                                            onClick={() => navigate(`/partner/milestones/${a._id}`)}
+                                        >
+                                            <FiChevronRight size={16} />
+                                        </button>
+                                    </div>
+                                </td>
+                            </motion.tr>
+                        )) : (
+                            <tr className="italic">
+                                <td colSpan="5" className="px-10 py-32 text-center italic">
+                                    <div className="max-w-xs mx-auto space-y-4 italic">
+                                        <div className="w-20 h-20 bg-slate-50 rounded-[2rem] flex items-center justify-center text-slate-200 mx-auto shadow-inner italic">
+                                            <FiLayers size={40} />
+                                        </div>
+                                        <div className="space-y-1 italic">
+                                            <h4 className="text-lg font-black text-slate-900 tracking-tight italic">Protocol Empty.</h4>
+                                            <p className="text-xs text-slate-400 font-medium italic">{t('institutional_agreements.empty')}</p>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        )}
+                    </AnimatePresence>
+                </tbody>
+            </table>
         </div>
       </div>
 

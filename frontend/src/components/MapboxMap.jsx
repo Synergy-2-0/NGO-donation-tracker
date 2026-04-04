@@ -29,19 +29,25 @@ export default function GeospatialMap({ data }) {
         attributionControl: false
     });
 
-    // Add FREE OpenStreetMap Tiles
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
+    // Add Premium Dark Tiles Hub
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; CartoDB',
+        subdomains: 'abcd',
+        maxZoom: 19
     }).addTo(mapInstance.current);
-
-    // Add minimal styling to the container
-    mapContainer.current.style.filter = 'grayscale(100%) invert(90%) contrast(100%) brightness(95%)';
 
     // Add markers from data
     if (data && data.features) {
         data.features.forEach(feature => {
-            const { name, city, focus, trustScore } = feature.properties;
-            const latlng = [feature.geometry.coordinates[1], feature.geometry.coordinates[0]];
+            if (!feature.geometry?.coordinates || feature.geometry.coordinates.length < 2) return;
+            
+            const lat = feature.geometry.coordinates[1];
+            const lng = feature.geometry.coordinates[0];
+
+            if (typeof lat !== 'number' || typeof lng !== 'number') return;
+            
+            const latlng = [lat, lng];
+            const { name, city, focus, trustScore } = feature.properties || {};
             
             const marker = L.circleMarker(latlng, {
                 radius: 8,

@@ -18,6 +18,7 @@ import {
   FiChevronRight,
   FiLogOut,
   FiMapPin,
+  FiActivity,
 } from 'react-icons/fi';
 import { LuScale3D } from 'react-icons/lu';
 
@@ -28,7 +29,6 @@ const partnerNav = [
     section: 'Overview',
     items: [
       { to: '/dashboard', label: 'Dashboard', icon: <FiGrid /> },
-      { to: '/finance/dashboard', label: 'Finance Summary', icon: <FiDollarSign /> },
       { to: '/finance/transactions', label: 'Recent Activity', icon: <FiRepeat /> },
     ],
   },
@@ -36,7 +36,6 @@ const partnerNav = [
     section: 'Partnerships',
     items: [
       { to: '/partner/agreements', label: 'My Agreements', icon: <LuScale3D /> },
-      { to: '/partners', label: 'Partner List', icon: <FiUsers /> },
       { to: '/marketplace', label: 'Campaigns', icon: <FiShoppingBag /> },
     ],
   },
@@ -44,7 +43,7 @@ const partnerNav = [
     section: 'Account',
     items: [
       { to: '/profile', label: 'My Profile', icon: <FiUser /> },
-      { to: '/settings', label: 'Settings HUB', icon: <FiShield /> },
+      { to: '/settings', label: 'Security', icon: <FiShield /> },
     ],
   },
 ];
@@ -76,7 +75,7 @@ const adminNav = [
       { to: '/partners', label: 'Partner List', icon: <FiMapPin /> },
       { to: '/partners/verification', label: 'Pending Access', icon: <FiShield /> },
       { to: '/partner/agreements', label: 'Managed Agreements', icon: <LuScale3D /> },
-      { to: '/settings', label: 'Security HUB', icon: <FiShield /> },
+      { to: '/settings', label: 'Security', icon: <FiShield /> },
     ],
   },
 ];
@@ -102,7 +101,7 @@ const ngoAdminNav = [
       { to: '/partners', label: 'Partner List', icon: <FiUsers /> },
       { to: '/partners/verification', label: 'Pending Access', icon: <FiShield /> },
       { to: '/partner/agreements', label: 'Active Agreements', icon: <LuScale3D /> },
-      { to: '/settings', label: 'Security HUB', icon: <FiShield /> },
+      { to: '/settings', label: 'Security', icon: <FiShield /> },
     ],
   },
 ];
@@ -126,7 +125,7 @@ const donorNav = [
     section: 'Account',
     items: [
       { to: '/profile', label: 'My Profile', icon: <FiUser /> },
-      { to: '/settings', label: 'Settings HUB', icon: <FiShield /> },
+      { to: '/settings', label: 'Security', icon: <FiShield /> },
     ],
   },
 ];
@@ -155,25 +154,31 @@ export default function Sidebar() {
 
   const partnerNav = [
     {
-      section: t('navbar.overview'),
+      section: t('sidebar.sections.management'),
       items: [
         { to: '/dashboard', label: t('navbar.dashboard'), icon: <FiGrid /> },
-        { to: '/finance/dashboard', label: t('navbar.finance_summary'), icon: <FiDollarSign /> },
-        { to: '/finance/transactions', label: t('navbar.recent_activity'), icon: <FiRepeat /> },
+        { to: '/finance/transactions', label: t('sidebar.items.operations_log'), icon: <FiRepeat /> },
       ],
     },
     {
-      section: t('navbar.partnerships'),
+      section: t('sidebar.sections.partnership_core'),
       items: [
         { to: '/partner/agreements', label: t('navbar.my_agreements'), icon: <LuScale3D /> },
-        { to: '/partners', label: t('navbar.partner_list'), icon: <FiUsers /> },
-        { to: '/marketplace', label: t('navbar.campaigns'), icon: <FiShoppingBag /> },
+        { to: '/partner/milestones', label: t('navbar.milestone_registry'), icon: <FiCheckSquare /> },
+        { to: '/marketplace', label: t('sidebar.items.collab_missions'), icon: <FiShoppingBag /> },
       ],
     },
     {
-      section: t('navbar.account'),
+      section: t('sidebar.sections.intel_ai'),
       items: [
-        { to: '/profile', label: t('navbar.profile'), icon: <FiUser /> },
+        { to: '/partner/ai-match', label: t('navbar.ai_matchmaker'), icon: <FiActivity /> },
+        { to: '/partner/csr-hub', label: t('navbar.csr_hub'), icon: <FiTarget /> },
+      ],
+    },
+    {
+      section: t('sidebar.sections.institutional'),
+      items: [
+        { to: '/profile', label: t('navbar.corporate_profile'), icon: <FiUser /> },
         { to: '/settings', label: t('navbar.settings'), icon: <FiShield /> },
       ],
     },

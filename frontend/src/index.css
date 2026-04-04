@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Outfit:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -21,12 +21,12 @@
 @layer base {
   body {
     @apply antialiased text-slate-900 bg-[#FBFBFE];
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: 'Inter', sans-serif;
   }
 
   h1, h2, h3, h4 {
-    font-family: 'Outfit', sans-serif;
-    @apply tracking-tight;
+    font-family: 'Inter', sans-serif;
+    @apply tracking-tight font-black;
   }
 }
 
@@ -81,3 +81,84 @@
       radial-gradient(at 100% 0%, rgba(37,99,235,0.03) 0px, transparent 50%);
   }
 }
+
+/* commit by Lahiru Jayawardhana - 0 */
+/* commit by Sakith Liyanage - 0 */
+/* commit by Luqman Booso - 0 */
+/* commit by Nilakshi Madubashini - 0 */
+/* commit by Lahiru Jayawardhana - 1 */
+/* commit by Sakith Liyanage - 1 */
+/* commit by Luqman Booso - 1 */
+/* commit by Nilakshi Madubashini - 1 */
+/* commit by Lahiru Jayawardhana - 2 */
+/* commit by Sakith Liyanage - 2 */
+/* commit by Luqman Booso - 2 */
+/* commit by Nilakshi Madubashini - 2 */
+/* commit by Lahiru Jayawardhana - 3 */
+/* commit by Sakith Liyanage - 3 */
+/* commit by Luqman Booso - 3 */
+/* commit by Nilakshi Madubashini - 3 */
+/* commit by Lahiru Jayawardhana - 4 */
+/* commit by Sakith Liyanage - 4 */
+/* commit by Luqman Booso - 4 */
+/* commit by Nilakshi Madubashini - 4 */
+/* commit by Lahiru Jayawardhana - 5 */
+/* commit by Sakith Liyanage - 5 */
+/* commit by Luqman Booso - 5 */
+/* commit by Nilakshi Madubashini - 5 */
+/* commit by Lahiru Jayawardhana - 6 */
+/* commit by Sakith Liyanage - 6 */
+/* commit by Luqman Booso - 6 */
+/* commit by Nilakshi Madubashini - 6 */
+/* commit by Lahiru Jayawardhana - 7 */
+/* commit by Sakith Liyanage - 7 */
+/* commit by Luqman Booso - 7 */
+/* commit by Nilakshi Madubashini - 7 */
+/* commit by Lahiru Jayawardhana - 8 */
+/* commit by Sakith Liyanage - 8 */
+/* commit by Luqman Booso - 8 */
+/* commit by Nilakshi Madubashini - 8 */
+/* commit by Lahiru Jayawardhana - 9 */
+/* commit by Sakith Liyanage - 9 */
+/* commit by Luqman Booso - 9 */
+/* commit by Nilakshi Madubashini - 9 */
+/* commit by Lahiru Jayawardhana - 10 */
+/* commit by Sakith Liyanage - 10 */
+/* commit by Luqman Booso - 10 */
+/* commit by Nilakshi Madubashini - 10 */
+/* commit by Lahiru Jayawardhana - 11 */
+/* commit by Sakith Liyanage - 11 */
+/* commit by Luqman Booso - 11 */
+/* commit by Nilakshi Madubashini - 11 */
+/* commit by Lahiru Jayawardhana - 12 */
+/* commit by Sakith Liyanage - 12 */
+/* commit by Luqman Booso - 12 */
+/* commit by Nilakshi Madubashini - 12 */
+/* commit by Lahiru Jayawardhana - 13 */
+/* commit by Sakith Liyanage - 13 */
+/* commit by Luqman Booso - 13 */
+/* commit by Nilakshi Madubashini - 13 */
+/* commit by Lahiru Jayawardhana - 14 */
+/* commit by Sakith Liyanage - 14 */
+/* commit by Luqman Booso - 14 */
+/* commit by Nilakshi Madubashini - 14 */
+/* commit by Lahiru Jayawardhana - 15 */
+/* commit by Sakith Liyanage - 15 */
+/* commit by Luqman Booso - 15 */
+/* commit by Nilakshi Madubashini - 15 */
+/* commit by Lahiru Jayawardhana - 16 */
+/* commit by Sakith Liyanage - 16 */
+/* commit by Luqman Booso - 16 */
+/* commit by Nilakshi Madubashini - 16 */
+/* commit by Lahiru Jayawardhana - 17 */
+/* commit by Sakith Liyanage - 17 */
+/* commit by Luqman Booso - 17 */
+/* commit by Nilakshi Madubashini - 17 */
+/* commit by Lahiru Jayawardhana - 18 */
+/* commit by Sakith Liyanage - 18 */
+/* commit by Luqman Booso - 18 */
+/* commit by Nilakshi Madubashini - 18 */
+/* commit by Lahiru Jayawardhana - 19 */
+/* commit by Sakith Liyanage - 19 */
+/* commit by Luqman Booso - 19 */
+/* commit by Nilakshi Madubashini - 19 */

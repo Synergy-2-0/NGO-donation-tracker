@@ -24,25 +24,29 @@ class MilestoneService {
   }
 
   async getMilestones({ agreementId, campaignId }, user) {
-    if (!agreementId && !campaignId) {
-      throw new Error('agreementId or campaignId query parameter is required');
-    }
+    const filters = {};
 
     if (agreementId) {
-      const agreement = await agreementRepository.findById(agreementId);
-      if (!agreement) throw new Error('Agreement not found');
-      
-      // Admin/ngo-admin: see all milestones for this agreement
-      // Partner/creator: see if they created or are assigned to this agreement
-      if (['admin', 'ngo-admin'].includes(user.role)) {
-        return await milestoneRepository.findByAgreement(agreementId);
-      }
-      
-      // For now, allow authenticated users (can further restrict to agreement creator later)
-      return await milestoneRepository.findByAgreement(agreementId);
+      filters.agreementId = agreementId;
+    } else if (campaignId) {
+      filters.campaignId = campaignId;
     }
 
-    return await milestoneRepository.findByCampaign(campaignId);
+    // Role-based scoping
+    if (user.role === 'partner') {
+      // If no specific agreement/campaign requested, filter by createdBy to see their own records
+      // Or find all their agreements and filter (simpler check: createdBy if they managed the milestones)
+      if (!agreementId && !campaignId) {
+        filters.createdBy = user.id;
+      }
+    } else if (!['admin', 'ngo-admin'].includes(user.role)) {
+       // Regular donors shouldn't see all milestones without a specific campaign context
+       if (!campaignId && !agreementId) {
+         throw new Error('Mission context is required for this action.');
+       }
+    }
+
+    return await milestoneRepository.findAll(filters);
   }
 
   async getMilestoneById(id, user) {

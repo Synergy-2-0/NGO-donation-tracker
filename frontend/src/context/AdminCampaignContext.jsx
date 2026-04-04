@@ -107,9 +107,33 @@ export function AdminCampaignProvider({ children }) {
         }
     }, []);
 
+    const submitCampaign = useCallback(async (campaignId) => {
+        try {
+            const res = await api.put(`/api/campaigns/${campaignId}/submit`);
+            setCampaigns((prev) =>
+                prev.map((c) => (c._id === campaignId ? res.data : c))
+            );
+            return res.data;
+        } catch (err) {
+            const message = err.response?.data?.message || 'Failed to submit mission for review.';
+            console.error('[Submit Error]', message);
+            throw new Error(message);
+        }
+    }, [setCampaigns]);
+
     return (
         <AdminCampaignContext.Provider
-            value={{ campaigns, loading, fetchCampaigns, fetchCampaignById, publishCampaign, createCampaign, updateCampaign, deleteCampaign }}
+            value={{ 
+                campaigns, 
+                loading, 
+                fetchCampaigns, 
+                fetchCampaignById, 
+                publishCampaign, 
+                submitCampaign,
+                createCampaign, 
+                updateCampaign, 
+                deleteCampaign 
+            }}
         >
             {children}
         </AdminCampaignContext.Provider>

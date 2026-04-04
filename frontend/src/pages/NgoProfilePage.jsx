@@ -62,7 +62,7 @@ export default function NgoProfilePage() {
 
   if (loading) return <LoadingSpinner message="Scanning organizational registry..." />;
 
-  const vStyle = verificationStyle[ngo?.verificationStatus] || verificationStyle.pending;
+  const vStyle = verificationStyle[ngo?.status] || verificationStyle.pending;
 
   return (
     <div className="max-w-[1400px] mx-auto space-y-12 pb-20 p-8 font-sans">
@@ -97,9 +97,9 @@ export default function NgoProfilePage() {
           </div>
 
           <div className="flex gap-4">
-            <button className="px-10 py-4 bg-white/10 backdrop-blur-xl border border-white/20 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-white hover:text-slate-950 transition-all italic flex items-center gap-3">
+            <Link to="/settings" className="px-10 py-4 bg-white/10 backdrop-blur-xl border border-white/20 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-white hover:text-slate-950 transition-all italic flex items-center gap-3">
               Edit Blueprint <FiActivity />
-            </button>
+            </Link>
             <Link to="/dashboard" className="px-10 py-4 bg-tf-primary text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] shadow-2xl shadow-tf-primary/30 hover:bg-slate-950 transition-all italic flex items-center gap-3">
               Command Deck <FiArrowRight />
             </Link>
@@ -126,13 +126,12 @@ export default function NgoProfilePage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                 <div className="space-y-6">
                   <InfoRow label="Registration ID" value={ngo.registrationNumber} />
-                  <InfoRow label="Founding Directive" value={ngo.yearEstablished ? `Class established ${ngo.yearEstablished}` : 'N/A'} />
+                  <InfoRow label="Organizational Mission" value={ngo.mission} />
                   <div>
                     <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-3 italic">Sector Focus Nodes</span>
                     <div className="flex flex-wrap gap-2">
-                      {ngo.sectorFocus?.map(s => (
-                        <span key={s} className="px-5 py-2 bg-slate-950 text-white text-[9px] font-black uppercase tracking-widest rounded-xl italic">{s}</span>
-                      ))}
+                       <span className="px-5 py-2 bg-slate-950 text-white text-[9px] font-black uppercase tracking-widest rounded-xl italic">Humanitarian</span>
+                       <span className="px-5 py-2 bg-slate-950 text-white text-[9px] font-black uppercase tracking-widest rounded-xl italic">Development</span>
                     </div>
                   </div>
                 </div>
@@ -154,10 +153,10 @@ export default function NgoProfilePage() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   {[
                     { label: 'Asset Intake', val: asMoney(ngo.totalFundsRaised), color: 'text-slate-950' },
-                    { label: 'Verified Deployed', val: asMoney(ngo.allocatedFunds), color: 'text-tf-primary' },
-                    { label: 'Unallocated HUB', val: asMoney(ngo.availableFunds), color: 'text-slate-400' }
+                    { label: 'Impact Reach', val: (ngo.totalBeneficiaries || 0).toLocaleString(), color: 'text-tf-primary' },
+                    { label: 'Operational Status', val: (ngo.status || 'Active').toUpperCase(), color: 'text-slate-400' }
                   ].map((stat, i) => (
-                    <div key={i} className="p-6 bg-white border border-slate-100 rounded-[2rem] shadow-sm group hover:border-tf-primary transition-all">
+                    <div key={i} className="p-6 bg-white border border-slate-100 rounded-[2rem] shadow-sm group hover:border-tf-primary transition-all text-left">
                       <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest italic mb-2">{stat.label}</p>
                       <p className={`text-xl font-black italic tracking-tighter ${stat.color}`}>{stat.val}</p>
                     </div>

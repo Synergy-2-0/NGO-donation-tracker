@@ -36,8 +36,6 @@ router.use(authenticate);
 router.post('/register', ngoController.register);
 router.get('/profile', ngoController.getProfile);
 router.patch('/profile', ngoController.updateProfile);
-router.get('/finance/metrics', ngoController.getMetrics);
-router.get('/finance/ledger', ngoController.getLedger);
 
 // Admin Specific Routes (Approve/Reject NGOs)
 router.get('/', authorizeRoles('admin'), ngoController.getAll);

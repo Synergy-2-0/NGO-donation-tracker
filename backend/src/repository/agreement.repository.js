@@ -45,7 +45,9 @@ class AgreementRepository {
   }
 
   async update(id, data) {
-    return await Agreement.findByIdAndUpdate(id, data, { new: true, runValidators: true });
+    return await Agreement.findByIdAndUpdate(id, data, { returnDocument: 'after', runValidators: true })
+      .populate('partnerId', 'organizationName')
+      .populate('campaignId', 'title');
   }
 
   async delete(id) {

@@ -98,8 +98,8 @@ export function PartnerOperationsProvider({ children }) {
   const updateAgreement = useCallback(async (agreementId, payload) => {
     return withLoading(async () => {
       const { data } = await api.put(`/api/agreements/${agreementId}`, payload);
-      setAgreements((prev) => prev.map((item) => (item._id === agreementId ? data : item)));
-      setCurrentAgreement((prev) => (prev?._id === agreementId ? data : prev));
+      setAgreements((prev) => prev.map((item) => (item._id === agreementId ? { ...item, ...data } : item)));
+      setCurrentAgreement((prev) => (prev?._id === agreementId ? { ...prev, ...data } : prev));
       return data;
     });
   }, []);
@@ -107,8 +107,8 @@ export function PartnerOperationsProvider({ children }) {
   const updateAgreementStatus = useCallback(async (agreementId, status) => {
     return withLoading(async () => {
       const { data } = await api.patch(`/api/agreements/${agreementId}/status`, { status });
-      setAgreements((prev) => prev.map((item) => (item._id === agreementId ? data : item)));
-      setCurrentAgreement((prev) => (prev?._id === agreementId ? data : prev));
+      setAgreements((prev) => prev.map((item) => (item._id === agreementId ? { ...item, ...data } : item)));
+      setCurrentAgreement((prev) => (prev?._id === agreementId ? { ...prev, ...data } : prev));
       return data;
     });
   }, []);
@@ -116,8 +116,8 @@ export function PartnerOperationsProvider({ children }) {
   const approveAgreement = useCallback(async (agreementId) => {
     return withLoading(async () => {
       const { data } = await api.patch(`/api/agreements/${agreementId}/approve`);
-      setAgreements((prev) => prev.map((item) => (item._id === agreementId ? data : item)));
-      setCurrentAgreement((prev) => (prev?._id === agreementId ? data : prev));
+      setAgreements((prev) => prev.map((item) => (item._id === agreementId ? { ...item, ...data } : item)));
+      setCurrentAgreement((prev) => (prev?._id === agreementId ? { ...prev, ...data } : prev));
       return data;
     });
   }, []);
@@ -125,8 +125,8 @@ export function PartnerOperationsProvider({ children }) {
   const acceptAgreement = useCallback(async (agreementId) => {
     return withLoading(async () => {
       const { data } = await api.patch(`/api/agreements/${agreementId}/accept`);
-      setAgreements((prev) => prev.map((item) => (item._id === agreementId ? data : item)));
-      setCurrentAgreement((prev) => (prev?._id === agreementId ? data : prev));
+      setAgreements((prev) => prev.map((item) => (item._id === agreementId ? { ...item, ...data } : item)));
+      setCurrentAgreement((prev) => (prev?._id === agreementId ? { ...prev, ...data } : prev));
       return data;
     });
   }, []);
@@ -179,6 +179,17 @@ export function PartnerOperationsProvider({ children }) {
     });
   }, []);
 
+  const uploadMilestoneEvidence = useCallback(async (file) => {
+    return withLoading(async () => {
+      const formData = new FormData();
+      formData.append('evidence', file);
+      const { data } = await api.post('/api/milestones/upload-evidence', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      return data;
+    });
+  }, []);
+
   const value = useMemo(() => ({
     agreements,
     milestones,
@@ -201,6 +212,7 @@ export function PartnerOperationsProvider({ children }) {
     createMilestone,
     updateMilestone,
     deleteMilestone,
+    uploadMilestoneEvidence,
   }), [
     agreements,
     milestones,
@@ -222,6 +234,7 @@ export function PartnerOperationsProvider({ children }) {
     createMilestone,
     updateMilestone,
     deleteMilestone,
+    uploadMilestoneEvidence,
   ]);
 
   return <PartnerOperationsContext.Provider value={value}>{children}</PartnerOperationsContext.Provider>;

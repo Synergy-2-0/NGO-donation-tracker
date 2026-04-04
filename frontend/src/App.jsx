@@ -26,6 +26,8 @@ import TransactionsPage from './pages/TransactionsPage';
 import PartnerAgreementsPage from './pages/PartnerAgreementsPage';
 import AgreementMilestonesPage from './pages/AgreementMilestonesPage';
 import CampaignMarketplacePage from './pages/CampaignMarketplacePage';
+import PartnerAiMatchPage from './pages/PartnerAiMatchPage';
+import PartnerCsrHubPage from './pages/PartnerCsrHubPage';
 
 import AdminDonorListPage from './pages/admin/AdminDonorListPage';
 import AdminDonorProfilePage from './pages/admin/AdminDonorProfilePage';
@@ -234,14 +236,38 @@ export default function App() {
                         </RoleProtectedRoute>
                       }
                     />
-                    <Route
-                      path="partner/agreements/:id/milestones"
-                      element={
-                        <RoleProtectedRoute roles={['partner', 'admin', 'ngo-admin']}>
-                          <AgreementMilestonesPage />
-                        </RoleProtectedRoute>
-                      }
-                    />
+                      <Route
+                        path="partner/agreements/:id/milestones"
+                        element={
+                          <RoleProtectedRoute roles={['partner', 'admin', 'ngo-admin']}>
+                            <AgreementMilestonesPage />
+                          </RoleProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="partner/milestones/:id?"
+                        element={
+                          <RoleProtectedRoute roles={['partner', 'admin', 'ngo-admin']}>
+                            <AgreementMilestonesPage />
+                          </RoleProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="partner/ai-match"
+                        element={
+                          <RoleProtectedRoute roles={['partner']}>
+                            <PartnerAiMatchPage />
+                          </RoleProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="partner/csr-hub"
+                        element={
+                          <RoleProtectedRoute roles={['partner']}>
+                            <PartnerCsrHubPage />
+                          </RoleProtectedRoute>
+                        }
+                      />
 
                     {/* Admin donor routes */}
                     <Route path="admin/donors" element={<AdminRoute><AdminDonorListPage /></AdminRoute>} />

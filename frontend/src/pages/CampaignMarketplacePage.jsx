@@ -6,6 +6,7 @@ import ErrorAlert from '../components/ErrorAlert';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiArrowRight, FiGlobe, FiSearch, FiMapPin, FiUsers, FiTarget, FiHeart, FiBriefcase } from 'react-icons/fi';
+import { useTranslation } from 'react-i18next';
 
 const SDG_TITLES = {
     1:'No Poverty',2:'Zero Hunger',3:'Good Health',4:'Quality Education',5:'Gender Equality',
@@ -17,6 +18,7 @@ const SDG_TITLES = {
 export default function CampaignMarketplacePage() {
     const { user } = useAuth();
     const navigate = useNavigate();
+    const { t } = useTranslation();
     const [campaigns, setCampaigns] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -56,7 +58,7 @@ export default function CampaignMarketplacePage() {
         return Array.from(sdgSet).sort((a, b) => a - b);
     }, [campaigns]);
 
-    if (loading) return <LoadingSpinner message="Loading active campaigns..." />;
+    if (loading) return <LoadingSpinner message={t('marketplace.loading')} />;
 
     return (
         <div className="max-w-7xl mx-auto space-y-10 pb-20 font-sans">
@@ -67,12 +69,12 @@ export default function CampaignMarketplacePage() {
                 <div className="absolute bottom-0 left-0 w-72 h-72 bg-emerald-500/5 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4" />
                 
                 <div className="relative z-10 max-w-2xl">
-                    <p className="text-[10px] font-black uppercase tracking-[.2em] text-slate-500 mb-2">Explore Opportunities</p>
+                    <p className="text-[10px] font-black uppercase tracking-[.2em] text-slate-500 mb-2">{t('marketplace.header.badge')}</p>
                     <h1 className="text-4xl md:text-5xl font-black text-white tracking-tight leading-tight">
-                        Campaign <span className="text-tf-primary">Marketplace</span>
+                        {t('marketplace.header.title_1')} <span className="text-tf-primary">{t('marketplace.header.title_2')}</span>
                     </h1>
                     <p className="text-slate-400 text-sm md:text-base mt-4 font-medium leading-relaxed">
-                        Discover and support verified operational campaigns. Whether you're an individual making a donation or an organization forming a strategic partnership, your impact starts here.
+                        {t('marketplace.header.subtitle')}
                     </p>
                 </div>
             </div>
@@ -85,7 +87,7 @@ export default function CampaignMarketplacePage() {
                     <FiSearch className="text-slate-400 text-lg" />
                     <input 
                         type="text" 
-                        placeholder="Search campaigns..." 
+                        placeholder={t('marketplace.search')} 
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         className="bg-transparent border-none focus:ring-0 text-sm font-bold text-slate-900 placeholder:text-slate-400 w-full outline-none"
@@ -104,7 +106,7 @@ export default function CampaignMarketplacePage() {
                                     : 'bg-slate-50 text-slate-500 hover:bg-slate-100 border border-slate-100'
                             }`}
                         >
-                            All Goals
+                            {t('marketplace.all_goals')}
                         </button>
                         {availableSdgs.map(sdg => (
                             <button 
@@ -135,14 +137,14 @@ export default function CampaignMarketplacePage() {
                         <div className="w-20 h-20 bg-slate-50 rounded-3xl mx-auto flex items-center justify-center text-slate-300 mb-6">
                             <FiTarget size={32} />
                         </div>
-                        <p className="text-slate-900 font-black text-lg">No campaigns found</p>
-                        <p className="text-slate-500 text-sm font-medium mt-2">Try adjusting your filters or search terms.</p>
+                        <p className="text-slate-900 font-black text-lg">{t('marketplace.no_results')}</p>
+                        <p className="text-slate-500 text-sm font-medium mt-2">{t('marketplace.adjust_filters')}</p>
                     </motion.div>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {filteredCampaigns.map((campaign, idx) => {
                             const progress = Math.min(Math.round(((campaign.raisedAmount || 0) / (campaign.goalAmount || 1)) * 100), 100);
-                            const imageUrl = campaign.image ? (campaign.image.startsWith('http') ? campaign.image : `${import.meta.env.VITE_API_URL || ''}${campaign.image}`) : null;
+                            const imageUrl = campaign.image ? (campaign.image.startsWith('http') ? campaign.image : (campaign.image.startsWith('/') ? campaign.image : `/${campaign.image}`)) : null;
 
                             return (
                                 <motion.div 
@@ -196,7 +198,7 @@ export default function CampaignMarketplacePage() {
                                         <div className="mt-auto space-y-4">
                                             <div className="flex justify-between items-end mb-2">
                                                 <div>
-                                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Raised</p>
+                                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{t('marketplace.raised')}</p>
                                                     <p className="text-sm font-black text-slate-900">
                                                         LKR {(campaign.raisedAmount || 0).toLocaleString()}
                                                     </p>
@@ -214,8 +216,8 @@ export default function CampaignMarketplacePage() {
                                                 />
                                             </div>
                                             <div className="flex items-center justify-between text-[10px] font-bold text-slate-400 uppercase tracking-widest pt-2">
-                                                <span>Goal: LKR {(campaign.goalAmount || 0).toLocaleString()}</span>
-                                                <span className="flex items-center gap-1"><FiUsers /> {Number(campaign.targetBeneficiaries || 0).toLocaleString()} target</span>
+                                                <span>{t('marketplace.goal')}: LKR {(campaign.goalAmount || 0).toLocaleString()}</span>
+                                                <span className="flex items-center gap-1"><FiUsers /> {Number(campaign.targetBeneficiaries || 0).toLocaleString()} {t('marketplace.target')}</span>
                                             </div>
                                         </div>
 
@@ -226,14 +228,14 @@ export default function CampaignMarketplacePage() {
                                                     onClick={() => handleProposePartnership(campaign._id)}
                                                     className="col-span-2 py-3 bg-slate-900 hover:bg-tf-primary text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 shadow-lg shadow-slate-900/10 flex items-center justify-center gap-2"
                                                 >
-                                                    <FiBriefcase className="text-sm" /> Propose Partnership
+                                                    <FiBriefcase className="text-sm" /> {t('marketplace.propose_partnership')}
                                                 </button>
                                             ) : user?.role === 'donor' ? (
                                                 <Link 
                                                     to={`/causes/${campaign._id}`}
                                                     className="col-span-2 py-3 bg-tf-primary hover:bg-orange-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 shadow-lg shadow-tf-primary/20 flex items-center justify-center gap-2"
                                                 >
-                                                    <FiHeart className="text-sm" /> Support Campaign
+                                                    <FiHeart className="text-sm" /> {t('marketplace.support_campaign')}
                                                 </Link>
                                             ) : null}
                                             
@@ -241,7 +243,7 @@ export default function CampaignMarketplacePage() {
                                                 to={`/causes/${campaign._id}`}
                                                 className={`py-3 bg-slate-50 border border-slate-100 hover:bg-slate-100 text-slate-600 text-[10px] font-black uppercase tracking-widest rounded-xl text-center flex items-center justify-center transition-all ${(!user || (user.role !== 'partner' && user.role !== 'donor')) ? 'col-span-2' : 'col-span-2'}`}
                                             >
-                                                View Complete Details
+                                                {t('marketplace.view_details')}
                                             </Link>
                                         </div>
                                     </div>

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import LoadingSpinner from '../components/LoadingSpinner';
+import api from '../api/axios';
 
 const ROLES = [
   { value: 'donor',   label: 'Donor' },
@@ -144,6 +145,26 @@ export default function LoginPage() {
     submitSignUp();
   };
 
+  const [liveStats, setLiveStats] = useState({ donors: 0, nodes: 0 });
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const [impactRes, donorRes] = await Promise.all([
+          api.get('/api/public/impact-metrics').then(res => res.data),
+          api.get('/api/public/donor-stats').then(res => res.data)
+        ]);
+        setLiveStats({ 
+          donors: donorRes.totalDonors || 0, 
+          nodes: impactRes.verifiedPartners || 0 
+        });
+      } catch (err) {
+        console.error('Failed to load live portal stats:', err);
+      }
+    };
+    fetchStats();
+  }, []);
+
   return (
     <div className="min-h-screen flex items-center justify-center p-6 bg-tf-dark relative overflow-hidden font-sans">
        {/* High-Fidelity Cinematic Backdrop */}
@@ -175,18 +196,22 @@ export default function LoginPage() {
 
                 <div className="flex gap-10 border-t border-white/5 pt-10">
                    <div className="space-y-1">
-                      <p className="text-3xl font-black text-white italic tabular-nums tracking-tighter font-display">12K+</p>
-                      <p className="text-[10px] font-black text-tf-primary uppercase tracking-widest italic leading-none">Global Patrons</p>
+                      <p className="text-3xl font-black text-white italic tabular-nums tracking-tighter font-display">
+                        {liveStats.donors > 0 ? liveStats.donors.toLocaleString() : '12K+'}
+                      </p>
+                      <p className="text-[10px] font-black text-tf-primary uppercase tracking-widest italic leading-none">Global Supporters Hub</p>
                    </div>
                    <div className="w-px h-12 bg-white/10" />
                    <div className="space-y-1">
-                      <p className="text-3xl font-black text-white italic tabular-nums tracking-tighter font-display">480+</p>
-                      <p className="text-[10px] font-black text-tf-primary uppercase tracking-widest italic leading-none">Verified Nodes</p>
+                      <p className="text-3xl font-black text-white italic tabular-nums tracking-tighter font-display">
+                        {liveStats.nodes > 0 ? liveStats.nodes.toLocaleString() : '480+'}
+                      </p>
+                      <p className="text-[10px] font-black text-tf-primary uppercase tracking-widest italic leading-none">Active Partners Hub</p>
                    </div>
                 </div>
 
                 <div className="flex flex-wrap gap-4 pt-4">
-                   {['Verified Aid', 'Real-time Impact', 'Secure Registry'].map((tag) => (
+                   {['Verified Aid', 'Real-time Impact Hub', 'Verified Security'].map((tag) => (
                       <span key={tag} className="px-5 py-3 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all italic tracking-tighter shadow-sm">
                          {tag}
                       </span>
@@ -303,20 +328,20 @@ export default function LoginPage() {
                                <FieldError msg={fieldErrors.name} />
                             </div>
                             <div className="space-y-3">
-                               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-6">Patron Email</label>
+                               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-6">Email Address Hub</label>
                                <input
                                   type="email"
                                   value={signUp.email}
                                   onChange={(e) => handleSignUpChange('email', e.target.value)}
                                   onBlur={() => touch('email')}
                                   required
-                                  placeholder="patron@transfund.org"
+                                  placeholder="email@example.com"
                                   className={inputCls(fieldErrors.email)}
                                 />
                                <FieldError msg={fieldErrors.email} />
                             </div>
                             <div className="space-y-3">
-                               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-6">Account Designation</label>
+                               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-6">Account Type Hub</label>
                                <select
                                   value={signUp.role}
                                   onChange={(e) => handleSignUpChange('role', e.target.value)}
@@ -340,11 +365,25 @@ export default function LoginPage() {
                                 />
                                <FieldError msg={fieldErrors.password} />
                             </div>
+                            <div className="space-y-3 relative">
+                               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-6">Confirm Password</label>
+                               <input
+                                  type={showPassword ? "text" : "password"}
+                                  value={signUp.confirmPassword}
+                                  onChange={(e) => handleSignUpChange('confirmPassword', e.target.value)}
+                                  onBlur={() => touch('confirmPassword')}
+                                  required
+                                  placeholder="••••••••"
+                                  className={inputCls(fieldErrors.confirmPassword)}
+                                />
+                               <FieldError msg={fieldErrors.confirmPassword} />
+                            </div>
                             <button
                                type="submit"
+                               disabled={loading}
                                className="w-full bg-tf-primary hover:bg-tf-dark text-white font-black py-7 rounded-full transition-all text-[12px] uppercase tracking-[0.4em] shadow-2xl active:scale-95"
                             >
-                               Configure Profile →
+                               {loading ? 'Verifying Account Hub…' : 'Next Step Hub →'}
                             </button>
                          </form>
                       ) : (
@@ -363,7 +402,7 @@ export default function LoginPage() {
                             </div>
                             <div className="grid grid-cols-2 gap-6">
                                <div className="space-y-3">
-                                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-6">City Node</label>
+                                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-6">City Hub</label>
                                   <input
                                      type="text"
                                      value={signUp.city}
@@ -399,14 +438,14 @@ export default function LoginPage() {
                                   onClick={() => setStep(1)}
                                   className="flex-1 border-2 border-slate-100 text-slate-400 hover:text-tf-dark hover:border-tf-dark font-black py-7 rounded-full text-[11px] uppercase tracking-widest transition-all italic active:scale-95"
                                >
-                                  Registry
+                                  Back Hub
                                 </button>
                                <button
                                   type="submit"
                                   disabled={loading}
                                   className="flex-[2] bg-tf-primary hover:bg-tf-dark text-white font-black py-7 rounded-full transition-all text-[12px] uppercase tracking-[0.4em] shadow-2xl active:scale-95"
                                >
-                                  {loading ? 'Initializing…' : 'Finalize Account'}
+                                  {loading ? 'Creating Account Hub…' : 'Complete Signup Hub'}
                                 </button>
                             </div>
                          </form>

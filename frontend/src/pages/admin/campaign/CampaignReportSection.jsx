@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import api from '../../../api/axios';
+import { FiCpu, FiZap, FiLoader } from 'react-icons/fi';
 
 export default function CampaignReportSection({ campaignId }) {
     const [report, setReport] = useState(null);
@@ -8,6 +9,7 @@ export default function CampaignReportSection({ campaignId }) {
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
+    const [generatingSummary, setGeneratingSummary] = useState(false);
 
     const [formData, setFormData] = useState({
         summary: '',
@@ -22,6 +24,19 @@ export default function CampaignReportSection({ campaignId }) {
             .catch(() => setReport(null))
             .finally(() => setLoading(false));
     }, [campaignId]);
+
+    const handleGenerateSummary = async () => {
+        setGeneratingSummary(true);
+        try {
+            const res = await api.get(`/api/ai/generate-summary/${campaignId}`);
+            setFormData(prev => ({ ...prev, summary: res.data.summary }));
+        } catch (err) {
+            console.error('Failed to generate summary:', err);
+            setError('Failed to reach AI Synthesis Hub. Please try manual entry.');
+        } finally {
+            setGeneratingSummary(false);
+        }
+    };
 
     const handleChange = (e) => {
         const { name, value, files } = e.target;
@@ -180,7 +195,22 @@ export default function CampaignReportSection({ campaignId }) {
                         </div>
 
                         <div className="space-y-4">
-                             <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] ml-4 italic">Executive Impact Summary</label>
+                             <div className="flex items-center justify-between px-4">
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] italic">Executive Impact Summary</label>
+                                <button
+                                    type="button"
+                                    onClick={handleGenerateSummary}
+                                    disabled={generatingSummary}
+                                    className="px-4 py-2 bg-tf-primary/5 border border-tf-primary/10 rounded-full text-[9px] font-black text-tf-primary uppercase tracking-[0.2em] hover:bg-tf-primary hover:text-white transition-all duration-500 flex items-center gap-3 active:scale-95 disabled:opacity-50 group/ai"
+                                >
+                                    {generatingSummary ? (
+                                        <FiLoader className="animate-spin text-xs" />
+                                    ) : (
+                                        <FiCpu className="text-xs group-hover/ai:rotate-12 transition-transform" />
+                                    )}
+                                    {generatingSummary ? 'Synthesizing...' : 'AI Generate Summary'}
+                                </button>
+                             </div>
                             <textarea
                                 name="summary"
                                 value={formData.summary}

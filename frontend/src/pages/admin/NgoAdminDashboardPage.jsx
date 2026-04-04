@@ -6,6 +6,7 @@ import { usePartnerOperations } from '../../context/PartnerOperationsContext';
 import { useFinance } from '../../context/FinanceContext';
 import api from '../../api/axios';
 import LoadingSpinner from '../../components/LoadingSpinner';
+import { useTranslation } from 'react-i18next';
 import { 
   FiTarget, FiShield, FiArrowRight, FiPlus, 
   FiActivity, FiFileText, FiTrendingUp, FiDollarSign, 
@@ -15,6 +16,7 @@ import { LuScale3D } from 'react-icons/lu';
 import { motion, AnimatePresence } from 'framer-motion';
 
 function MetricCard({ label, value, icon, colorClass, sub, delay = 0 }) {
+  const { t } = useTranslation();
   return (
     <motion.div 
       initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay }}
@@ -26,10 +28,10 @@ function MetricCard({ label, value, icon, colorClass, sub, delay = 0 }) {
           <div className={`w-12 h-12 rounded-2xl ${colorClass.replace('bg-', 'text-')} bg-opacity-10 flex items-center justify-center text-xl`}>
             {icon}
           </div>
-          <span className="text-[9px] font-black text-slate-300 uppercase tracking-widest italic leading-none group-hover:text-slate-500 transition-colors">Performance Info</span>
+          <span className="text-[9px] font-black text-slate-300 uppercase tracking-widest italic leading-none group-hover:text-slate-500 transition-colors">{t('ngo_dashboard.registry_node')}</span>
         </div>
         <div>
-          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{label}</p>
+          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 italic">{label}</p>
           <h4 className="text-2xl font-black text-slate-900 tracking-tight italic tabular-nums">{value}</h4>
           {sub && <p className="text-[9px] font-bold text-slate-400 mt-2 italic">{sub}</p>}
         </div>
@@ -39,6 +41,7 @@ function MetricCard({ label, value, icon, colorClass, sub, delay = 0 }) {
 }
 
 export default function NgoAdminDashboardPage() {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const { user } = useAuth();
     const [ngoProfile, setNgoProfile] = useState(null);
@@ -67,46 +70,77 @@ export default function NgoAdminDashboardPage() {
         const totalRaised = campaigns.reduce((sum, c) => sum + (c.raisedAmount || 0), 0);
         
         return [
-            { label: 'Active Projects', value: activeCount, icon: <FiTarget />, colorClass: 'bg-tf-primary', sub: 'Verified operational missions' },
-            { label: 'Trust Rating', value: `${financeSummary?.trustScore || 85}%`, icon: <FiShield />, colorClass: 'bg-orange-600', sub: 'Verified transparency score' },
-            { label: 'Total Raised', value: `LKR ${totalRaised.toLocaleString()}`, icon: <FiTrendingUp />, colorClass: 'bg-slate-900', sub: 'Cumulative intake' },
-            { label: 'Treasury Balance', value: `LKR ${(financeSummary?.availableFunds || 0).toLocaleString()}`, icon: <FiDollarSign />, colorClass: 'bg-emerald-500', sub: 'Allocated for projects Hub' },
+            { label: t('ngo_dashboard.active_projects'), value: activeCount, icon: <FiTarget />, colorClass: 'bg-tf-primary', sub: t('ngo_dashboard.verified_missions') },
+            { label: t('ngo_dashboard.trust_rating'), value: `${financeSummary?.trustScore || 85}%`, icon: <FiShield />, colorClass: 'bg-orange-600', sub: t('ngo_dashboard.transparency_score') },
+            { label: t('ngo_dashboard.total_raised'), value: `LKR ${totalRaised.toLocaleString()}`, icon: <FiTrendingUp />, colorClass: 'bg-slate-900', sub: t('ngo_dashboard.cumulative_intake') },
+            { label: t('ngo_dashboard.treasury_balance'), value: `LKR ${(financeSummary?.availableFunds || 0).toLocaleString()}`, icon: <FiDollarSign />, colorClass: 'bg-emerald-500', sub: t('ngo_dashboard.allocated_projects') },
         ];
-    }, [financeSummary, campaigns]);
+    }, [financeSummary, campaigns, t]);
 
     const recentAgreements = useMemo(() => agreements.slice(0, 5), [agreements]);
     const recentCampaigns = useMemo(() => campaigns.slice(0, 4), [campaigns]);
 
-    if (loadingCampaigns && campaigns.length === 0) return <LoadingSpinner message="Scanning NGO Information Hub..." />;
+    if (loadingCampaigns && campaigns.length === 0) return <LoadingSpinner message={t('marketplace.loading')} />;
 
     return (
-        <div className="max-w-7xl mx-auto space-y-10 pb-20 font-sans animate-soft pt-6">
+        <div className="max-w-7xl mx-auto space-y-10 pb-20 font-sans animate-soft pt-6 text-left selection:bg-tf-primary selection:text-white">
             
             {/* NGO Command Center Header */}
-            <section className="relative overflow-hidden bg-slate-900 rounded-[2.5rem] p-10 md:p-14 shadow-2xl">
+            <section className="relative overflow-hidden bg-slate-900 rounded-[2.5rem] p-10 md:p-14 shadow-2xl border border-white/5">
                 <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-tf-primary/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3" />
                 <div className="absolute bottom-0 left-0 w-80 h-80 bg-orange-600/5 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/4" />
                 
                 <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-10">
-                    <div className="space-y-6 flex-1 text-left">
-                        <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/5 border border-white/10 rounded-full text-tf-primary text-[10px] font-black uppercase tracking-widest backdrop-blur-md">
-                           <FiActivity className="text-sm shrink-0" /> Organization Control Center
+                    <div className="space-y-6 flex-1">
+                        <div className="inline-flex items-center gap-4">
+                           {financeSummary?.status !== 'approved' ? (
+                             <span className="flex items-center gap-2 px-4 py-1.5 bg-rose-500/10 border border-rose-500/20 rounded-full text-rose-500 text-[10px] font-black uppercase tracking-widest backdrop-blur-md italic">
+                                <FiShield className="text-sm shrink-0" /> {t('ngo_dashboard.verification_badge')}
+                             </span>
+                           ) : (
+                             <span className="flex items-center gap-2 px-4 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-emerald-500 text-[10px] font-black uppercase tracking-widest backdrop-blur-md italic">
+                                <FiShield className="text-sm shrink-0" /> MISSION AUTHORIZED
+                             </span>
+                           )}
+                           <span className="text-[10px] font-black text-white/30 uppercase tracking-[0.5em] italic">{t('ngo_dashboard.control_center')}</span>
                         </div>
-                        <h1 className="text-3xl md:text-5xl font-black text-white tracking-tight leading-tight italic">
-                          Welcome, <span className="text-tf-primary not-italic">{user?.name?.split(' ')[0] || 'Administrator'}</span>
-                        </h1>
-                        <p className="text-slate-400 text-lg font-medium leading-relaxed max-w-xl">
-                          Manage your active projects, partner agreements, and monitor your organization's total impact.
-                        </p>
+                        
+                        <div className="space-y-2">
+                           <h1 className="text-5xl md:text-6xl font-black text-white tracking-tighter italic leading-none">
+                              {t('ngo_dashboard.welcome')}, <span className="text-tf-primary not-italic">{user?.name?.split(' ')[0]}</span>
+                           </h1>
+                           <p className="text-white/50 text-base md:text-lg font-medium italic max-w-xl leading-relaxed">
+                              {t('ngo_dashboard.tagline')}
+                           </p>
+                        </div>
+
+                        <div className="flex flex-wrap gap-4 pt-4">
+                           <button onClick={() => navigate('/admin/campaigns/create')} className="px-8 py-3.5 bg-tf-primary hover:bg-orange-500 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg active:scale-95 flex items-center gap-3 italic">
+                              <FiPlus className="text-lg" /> CREATE CAMPAIGN HUB
+                           </button>
+                           <button onClick={() => navigate('/admin/finance')} className="px-8 py-3.5 bg-white/5 hover:bg-white/10 border border-white/10 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-3 italic">
+                              <FiActivity className="text-lg" /> {t('ngo_dashboard.locked_sync')}
+                           </button>
+                        </div>
                     </div>
-                    
-                    <div className="flex flex-wrap gap-4 shrink-0">
-                        <Link to="/admin/campaigns/create" className="px-8 py-4 bg-tf-primary text-white text-[11px] font-black uppercase tracking-widest rounded-2xl hover:bg-orange-600 transition-all shadow-xl shadow-tf-primary/20 active:scale-95 flex items-center gap-3">
-                           <FiPlus size={20} /> Launch New Project
-                        </Link>
-                        <Link to="/finance/dashboard" className="px-8 py-4 bg-white/5 border border-white/10 text-white text-[11px] font-black uppercase tracking-widest rounded-2xl hover:bg-white/10 transition-all active:scale-95">
-                           Financial Info
-                        </Link>
+
+                    <div className="grid grid-cols-2 gap-4 lg:w-[450px]">
+                        <div className="bg-white/5 backdrop-blur-2xl border border-white/10 p-8 rounded-[2rem] space-y-2 group hover:bg-white/10 transition-all shadow-2xl relative overflow-hidden italic">
+                           <div className="absolute top-0 right-0 w-20 h-20 bg-tf-primary/10 blur-2xl -mr-10 -mt-10" />
+                           <p className="text-[9px] font-black text-white/30 uppercase tracking-widest italic">{t('ngo_dashboard.treasury_analytics')}</p>
+                           <h4 className="text-2xl font-black text-white italic tabular-nums leading-none">LKR {(financeSummary?.availableFunds || 0).toLocaleString()}</h4>
+                           <div className="w-full h-1 bg-white/5 rounded-full mt-4 overflow-hidden">
+                              <motion.div initial={{ width: 0 }} animate={{ width: '75%' }} className="h-full bg-tf-primary" />
+                           </div>
+                        </div>
+                        <div className="bg-white/5 backdrop-blur-2xl border border-white/10 p-8 rounded-[2rem] space-y-2 group hover:bg-white/10 transition-all shadow-2xl italic">
+                           <p className="text-[9px] font-black text-white/30 uppercase tracking-widest italic">{t('ngo_dashboard.active_projects')}</p>
+                           <h4 className="text-2xl font-black text-white italic tabular-nums leading-none">{campaigns.filter(c => c.status === 'active').length}</h4>
+                           <div className="flex -space-x-2 mt-4">
+                              {[1,2,3].map(i => <div key={i} className="w-6 h-6 rounded-full border-2 border-slate-900 bg-slate-800" />)}
+                              <div className="w-6 h-6 rounded-full border-2 border-slate-900 bg-tf-primary flex items-center justify-center text-[8px] font-bold text-white tracking-widest">+</div>
+                           </div>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -123,7 +157,7 @@ export default function NgoAdminDashboardPage() {
                 {/* Active Agreements View */}
                 <div className="lg:col-span-8 space-y-8">
                     {/* Financial Activity Pulse */}
-                    <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden">
+                    <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden text-left">
                         <div className="px-10 py-8 border-b border-slate-50 flex items-center justify-between">
                             <div className="flex items-center gap-3">
                                 <div className="w-10 h-10 bg-tf-primary/10 text-tf-primary rounded-xl flex items-center justify-center shadow-lg">
@@ -137,14 +171,14 @@ export default function NgoAdminDashboardPage() {
                             <Link to="/finance/transactions" className="px-6 py-2.5 bg-slate-50 text-slate-600 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-slate-900 hover:text-white transition-all shadow-sm">Audit Ledger</Link>
                         </div>
                         
-                        <div className="divide-y divide-slate-50">
+                        <div className="divide-y divide-slate-50 text-left">
                             {transactions?.length > 0 ? transactions.slice(0, 5).map((ra) => (
                                 <div key={ra._id} className="flex items-center justify-between p-8 hover:bg-slate-50 transition-all group">
                                     <div className="flex items-center gap-6">
                                         <div className="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 group-hover:bg-tf-primary group-hover:text-white transition-all">
                                             <FiDollarSign className="text-lg" />
                                         </div>
-                                        <div>
+                                        <div className="text-left">
                                             <p className="text-sm font-black text-slate-950 group-hover:text-tf-primary transition-colors italic leading-none mb-1">{ra.description || 'Campaign Contribution'}</p>
                                             <div className="flex items-center gap-3">
                                                 <span className="text-[10px] font-black text-tf-primary uppercase tracking-widest italic">{ra.type === 'income' ? 'Contribution' : 'Allocation'}</span>
@@ -167,13 +201,13 @@ export default function NgoAdminDashboardPage() {
                         </div>
                     </div>
 
-                    <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden">
+                    <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden text-left">
                         <div className="px-10 py-8 border-b border-slate-50 flex items-center justify-between">
                             <div className="flex items-center gap-3">
                                 <div className="w-10 h-10 bg-slate-900 text-white rounded-xl flex items-center justify-center shadow-lg">
                                     <FiUsers className="text-xl" />
                                 </div>
-                                <div>
+                                <div className="text-left">
                                     <h3 className="text-lg font-black text-slate-900 tracking-tight">Partner Agreements Hub</h3>
                                     <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Formal community partner registry</p>
                                 </div>
@@ -184,11 +218,11 @@ export default function NgoAdminDashboardPage() {
                         <div className="divide-y divide-slate-50">
                             {recentAgreements.length > 0 ? recentAgreements.map((a) => (
                                 <Link key={a._id} to={`/partner/agreements/${a._id}/milestones`} className="flex items-center justify-between p-8 hover:bg-slate-50 transition-all group">
-                                    <div className="flex items-center gap-6">
+                                    <div className="flex items-center gap-6 text-left">
                                         <div className="w-14 h-14 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 group-hover:bg-tf-primary group-hover:text-white group-hover:border-tf-primary/20 transition-all shadow-inner">
                                             <FiFileText className="text-xl" />
                                         </div>
-                                        <div>
+                                        <div className="text-left">
                                             <p className="text-base font-black text-slate-950 group-hover:text-tf-primary transition-colors italic leading-none mb-1">{a.title || 'Institutional Partnership'}</p>
                                             <div className="flex items-center gap-3">
                                                 <span className="text-[10px] font-black text-tf-primary uppercase tracking-widest italic">{(a.agreementType || 'Mission').toUpperCase()}</span>
@@ -210,7 +244,7 @@ export default function NgoAdminDashboardPage() {
                 </div>
 
                 {/* Project Progress Overview */}
-                <div className="lg:col-span-4 space-y-8">
+                <div className="lg:col-span-4 space-y-8 text-left">
                     <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm p-10 space-y-10 group/projects overflow-hidden relative">
                         <div className="absolute top-0 right-0 w-32 h-32 bg-tf-primary/5 rounded-full blur-3xl -mr-16 -mt-16" />
                         <div className="flex items-center justify-between relative z-10">
@@ -218,7 +252,7 @@ export default function NgoAdminDashboardPage() {
                             <FiTarget className="text-tf-primary" />
                         </div>
                         
-                        <div className="space-y-10 relative z-10">
+                        <div className="space-y-10 relative z-10 text-left">
                             {recentCampaigns.length > 0 ? recentCampaigns.map((c) => (
                                 <div key={c._id} className="space-y-4 group/item">
                                     <div className="flex justify-between items-end">

@@ -18,18 +18,57 @@ const PaymentSuccessPage = () => {
 
   useEffect(() => {
     setIsVisible(true);
-    if (transactionId) {
-      api.post(`/api/finance/payhere/verify/${transactionId}`)
-        .then(() => {
-          return api.get(`/api/finance/transactions/${transactionId}`);
+    
+    // Strategic Data Extraction Hub
+    const tid = searchParams.get('transaction_id');
+    const oid = searchParams.get('order_id');
+
+    if (tid) {
+      // Step 1: Institutional Verification Hub
+      api.post(`/api/finance/payhere/verify/${tid}`)
+        .then((verificationRes) => {
+          // If the verification payload contains the full transaction, use it Hub
+          if (verificationRes.data?.transaction) {
+             setTransaction(verificationRes.data.transaction);
+             setLoading(false);
+          } else {
+             // Fallback: Synchronize from the primary ledger Hub
+             return api.get(`/api/finance/transactions/${tid}`);
+          }
         })
-        .then(res => setTransaction(res.data))
-        .catch(err => console.error('Error verifying/fetching transaction:', err))
-        .finally(() => setLoading(false));
+        .then(res => {
+          if (res) {
+             setTransaction(res.data);
+             setLoading(false);
+          }
+        })
+        .catch(err => {
+           console.error('[Verification Error] Direct audit failed Hub:', err);
+           // Final Fallback: Attempt discovery by Order ID Hub
+           if (oid) {
+              api.get(`/api/finance/transactions?orderId=${oid}`)
+                 .then(res => {
+                    const found = Array.isArray(res.data) ? res.data[0] : (res.data?.transaction || res.data);
+                    if (found && found._id) setTransaction(found);
+                 })
+                 .catch(() => {})
+                 .finally(() => setLoading(false));
+           } else {
+              setLoading(false);
+           }
+        });
+    } else if (oid) {
+        api.get(`/api/finance/transactions?orderId=${oid}`)
+            .then(res => {
+              const found = Array.isArray(res.data) ? res.data[0] : (res.data?.transaction || res.data);
+              if (found && found._id) setTransaction(found);
+            })
+            .catch(() => {})
+            .finally(() => setLoading(false));
     } else {
       setLoading(false);
     }
-  }, [transactionId]);
+  }, [searchParams]);
 
   const handlePrint = () => {
     window.print();
@@ -102,7 +141,9 @@ const PaymentSuccessPage = () => {
                </div>
                <div className="flex justify-between items-center px-4 pt-4 border-t border-slate-50">
                   <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest text-left">Transaction ID</p>
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest text-right">#{transaction?._id?.slice(-12).toUpperCase()}</p>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest text-right">
+                     #{transaction?._id ? transaction._id.slice(-12).toUpperCase() : (searchParams.get('order_id') || 'VERIFYING...')}
+                  </p>
                </div>
             </div>
 
@@ -208,7 +249,7 @@ const PaymentSuccessPage = () => {
                <div className="text-right flex flex-col justify-end space-y-4">
                   <div className="h-[2px] w-48 bg-slate-100 ml-auto" />
                   <p className="text-[10px] font-black text-slate-900 uppercase tracking-widest leading-none">Secretariat Digital Seal</p>
-                  <p className="text-[8px] font-black text-slate-300 uppercase tracking-widest italic">Node: {transaction?._id?.slice(0, 16)}</p>
+                  <p className="text-[8px] font-black text-slate-300 uppercase tracking-widest italic">Node: {transaction?._id ? transaction._id.slice(0, 16) : 'PENDING-VERIFICATION'}</p>
                </div>
             </div>
          </div>

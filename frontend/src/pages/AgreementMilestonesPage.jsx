@@ -1,19 +1,13 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { usePartnerOperations } from '../context/PartnerOperationsContext';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ErrorAlert from '../components/ErrorAlert';
-import { FiCheckCircle, FiClock, FiActivity, FiArrowLeft, FiEdit2, FiTrash2, FiPlus, FiFileText, FiX, FiAlertTriangle, FiArrowRight, FiCheck, FiLink } from 'react-icons/fi';
-import { LuScale3D } from "react-icons/lu";
-
-const MILESTONE_STATUSES = ['pending', 'in-progress', 'completed'];
-
-const badgeConfig = {
-  pending: { label: 'Pending Start', classes: 'bg-slate-100 text-slate-500 border-slate-200', icon: <FiClock className="text-xl text-slate-400" /> },
-  'in-progress': { label: 'In Execution', classes: 'bg-brand-orange/10 text-brand-orange border-brand-orange/20', icon: <FiActivity className="text-xl text-brand-orange" /> },
-  completed: { label: 'Milestone Met', classes: 'bg-emerald-50 text-emerald-600 border-emerald-200', icon: <FiCheckCircle className="text-xl text-emerald-500" /> },
-};
+import { useTranslation } from 'react-i18next';
+import { FiCheckCircle, FiClock, FiActivity, FiArrowLeft, FiEdit2, FiTrash2, FiPlus, FiFileText, FiX, FiAlertTriangle, FiArrowRight, FiCheck, FiLink, FiCheckSquare, FiTarget, FiLayers, FiDollarSign } from 'react-icons/fi';
+import { motion, AnimatePresence } from 'framer-motion';
+import api from '../api/axios';
 
 function asDate(value) {
   if (!value) return '-';
@@ -25,11 +19,16 @@ const emptyMilestone = {
   description: '',
   dueDate: '',
   status: 'pending',
+  budget: '',
   evidenceUrl: '',
 };
 
+const MILESTONE_STATUSES = ['pending', 'in-progress', 'completed'];
+
 export default function AgreementMilestonesPage() {
+  const { t } = useTranslation();
   const { id } = useParams();
+  const navigate = useNavigate();
   const { user } = useAuth();
   const {
     currentAgreement,
@@ -39,14 +38,18 @@ export default function AgreementMilestonesPage() {
     setError,
     fetchAgreementById,
     fetchMilestones,
+    fetchMyPartnerAgreements,
+    fetchAllAgreements,
     createMilestone,
     updateMilestone,
     deleteMilestone,
+    updateAgreement,
     uploadMilestoneEvidence,
   } = usePartnerOperations();
 
   const isAdminLike = user?.role === 'admin' || user?.role === 'ngo-admin';
 
+  const cleanId = id?.replace(/,+$/, '');
   const [statusFilter, setStatusFilter] = useState('all');
   const [success, setSuccess] = useState('');
   const [showModal, setShowModal] = useState(false);
@@ -54,34 +57,82 @@ export default function AgreementMilestonesPage() {
   const [form, setForm] = useState(emptyMilestone);
   const [formError, setFormError] = useState('');
   const [uploading, setUploading] = useState(false);
+  const [paymentLoading, setPaymentLoading] = useState(false);
 
   useEffect(() => {
-    fetchAgreementById(id).catch(() => {});
-    fetchMilestones({ agreementId: id }).catch(() => {});
-  }, [id, fetchAgreementById, fetchMilestones]);
+    if (cleanId) {
+      fetchAgreementById(cleanId).catch(() => {});
+      fetchMilestones({ agreementId: cleanId }).catch(() => {});
+    } else {
+      fetchMilestones({}).catch(() => {});
+      if (user?.role === 'partner') fetchMyPartnerAgreements();
+      else fetchAllAgreements();
+    }
+  }, [cleanId, fetchAgreementById, fetchMilestones, fetchMyPartnerAgreements, fetchAllAgreements, user?.role]);
+
+  const badgeConfig = {
+    pending: { label: t('milestones.filter_pending'), classes: 'bg-slate-100 text-slate-500 border-slate-200', icon: <FiClock className="text-xl text-slate-400" /> },
+    'in-progress': { label: t('milestones.filter_executing'), classes: 'bg-tf-primary/10 text-tf-primary border-tf-primary/20', icon: <FiActivity className="text-xl text-tf-primary" /> },
+    completed: { label: t('milestones.filter_completed'), classes: 'bg-emerald-50 text-emerald-600 border-emerald-200', icon: <FiCheckCircle className="text-xl text-emerald-500" /> },
+  };
+
+  const activeMission = id ? currentAgreement : null;
 
   const visibleMilestones = useMemo(() => {
-    let filtered = milestones;
-    if (statusFilter !== 'all') {
-        filtered = filtered.filter((item) => item.status === statusFilter);
+    // 1. Identify primary milestones from the registry Hub
+    let source = milestones || [];
+    
+    // 2. If viewing a specific mission, hub-filter by its clean identifier
+    if (cleanId) {
+        source = source.filter(m => {
+            // Embedded milestones don't have an agreementId because they ARE part of the currentAgreement
+            if (!m.agreementId) return true; 
+            const mId = (m.agreementId?._id || m.agreementId)?.toString();
+            return mId === cleanId.toString();
+        });
     }
-    // Sort by due date (ascending)
-    return [...filtered].sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
-  }, [milestones, statusFilter]);
+
+    // 3. Merge embedded milestones Hub Hub Hub
+    if (cleanId && currentAgreement) {
+        const embedded = currentAgreement.initialMilestones || 
+                         currentAgreement.milestones || 
+                         currentAgreement.initial_milestones || 
+                         [];
+        // Filter out any embedded milestones that might somehow already be in source by _id (if ever synced)
+        const newEmbedded = embedded.filter(em => !em._id || !source.find(s => s._id === em._id));
+        source = [...source, ...newEmbedded];
+    }
+
+    let filtered = Array.isArray(source) ? [...source] : [];
+    if (statusFilter !== 'all') {
+        filtered = filtered.filter((item) => (item.status || 'pending') === statusFilter);
+    }
+    return filtered.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+  }, [milestones, currentAgreement?.milestones, currentAgreement?.initialMilestones, statusFilter, cleanId]);
+
+  const groupedData = useMemo(() => {
+    if (id) return [{ id: 'current', title: '', milestones: visibleMilestones }];
+    const groups = {};
+    visibleMilestones.forEach(m => {
+      const gId = m.agreementId?._id || 'unknown';
+      if (!groups[gId]) {
+        groups[gId] = {
+          id: gId,
+          title: m.agreementId?.title || 'Operational Strategic Node',
+          campaign: m.agreementId?.campaignId || m.campaignId,
+          milestones: []
+        };
+      }
+      groups[gId].milestones.push(m);
+    });
+    return Object.values(groups);
+  }, [visibleMilestones, id]);
 
   const progress = useMemo(() => {
     if (!milestones.length) return 0;
     const completedCount = milestones.filter((item) => item.status === 'completed').length;
     return Math.round((completedCount / milestones.length) * 100);
   }, [milestones]);
-
-  const openCreate = () => {
-    setEditing(null);
-    setForm(emptyMilestone);
-    setFormError('');
-    setSuccess('');
-    setShowModal(true);
-  };
 
   const openEdit = (item) => {
     setEditing(item);
@@ -93,406 +144,505 @@ export default function AgreementMilestonesPage() {
       evidenceUrl: item.evidence?.url || '',
     });
     setFormError('');
-    setSuccess('');
     setShowModal(true);
   };
 
-  const validateForm = () => {
-    if (!form.title.trim()) return 'Milestone metric or title is required.';
-    if (!form.dueDate) return 'Execution target date is required.';
-    if (form.evidenceUrl && !/^https?:\/\//i.test(form.evidenceUrl)) return 'Proof of Execution URL must start with http:// or https://';
-    return '';
+  const openCreate = () => {
+    if (!id) {
+        setFormError('Please select a specific mission node from the hub to initialize a milestone.');
+        return;
+    }
+    setEditing(null);
+    setForm(emptyMilestone);
+    setFormError('');
+    setShowModal(true);
   };
 
-  const [evidenceFile, setEvidenceFile] = useState(null);
-
-  const onSave = async (event) => {
-    event.preventDefault();
-    const validation = validateForm();
-    if (validation) {
-      setFormError(validation);
-      return;
-    }
-
-    if (!currentAgreement?._id || !currentAgreement?.campaignId) {
-      setFormError('Agreement context is missing core system linkage.');
-      return;
-    }
-
-    let finalEvidenceUrl = form.evidenceUrl;
-
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setFormError('');
     try {
-      if (evidenceFile) {
-        setUploading(true);
-        const { url } = await uploadMilestoneEvidence(evidenceFile);
-        finalEvidenceUrl = url;
-        setUploading(false);
-      }
-
-      const payload = {
-        agreementId: currentAgreement._id,
-        campaignId: currentAgreement.campaignId?._id || currentAgreement.campaignId || "",
-        title: form.title.trim(),
-        description: form.description.trim(),
-        dueDate: form.dueDate,
-        status: form.status,
-      };
-
-      if (finalEvidenceUrl.trim()) {
-        payload.evidence = { url: finalEvidenceUrl.trim() };
-      }
-
+      const payload = { ...form, budget: Number(form.budget) || 0 };
       if (editing) {
         await updateMilestone(editing._id, payload);
-        setSuccess('Milestone ledger updated.');
+        setSuccess('Milestone protocol updated successfully.');
       } else {
-        await createMilestone(payload);
-        setSuccess('New execution milestone appended.');
+        await createMilestone({ ...payload, agreementId: id });
+        setSuccess('New mission milestone authorized and deployed.');
       }
-      setFormError('');
-      setEvidenceFile(null);
       setShowModal(false);
-      setError('');
-      await fetchMilestones({ agreementId: id });
+      setTimeout(() => setSuccess(''), 3000);
     } catch (err) {
-      setUploading(false);
-      setSuccess('');
-      setFormError(err.response?.data?.message || 'Transaction failed. Could not sync milestone.');
+      setFormError(err.response?.data?.message || 'Failed to authorize milestone operation.');
     }
   };
 
-  const onDelete = async (milestoneId) => {
-    const confirmed = window.confirm('Drop this tracking milestone? This action cannot be undone.');
-    if (!confirmed) return;
-
+  const handleFileUpload = async (milestone, file) => {
+    if (!file) return;
+    if (!milestone._id) return setError('Cannot upload evidence for embedded milestone without saving first.');
+    setUploading(true);
     try {
-      await deleteMilestone(milestoneId);
-      setSuccess('Milestone successfully purged.');
-      setError('');
+      // The context function expects just the File object: uploadMilestoneEvidence(file)
+      const data = await uploadMilestoneEvidence(file);
+      
+      if (data && data.url) {
+          if (!milestone.agreementId && activeMission) {
+               // Update embedded milestone
+               const updatedInitialMilestones = (activeMission.initialMilestones || []).map(m => 
+                   m._id === milestone._id ? { ...m, evidence: { url: data.url, uploadedAt: new Date() } } : m
+               );
+               await updateAgreement(activeMission._id, { 
+                   campaignId: activeMission.campaignId?._id || activeMission.campaignId,
+                   initialMilestones: updatedInitialMilestones 
+               });
+               fetchAgreementById(activeMission._id).catch(() => {});
+          } else {
+               // Update real milestone
+               await updateMilestone(milestone._id, { evidence: { url: data.url, uploadedAt: new Date() } });
+          }
+          setSuccess('Evidence node synchronized successfully.');
+          setTimeout(() => setSuccess(''), 3000);
+      }
     } catch (err) {
-      setSuccess('');
-      setError(err.response?.data?.message || 'Failed to purge milestone.');
+      setError(err.response?.data?.message || 'Evidence synchronization failed.');
+    } finally {
+      setUploading(false);
     }
   };
 
-  const onStatusChangeQuick = async (id, newStatus) => {
-      try {
-          await updateMilestone(id, { status: newStatus });
-          setSuccess('Execution phase updated.');
-          setError('');
-          await fetchMilestones({ agreementId: currentAgreement._id });
-      } catch (err) {
-          setSuccess('');
-          setError(err.response?.data?.message || 'Failed to update phase.');
-      }
+  const handleDelete = async (mid) => {
+    if (!window.confirm('Are you sure you want to terminate this node?')) return;
+    try {
+        await deleteMilestone(mid);
+        setSuccess('Node terminated successfully.');
+        setTimeout(() => setSuccess(''), 3000);
+    } catch (err) {
+        setError('Failed to terminate node.');
+    }
   };
 
-  if (loading && !currentAgreement) return <LoadingSpinner message="Opening agreement details..." />;
-  if (!currentAgreement && !loading) return (
-     <div className="p-20 text-center space-y-4">
-        <FiAlertTriangle className="text-4xl text-amber-500 mx-auto" />
-        <h3 className="text-xl font-bold text-slate-800">Agreement Not Found</h3>
-        <Link to="/partner/agreements" className="text-brand-red font-black uppercase text-[10px] tracking-widest">Return to List</Link>
-     </div>
-  );
+  const handleMarkExecuting = async (milestone) => {
+    if (!window.confirm('Mark this node as ready for execution?')) return;
+    try {
+        if (!milestone.agreementId && activeMission) {
+            // It's an embedded milestone!
+            const updatedInitialMilestones = (activeMission.initialMilestones || []).map(m => 
+                m._id === milestone._id ? { ...m, status: 'in-progress' } : m
+            );
+            await updateAgreement(activeMission._id, { 
+                campaignId: activeMission.campaignId?._id || activeMission.campaignId,
+                initialMilestones: updatedInitialMilestones 
+            });
+            fetchAgreementById(activeMission._id).catch(() => {});
+        } else {
+            await updateMilestone(milestone._id, { status: 'in-progress' });
+        }
+        setSuccess('Mission milestone pushed to Executing phase.');
+        setTimeout(() => setSuccess(''), 3000);
+    } catch (err) {
+        const msg = err.response?.data?.message || err.response?.data || err.message || JSON.stringify(err);
+        setError(`Failed to update protocol status: ${msg}`);
+    }
+  };
+
+  const handlePayMilestone = async (milestone) => {
+    if (!user || user.role !== 'partner') return;
+    if (paymentLoading) return;
+    if (!milestone.budget || milestone.budget <= 0) {
+        return setError('Milestone budget is invalid or zero.');
+    }
+    
+    setPaymentLoading(true);
+    try {
+        const campaignId = milestone.campaignId || activeMission?.campaignId?._id || activeMission?.campaignId;
+        const ngoId = activeMission?.campaignId?.createdBy || '660000000000000000000000';
+        const payload = {
+            donorId: user._id,
+            ngoId: ngoId,
+            campaignId: campaignId,
+            amount: milestone.budget,
+            currency: "LKR",
+            firstName: user?.name?.split(' ')[0] || 'Partner',
+            lastName: user?.name?.split(' ').slice(1).join(' ') || 'User',
+            email: user?.email || '',
+            phone: '0700000000',
+            address: 'Colombo',
+            city: 'Colombo',
+            country: 'Sri Lanka',
+            type: 'one-time',
+            frequency: null
+         };
+
+         const { data } = await api.post('/api/finance/payhere/init', payload);
+         if (data.success && data.paymentData) {
+            // Optimistically formalize the completed status for the sandbox lifecycle Hub
+            if (!milestone.agreementId && activeMission) {
+                const updatedInitialMilestones = (activeMission.initialMilestones || []).map(m => 
+                    m._id === milestone._id ? { ...m, status: 'completed' } : m
+                );
+                await updateAgreement(activeMission._id, { 
+                    campaignId: activeMission.campaignId?._id || activeMission.campaignId,
+                    initialMilestones: updatedInitialMilestones 
+                });
+            } else {
+                await updateMilestone(milestone._id, { status: 'completed' });
+            }
+
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = 'https://sandbox.payhere.lk/pay/checkout';
+            Object.keys(data.paymentData).forEach(key => {
+               const input = document.createElement('input');
+               input.type = 'hidden';
+               input.name = key;
+               input.value = data.paymentData[key];
+               form.appendChild(input);
+            });
+            document.body.appendChild(form);
+            form.submit();
+         }
+    } catch (err) {
+        setError(err.response?.data?.message || 'Payment initialization failed');
+    } finally {
+        setPaymentLoading(false);
+    }
+  };
+
+  if (loading && milestones.length === 0) return <LoadingSpinner message={t('marketplace.loading')} />;
 
   return (
-    <div className="space-y-8 max-w-7xl mx-auto pb-20 animate-fadeIn relative text-left">
-      <Link to="/partner/agreements" className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold text-[10px] uppercase tracking-widest rounded-xl transition-colors mb-2">
-         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7"/></svg>
-         Back to Ledger
-      </Link>
-
-      {currentAgreement && (
-        <div className="relative overflow-hidden bg-white border border-slate-100 rounded-[32px] p-8 md:p-10 shadow-xl shadow-slate-200/40 flex flex-col md:flex-row gap-8 items-center justify-between transition-all hover:shadow-2xl hover:shadow-slate-200/60">
-            <div className="w-full md:w-1/2 relative z-10">
-                <div className="flex items-center gap-3 mb-4">
-                     <span className="w-10 h-10 bg-slate-900 text-white rounded-xl flex items-center justify-center text-xl shadow-md"><FiFileText /></span>
-                     <span className="text-[10px] uppercase font-black tracking-widest text-slate-400">Ledger Details</span>
+    <div className="max-w-7xl mx-auto space-y-12 pb-20 pt-6 font-sans selection:bg-tf-primary selection:text-white text-left">
+      
+      {/* Dynamic Roadmap Header */}
+      <section className="relative overflow-hidden bg-slate-900 rounded-[2.5rem] p-10 md:p-14 shadow-2xl">
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-tf-primary/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3" />
+        <div className="absolute bottom-0 left-0 w-80 h-80 bg-orange-600/5 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/4" />
+        
+        <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-12">
+            <div className="space-y-6 flex-1">
+                <div className="flex items-center gap-4">
+                    <span className="flex items-center gap-2 px-3 py-1 bg-tf-primary/10 border border-tf-primary/20 rounded-full text-tf-primary text-[10px] font-black uppercase tracking-widest backdrop-blur-sm italic">
+                        <FiTarget className="text-sm" /> {t('milestones.header_badge')}
+                    </span>
+                    <span className="text-[10px] font-black text-white/30 uppercase tracking-[0.5em] italic">MISSION HUB</span>
                 </div>
-                <h1 className="text-3xl font-black text-slate-800 tracking-tight leading-tight mb-2 pr-4">{currentAgreement.title}</h1>
-                <p className="text-sm font-semibold text-slate-500 capitalize">{currentAgreement.agreementType?.replace('-', ' ') || 'Partnership'} support</p>
-            </div>
-
-            <div className="w-full md:w-1/2 relative z-10 flex flex-col gap-3">
-                <div className="flex items-end justify-between mb-1">
-                     <span className="text-sm font-black text-slate-800">Execution Matrix</span>
-                     <span className="text-2xl font-black text-brand-red tracking-tighter">{progress}%</span>
-                </div>
-                <div className="h-4 bg-slate-100 rounded-full overflow-hidden border border-slate-200/50 shadow-inner">
-                    <div 
-                        className="h-full bg-gradient-to-r from-brand-orange to-brand-red rounded-full transition-all duration-1000 ease-out" 
-                        style={{ width: `${progress}%` }} 
-                    />
-                </div>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest text-right">
-                    {milestones.filter((item) => item.status === 'completed').length} of {milestones.length} Metrics Hit
+                
+                <h1 className="text-4xl md:text-6xl font-black text-white tracking-tighter italic leading-none">
+                    {t('milestones.institutional')} <span className="text-tf-primary not-italic">{t('milestones.roadmap')}</span>
+                </h1>
+                <p className="text-white/50 text-base md:text-lg font-medium italic max-w-2xl leading-relaxed">
+                    {id ? t('milestones.subtitle') : t('milestones.global_hub_desc')}
                 </p>
+
+                <div className="flex flex-wrap gap-4 pt-2">
+                    <div className="px-6 py-3 bg-white/5 border border-white/10 rounded-2xl flex flex-col italic">
+                        <span className="text-[9px] font-black text-white/30 uppercase tracking-widest italic">{t('milestones.progress')}</span>
+                        <span className="text-xl font-black text-white tabular-nums tracking-tighter italic">{progress}%</span>
+                    </div>
+                    {id && (
+                        <div className="px-6 py-3 bg-white/5 border border-white/10 rounded-2xl flex flex-col italic">
+                            <span className="text-[9px] font-black text-white/30 uppercase tracking-widest italic">{t('milestones.total_volume')}</span>
+                            <span className="text-xl font-black text-tf-primary tabular-nums tracking-tighter italic">LKR {Number(activeMission?.amount || activeMission?.totalValue || 0).toLocaleString()}</span>
+                        </div>
+                    )}
+                </div>
             </div>
+
+            {id && (
+                <div className="bg-white/5 backdrop-blur-xl border border-white/10 p-8 rounded-[2.5rem] lg:w-80 space-y-6 italic">
+                    <div className="space-y-4">
+                        <div>
+                            <p className="text-[9px] font-black text-white/30 uppercase tracking-widest mb-1 italic">{t('milestones.partner_node')}</p>
+                            <p className="text-sm font-bold text-white leading-tight italic">{activeMission?.partnerId?.organizationName || 'Verified Strategic Entity'}</p>
+                        </div>
+                        <div>
+                            <p className="text-[9px] font-black text-white/30 uppercase tracking-widest mb-1 italic">{t('milestones.mission_node')}</p>
+                            <p className="text-sm font-bold text-white leading-tight italic">{activeMission?.campaignId?.title || 'Operational Impact Node'}</p>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
+      </section>
+
+      {success && (
+        <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="bg-emerald-50 border border-emerald-100 p-6 rounded-[2rem] flex items-center gap-4 text-emerald-700 font-bold italic shadow-sm mx-4">
+          <FiCheckSquare className="text-xl" />
+          {success}
+        </motion.div>
       )}
 
-      {(error || success) && (
-         <div className="px-2">
-           {error && (
-             <div className="flex items-center gap-3 bg-red-50/50 border border-brand-red/20 text-brand-red px-5 py-4 rounded-2xl animate-fadeIn mb-3">
-                <FiAlertTriangle className="text-xl shrink-0" />
-                <p className="text-sm font-medium">{error}</p>
-                <button onClick={() => setError('')} className="ml-auto text-brand-red/60 hover:text-brand-red p-1"><FiX className="text-lg" /></button>
-             </div>
-           )}
-           {success && (
-             <div className="flex items-center gap-3 bg-emerald-50/50 border border-emerald-200/50 text-emerald-700 px-5 py-4 rounded-2xl animate-fadeIn mb-3">
-                <FiCheckCircle className="text-xl shrink-0" />
-                <p className="text-sm font-medium">{success}</p>
-                <button onClick={() => setSuccess('')} className="ml-auto text-emerald-700/60 hover:text-emerald-700 p-1"><FiX className="text-lg" /></button>
-             </div>
-           )}
-         </div>
-      )}
+      {error && <ErrorAlert message={error} onDismiss={() => setError('')} />}
 
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 px-2">
-          <div className="flex items-center gap-3">
-              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest bg-slate-100 px-3 py-1.5 rounded-lg">Filter Timeline:</span>
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                className="bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm font-bold text-slate-700 focus:border-brand-red focus:ring-2 focus:ring-brand-red/20 outline-none transition-all cursor-pointer"
+      <div className="bg-white rounded-[3rem] border border-slate-100 shadow-sm overflow-hidden text-left italic">
+        {/* Navigation & Controls */}
+        <div className="px-10 py-8 border-b border-slate-50 flex flex-col md:flex-row md:items-center justify-between gap-6 bg-slate-50/30 italic">
+          <div className="flex items-center gap-4 bg-white p-1.5 rounded-2xl border border-slate-100 shadow-sm overflow-x-auto selection:bg-tf-primary/10 italic">
+            {['all', 'pending', 'in-progress', 'completed'].map((f) => (
+              <button
+                key={f}
+                onClick={() => setStatusFilter(f)}
+                className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap italic ${
+                  statusFilter === f ? 'bg-slate-900 text-white shadow-lg' : 'text-slate-400 hover:text-slate-900'
+                }`}
               >
-                <option value="all">All Phases</option>
-                <option value="pending">Pending Start</option>
-                <option value="in-progress">In Execution</option>
-                <option value="completed">Completed Metrics</option>
-              </select>
+                {f === 'all' ? t('milestones.filter_all') : f === 'pending' ? t('milestones.filter_pending') : f === 'in-progress' ? t('milestones.filter_executing') : t('milestones.filter_completed')}
+              </button>
+            ))}
           </div>
-          
-          {(isAdminLike || user?.role === 'partner') && (
-            <button
-              onClick={openCreate}
-              className="px-6 py-2.5 bg-slate-900 text-white rounded-xl text-xs font-black uppercase tracking-[0.2em] hover:bg-brand-red shadow-lg transition-all flex items-center gap-2 w-full md:w-auto justify-center active:scale-95"
+
+          {!isAdminLike && user?.role === 'partner' && id && (
+            <button 
+                onClick={openCreate}
+                className="px-8 py-3.5 bg-tf-primary text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-orange-600 transition-all shadow-xl shadow-tf-primary/20 active:scale-95 flex items-center gap-3 italic"
             >
-              + Append Metric
+              <FiPlus className="text-lg" /> {t('milestones.create_milestone')}
             </button>
           )}
-      </div>
-
-      {visibleMilestones.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-24 text-center bg-white rounded-[32px] border border-slate-100 shadow-sm transition-all hover:shadow-md">
-            <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mb-4">
-              <span className="text-3xl">📭</span>
-            </div>
-            <h3 className="text-lg font-bold text-slate-800 mb-1">No Tracking Metrics Found</h3>
-            <p className="text-slate-500 text-sm max-w-sm font-medium">Use the tracking matrix to hold partners accountable to execution promises over time.</p>
         </div>
-      ) : (
-        <div className="relative">
-             {/* Timeline Line */}
-             <div className="absolute left-[39px] top-6 bottom-6 w-0.5 bg-slate-200 hidden md:block"></div>
-             
-             <div className="space-y-6 md:space-y-8">
-                {visibleMilestones.map((item, idx) => {
-                    const isOverdue = new Date(item.dueDate) < new Date() && item.status !== 'completed';
-                    const config = badgeConfig[item.status];
-                    const isPartnerOwner = user?.role === 'partner';
 
-                    return (
-                        <div key={item._id} className="relative flex flex-col md:flex-row md:items-start gap-4 md:gap-8 group">
-                             {/* Timeline Node */}
-                             <div className={`hidden md:flex w-20 shrink-0 flex-col items-center relative z-10 pt-4`}>
-                                 <div className={`w-10 h-10 rounded-full border-4 flex items-center justify-center text-sm shadow-sm transition-all duration-300 ${item.status === 'completed' ? 'border-emerald-200 bg-emerald-100' : isOverdue ? 'border-red-200 bg-red-100' : 'border-white bg-white shadow-md'}`}>
-                                     {config.icon}
-                                 </div>
-                             </div>
-
-                             {/* Content Card */}
-                             <div className={`flex-1 bg-white rounded-[24px] border transition-all duration-300 relative overflow-hidden flex flex-col ${isOverdue ? 'border-red-200 shadow-[0_4px_20px_rgba(220,38,38,0.05)]' : 'border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1'}`}>
-                                 {isOverdue && (
-                                     <div className="w-full h-1 bg-brand-red/80 absolute top-0 left-0"></div>
-                                 )}
-                                 
-                                 <div className="p-6 sm:p-8 flex-1">
-                                    <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-4">
-                                         <div className="pr-4">
-                                            <div className="flex items-center gap-3 mb-2">
-                                                <span className={`px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.2em] rounded border ${config.classes}`}>
-                                                    {config.label}
-                                                </span>
-                                                {isOverdue && <span className="text-[10px] font-black text-brand-red uppercase tracking-widest flex items-center gap-1"><svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> Overdue</span>}
-                                            </div>
-                                            <h3 className={`text-xl font-extrabold tracking-tight leading-tight transition-colors ${item.status === 'completed' ? 'text-slate-400 line-through decoration-slate-200' : 'text-slate-900 group-hover:text-brand-red'}`}>{item.title}</h3>
-                                         </div>
-                                         <div className="bg-slate-50 px-4 py-2 rounded-xl border border-slate-100 text-right shrink-0">
-                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Target execution</p>
-                                            <p className="text-sm font-black text-slate-800 tracking-tighter">{asDate(item.dueDate)}</p>
-                                         </div>
-                                    </div>
-                                    <p className={`text-sm leading-relaxed font-medium ${item.status === 'completed' ? 'text-slate-400' : 'text-slate-500'}`}>
-                                        {item.description || 'No execution brief provided.'}
-                                    </p>
-
-                                    {item.evidence?.url && (
-                                        <div className="mt-6 flex flex-wrap gap-2">
-                                            <a href={item.evidence.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 px-4 py-2.5 bg-slate-900 text-white rounded-xl text-xs font-black uppercase tracking-widest transition-all hover:bg-brand-red shadow-lg shadow-slate-900/10 active:scale-95">
-                                               <FiFileText className="text-base" />
-                                               View Proof of Execution
-                                            </a>
-                                            <div className="px-4 py-2.5 bg-slate-50 text-slate-400 rounded-xl text-[9px] font-black uppercase tracking-widest flex items-center gap-2 border border-slate-100">
-                                                <FiLink /> Verified Evidence Attached
-                                            </div>
-                                        </div>
-                                    )}
-                                 </div>
-                                 <div className="bg-slate-50 p-4 sm:px-8 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4 mt-auto">
-                                      {(isAdminLike || isPartnerOwner) ? (
-                                           <div className="flex items-center gap-2 w-full sm:w-auto">
-                                                <select
-                                                    value={item.status}
-                                                    onChange={(e) => onStatusChangeQuick(item._id, e.target.value)}
-                                                    className="bg-white border border-slate-200 text-slate-600 text-[10px] font-black uppercase tracking-widest rounded-xl px-3 py-2 w-full sm:w-auto outline-none cursor-pointer focus:border-brand-red transition-all shadow-sm"
-                                                >
-                                                    <option value="pending">Set Pending</option>
-                                                    <option value="in-progress">Set Execution</option>
-                                                    <option value="completed">Set Complete</option>
-                                                </select>
-                                           </div>
-                                      ) : (
-                                          <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest bg-white px-3 py-1.5 rounded-lg border border-slate-100 shadow-sm">Review-Only Mode</div>
-                                      )}
-
-                                      {(isAdminLike || isPartnerOwner) && (
-                                          <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
-                                              <button onClick={() => openEdit(item)} className="px-5 py-2.5 bg-white text-slate-700 border border-slate-200 hover:bg-slate-900 hover:text-white hover:border-slate-900 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all w-full sm:w-auto text-center shadow-sm active:scale-95">
-                                                  Edit Metric
-                                              </button>
-                                              {isAdminLike && (
-                                                <button onClick={() => onDelete(item._id)} className="px-5 py-2.5 bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all w-full sm:w-auto text-center shadow-sm active:scale-95">
-                                                    Purge
-                                                </button>
-                                              )}
-                                          </div>
-                                      )}
-                                 </div>
-                             </div>
-                        </div>
-                    );
-                })}
-             </div>
-        </div>
-      )}
-
-      {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 pb-20 sm:pb-6 overflow-hidden text-left">
-          <div className="absolute inset-0 bg-slate-900/70 backdrop-blur-md transition-opacity" onClick={() => setShowModal(false)}></div>
-          
-          <div className="relative bg-white w-full max-w-2xl max-h-[90vh] rounded-[40px] shadow-2xl overflow-hidden flex flex-col animate-slideUp mt-10 border border-slate-100">
-            <div className="px-8 pt-8 pb-6 flex items-center justify-between shrink-0 bg-gradient-to-b from-slate-50 to-white">
-              <div>
-                  <h3 className="text-2xl font-black text-slate-900 tracking-tight">{editing ? 'Optimize Execution Metric' : 'Design Functional Metric'}</h3>
-                  <p className="text-[10px] uppercase font-black tracking-[0.2em] text-slate-400 mt-1.5 flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-brand-red animate-pulse"></span>
-                    Blockchain-Verified Milestone Ledger
-                  </p>
-              </div>
-              <button onClick={() => setShowModal(false)} className="w-12 h-12 flex items-center justify-center rounded-2xl bg-white text-slate-400 border border-slate-100 hover:bg-slate-50 hover:text-slate-900 transition-all shadow-sm active:scale-90">
-                  <FiX className="text-xl" />
-              </button>
-            </div>
-
-            <form onSubmit={onSave} className="flex-1 overflow-y-auto px-10 py-4 space-y-8 scrollbar-elegant">
-              {formError && (
-                  <div className="p-5 bg-rose-50 border border-rose-100 rounded-2xl flex items-start gap-3 text-rose-700 text-sm font-bold shadow-sm animate-shake">
-                      <FiAlertTriangle className="text-xl shrink-0 mt-0.5" />
-                      <span>{formError}</span>
+        {/* Grouped Milestone Sections */}
+        <div className="space-y-12">
+          {groupedData.length > 0 ? groupedData.map((group, gIdx) => (
+            <div key={group.id || gIdx} className="animate-fadeIn">
+              {!id && (
+                <div className="px-10 py-8 bg-slate-900 flex flex-col md:flex-row md:items-center justify-between group cursor-pointer hover:bg-slate-800 transition-all border-l-4 border-tf-primary shadow-xl">
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-3">
+                         <div className="px-3 py-1 bg-tf-primary/10 border border-tf-primary/20 rounded-full text-tf-primary text-[8px] font-black uppercase tracking-widest italic">
+                            {group.campaign?.title || 'Mission Node'}
+                         </div>
+                    </div>
+                    <h3 className="text-xl font-black text-white italic tracking-tight uppercase leading-none">
+                      {group.title}
+                    </h3>
                   </div>
+                  <div className="flex items-center gap-8 mt-4 md:mt-0">
+                    <div className="text-right">
+                      <p className="text-[9px] font-black text-white/20 uppercase tracking-widest italic mb-1">Success Nodes</p>
+                      <p className="text-sm font-black text-tf-primary italic tabular-nums">{group.milestones.length} Active Steps</p>
+                    </div>
+                    <button 
+                      onClick={() => navigate(`/partner/milestones/${group.id}`)}
+                      className="w-12 h-12 flex items-center justify-center bg-white/5 border border-white/10 rounded-2xl text-white/30 group-hover:text-tf-primary group-hover:border-tf-primary group-hover:bg-tf-primary/5 transition-all shadow-2xl"
+                    >
+                      <FiArrowRight size={20} />
+                    </button>
+                  </div>
+                </div>
               )}
 
-              <div className="space-y-6">
-                  <div className="group">
-                    <label className="block text-[10px] uppercase font-black tracking-widest text-slate-400 mb-2.5 transition-colors group-focus-within:text-brand-red">Metric Specification (Title)</label>
-                    <input required value={form.title} onChange={(e) => setForm(prev => ({ ...prev, title: e.target.value }))} className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 text-base font-bold text-slate-900 focus:bg-white focus:border-brand-red focus:ring-4 focus:ring-brand-red/5 outline-none transition-all placeholder:font-medium placeholder:text-slate-300" placeholder="e.g., Clinical Equipment Logistics" />
-                  </div>
-
-                  <div>
-                    <label className="block text-[10px] uppercase font-black tracking-widest text-slate-400 mb-2.5">Execution Brief (Operational Details)</label>
-                    <textarea value={form.description} onChange={(e) => setForm(prev => ({ ...prev, description: e.target.value }))} className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 text-sm font-medium text-slate-800 focus:bg-white focus:border-brand-red focus:ring-4 focus:ring-brand-red/5 outline-none transition-all min-h-[120px] resize-none placeholder:text-slate-300" placeholder="Describe the tactical implementation steps and success criteria for this milestone..." />
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 bg-slate-50/50 p-8 rounded-[32px] border border-slate-100">
-                    <div>
-                      <label className="block text-[10px] uppercase font-black tracking-widest text-slate-400 mb-2.5">Target Completion</label>
-                      <input required type="date" value={form.dueDate} onChange={(e) => setForm(prev => ({ ...prev, dueDate: e.target.value }))} className="w-full bg-white border border-slate-200 rounded-2xl px-5 py-4 text-sm font-black text-slate-800 focus:border-brand-red focus:ring-4 focus:ring-brand-red/5 outline-none transition-all" />
-                    </div>
-
-                    <div>
-                      <label className="block text-[10px] uppercase font-black tracking-widest text-slate-400 mb-2.5">Lifecycle Stage</label>
-                      <select value={form.status} onChange={(e) => setForm(prev => ({ ...prev, status: e.target.value }))} className="w-full bg-white border border-slate-200 rounded-2xl px-5 py-4 text-sm font-black text-slate-800 focus:border-brand-red focus:ring-4 focus:ring-brand-red/5 outline-none transition-all cursor-pointer">
-                        <option value="pending">Pending Execution</option>
-                        <option value="in-progress">In-Field Execution</option>
-                        <option value="completed">Metric Successful</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div className="p-8 bg-brand-red/[0.02] border-2 border-dashed border-slate-100 rounded-[32px] space-y-6">
-                    <div>
-                      <label className="block text-[10px] uppercase font-black tracking-widest text-slate-400 mb-2.5">Digital Proof of Execution (PoE)</label>
-                      
-                      <div className="flex flex-col gap-4">
-                        <label className="flex flex-col items-center justify-center w-full px-6 py-10 bg-white border-2 border-dashed border-slate-200 rounded-3xl cursor-pointer hover:bg-slate-50 hover:border-brand-red transition-all group relative overflow-hidden">
-                            <input 
-                              type="file" 
-                              className="hidden" 
-                              onChange={(e) => setEvidenceFile(e.target.files[0])}
-                            />
-                            {uploading ? (
-                                <div className="flex flex-col items-center gap-3">
-                                    <div className="w-8 h-8 border-4 border-brand-red border-t-transparent rounded-full animate-spin"></div>
-                                    <p className="text-xs font-black uppercase tracking-widest text-slate-400">Uploading Evidence...</p>
-                                </div>
-                            ) : evidenceFile ? (
-                                <div className="flex flex-col items-center gap-2 text-emerald-600">
-                                    <FiCheckCircle className="text-4xl" />
-                                    <p className="text-xs font-black uppercase tracking-widest">{evidenceFile.name}</p>
-                                    <span className="text-[10px] font-bold text-slate-400">(Ready to Sync)</span>
-                                </div>
-                            ) : (
-                                <>
-                                    <FiFileText className="text-4xl text-slate-300 mb-3 group-hover:text-brand-red transition-colors" />
-                                    <p className="text-xs font-black uppercase tracking-widest text-slate-500 text-center">Drag and drop file <br/><span className="text-brand-red mt-1 block">or click to browse</span></p>
-                                    <p className="text-[9px] font-bold text-slate-300 mt-4 uppercase tracking-widest text-center">Supports PDF, JPG, PNG (Max 5MB)</p>
-                                </>
-                            )}
-                        </label>
-
-                        <div className="relative">
-                            <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
-                                <FiLink className="text-slate-400" />
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="bg-slate-50/50">
+                      <th className="px-10 py-5 text-[11px] font-bold text-slate-400 uppercase tracking-wider">{t('milestones.table_milestones.title')}</th>
+                      <th className="px-5 py-5 text-[11px] font-bold text-slate-400 uppercase tracking-wider">{t('milestones.table_milestones.date')}</th>
+                      <th className="px-5 py-5 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Budget</th>
+                      <th className="px-5 py-5 text-[11px] font-bold text-slate-400 uppercase tracking-wider">{t('milestones.table_milestones.status')}</th>
+                      <th className="px-5 py-5 text-[11px] font-bold text-slate-400 uppercase tracking-wider">{t('milestones.table_milestones.evidence')}</th>
+                      <th className="px-10 py-5 text-[11px] font-bold text-slate-400 uppercase tracking-wider text-right">{t('milestones.table_milestones.actions')}</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-50">
+                    <AnimatePresence>
+                      {group.milestones.map((item, msIdx) => (
+                        <motion.tr 
+                          key={item._id || `${item.title}-${msIdx}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: msIdx * 0.05 }}
+                          className="group hover:bg-slate-50/50 transition-colors"
+                        >
+                          <td className="px-10 py-6 w-[28%]">
+                            <div className="space-y-0.5">
+                              <span className="text-[15px] font-bold text-slate-900 tracking-tight">{item.title}</span>
+                              <p className="text-sm text-slate-500 line-clamp-2 leading-relaxed">{item.description}</p>
                             </div>
+                          </td>
+                          <td className="px-5 py-6">
+                            <span className="text-sm font-semibold text-slate-700 tabular-nums">{item.dueDate ? asDate(item.dueDate) : 'No Date Set'}</span>
+                          </td>
+                          <td className="px-5 py-6 font-bold text-slate-900 text-[15px] tabular-nums">
+                             LKR {(item.budget || 0).toLocaleString()}
+                          </td>
+                          <td className="px-5 py-6">
+                               <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full border text-[10px] font-bold uppercase tracking-widest w-fit ${badgeConfig[item.status || 'pending']?.classes}`}>
+                                  <span className="w-1.5 h-1.5 rounded-full bg-current animate-pulse shadow-[0_0_8px_currentColor]" />
+                                  {badgeConfig[item.status || 'pending']?.label}
+                              </div>
+                          </td>
+                          <td className="px-5 py-6">
+                            {item.evidence?.url ? (
+                              <a 
+                                href={item.evidence.url} target="_blank" rel="noopener noreferrer" 
+                                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-orange-50 text-tf-primary hover:bg-orange-100 transition-colors"
+                              >
+                                <FiLink size={14} />
+                                <span className="text-[11px] font-bold uppercase tracking-wider">{t('milestones.view_evidence')}</span>
+                              </a>
+                            ) : (
+                              <span className="text-[11px] font-bold text-slate-300 uppercase tracking-wider">-</span>
+                            )}
+                          </td>
+                          <td className="px-10 py-6">
+                            <div className="flex items-center justify-end gap-2 opacity-50 group-hover:opacity-100 transition-opacity">
+                              {(user?.role === 'partner' || user?.role === 'ngo-admin') && (
+                                  <div className="relative" title="Upload Evidence">
+                                    <input type="file" className="absolute inset-0 opacity-0 cursor-pointer" onChange={(e) => handleFileUpload(item, e.target.files[0])} disabled={uploading} />
+                                    <button className="w-9 h-9 flex items-center justify-center bg-slate-100 text-slate-500 rounded-lg hover:bg-tf-primary hover:text-white transition-all">
+                                      <FiPlus className="text-sm" />
+                                    </button>
+                                  </div>
+                              )}
+                              
+                              {user?.role === 'partner' && (
+                                <>
+                                  {item.status === 'in-progress' && (
+                                    <button onClick={() => handlePayMilestone(item)} disabled={paymentLoading} className="h-9 px-4 bg-emerald-600 text-white rounded-lg text-[11px] font-bold uppercase tracking-wider hover:bg-emerald-700 transition-all flex items-center gap-2 disabled:opacity-50" title="Make Payment">
+                                      <FiDollarSign size={14} /> Pay
+                                    </button>
+                                  )}
+                                  <button onClick={() => openEdit(item)} className="w-9 h-9 flex items-center justify-center bg-slate-50 text-slate-400 rounded-lg hover:text-tf-primary hover:bg-slate-100 transition-colors">
+                                    <FiEdit2 size={14} />
+                                  </button>
+                                  <button onClick={() => handleDelete(item._id)} className="w-9 h-9 flex items-center justify-center bg-slate-50 text-slate-400 rounded-lg hover:text-rose-500 hover:bg-rose-50 transition-colors">
+                                    <FiTrash2 size={14} />
+                                  </button>
+                                </>
+                              )}
+                              {user?.role === 'ngo-admin' && item.status === 'pending' && (
+                                <button onClick={() => handleMarkExecuting(item)} className="w-9 h-9 flex items-center justify-center bg-tf-primary/10 text-tf-primary rounded-lg hover:bg-tf-primary/20 transition-colors" title="Move to Executing">
+                                  <FiActivity size={14} />
+                                </button>
+                              )}
+                            </div>
+                          </td>
+                        </motion.tr>
+                      ))}
+                    </AnimatePresence>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )) : (
+            <div className="px-10 py-32 text-center italic">
+              <div className="max-w-xs mx-auto space-y-4 italic">
+                <div className="w-20 h-20 bg-slate-50 rounded-[2rem] flex items-center justify-center text-slate-200 mx-auto shadow-inner italic">
+                  <FiTarget size={40} />
+                </div>
+                <div className="space-y-1 italic">
+                  <h4 className="text-lg font-black text-slate-900 tracking-tight italic">{t('milestones.empty_title')}</h4>
+                  <p className="text-xs text-slate-400 font-medium italic">{t('milestones.empty_desc')}</p>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Operation Modal */}
+      <AnimatePresence>
+        {showModal && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-900/60 backdrop-blur-xl italic">
+            <motion.div 
+                initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                className="bg-white rounded-[3rem] w-full max-w-xl shadow-2xl overflow-hidden border border-white/20 italic"
+            >
+              <div className="p-10 bg-slate-900 text-white relative italic">
+                 <div className="absolute top-0 right-0 w-32 h-32 bg-tf-primary/20 blur-3xl rounded-full -mr-16 -mt-16 italic" />
+                 <div className="relative z-10 flex items-center justify-between italic">
+                    <div className="flex items-center gap-4 italic">
+                        <div className="w-12 h-12 bg-tf-primary rounded-2xl flex items-center justify-center shadow-lg shadow-tf-primary/20 italic">
+                            <FiActivity size={24} />
+                        </div>
+                        <div className="italic">
+                            <h3 className="text-2xl font-black italic tracking-tighter leading-none mb-1 italic">{t('milestones.modal.title')}</h3>
+                            <p className="text-[10px] uppercase font-black tracking-widest text-white/40 italic">Authorization Protocol Hub</p>
+                        </div>
+                    </div>
+                    <button onClick={() => setShowModal(false)} className="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition-all italic">
+                        <FiX size={20} />
+                    </button>
+                 </div>
+              </div>
+
+              <form onSubmit={handleSubmit} className="p-10 space-y-8 italic">
+                {formError && (
+                  <div className="p-5 bg-rose-50 border border-rose-100 rounded-2xl flex items-center gap-3 text-rose-700 text-xs font-bold animate-shake italic">
+                    <FiAlertTriangle className="text-lg shrink-0 not-italic" /> {formError}
+                  </div>
+                )}
+
+                <div className="space-y-6 italic">
+                    <div className="space-y-2 italic">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic flex items-center gap-2">
+                            <FiTarget className="text-tf-primary not-italic" /> {t('milestones.modal.label_title')}
+                        </label>
+                        <input 
+                            required type="text" value={form.title} placeholder="e.g. Community Support Initialization"
+                            onChange={(e) => setForm({ ...form, title: e.target.value })}
+                            className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-5 text-slate-900 font-bold placeholder:text-slate-300 focus:ring-4 focus:ring-tf-primary/5 focus:border-tf-primary transition-all outline-none italic"
+                        />
+                    </div>
+
+                    <div className="space-y-2 italic">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic flex items-center gap-2">
+                            <FiFileText className="text-tf-primary not-italic" /> {t('milestones.modal.label_desc')}
+                        </label>
+                        <textarea 
+                            required value={form.description} rows={3} placeholder="Detailed notes about the project objectives and activities."
+                            onChange={(e) => setForm({ ...form, description: e.target.value })}
+                            className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-5 text-slate-900 font-bold placeholder:text-slate-300 focus:ring-4 focus:ring-tf-primary/5 focus:border-tf-primary transition-all outline-none resize-none italic"
+                        />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-6 italic">
+                        <div className="space-y-2 italic">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic flex items-center gap-2">
+                                <FiClock className="text-tf-primary not-italic" /> {t('milestones.modal.label_date')}
+                            </label>
                             <input 
-                              value={form.evidenceUrl} 
-                              onChange={(e) => setForm(prev => ({ ...prev, evidenceUrl: e.target.value }))} 
-                              className="w-full bg-white border border-slate-100 rounded-2xl pl-11 pr-5 py-4 text-xs font-mono text-slate-500 focus:border-slate-300 outline-none transition-all placeholder:font-sans" 
-                              placeholder="Or provide direct external link (Google Drive, S3, etc.)" 
+                                required type="date" value={form.dueDate}
+                                onChange={(e) => setForm({ ...form, dueDate: e.target.value })}
+                                className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-slate-900 font-bold placeholder:text-slate-300 focus:ring-2 focus:ring-tf-primary/20 focus:border-tf-primary transition-all outline-none italic"
                             />
                         </div>
-                      </div>
+                        <div className="space-y-2 italic">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic flex items-center gap-2">
+                                <FiActivity className="text-tf-primary not-italic" /> Budget (LKR)
+                            </label>
+                            <input 
+                                type="number" value={form.budget} placeholder="Allocation Amount"
+                                onChange={(e) => setForm({ ...form, budget: e.target.value })}
+                                className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-slate-900 font-bold focus:ring-2 focus:ring-tf-primary/20 focus:border-tf-primary transition-all outline-none italic"
+                            />
+                        </div>
+                        <div className="space-y-2 italic">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic flex items-center gap-2">
+                                <FiActivity className="text-tf-primary not-italic" /> {t('milestones.modal.label_status')}
+                            </label>
+                            <select 
+                                value={form.status}
+                                onChange={(e) => setForm({ ...form, status: e.target.value })}
+                                className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-slate-900 font-bold focus:ring-2 focus:ring-tf-primary/20 focus:border-tf-primary transition-all outline-none italic appearance-none"
+                            >
+                                {MILESTONE_STATUSES.map(s => (
+                                    <option key={s} value={s}>{s.charAt(0).toUpperCase() + s.slice(1)}</option>
+                                ))}
+                            </select>
+                        </div>
                     </div>
-                  </div>
-              </div>
-            </form>
+                </div>
 
-            <div className="px-10 py-8 border-t border-slate-100 flex items-center justify-end gap-5 shrink-0 bg-white">
-                <button type="button" onClick={() => setShowModal(false)} className="px-6 py-2 text-xs font-black tracking-[0.2em] uppercase text-slate-400 hover:text-slate-900 transition-colors">
-                  Discard
+                <button 
+                    type="submit" 
+                    className="w-full py-5 bg-tf-primary hover:bg-orange-600 text-white rounded-2xl text-xs font-black uppercase tracking-widest transition-all shadow-xl shadow-tf-primary/20 active:scale-95 flex items-center justify-center gap-3 italic"
+                >
+                    <FiCheckCircle className="text-lg not-italic" /> {t('milestones.modal.submit')}
                 </button>
-                <button type="button" onClick={onSave} disabled={loading || uploading} className="px-10 py-4 bg-slate-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] hover:bg-brand-red shadow-2xl shadow-slate-900/20 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
-                  <FiCheck className="text-lg" />
-                  {loading || uploading ? 'Syncing...' : editing ? 'Update Matrix' : 'Record Milestone'}
-                </button>
-            </div>
+              </form>
+            </motion.div>
           </div>
-        </div>
-      )}
+        )}
+      </AnimatePresence>
     </div>
   );
 }

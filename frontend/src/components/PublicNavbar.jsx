@@ -2,7 +2,8 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useTranslation } from 'react-i18next';
-import { FiGlobe } from 'react-icons/fi';
+import { FiGlobe, FiMenu, FiX } from 'react-icons/fi';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function PublicNavbar() {
   const navigate = useNavigate();
@@ -10,6 +11,7 @@ export default function PublicNavbar() {
   const { user, logout } = useAuth();
   const { t, i18n } = useTranslation();
   const [scrolled, setScrolled] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const changeLanguage = (lng) => {
     i18n.changeLanguage(lng);
@@ -24,11 +26,8 @@ export default function PublicNavbar() {
   }, []);
 
   const navLinks = [
-    { label: t('public_navbar.mission'), href: '/about' },
     { label: t('public_navbar.causes'), href: '/causes' },
     { label: t('public_navbar.transparency'), href: '/transparency' },
-    { label: t('public_navbar.how_it_works'), href: '/how-it-works' },
-    { label: t('public_navbar.impact_hub'), href: '/impact' },
     { label: t('public_navbar.partner_list'), href: '/partners/list' }
   ];
 
@@ -39,101 +38,166 @@ export default function PublicNavbar() {
     if (!user) return t('public_navbar.login');
     if (user.role === 'admin') return t('public_navbar.admin_portal');
     if (user.role === 'ngo-admin') return t('public_navbar.ngo_dashboard');
+    if (user.role === 'partner') return t('public_navbar.partner_dashboard');
     return t('public_navbar.donor_dashboard');
   };
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-700 px-6 md:px-12 lg:px-20 py-5 flex items-center justify-between font-sans ${
-      scrolled 
-        ? 'bg-white/95 backdrop-blur-xl border-b border-slate-100 py-4 shadow-2xl' 
-        : (isHomePage ? 'bg-transparent text-white' : 'bg-white border-b border-slate-50 py-4')
-    }`}>
-      {/* Brand Section */}
-      <div className="flex-1 flex justify-start">
-        <Link to="/" className="flex items-center group cursor-pointer shrink-0">
-          <img 
-            src={logoSrc} 
-            alt="TransFund Logo" 
-            className="h-10 md:h-12 w-auto object-contain transition-all duration-700 group-hover:scale-105" 
-          />
+    <nav 
+      className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-700 px-6 md:px-12 py-5 ${
+        scrolled || !isHomePage ? 'bg-white shadow-2xl py-4' : 'bg-transparent'
+      }`}
+    >
+      <div className="max-w-[1600px] mx-auto flex items-center justify-between gap-8">
+        
+        {/* Brand */}
+        <Link to="/" className="flex-shrink-0 w-48 transition-transform hover:scale-110 duration-500">
+           <img src={logoSrc} alt="TrustFund" className="h-8 md:h-10 object-contain" />
         </Link>
-      </div>
 
-      {/* Primary Navigation Matrix */}
-      <div className={`hidden lg:flex flex-[2] justify-center items-center gap-6 xl:gap-8 text-[10px] font-black uppercase tracking-[0.15em] italic ${
-        scrolled || !isHomePage ? 'text-slate-500' : 'text-white/70'
-      }`}>
-        {navLinks.map((item) => (
-          <Link
-            key={item.label}
-            to={item.href}
-            className="hover:text-tf-primary transition-all relative group py-2 whitespace-nowrap"
-          >
-            {item.label}
-            <span className="absolute bottom-0 left-0 w-0 h-[2px] bg-tf-primary transition-all group-hover:w-full" />
-          </Link>
-        ))}
-      </div>
-
-      {/* Strategic Entry Points */}
-      <div className="flex-1 flex items-center justify-end gap-6">
-        {/* Language Switcher */}
-        <div className={`flex items-center gap-1.5 p-1 rounded-full border transition-all ${
-          scrolled || !isHomePage ? 'bg-slate-50 border-slate-100' : 'bg-white/10 border-white/10'
-        }`}>
-          {['en', 'si', 'ta'].map((lng) => (
-            <button
-              key={lng}
-              onClick={() => changeLanguage(lng)}
-              className={`px-3 py-1.5 text-[9px] font-black uppercase rounded-full transition-all ${
-                i18n.language === lng 
-                  ? 'bg-tf-primary text-white shadow-lg shadow-tf-primary/20' 
-                  : (scrolled || !isHomePage ? 'text-slate-400 hover:text-slate-600' : 'text-white/40 hover:text-white')
+        {/* Navigation - Strategic & Spaced */}
+        <div className="hidden lg:flex items-center justify-center gap-10 xl:gap-16 flex-1">
+          {navLinks.map((link) => (
+            <Link
+              key={link.href}
+              to={link.href}
+              className={`text-[10px] font-extrabold uppercase tracking-[0.3em] transition-all hover:text-tf-primary whitespace-nowrap ${
+                scrolled || !isHomePage ? 'text-slate-900' : 'text-white'
               }`}
             >
-              {lng === 'en' ? 'EN' : lng === 'si' ? 'සිං' : 'தமி'}
-            </button>
+              {link.label}
+            </Link>
           ))}
         </div>
 
-        <div className={`h-6 w-[1px] ${scrolled || !isHomePage ? 'bg-slate-100' : 'bg-white/10'}`} />
+        {/* Actions Hub */}
+        <div className="flex items-center gap-4 xl:gap-8">
+          {/* Language Switcher */}
+          <div className={`hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full border transition-all ${
+            scrolled || !isHomePage ? 'bg-slate-50 border-slate-100 shadow-inner' : 'bg-white/10 border-white/10 backdrop-blur-md'
+          }`}>
+            {['en', 'si', 'ta'].map((lng) => (
+              <button
+                key={lng}
+                onClick={() => changeLanguage(lng)}
+                className={`w-8 h-8 rounded-full text-[9px] font-black transition-all flex items-center justify-center ${
+                  i18n.language === lng 
+                    ? 'bg-tf-primary text-white shadow-lg shadow-tf-primary/20' 
+                    : 'text-slate-400 hover:text-tf-primary'
+                }`}
+              >
+                {lng.toUpperCase()}
+              </button>
+            ))}
+          </div>
 
-        {user ? (
-          <div className="flex items-center gap-6">
-             <button
-               onClick={() => logout()}
-               className={`hidden xl:block text-[9px] font-black uppercase tracking-[0.3em] italic transition-all underline underline-offset-[10px] decoration-tf-primary/20 hover:decoration-tf-primary hover:text-tf-primary ${
-                 scrolled || !isHomePage ? 'text-slate-300' : 'text-white/30'
-               }`}
-             >
-               {t('public_navbar.discard')}
-             </button>
-             <button
-               onClick={() => navigate('/dashboard')}
-               className="px-8 py-3.5 bg-slate-950 hover:bg-tf-primary text-white text-[10px] font-black uppercase tracking-[0.3em] rounded-full transition-all shadow-xl hover:shadow-tf-primary/30 active:scale-95 italic whitespace-nowrap"
-             >
-               {getDashboardLabel()}
-             </button>
-          </div>
-        ) : (
-          <div className="flex items-center gap-6">
-            <button
-              onClick={() => navigate('/login')}
-              className={`hidden md:block text-[9px] font-black uppercase tracking-[0.3em] transition-all underline underline-offset-[10px] decoration-tf-primary/20 hover:decoration-tf-primary hover:text-tf-primary ${
-                scrolled || !isHomePage ? 'text-slate-950' : 'text-white'
-              }`}
-            >
-              {t('public_navbar.sign_in')}
-            </button>
-            <button
-              onClick={() => navigate('/login?tab=signup')}
-              className="px-8 py-3.5 bg-tf-primary hover:bg-slate-950 text-white text-[10px] font-black uppercase tracking-[0.3em] rounded-full transition-all shadow-xl shadow-tf-primary/20 active:scale-95 italic whitespace-nowrap"
-            >
-              {t('public_navbar.get_started')}
-            </button>
-          </div>
-        )}
+          <div className={`h-8 w-[1px] hidden xl:block ${scrolled || !isHomePage ? 'bg-slate-100' : 'bg-white/10'}`} />
+
+          {/* Desktop Actions */}
+          {user ? (
+            <div className="hidden lg:flex items-center gap-6">
+               <button
+                 onClick={() => logout()}
+                 className={`text-[9px] font-black text-slate-400 uppercase tracking-widest hover:text-tf-primary transition-colors italic`}
+               >
+                 {t('public_navbar.discard')}
+               </button>
+               <button
+                 onClick={() => navigate('/dashboard')}
+                 className="px-8 py-3 bg-slate-950 hover:bg-tf-primary text-white text-[9px] font-black uppercase tracking-widest rounded-full transition-all shadow-xl italic"
+               >
+                 {getDashboardLabel()}
+               </button>
+            </div>
+          ) : (
+            <div className="hidden lg:flex items-center gap-6">
+              <button
+                onClick={() => navigate('/login')}
+                className={`text-[9px] font-black uppercase tracking-widest transition-all ${
+                  scrolled || !isHomePage ? 'text-slate-950' : 'text-white'
+                }`}
+              >
+                {t('public_navbar.sign_in')}
+              </button>
+              <button
+                onClick={() => navigate('/login?tab=signup')}
+                className="px-8 py-3 bg-tf-primary hover:bg-slate-950 text-white text-[9px] font-black uppercase tracking-widest rounded-full transition-all shadow-xl italic"
+              >
+                {t('public_navbar.get_started')}
+              </button>
+            </div>
+          )}
+
+          {/* Mobile Toggle */}
+          <button 
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className={`lg:hidden p-3 rounded-xl transition-all ${
+              scrolled || !isHomePage ? 'text-slate-900 bg-slate-100' : 'text-white bg-white/10'
+            }`}
+          >
+            {mobileMenuOpen ? <FiX size={20} /> : <FiMenu size={20} />}
+          </button>
+        </div>
       </div>
+
+      {/* Mobile Menu */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div 
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="absolute top-full left-0 right-0 bg-white shadow-2xl border-t border-slate-100 overflow-hidden lg:hidden"
+          >
+            <div className="p-8 flex flex-col gap-8">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  to={link.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-sm font-black text-slate-900 uppercase tracking-[0.2em] italic"
+                >
+                  {link.label}
+                </Link>
+              ))}
+              
+              <div className="h-px bg-slate-100 w-full" />
+              
+              {user ? (
+                 <div className="flex flex-col gap-4">
+                    <button
+                      onClick={() => { navigate('/dashboard'); setMobileMenuOpen(false); }}
+                      className="w-full py-5 bg-slate-950 text-white text-[10px] font-black uppercase tracking-widest rounded-2xl italic"
+                    >
+                      {getDashboardLabel()}
+                    </button>
+                    <button
+                      onClick={() => { logout(); setMobileMenuOpen(false); }}
+                      className="w-full py-5 bg-slate-50 text-slate-400 text-[10px] font-black uppercase tracking-widest rounded-2xl italic"
+                    >
+                      {t('public_navbar.discard')}
+                    </button>
+                 </div>
+              ) : (
+                <div className="flex flex-col gap-4">
+                   <button
+                     onClick={() => { navigate('/login'); setMobileMenuOpen(false); }}
+                     className="w-full py-5 bg-slate-50 text-slate-900 text-[10px] font-black uppercase tracking-widest rounded-2xl italic border border-slate-200"
+                   >
+                     {t('public_navbar.sign_in')}
+                   </button>
+                   <button
+                     onClick={() => { navigate('/login?tab=signup'); setMobileMenuOpen(false); }}
+                     className="w-full py-5 bg-tf-primary text-white text-[10px] font-black uppercase tracking-widest rounded-2xl italic"
+                   >
+                     {t('public_navbar.get_started')}
+                   </button>
+                </div>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </nav>
   );
 }

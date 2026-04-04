@@ -23,7 +23,7 @@ function CauseCard({ cause, index }) {
      >
        <div className="relative aspect-[4/3] overflow-hidden">
           <img 
-            src={cause.image ? (cause.image.startsWith('http') ? cause.image : `${import.meta.env.VITE_API_URL || ''}${cause.image}`) : "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&q=80&w=800"} 
+            src={cause.image ? (cause.image.startsWith('http') ? cause.image : (cause.image.startsWith('/') ? cause.image : `/${cause.image}`)) : "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&q=80&w=800"} 
             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[2s]" 
             alt={cause.title} 
           />
@@ -43,9 +43,9 @@ function CauseCard({ cause, index }) {
        <div className="p-8 md:p-10 space-y-8 flex flex-col flex-1 text-left relative">
           <div className="space-y-4 flex-1">
              <h3 className="text-2xl font-black text-slate-900 leading-tight tracking-tight italic group-hover:text-tf-primary transition-colors lowercase">{cause.title}</h3>
-             <div className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-widest italic">
+             <div className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-widest italic leading-none">
                 <FiMapPin className="text-tf-primary" />
-                {cause.location?.city}, {cause.location?.country || 'LK'}
+                {cause.location?.city ? `${cause.location.city}, ` : ''}{cause.location?.country || 'LK'}
              </div>
           </div>
 

@@ -51,21 +51,21 @@ export default function Navbar() {
         <div className="flex items-center gap-2 bg-slate-50 p-1.5 rounded-2xl border border-slate-100 shadow-inner">
           <button
             onClick={() => changeLanguage('en')}
-            className={`px-3 py-1.5 text-[10px] font-black rounded-xl transition-all ${i18n.language === 'en' ? 'bg-white text-tf-primary shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+            className={`px-3 py-1.5 text-[10px] font-extrabold rounded-xl transition-all ${i18n.language === 'en' ? 'bg-white text-tf-primary shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
           >
             EN
           </button>
           <div className="w-[1px] h-3 bg-slate-200" />
           <button
             onClick={() => changeLanguage('si')}
-            className={`px-3 py-1.5 text-[10px] font-black rounded-xl transition-all ${i18n.language === 'si' ? 'bg-white text-tf-primary shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+            className={`px-3 py-1.5 text-[10px] font-extrabold rounded-xl transition-all ${i18n.language === 'si' ? 'bg-white text-tf-primary shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
           >
             සිං
           </button>
           <div className="w-[1px] h-3 bg-slate-200" />
           <button
             onClick={() => changeLanguage('ta')}
-            className={`px-3 py-1.5 text-[10px] font-black rounded-xl transition-all ${i18n.language === 'ta' ? 'bg-white text-tf-primary shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+            className={`px-3 py-1.5 text-[10px] font-extrabold rounded-xl transition-all ${i18n.language === 'ta' ? 'bg-white text-tf-primary shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
           >
             தமி
           </button>
@@ -77,7 +77,7 @@ export default function Navbar() {
           onClick={logout}
           className="text-[10px] font-bold text-tf-primary hover:text-orange-700 uppercase tracking-widest transition-all hover:translate-x-1 flex items-center gap-2"
         >
-          <span className="text-xs font-black uppercase tracking-widest">{t('navbar.logout')}</span>
+          <span className="text-xs font-extrabold uppercase tracking-widest">{t('navbar.logout')}</span>
           <FiLogOut className="w-4 h-4" />
         </button>
       </div>

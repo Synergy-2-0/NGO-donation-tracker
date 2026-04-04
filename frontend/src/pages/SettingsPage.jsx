@@ -75,13 +75,13 @@ export default function SettingsPage() {
         
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-10">
           <div className="space-y-4 flex-1 text-left">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/5 border border-white/10 rounded-full text-tf-primary text-[10px] font-black uppercase tracking-widest backdrop-blur-md italic">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/5 border border-white/10 rounded-full text-tf-primary text-[10px] font-extrabold uppercase tracking-widest backdrop-blur-md ">
                <FiActivity className="animate-pulse" /> Operational Configuration HUB
             </div>
-            <h1 className="text-3xl md:text-5xl font-black text-white tracking-tight leading-tight italic">
+            <h1 className="text-3xl md:text-5xl font-extrabold text-white tracking-tight leading-tight ">
                Member <span className="text-tf-primary text-glow-orange">HUB Settings</span>
             </h1>
-            <p className="text-slate-400 text-lg font-medium leading-relaxed max-w-xl italic text-left">
+            <p className="text-slate-400 text-lg font-medium leading-relaxed max-w-xl  text-left">
                Secure and personalized environment management for verified TransFund members Hub.
             </p>
           </div>
@@ -99,7 +99,7 @@ export default function SettingsPage() {
             <AnimatePresence mode="wait">
                {error && <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}><ErrorAlert message={error} /></motion.div>}
                {success && (
-                  <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="p-5 bg-emerald-50 border border-emerald-100 rounded-2xl text-emerald-600 text-xs font-black uppercase tracking-widest italic flex items-center gap-3">
+                  <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="p-5 bg-emerald-50 border border-emerald-100 rounded-2xl text-emerald-600 text-xs font-extrabold uppercase tracking-widest  flex items-center gap-3">
                      <FiCheckCircle className="text-lg" /> {success}
                   </motion.div>
                )}
@@ -118,7 +118,7 @@ export default function SettingsPage() {
                     <button
                       key={tab.id}
                       onClick={() => setActiveTab(tab.id)}
-                      className={`flex items-center gap-4 px-6 py-4 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all duration-500 relative group/btn ${
+                      className={`flex items-center gap-4 px-6 py-4 rounded-2xl text-[11px] font-extrabold uppercase tracking-widest transition-all duration-500 relative group/btn ${
                         activeTab === tab.id 
                           ? 'bg-slate-900 text-white shadow-xl shadow-slate-900/20 translate-x-2' 
                           : 'text-slate-400 hover:bg-slate-50 hover:text-slate-900'
@@ -139,12 +139,12 @@ export default function SettingsPage() {
            <div className="bg-slate-950 rounded-[2.5rem] p-8 text-white relative overflow-hidden group/card shadow-2xl">
               <div className="absolute inset-0 bg-tf-primary/5 opacity-0 group-hover/card:opacity-100 transition-opacity duration-700" />
               <div className="relative z-10 space-y-6 text-left">
-                 <p className="text-[10px] font-black text-tf-primary uppercase tracking-[0.3em] italic leading-none">Security Registry</p>
+                 <p className="text-[10px] font-extrabold text-tf-primary uppercase tracking-[0.3em]  leading-none">Security Registry</p>
                  <div className="p-4 bg-white/5 rounded-2xl border border-white/10 space-y-1">
-                    <p className="text-[9px] font-black text-white/30 uppercase tracking-widest italic leading-none mb-1">Authenticated ID</p>
-                    <p className="text-sm font-bold truncate italic">{user?.email}</p>
+                    <p className="text-[9px] font-extrabold text-white/30 uppercase tracking-widest  leading-none mb-1">Authenticated ID</p>
+                    <p className="text-sm font-bold truncate ">{user?.email}</p>
                  </div>
-                 <p className="text-xs font-medium text-white/40 leading-relaxed italic">Synchronized at: {new Date().toLocaleDateString()} HUB</p>
+                 <p className="text-xs font-medium text-white/40 leading-relaxed ">Synchronized at: {new Date().toLocaleDateString()} HUB</p>
               </div>
            </div>
         </aside>
@@ -164,10 +164,10 @@ export default function SettingsPage() {
                  
                  <div className="relative z-10 space-y-12">
                     <div className="space-y-4 border-b border-slate-50 pb-8 text-left">
-                       <h3 className="text-2xl font-black text-slate-900 tracking-tight italic uppercase leading-none">
+                       <h3 className="text-2xl font-extrabold text-slate-900 tracking-tight  uppercase leading-none">
                           {TABS.find(t => t.id === activeTab).label}
                        </h3>
-                       <p className="text-[10px] text-slate-300 font-black uppercase tracking-[.4em] italic leading-none">
+                       <p className="text-[10px] text-slate-300 font-extrabold uppercase tracking-[.4em]  leading-none">
                           Identity Protocol Management HUB
                        </p>
                     </div>
@@ -199,8 +199,8 @@ export default function SettingsPage() {
                                 icon={<FiSmartphone />} 
                              />
                              <div className="space-y-4">
-                                <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic text-left">Internal Registry Profile HUB</h4>
-                                <div className="p-6 bg-slate-50 border border-slate-100 rounded-[1.5rem] text-xs font-bold text-slate-400 italic">
+                                <h4 className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest  text-left">Internal Registry Profile HUB</h4>
+                                <div className="p-6 bg-slate-50 border border-slate-100 rounded-[1.5rem] text-xs font-bold text-slate-400 ">
                                    Role: <span className="text-tf-primary uppercase ml-2">{user?.role} Access HUB</span>
                                 </div>
                              </div>
@@ -210,7 +210,7 @@ export default function SettingsPage() {
                        {activeTab === 'security' && (
                           <div className="space-y-10 text-left">
                              <div className="space-y-6 bg-slate-50/50 p-8 rounded-3xl border border-slate-100">
-                                <h4 className="text-[10px] font-black text-slate-900 uppercase tracking-widest flex items-center gap-3 italic">
+                                <h4 className="text-[10px] font-extrabold text-slate-900 uppercase tracking-widest flex items-center gap-3 ">
                                    <FiLock className="text-tf-primary" /> Key Rotation Protocol
                                 </h4>
                                 <div className="space-y-6">
@@ -255,8 +255,8 @@ export default function SettingsPage() {
                              ).map((item, i) => (
                                 <div key={i} className="flex items-center justify-between p-6 bg-slate-50 border border-slate-100 rounded-2xl group/item hover:bg-white hover:shadow-xl transition-all duration-500">
                                    <div>
-                                      <p className="text-[11px] font-black text-slate-900 uppercase tracking-widest italic leading-none mb-1">{item.t}</p>
-                                      <p className="text-[10px] font-bold text-slate-400 italic leading-none">{item.d}</p>
+                                      <p className="text-[11px] font-extrabold text-slate-900 uppercase tracking-widest  leading-none mb-1">{item.t}</p>
+                                      <p className="text-[10px] font-bold text-slate-400  leading-none">{item.d}</p>
                                    </div>
                                    <div className="relative inline-flex items-center cursor-pointer">
                                       <input type="checkbox" className="sr-only peer" defaultChecked={true} />
@@ -271,22 +271,22 @@ export default function SettingsPage() {
                           <div className="space-y-10 text-left">
                              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                 <div className="space-y-4">
-                                   <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic leading-none">UI Registry Environment</h4>
+                                   <h4 className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest  leading-none">UI Registry Environment</h4>
                                    <div className="grid grid-cols-2 gap-4">
                                       <button type="button" className="p-6 rounded-2xl bg-white border border-slate-900 text-slate-900 flex flex-col items-center gap-3 shadow-xl shadow-slate-900/10 scale-105 z-10 transition-all">
                                          <FiSun size={20} />
-                                         <span className="text-[9px] font-black uppercase tracking-widest">Normal Hub</span>
+                                         <span className="text-[9px] font-extrabold uppercase tracking-widest">Normal Hub</span>
                                       </button>
                                       <button type="button" className="p-6 rounded-2xl bg-slate-50 border border-slate-100 text-slate-400 flex flex-col items-center gap-3 opacity-50 grayscale cursor-not-allowed">
                                          <FiMoon size={20} />
-                                         <span className="text-[9px] font-black uppercase tracking-widest">Archive Hub</span>
+                                         <span className="text-[9px] font-extrabold uppercase tracking-widest">Archive Hub</span>
                                       </button>
                                    </div>
                                 </div>
                                 <div className="p-8 bg-tf-primary/5 rounded-[2rem] border border-tf-primary/10 space-y-4">
-                                   <p className="text-[10px] font-black text-tf-primary uppercase tracking-widest italic leading-none">Data Localization HUB</p>
-                                   <p className="text-xs font-medium text-slate-500 italic leading-relaxed">Language and regional time-sync is managed globally for verified members HUB.</p>
-                                   <button type="button" className="w-full py-4 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase tracking-widest opacity-50 italic">Registry Status: Synchronized</button>
+                                   <p className="text-[10px] font-extrabold text-tf-primary uppercase tracking-widest  leading-none">Data Localization HUB</p>
+                                   <p className="text-xs font-medium text-slate-500  leading-relaxed">Language and regional time-sync is managed globally for verified members HUB.</p>
+                                   <button type="button" className="w-full py-4 bg-slate-900 text-white rounded-xl text-[10px] font-extrabold uppercase tracking-widest opacity-50 ">Registry Status: Synchronized</button>
                                 </div>
                              </div>
                           </div>
@@ -294,7 +294,7 @@ export default function SettingsPage() {
 
                        {(activeTab === 'profile' || activeTab === 'security') && (
                           <div className="pt-10 border-t border-slate-50 flex items-center justify-end">
-                             <button type="submit" disabled={loading} className="px-12 py-5 bg-slate-900 text-white rounded-2xl text-[11px] font-black uppercase tracking-[0.4em] hover:bg-tf-primary transition-all duration-700 shadow-2xl active:scale-95 italic flex items-center gap-3 group/save disabled:opacity-50">
+                             <button type="submit" disabled={loading} className="px-12 py-5 bg-slate-900 text-white rounded-2xl text-[11px] font-extrabold uppercase tracking-[0.4em] hover:bg-tf-primary transition-all duration-700 shadow-2xl active:scale-95  flex items-center gap-3 group/save disabled:opacity-50">
                                 {loading ? 'Synchronizing HUB...' : (
                                    <>Save Configuration HUB <FiArrowRight className="group-hover:translate-x-2 transition-transform" /></>
                                 )}
@@ -314,13 +314,13 @@ export default function SettingsPage() {
 function FormInput({ label, icon, ...props }) {
   return (
     <div className="space-y-4 group/input">
-      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 block group-focus-within/input:text-tf-primary transition-colors italic leading-none">
+      <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-1 block group-focus-within/input:text-tf-primary transition-colors  leading-none">
         {label}
       </label>
       <div className="relative">
         <input 
           {...props} 
-          className="w-full bg-slate-50/50 border border-slate-100 rounded-2xl px-6 py-5 text-[13px] font-black text-slate-900 placeholder:text-slate-200 focus:outline-none focus:border-tf-primary focus:bg-white transition-all shadow-inner italic" 
+          className="w-full bg-slate-50/50 border border-slate-100 rounded-2xl px-6 py-5 text-[13px] font-extrabold text-slate-900 placeholder:text-slate-200 focus:outline-none focus:border-tf-primary focus:bg-white transition-all shadow-inner " 
         />
         {icon && (
           <div className="absolute right-6 top-1/2 -translate-y-1/2 text-slate-200 text-lg group-focus-within/input:text-tf-primary transition-colors">

@@ -208,7 +208,7 @@ export default function PartnerVerificationPage() {
              <div className="relative bg-white w-full max-w-4xl max-h-[90vh] rounded-[32px] shadow-2xl overflow-hidden flex flex-col md:flex-row animate-fadeIn mt-10">
                  {/* Sidebar Preview */}
                  <div className="w-full md:w-5/12 bg-slate-50 border-r border-slate-100 p-8 flex flex-col overflow-y-auto">
-                     <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6">Compliance Documents</h3>
+                     <h3 className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-6">Compliance Documents</h3>
                      
                      {selectedPartner.verificationDocuments?.length > 0 ? (
                          <div className="flex-1 flex flex-col gap-4">
@@ -267,8 +267,8 @@ export default function PartnerVerificationPage() {
                                 </div>
                             )}
                             <div>
-                                <h2 className="text-2xl font-black text-slate-900 tracking-tight leading-none mb-1">{selectedPartner.organizationName}</h2>
-                                <span className="text-[10px] font-black uppercase text-slate-500 tracking-[0.2em]">{selectedPartner.industry}</span>
+                                <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight leading-none mb-1">{selectedPartner.organizationName}</h2>
+                                <span className="text-[10px] font-extrabold uppercase text-slate-500 tracking-[0.2em]">{selectedPartner.industry}</span>
                             </div>
                         </div>
 
@@ -291,16 +291,16 @@ export default function PartnerVerificationPage() {
                             <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3 border-b border-slate-100 pb-2">Aligned SDG Pillars</span>
                             <div className="flex gap-2 flex-wrap">
                                 {selectedPartner.csrFocus?.length > 0 ? selectedPartner.csrFocus.map(focus => (
-                                    <span key={focus} className="px-3 py-1 bg-brand-red/5 text-brand-red border border-brand-red/20 font-black text-[10px] uppercase tracking-widest rounded-lg">
+                                    <span key={focus} className="px-3 py-1 bg-brand-red/5 text-brand-red border border-brand-red/20 font-extrabold text-[10px] uppercase tracking-widest rounded-lg">
                                         {focus.replace('_', ' ')}
                                     </span>
-                                )) : <span className="text-xs text-slate-400 italic">No specific goals selected</span>}
+                                )) : <span className="text-xs text-slate-400 ">No specific goals selected</span>}
                             </div>
                         </div>
                      </div>
 
                      <div className="p-6 md:p-8 bg-slate-50 border-t border-slate-100 flex flex-col sm:flex-row gap-3 items-center justify-between shrink-0">
-                         <button onClick={() => setSelectedPartner(null)} className="px-6 py-3 w-full sm:w-auto text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-slate-800 hover:bg-slate-200 rounded-xl transition-colors">
+                         <button onClick={() => setSelectedPartner(null)} className="px-6 py-3 w-full sm:w-auto text-[10px] font-extrabold uppercase tracking-widest text-slate-500 hover:text-slate-800 hover:bg-slate-200 rounded-xl transition-colors">
                              Cancel
                          </button>
 
@@ -309,7 +309,7 @@ export default function PartnerVerificationPage() {
                                  <button 
                                    onClick={() => onReject(selectedPartner._id)} 
                                    disabled={rejectingId === selectedPartner._id}
-                                   className="px-6 py-3 w-full sm:w-auto bg-white border border-slate-200 text-slate-600 text-[10px] font-black uppercase tracking-[0.2em] rounded-xl hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-all active:scale-95 disabled:opacity-75"
+                                   className="px-6 py-3 w-full sm:w-auto bg-white border border-slate-200 text-slate-600 text-[10px] font-extrabold uppercase tracking-[0.2em] rounded-xl hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-all active:scale-95 disabled:opacity-75"
                                  >
                                     {rejectingId === selectedPartner._id ? 'Rejecting...' : 'Reject'}
                                  </button>
@@ -319,7 +319,7 @@ export default function PartnerVerificationPage() {
                                      setSelectedPartner(null);
                                    }} 
                                    disabled={approvingId === selectedPartner._id || (!hasReviewedDocs && selectedPartner.verificationDocuments?.length > 0)}
-                                   className="px-8 py-3 w-full sm:w-auto bg-brand-red text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-xl hover:bg-brand-red/90 shadow-[0_8px_30px_rgb(220,38,38,0.3)] transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                                   className="px-8 py-3 w-full sm:w-auto bg-brand-red text-white text-[10px] font-extrabold uppercase tracking-[0.2em] rounded-xl hover:bg-brand-red/90 shadow-[0_8px_30px_rgb(220,38,38,0.3)] transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                                    title={!hasReviewedDocs ? 'Open and review the document first to enable approval.' : ''}
                                  >
                                     <FiShield className="text-lg" />

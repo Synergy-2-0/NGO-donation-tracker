@@ -20,7 +20,7 @@ export default function PartnerPendingApprovalPage() {
         {/* Logo */}
         <div className="flex items-center justify-center gap-3 mb-10">
           <img src="/heart-logo c.png" alt="TrustFund" className="w-10 h-10 object-contain" />
-          <span className="text-white font-black text-xl tracking-tight">TrustFund</span>
+          <span className="text-white font-extrabold text-xl tracking-tight">TrustFund</span>
         </div>
 
         <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-10 text-center shadow-2xl">
@@ -32,7 +32,7 @@ export default function PartnerPendingApprovalPage() {
             </div>
           </div>
 
-          <h1 className="text-2xl font-black text-white tracking-tight mb-3">
+          <h1 className="text-2xl font-extrabold text-white tracking-tight mb-3">
             Application Under Review
           </h1>
           <p className="text-slate-400 text-sm leading-relaxed mb-8">
@@ -77,14 +77,14 @@ function StatusStep({ icon, label, done, active, pending }) {
       <span className={`text-sm font-semibold ${done ? 'text-emerald-400' : active ? 'text-brand-orange' : 'text-slate-600'}`}>
         {label}
       </span>
-      {done && <span className="ml-auto text-[10px] font-black text-emerald-500 uppercase tracking-widest">Done</span>}
+      {done && <span className="ml-auto text-[10px] font-extrabold text-emerald-500 uppercase tracking-widest">Done</span>}
       {active && (
         <span className="ml-auto flex items-center gap-1.5">
           <span className="relative flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-orange opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2 w-2 bg-brand-orange"></span>
           </span>
-          <span className="text-[10px] font-black text-brand-orange uppercase tracking-widest">Live</span>
+          <span className="text-[10px] font-extrabold text-brand-orange uppercase tracking-widest">Live</span>
         </span>
       )}
     </div>

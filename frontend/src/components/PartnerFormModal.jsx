@@ -177,8 +177,8 @@ export default function PartnerFormModal({ partner, loading, onClose, onSave }) 
       <div className="bg-white rounded-[40px] shadow-2xl w-full max-w-5xl max-h-[90vh] overflow-hidden flex flex-col animate-scaleIn">
         <div className="flex items-center justify-between p-8 border-b border-slate-50 shrink-0">
           <div>
-            <p className="text-[10px] font-black uppercase tracking-[.2em] text-slate-400 mb-1">Impact Governance</p>
-            <h3 className="text-2xl font-black text-slate-900 tracking-tight">{title}</h3>
+            <p className="text-[10px] font-extrabold uppercase tracking-[.2em] text-slate-400 mb-1">Impact Governance</p>
+            <h3 className="text-2xl font-extrabold text-slate-900 tracking-tight">{title}</h3>
           </div>
           <button onClick={onClose} className="w-12 h-12 flex items-center justify-center bg-slate-50 hover:bg-rose-50 rounded-2xl text-slate-400 hover:text-rose-500 transition-all active:scale-90">
             <FiX className="text-xl" />
@@ -192,7 +192,7 @@ export default function PartnerFormModal({ partner, loading, onClose, onSave }) 
           <div className="space-y-6">
             <div className="flex items-center gap-3">
               <span className="w-8 h-8 bg-slate-100 text-slate-900 rounded-xl flex items-center justify-center text-sm"><FiBriefcase /></span>
-              <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-400">Structural Foundations</h4>
+              <h4 className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Structural Foundations</h4>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -210,7 +210,7 @@ export default function PartnerFormModal({ partner, loading, onClose, onSave }) 
           <div className="space-y-6">
             <div className="flex items-center gap-3">
               <span className="w-8 h-8 bg-slate-100 text-slate-900 rounded-xl flex items-center justify-center text-sm"><FiGlobe /></span>
-              <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-400">Communication Nodes</h4>
+              <h4 className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Communication Nodes</h4>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                <FormInput label="Contact Name" value={form.contactPerson.name} onChange={v => updateField(['contactPerson', 'name'], v)} />
@@ -224,7 +224,7 @@ export default function PartnerFormModal({ partner, loading, onClose, onSave }) 
           <div className="space-y-6">
              <div className="flex items-center gap-3">
               <span className="w-8 h-8 bg-slate-100 text-slate-900 rounded-xl flex items-center justify-center text-sm"><FiMapPin /></span>
-              <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-400">Geographic Registry</h4>
+              <h4 className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Geographic Registry</h4>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
                <FormInput label="Street" value={form.address.street} onChange={v => updateField(['address', 'street'], v)} />
@@ -239,11 +239,11 @@ export default function PartnerFormModal({ partner, loading, onClose, onSave }) 
           <div className="space-y-6">
              <div className="flex items-center gap-3">
               <span className="w-8 h-8 bg-slate-100 text-slate-900 rounded-xl flex items-center justify-center text-sm"><FiTarget /></span>
-              <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-400">Synergy & Focus</h4>
+              <h4 className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Synergy & Focus</h4>
             </div>
             <div className="grid grid-cols-1 gap-8">
                <div className="space-y-4">
-                  <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">CSR Focus Areas</p>
+                  <p className="text-[10px] font-extrabold text-slate-300 uppercase tracking-widest">CSR Focus Areas</p>
                   <div className="flex flex-wrap gap-2">
                      {CSR_FOCUS.map(f => {
                        const active = form.csrFocus.includes(f);
@@ -251,7 +251,7 @@ export default function PartnerFormModal({ partner, loading, onClose, onSave }) 
                          <button key={f} type="button" onClick={() => {
                             const next = active ? form.csrFocus.filter(v => v !== f) : [...form.csrFocus, f];
                             setForm(p => ({ ...p, csrFocus: next }));
-                         }} className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all ${active ? 'bg-slate-900 border-slate-900 text-white shadow-lg' : 'bg-slate-50 border-slate-100 text-slate-500 hover:bg-slate-100'}`}>
+                         }} className={`px-4 py-2 rounded-xl text-[10px] font-extrabold uppercase tracking-widest border transition-all ${active ? 'bg-slate-900 border-slate-900 text-white shadow-lg' : 'bg-slate-50 border-slate-100 text-slate-500 hover:bg-slate-100'}`}>
                             {toTitle(f)}
                          </button>
                        );
@@ -260,7 +260,7 @@ export default function PartnerFormModal({ partner, loading, onClose, onSave }) 
                </div>
                
                <div className="space-y-4">
-                  <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Global SDG Synergy Node (1-17)</p>
+                  <p className="text-[10px] font-extrabold text-slate-300 uppercase tracking-widest">Global SDG Synergy Node (1-17)</p>
                   <div className="flex flex-wrap gap-1.5">
                     {Array.from({length: 17}, (_, i) => i + 1).map(n => {
                        const active = parseSdgGoals(form.sdgGoalsText).includes(n);
@@ -269,7 +269,7 @@ export default function PartnerFormModal({ partner, loading, onClose, onSave }) 
                             const curr = parseSdgGoals(form.sdgGoalsText);
                             const next = active ? curr.filter(v => v !== n) : [...curr, n].sort((a,b) => a-b);
                             updateField(['sdgGoalsText'], next.join(', '));
-                         }} className={`w-10 h-10 flex items-center justify-center rounded-xl text-xs font-black transition-all border ${active ? 'bg-brand-red border-brand-red text-white shadow-lg shadow-brand-red/20 scale-110 z-10' : 'bg-slate-50 border-slate-100 text-slate-400 hover:border-slate-300'}`}>
+                         }} className={`w-10 h-10 flex items-center justify-center rounded-xl text-xs font-extrabold transition-all border ${active ? 'bg-brand-red border-brand-red text-white shadow-lg shadow-brand-red/20 scale-110 z-10' : 'bg-slate-50 border-slate-100 text-slate-400 hover:border-slate-300'}`}>
                             {n}
                          </button>
                        );
@@ -281,12 +281,12 @@ export default function PartnerFormModal({ partner, loading, onClose, onSave }) 
         </form>
 
         <div className="p-8 border-t border-slate-50 bg-slate-50/50 shrink-0 flex items-center justify-between">
-            <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest hidden sm:block">Synergy Core V2.4</p>
+            <p className="text-[10px] font-extrabold text-slate-300 uppercase tracking-widest hidden sm:block">Synergy Core V2.4</p>
             <div className="flex gap-3 w-full sm:w-auto">
-               <button onClick={onClose} className="flex-1 sm:flex-none px-8 py-3.5 bg-white border border-slate-200 text-slate-600 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all">
+               <button onClick={onClose} className="flex-1 sm:flex-none px-8 py-3.5 bg-white border border-slate-200 text-slate-600 rounded-2xl text-[10px] font-extrabold uppercase tracking-widest hover:bg-slate-50 transition-all">
                   Cancel Node
                </button>
-               <button onClick={handleSubmit} disabled={loading} className="flex-1 sm:flex-none px-8 py-3.5 bg-brand-red text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-brand-red/90 shadow-xl shadow-brand-red/20 transition-all flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50">
+               <button onClick={handleSubmit} disabled={loading} className="flex-1 sm:flex-none px-8 py-3.5 bg-brand-red text-white rounded-2xl text-[10px] font-extrabold uppercase tracking-widest hover:bg-brand-red/90 shadow-xl shadow-brand-red/20 transition-all flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50">
                   {loading ? 'Processing...' : 'Sync Registry'} <FiCheck className="text-sm stroke-[3]" />
                </button>
             </div>
@@ -299,7 +299,7 @@ export default function PartnerFormModal({ partner, loading, onClose, onSave }) 
 function FormInput({ label, required, value, onChange, type="text" }) {
     return (
         <div className="space-y-2 group">
-            <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 group-focus-within:text-brand-red transition-colors flex items-center gap-1.5">
+            <label className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 group-focus-within:text-brand-red transition-colors flex items-center gap-1.5">
                {label} {required && <span className="w-1 h-1 rounded-full bg-brand-red" />}
             </label>
             <input 
@@ -315,7 +315,7 @@ function FormInput({ label, required, value, onChange, type="text" }) {
 function FormSelect({ label, value, onChange, options }) {
     return (
         <div className="space-y-2">
-            <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">{label}</label>
+            <label className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">{label}</label>
             <select 
               value={value} 
               onChange={e => onChange(e.target.value)}

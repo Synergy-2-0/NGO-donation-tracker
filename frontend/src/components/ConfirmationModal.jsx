@@ -27,7 +27,7 @@ export default function ConfirmationModal({ isOpen, onClose, onConfirm, title, m
                     </div>
                     
                     <div className="space-y-2">
-                        <h3 className="text-xl font-black text-slate-900 tracking-tight">{title}</h3>
+                        <h3 className="text-xl font-extrabold text-slate-900 tracking-tight">{title}</h3>
                         <p className="text-slate-500 text-sm font-medium leading-relaxed">
                             {message}
                         </p>
@@ -36,13 +36,13 @@ export default function ConfirmationModal({ isOpen, onClose, onConfirm, title, m
                     <div className="flex flex-col sm:flex-row gap-3 pt-2">
                         <button 
                             onClick={onClose}
-                            className="flex-1 px-6 py-4 bg-slate-50 text-slate-500 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-100 transition-all active:scale-95"
+                            className="flex-1 px-6 py-4 bg-slate-50 text-slate-500 rounded-2xl text-[10px] font-extrabold uppercase tracking-widest hover:bg-slate-100 transition-all active:scale-95"
                         >
                             Back To safety
                         </button>
                         <button 
                             onClick={onConfirm}
-                            className={`flex-1 px-6 py-4 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg active:scale-95 ${config.button}`}
+                            className={`flex-1 px-6 py-4 text-white rounded-2xl text-[10px] font-extrabold uppercase tracking-widest transition-all shadow-lg active:scale-95 ${config.button}`}
                         >
                             {confirmText}
                         </button>

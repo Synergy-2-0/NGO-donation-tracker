@@ -97,7 +97,7 @@ export default function NgoOnboardingPage() {
         <div className="md:w-1/3 bg-slate-900 text-white p-12 flex flex-col justify-between relative overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-64 bg-tf-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
           <div className="relative z-10">
-            <h2 className="text-3xl font-black mb-4">NGO Registration</h2>
+            <h2 className="text-3xl font-extrabold mb-4">NGO Registration</h2>
             <p className="text-slate-400 text-sm leading-relaxed">Join Synergy to bridge the gap between donors and impact.</p>
           </div>
           
@@ -118,10 +118,10 @@ export default function NgoOnboardingPage() {
           <div className="flex-1">
             {step === 1 && (
               <div className="space-y-6 animate-fadeIn">
-                <h3 className="text-2xl font-black text-slate-900">Organization Profile</h3>
+                <h3 className="text-2xl font-extrabold text-slate-900">Organization Profile</h3>
                 <div className="space-y-4">
                   <div>
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">NGO Name</label>
+                    <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest block mb-2">NGO Name</label>
                     <input 
                       type="text" 
                       className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4"
@@ -131,7 +131,7 @@ export default function NgoOnboardingPage() {
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Reg. Number</label>
+                      <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest block mb-2">Reg. Number</label>
                       <input 
                         type="text" 
                         className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4"
@@ -140,7 +140,7 @@ export default function NgoOnboardingPage() {
                       />
                     </div>
                     <div>
-                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Phone</label>
+                      <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest block mb-2">Phone</label>
                       <input 
                         type="tel" 
                         className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4"
@@ -150,7 +150,7 @@ export default function NgoOnboardingPage() {
                     </div>
                   </div>
                   <div>
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Mission Statement</label>
+                    <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest block mb-2">Mission Statement</label>
                     <textarea 
                       className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 h-32"
                       value={form.mission}
@@ -163,18 +163,18 @@ export default function NgoOnboardingPage() {
 
             {step === 2 && (
               <div className="space-y-6 animate-fadeIn">
-                <h3 className="text-2xl font-black text-slate-900">Address & Presence</h3>
+                <h3 className="text-2xl font-extrabold text-slate-900">Address & Presence</h3>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="col-span-2">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Street</label>
+                    <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest block mb-1">Street</label>
                     <input type="text" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3" value={form.address.street} onChange={e => setForm({...form, address: {...form.address, street: e.target.value}})}/>
                   </div>
                   <div>
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">City</label>
+                    <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest block mb-1">City</label>
                     <input type="text" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3" value={form.address.city} onChange={e => setForm({...form, address: {...form.address, city: e.target.value}})}/>
                   </div>
                   <div>
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Website</label>
+                    <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest block mb-1">Website</label>
                     <input type="url" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3" value={form.website} onChange={e => setForm({...form, website: e.target.value})}/>
                   </div>
                 </div>
@@ -183,14 +183,14 @@ export default function NgoOnboardingPage() {
 
             {step === 3 && (
               <div className="space-y-6 animate-fadeIn">
-                <h3 className="text-2xl font-black text-slate-900">Verification</h3>
+                <h3 className="text-2xl font-extrabold text-slate-900">Verification</h3>
                 <div className="border-2 border-dashed border-slate-200 rounded-3xl p-10 flex flex-col items-center justify-center text-center">
                   <FiUploadCloud className="text-3xl text-slate-400 mb-4" />
                   <p className="text-sm font-bold text-slate-700 mb-2">Upload Registration Document</p>
                   <p className="text-[10px] text-slate-400 uppercase tracking-widest mb-6">PDF or Scanned Copy</p>
                   <input id="doc-upload" type="file" className="hidden" onChange={e => handleFileUpload(e, 'doc')} />
-                  <label htmlFor="doc-upload" className="bg-slate-900 text-white px-8 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest cursor-pointer hover:bg-black transition-all">Select File</label>
-                  {form.verificationDocuments[0].url && <p className="mt-4 text-emerald-500 text-[10px] font-black uppercase tracking-widest">✓ Uploaded successfully</p>}
+                  <label htmlFor="doc-upload" className="bg-slate-900 text-white px-8 py-3 rounded-xl text-[10px] font-extrabold uppercase tracking-widest cursor-pointer hover:bg-black transition-all">Select File</label>
+                  {form.verificationDocuments[0].url && <p className="mt-4 text-emerald-500 text-[10px] font-extrabold uppercase tracking-widest">✓ Uploaded successfully</p>}
                 </div>
               </div>
             )}
@@ -198,12 +198,12 @@ export default function NgoOnboardingPage() {
 
           <div className="mt-12 flex justify-between">
             {step > 1 ? (
-              <button onClick={() => setStep(prev => prev - 1)} className="px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-400 hover:bg-slate-100 transition-all">Back</button>
+              <button onClick={() => setStep(prev => prev - 1)} className="px-6 py-3 rounded-xl text-[10px] font-extrabold uppercase tracking-widest text-slate-400 hover:bg-slate-100 transition-all">Back</button>
             ) : <div />}
             {step < 3 ? (
-              <button onClick={handleNext} className="bg-slate-900 text-white px-8 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:bg-black transition-all">Next <FiArrowRight /></button>
+              <button onClick={handleNext} className="bg-slate-900 text-white px-8 py-3 rounded-xl text-[10px] font-extrabold uppercase tracking-widest flex items-center gap-2 hover:bg-black transition-all">Next <FiArrowRight /></button>
             ) : (
-              <button onClick={handleFinish} disabled={isSubmitting} className="bg-tf-primary text-white px-8 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-tf-primary-dark transition-all disabled:opacity-50">{isSubmitting ? 'Registering...' : 'Complete Registration'}</button>
+              <button onClick={handleFinish} disabled={isSubmitting} className="bg-tf-primary text-white px-8 py-3 rounded-xl text-[10px] font-extrabold uppercase tracking-widest hover:bg-tf-primary-dark transition-all disabled:opacity-50">{isSubmitting ? 'Registering...' : 'Complete Registration'}</button>
             )}
           </div>
         </div>

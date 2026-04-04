@@ -38,11 +38,11 @@ export default function AIInsights() {
                <FiCpu className="text-white text-xl" />
             </div>
             <div>
-              <h3 className="font-black text-xl tracking-tight leading-none mb-1">Donor Insights</h3>
-              <p className="text-[10px] uppercase font-black tracking-widest text-white/40 italic">Community Information Hub</p>
+              <h3 className="font-extrabold text-xl tracking-tight leading-none mb-1">Donor Insights</h3>
+              <p className="text-[10px] uppercase font-extrabold tracking-widest text-white/40 ">Community Information Hub</p>
             </div>
           </div>
-          <div className="flex items-center gap-2 px-4 py-1.5 bg-white/5 border border-white/10 rounded-full text-[10px] font-black uppercase tracking-widest italic backdrop-blur-md">
+          <div className="flex items-center gap-2 px-4 py-1.5 bg-white/5 border border-white/10 rounded-full text-[10px] font-extrabold uppercase tracking-widest  backdrop-blur-md">
             <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse shadow-[0_0_8px_#34d399]" />
             Live Analysis
           </div>
@@ -64,22 +64,22 @@ export default function AIInsights() {
               </div>
               <div className="space-y-2">
                 <div className="flex flex-wrap items-center gap-3">
-                  <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 italic">
+                  <span className="text-[9px] font-extrabold uppercase tracking-widest text-slate-400 ">
                     {item.type} Hub
                   </span>
                   {item.confidence && (
-                    <div className="px-2 py-0.5 bg-emerald-50 text-[9px] font-black text-emerald-600 rounded-lg border border-emerald-100 uppercase tracking-widest">
+                    <div className="px-2 py-0.5 bg-emerald-50 text-[9px] font-extrabold text-emerald-600 rounded-lg border border-emerald-100 uppercase tracking-widest">
                       {Math.round(item.confidence * 100)}% Match
                     </div>
                   )}
                 </div>
-                <p className="text-sm font-bold text-slate-700 leading-relaxed italic">
+                <p className="text-sm font-bold text-slate-700 leading-relaxed ">
                   {item.insight}
                 </p>
               </div>
             </motion.div>
           )) : (
-            <div className="py-20 text-center space-y-4 bg-slate-50/50 rounded-[2rem] border border-dashed border-slate-100 italic">
+            <div className="py-20 text-center space-y-4 bg-slate-50/50 rounded-[2rem] border border-dashed border-slate-100 ">
                <FiInfo className="mx-auto text-slate-200" size={40} />
                <p className="text-slate-400 font-bold text-xs uppercase tracking-widest">No donor insights available for the selected registry.</p>
             </div>
@@ -88,10 +88,10 @@ export default function AIInsights() {
       </div>
 
       <div className="px-10 py-6 bg-slate-50/50 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div className="flex items-center gap-2 text-[10px] text-slate-400 font-black uppercase tracking-widest italic leading-none">
-          <FiInfo size={14} className="not-italic text-tf-primary" /> Active Synchronization Protocols Hub
+        <div className="flex items-center gap-2 text-[10px] text-slate-400 font-extrabold uppercase tracking-widest  leading-none">
+          <FiInfo size={14} className="not- text-tf-primary" /> Active Synchronization Protocols Hub
         </div>
-        <button className="text-[10px] font-black text-tf-primary hover:text-slate-900 transition-colors uppercase tracking-widest underline decoration-2 underline-offset-8 decoration-tf-primary/30">
+        <button className="text-[10px] font-extrabold text-tf-primary hover:text-slate-900 transition-colors uppercase tracking-widest underline decoration-2 underline-offset-8 decoration-tf-primary/30">
           RECALIBRATERegistry →
         </button>
       </div>

@@ -321,43 +321,43 @@ export default function AgreementMilestonesPage() {
         <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-12">
             <div className="space-y-6 flex-1">
                 <div className="flex items-center gap-4">
-                    <span className="flex items-center gap-2 px-3 py-1 bg-tf-primary/10 border border-tf-primary/20 rounded-full text-tf-primary text-[10px] font-black uppercase tracking-widest backdrop-blur-sm italic">
+                    <span className="flex items-center gap-2 px-3 py-1 bg-tf-primary/10 border border-tf-primary/20 rounded-full text-tf-primary text-[10px] font-extrabold uppercase tracking-widest backdrop-blur-sm ">
                         <FiTarget className="text-sm" /> {t('milestones.header_badge')}
                     </span>
-                    <span className="text-[10px] font-black text-white/30 uppercase tracking-[0.5em] italic">MISSION HUB</span>
+                    <span className="text-[10px] font-extrabold text-white/30 uppercase tracking-[0.5em] ">MISSION HUB</span>
                 </div>
                 
-                <h1 className="text-4xl md:text-6xl font-black text-white tracking-tighter italic leading-none">
-                    {t('milestones.institutional')} <span className="text-tf-primary not-italic">{t('milestones.roadmap')}</span>
+                <h1 className="text-4xl md:text-6xl font-extrabold text-white tracking-tighter  leading-none">
+                    {t('milestones.institutional')} <span className="text-tf-primary not-">{t('milestones.roadmap')}</span>
                 </h1>
-                <p className="text-white/50 text-base md:text-lg font-medium italic max-w-2xl leading-relaxed">
+                <p className="text-white/50 text-base md:text-lg font-medium  max-w-2xl leading-relaxed">
                     {id ? t('milestones.subtitle') : t('milestones.global_hub_desc')}
                 </p>
 
                 <div className="flex flex-wrap gap-4 pt-2">
-                    <div className="px-6 py-3 bg-white/5 border border-white/10 rounded-2xl flex flex-col italic">
-                        <span className="text-[9px] font-black text-white/30 uppercase tracking-widest italic">{t('milestones.progress')}</span>
-                        <span className="text-xl font-black text-white tabular-nums tracking-tighter italic">{progress}%</span>
+                    <div className="px-6 py-3 bg-white/5 border border-white/10 rounded-2xl flex flex-col ">
+                        <span className="text-[9px] font-extrabold text-white/30 uppercase tracking-widest ">{t('milestones.progress')}</span>
+                        <span className="text-xl font-extrabold text-white tabular-nums tracking-tighter ">{progress}%</span>
                     </div>
                     {id && (
-                        <div className="px-6 py-3 bg-white/5 border border-white/10 rounded-2xl flex flex-col italic">
-                            <span className="text-[9px] font-black text-white/30 uppercase tracking-widest italic">{t('milestones.total_volume')}</span>
-                            <span className="text-xl font-black text-tf-primary tabular-nums tracking-tighter italic">LKR {Number(activeMission?.amount || activeMission?.totalValue || 0).toLocaleString()}</span>
+                        <div className="px-6 py-3 bg-white/5 border border-white/10 rounded-2xl flex flex-col ">
+                            <span className="text-[9px] font-extrabold text-white/30 uppercase tracking-widest ">{t('milestones.total_volume')}</span>
+                            <span className="text-xl font-extrabold text-tf-primary tabular-nums tracking-tighter ">LKR {Number(activeMission?.amount || activeMission?.totalValue || 0).toLocaleString()}</span>
                         </div>
                     )}
                 </div>
             </div>
 
             {id && (
-                <div className="bg-white/5 backdrop-blur-xl border border-white/10 p-8 rounded-[2.5rem] lg:w-80 space-y-6 italic">
+                <div className="bg-white/5 backdrop-blur-xl border border-white/10 p-8 rounded-[2.5rem] lg:w-80 space-y-6 ">
                     <div className="space-y-4">
                         <div>
-                            <p className="text-[9px] font-black text-white/30 uppercase tracking-widest mb-1 italic">{t('milestones.partner_node')}</p>
-                            <p className="text-sm font-bold text-white leading-tight italic">{activeMission?.partnerId?.organizationName || 'Verified Strategic Entity'}</p>
+                            <p className="text-[9px] font-extrabold text-white/30 uppercase tracking-widest mb-1 ">{t('milestones.partner_node')}</p>
+                            <p className="text-sm font-bold text-white leading-tight ">{activeMission?.partnerId?.organizationName || 'Verified Strategic Entity'}</p>
                         </div>
                         <div>
-                            <p className="text-[9px] font-black text-white/30 uppercase tracking-widest mb-1 italic">{t('milestones.mission_node')}</p>
-                            <p className="text-sm font-bold text-white leading-tight italic">{activeMission?.campaignId?.title || 'Operational Impact Node'}</p>
+                            <p className="text-[9px] font-extrabold text-white/30 uppercase tracking-widest mb-1 ">{t('milestones.mission_node')}</p>
+                            <p className="text-sm font-bold text-white leading-tight ">{activeMission?.campaignId?.title || 'Operational Impact Node'}</p>
                         </div>
                     </div>
                 </div>
@@ -366,7 +366,7 @@ export default function AgreementMilestonesPage() {
       </section>
 
       {success && (
-        <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="bg-emerald-50 border border-emerald-100 p-6 rounded-[2rem] flex items-center gap-4 text-emerald-700 font-bold italic shadow-sm mx-4">
+        <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="bg-emerald-50 border border-emerald-100 p-6 rounded-[2rem] flex items-center gap-4 text-emerald-700 font-bold  shadow-sm mx-4">
           <FiCheckSquare className="text-xl" />
           {success}
         </motion.div>
@@ -374,15 +374,15 @@ export default function AgreementMilestonesPage() {
 
       {error && <ErrorAlert message={error} onDismiss={() => setError('')} />}
 
-      <div className="bg-white rounded-[3rem] border border-slate-100 shadow-sm overflow-hidden text-left italic">
+      <div className="bg-white rounded-[3rem] border border-slate-100 shadow-sm overflow-hidden text-left ">
         {/* Navigation & Controls */}
-        <div className="px-10 py-8 border-b border-slate-50 flex flex-col md:flex-row md:items-center justify-between gap-6 bg-slate-50/30 italic">
-          <div className="flex items-center gap-4 bg-white p-1.5 rounded-2xl border border-slate-100 shadow-sm overflow-x-auto selection:bg-tf-primary/10 italic">
+        <div className="px-10 py-8 border-b border-slate-50 flex flex-col md:flex-row md:items-center justify-between gap-6 bg-slate-50/30 ">
+          <div className="flex items-center gap-4 bg-white p-1.5 rounded-2xl border border-slate-100 shadow-sm overflow-x-auto selection:bg-tf-primary/10 ">
             {['all', 'pending', 'in-progress', 'completed'].map((f) => (
               <button
                 key={f}
                 onClick={() => setStatusFilter(f)}
-                className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap italic ${
+                className={`px-6 py-2.5 rounded-xl text-[10px] font-extrabold uppercase tracking-widest transition-all whitespace-nowrap  ${
                   statusFilter === f ? 'bg-slate-900 text-white shadow-lg' : 'text-slate-400 hover:text-slate-900'
                 }`}
               >
@@ -394,7 +394,7 @@ export default function AgreementMilestonesPage() {
           {!isAdminLike && user?.role === 'partner' && id && (
             <button 
                 onClick={openCreate}
-                className="px-8 py-3.5 bg-tf-primary text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-orange-600 transition-all shadow-xl shadow-tf-primary/20 active:scale-95 flex items-center gap-3 italic"
+                className="px-8 py-3.5 bg-tf-primary text-white rounded-2xl text-[10px] font-extrabold uppercase tracking-widest hover:bg-orange-600 transition-all shadow-xl shadow-tf-primary/20 active:scale-95 flex items-center gap-3 "
             >
               <FiPlus className="text-lg" /> {t('milestones.create_milestone')}
             </button>
@@ -409,18 +409,18 @@ export default function AgreementMilestonesPage() {
                 <div className="px-10 py-8 bg-slate-900 flex flex-col md:flex-row md:items-center justify-between group cursor-pointer hover:bg-slate-800 transition-all border-l-4 border-tf-primary shadow-xl">
                   <div className="space-y-2">
                     <div className="flex items-center gap-3">
-                         <div className="px-3 py-1 bg-tf-primary/10 border border-tf-primary/20 rounded-full text-tf-primary text-[8px] font-black uppercase tracking-widest italic">
+                         <div className="px-3 py-1 bg-tf-primary/10 border border-tf-primary/20 rounded-full text-tf-primary text-[8px] font-extrabold uppercase tracking-widest ">
                             {group.campaign?.title || 'Mission Node'}
                          </div>
                     </div>
-                    <h3 className="text-xl font-black text-white italic tracking-tight uppercase leading-none">
+                    <h3 className="text-xl font-extrabold text-white  tracking-tight uppercase leading-none">
                       {group.title}
                     </h3>
                   </div>
                   <div className="flex items-center gap-8 mt-4 md:mt-0">
                     <div className="text-right">
-                      <p className="text-[9px] font-black text-white/20 uppercase tracking-widest italic mb-1">Success Nodes</p>
-                      <p className="text-sm font-black text-tf-primary italic tabular-nums">{group.milestones.length} Active Steps</p>
+                      <p className="text-[9px] font-extrabold text-white/20 uppercase tracking-widest  mb-1">Success Nodes</p>
+                      <p className="text-sm font-extrabold text-tf-primary  tabular-nums">{group.milestones.length} Active Steps</p>
                     </div>
                     <button 
                       onClick={() => navigate(`/partner/milestones/${group.id}`)}
@@ -523,14 +523,14 @@ export default function AgreementMilestonesPage() {
               </div>
             </div>
           )) : (
-            <div className="px-10 py-32 text-center italic">
-              <div className="max-w-xs mx-auto space-y-4 italic">
-                <div className="w-20 h-20 bg-slate-50 rounded-[2rem] flex items-center justify-center text-slate-200 mx-auto shadow-inner italic">
+            <div className="px-10 py-32 text-center ">
+              <div className="max-w-xs mx-auto space-y-4 ">
+                <div className="w-20 h-20 bg-slate-50 rounded-[2rem] flex items-center justify-center text-slate-200 mx-auto shadow-inner ">
                   <FiTarget size={40} />
                 </div>
-                <div className="space-y-1 italic">
-                  <h4 className="text-lg font-black text-slate-900 tracking-tight italic">{t('milestones.empty_title')}</h4>
-                  <p className="text-xs text-slate-400 font-medium italic">{t('milestones.empty_desc')}</p>
+                <div className="space-y-1 ">
+                  <h4 className="text-lg font-extrabold text-slate-900 tracking-tight ">{t('milestones.empty_title')}</h4>
+                  <p className="text-xs text-slate-400 font-medium ">{t('milestones.empty_desc')}</p>
                 </div>
               </div>
             </div>
@@ -541,88 +541,88 @@ export default function AgreementMilestonesPage() {
       {/* Operation Modal */}
       <AnimatePresence>
         {showModal && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-900/60 backdrop-blur-xl italic">
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-900/60 backdrop-blur-xl ">
             <motion.div 
                 initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                className="bg-white rounded-[3rem] w-full max-w-xl shadow-2xl overflow-hidden border border-white/20 italic"
+                className="bg-white rounded-[3rem] w-full max-w-xl shadow-2xl overflow-hidden border border-white/20 "
             >
-              <div className="p-10 bg-slate-900 text-white relative italic">
-                 <div className="absolute top-0 right-0 w-32 h-32 bg-tf-primary/20 blur-3xl rounded-full -mr-16 -mt-16 italic" />
-                 <div className="relative z-10 flex items-center justify-between italic">
-                    <div className="flex items-center gap-4 italic">
-                        <div className="w-12 h-12 bg-tf-primary rounded-2xl flex items-center justify-center shadow-lg shadow-tf-primary/20 italic">
+              <div className="p-10 bg-slate-900 text-white relative ">
+                 <div className="absolute top-0 right-0 w-32 h-32 bg-tf-primary/20 blur-3xl rounded-full -mr-16 -mt-16 " />
+                 <div className="relative z-10 flex items-center justify-between ">
+                    <div className="flex items-center gap-4 ">
+                        <div className="w-12 h-12 bg-tf-primary rounded-2xl flex items-center justify-center shadow-lg shadow-tf-primary/20 ">
                             <FiActivity size={24} />
                         </div>
-                        <div className="italic">
-                            <h3 className="text-2xl font-black italic tracking-tighter leading-none mb-1 italic">{t('milestones.modal.title')}</h3>
-                            <p className="text-[10px] uppercase font-black tracking-widest text-white/40 italic">Authorization Protocol Hub</p>
+                        <div className="">
+                            <h3 className="text-2xl font-extrabold  tracking-tighter leading-none mb-1 ">{t('milestones.modal.title')}</h3>
+                            <p className="text-[10px] uppercase font-extrabold tracking-widest text-white/40 ">Authorization Protocol Hub</p>
                         </div>
                     </div>
-                    <button onClick={() => setShowModal(false)} className="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition-all italic">
+                    <button onClick={() => setShowModal(false)} className="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition-all ">
                         <FiX size={20} />
                     </button>
                  </div>
               </div>
 
-              <form onSubmit={handleSubmit} className="p-10 space-y-8 italic">
+              <form onSubmit={handleSubmit} className="p-10 space-y-8 ">
                 {formError && (
-                  <div className="p-5 bg-rose-50 border border-rose-100 rounded-2xl flex items-center gap-3 text-rose-700 text-xs font-bold animate-shake italic">
-                    <FiAlertTriangle className="text-lg shrink-0 not-italic" /> {formError}
+                  <div className="p-5 bg-rose-50 border border-rose-100 rounded-2xl flex items-center gap-3 text-rose-700 text-xs font-bold animate-shake ">
+                    <FiAlertTriangle className="text-lg shrink-0 not-" /> {formError}
                   </div>
                 )}
 
-                <div className="space-y-6 italic">
-                    <div className="space-y-2 italic">
-                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic flex items-center gap-2">
-                            <FiTarget className="text-tf-primary not-italic" /> {t('milestones.modal.label_title')}
+                <div className="space-y-6 ">
+                    <div className="space-y-2 ">
+                        <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest  flex items-center gap-2">
+                            <FiTarget className="text-tf-primary not-" /> {t('milestones.modal.label_title')}
                         </label>
                         <input 
                             required type="text" value={form.title} placeholder="e.g. Community Support Initialization"
                             onChange={(e) => setForm({ ...form, title: e.target.value })}
-                            className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-5 text-slate-900 font-bold placeholder:text-slate-300 focus:ring-4 focus:ring-tf-primary/5 focus:border-tf-primary transition-all outline-none italic"
+                            className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-5 text-slate-900 font-bold placeholder:text-slate-300 focus:ring-4 focus:ring-tf-primary/5 focus:border-tf-primary transition-all outline-none "
                         />
                     </div>
 
-                    <div className="space-y-2 italic">
-                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic flex items-center gap-2">
-                            <FiFileText className="text-tf-primary not-italic" /> {t('milestones.modal.label_desc')}
+                    <div className="space-y-2 ">
+                        <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest  flex items-center gap-2">
+                            <FiFileText className="text-tf-primary not-" /> {t('milestones.modal.label_desc')}
                         </label>
                         <textarea 
                             required value={form.description} rows={3} placeholder="Detailed notes about the project objectives and activities."
                             onChange={(e) => setForm({ ...form, description: e.target.value })}
-                            className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-5 text-slate-900 font-bold placeholder:text-slate-300 focus:ring-4 focus:ring-tf-primary/5 focus:border-tf-primary transition-all outline-none resize-none italic"
+                            className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-5 text-slate-900 font-bold placeholder:text-slate-300 focus:ring-4 focus:ring-tf-primary/5 focus:border-tf-primary transition-all outline-none resize-none "
                         />
                     </div>
 
-                    <div className="grid grid-cols-2 gap-6 italic">
-                        <div className="space-y-2 italic">
-                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic flex items-center gap-2">
-                                <FiClock className="text-tf-primary not-italic" /> {t('milestones.modal.label_date')}
+                    <div className="grid grid-cols-2 gap-6 ">
+                        <div className="space-y-2 ">
+                            <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest  flex items-center gap-2">
+                                <FiClock className="text-tf-primary not-" /> {t('milestones.modal.label_date')}
                             </label>
                             <input 
                                 required type="date" value={form.dueDate}
                                 onChange={(e) => setForm({ ...form, dueDate: e.target.value })}
-                                className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-slate-900 font-bold placeholder:text-slate-300 focus:ring-2 focus:ring-tf-primary/20 focus:border-tf-primary transition-all outline-none italic"
+                                className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-slate-900 font-bold placeholder:text-slate-300 focus:ring-2 focus:ring-tf-primary/20 focus:border-tf-primary transition-all outline-none "
                             />
                         </div>
-                        <div className="space-y-2 italic">
-                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic flex items-center gap-2">
-                                <FiActivity className="text-tf-primary not-italic" /> Budget (LKR)
+                        <div className="space-y-2 ">
+                            <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest  flex items-center gap-2">
+                                <FiActivity className="text-tf-primary not-" /> Budget (LKR)
                             </label>
                             <input 
                                 type="number" value={form.budget} placeholder="Allocation Amount"
                                 onChange={(e) => setForm({ ...form, budget: e.target.value })}
-                                className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-slate-900 font-bold focus:ring-2 focus:ring-tf-primary/20 focus:border-tf-primary transition-all outline-none italic"
+                                className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-slate-900 font-bold focus:ring-2 focus:ring-tf-primary/20 focus:border-tf-primary transition-all outline-none "
                             />
                         </div>
-                        <div className="space-y-2 italic">
-                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic flex items-center gap-2">
-                                <FiActivity className="text-tf-primary not-italic" /> {t('milestones.modal.label_status')}
+                        <div className="space-y-2 ">
+                            <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest  flex items-center gap-2">
+                                <FiActivity className="text-tf-primary not-" /> {t('milestones.modal.label_status')}
                             </label>
                             <select 
                                 value={form.status}
                                 onChange={(e) => setForm({ ...form, status: e.target.value })}
-                                className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-slate-900 font-bold focus:ring-2 focus:ring-tf-primary/20 focus:border-tf-primary transition-all outline-none italic appearance-none"
+                                className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-slate-900 font-bold focus:ring-2 focus:ring-tf-primary/20 focus:border-tf-primary transition-all outline-none  appearance-none"
                             >
                                 {MILESTONE_STATUSES.map(s => (
                                     <option key={s} value={s}>{s.charAt(0).toUpperCase() + s.slice(1)}</option>
@@ -634,9 +634,9 @@ export default function AgreementMilestonesPage() {
 
                 <button 
                     type="submit" 
-                    className="w-full py-5 bg-tf-primary hover:bg-orange-600 text-white rounded-2xl text-xs font-black uppercase tracking-widest transition-all shadow-xl shadow-tf-primary/20 active:scale-95 flex items-center justify-center gap-3 italic"
+                    className="w-full py-5 bg-tf-primary hover:bg-orange-600 text-white rounded-2xl text-xs font-extrabold uppercase tracking-widest transition-all shadow-xl shadow-tf-primary/20 active:scale-95 flex items-center justify-center gap-3 "
                 >
-                    <FiCheckCircle className="text-lg not-italic" /> {t('milestones.modal.submit')}
+                    <FiCheckCircle className="text-lg not-" /> {t('milestones.modal.submit')}
                 </button>
               </form>
             </motion.div>

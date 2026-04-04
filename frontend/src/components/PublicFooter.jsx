@@ -13,7 +13,7 @@ export default function PublicFooter() {
                className="h-10 w-auto object-contain" 
              />
           </Link>
-          <p className="text-slate-400 text-sm leading-relaxed max-w-sm font-medium italic">
+          <p className="text-slate-400 text-sm leading-relaxed max-w-sm font-medium ">
             Empowering humanity through transparent, direct, and verifiable aid. TransFund connects kind donors with community causes for absolute integrity in every gift.
           </p>
           <div className="flex gap-4">
@@ -27,7 +27,7 @@ export default function PublicFooter() {
 
         {/* Quick Links */}
         <div className="space-y-8">
-          <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-tf-primary italic">Information Center Hub</h4>
+          <h4 className="text-[10px] font-extrabold uppercase tracking-[0.4em] text-tf-primary ">Information Center Hub</h4>
           <ul className="space-y-4">
             <li><Link to="/about" className="text-slate-400 hover:text-white transition-colors text-sm font-medium">About TransFund</Link></li>
             <li><Link to="/causes" className="text-slate-400 hover:text-white transition-colors text-sm font-medium">Browse Causes</Link></li>
@@ -39,7 +39,7 @@ export default function PublicFooter() {
 
         {/* Register */}
         <div className="space-y-8">
-          <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-tf-primary italic">Support Hub</h4>
+          <h4 className="text-[10px] font-extrabold uppercase tracking-[0.4em] text-tf-primary ">Support Hub</h4>
           <ul className="space-y-4">
             <li><Link to="/login" className="text-slate-400 hover:text-white transition-colors text-sm font-medium">Donate Now</Link></li>
             <li><Link to="/login?tab=signup" className="text-slate-400 hover:text-white transition-colors text-sm font-medium">Create a Campaign</Link></li>
@@ -51,7 +51,7 @@ export default function PublicFooter() {
 
         {/* Contact Info */}
         <div className="space-y-8">
-          <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-tf-primary italic">Contact Global</h4>
+          <h4 className="text-[10px] font-extrabold uppercase tracking-[0.4em] text-tf-primary ">Contact Global</h4>
           <ul className="space-y-5 text-sm text-slate-400">
             <li className="flex gap-4">
               <svg className="w-5 h-5 shrink-0 text-tf-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
@@ -64,16 +64,16 @@ export default function PublicFooter() {
           </ul>
           <div className="pt-6 space-y-3 border-t border-white/5">
             <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-none">Official Organization Registration Hub</p>
-            <p className="text-xs text-tf-primary font-bold italic tracking-tighter">TF-SL-810-24X</p>
+            <p className="text-xs text-tf-primary font-bold  tracking-tighter">TF-SL-810-24X</p>
           </div>
         </div>
       </div>
 
       <div className="max-w-[1400px] mx-auto pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-10">
-        <p className="text-xs text-slate-500 font-medium tracking-wide italic">
+        <p className="text-xs text-slate-500 font-medium tracking-wide ">
           &copy; 2026 TransFund Humanitarian Organization. all rights reserved Hub.
         </p>
-        <div className="flex gap-10 text-[10px] font-black italic uppercase tracking-[0.4em] text-slate-500">
+        <div className="flex gap-10 text-[10px] font-extrabold  uppercase tracking-[0.4em] text-slate-500">
            <span className="hover:text-tf-primary cursor-crosshair transition-all">Verified Secure</span>
            <span className="hover:text-tf-primary cursor-crosshair transition-all">Transparency Enabled</span>
         </div>

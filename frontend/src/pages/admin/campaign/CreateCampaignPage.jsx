@@ -72,7 +72,7 @@ function SectionCard({ icon, title, subtitle, accentColor = 'group-hover:bg-tf-p
                     {icon}
                 </div>
                 <div>
-                    <h3 className="text-base font-black text-slate-900 tracking-tight">{title}</h3>
+                    <h3 className="text-base font-extrabold text-slate-900 tracking-tight">{title}</h3>
                     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">{subtitle}</p>
                 </div>
             </div>
@@ -84,9 +84,9 @@ function SectionCard({ icon, title, subtitle, accentColor = 'group-hover:bg-tf-p
 function FieldLabel({ children, required, hint }) {
     return (
         <div className="flex items-center justify-between mb-2">
-            <label className="flex items-center gap-2 text-[10px] font-black text-slate-500 uppercase tracking-[0.35em] leading-none">
+            <label className="flex items-center gap-2 text-[10px] font-extrabold text-slate-500 uppercase tracking-[0.35em] leading-none">
                 {children}
-                {required && <span className="text-tf-primary text-[8px] font-black">REQUIRED</span>}
+                {required && <span className="text-tf-primary text-[8px] font-extrabold">REQUIRED</span>}
             </label>
             {hint && <span className="text-[10px] text-slate-400 font-medium">{hint}</span>}
         </div>
@@ -227,8 +227,8 @@ export default function CreateCampaignPage() {
                 <div className="absolute bottom-0 left-0 w-72 h-72 bg-emerald-500/5 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4" />
                 <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
                     <div>
-                        <p className="text-[10px] font-black uppercase tracking-[.2em] text-slate-500 mb-2">Campaign Management</p>
-                        <h2 className="text-3xl md:text-4xl font-black text-white tracking-tight">
+                        <p className="text-[10px] font-extrabold uppercase tracking-[.2em] text-slate-500 mb-2">Campaign Management</p>
+                        <h2 className="text-3xl md:text-4xl font-extrabold text-white tracking-tight">
                             Create New <span className="text-tf-primary">Campaign</span>
                         </h2>
                         <p className="text-slate-400 text-sm mt-2 max-w-xl font-medium">
@@ -237,7 +237,7 @@ export default function CreateCampaignPage() {
                     </div>
                     <Link
                         to="/admin/campaign-dashboard"
-                        className="px-6 py-3 bg-white/5 border border-white/10 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-white hover:text-slate-900 transition-all flex items-center gap-2 shrink-0 active:scale-95"
+                        className="px-6 py-3 bg-white/5 border border-white/10 text-white rounded-2xl text-[10px] font-extrabold uppercase tracking-widest hover:bg-white hover:text-slate-900 transition-all flex items-center gap-2 shrink-0 active:scale-95"
                     >
                         <FiArrowLeft className="stroke-[2.5]" /> Back to Registry
                     </Link>
@@ -251,7 +251,7 @@ export default function CreateCampaignPage() {
                         <FiDollarSign className="text-lg" />
                     </div>
                     <div>
-                        <h4 className="text-sm font-black text-blue-900 tracking-tight">One-Time Campaign Donation</h4>
+                        <h4 className="text-sm font-extrabold text-blue-900 tracking-tight">One-Time Campaign Donation</h4>
                         <p className="text-[11px] text-blue-600 font-medium mt-1 leading-relaxed">
                             Donors give a single payment while the campaign is <strong>open</strong> (between start & end date). Once the campaign closes, no more one-time donations are accepted.
                         </p>
@@ -262,7 +262,7 @@ export default function CreateCampaignPage() {
                         <FiRepeat className="text-lg" />
                     </div>
                     <div>
-                        <h4 className="text-sm font-black text-emerald-900 tracking-tight">Recurring Pledge Agreement</h4>
+                        <h4 className="text-sm font-extrabold text-emerald-900 tracking-tight">Recurring Pledge Agreement</h4>
                         <p className="text-[11px] text-emerald-600 font-medium mt-1 leading-relaxed">
                             Donors commit to a <strong>recurring amount</strong> (monthly/quarterly/yearly). The pledge continues as a scheduled agreement — it is <strong>not</strong> limited by the campaign end date.
                         </p>
@@ -274,11 +274,11 @@ export default function CreateCampaignPage() {
             <div className="bg-white rounded-[24px] border border-slate-100 shadow-sm px-8 py-5 flex items-center justify-between">
                 <div className="flex items-center gap-4">
                     <div className={`w-2.5 h-2.5 rounded-full transition-colors ${isReady ? 'bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]' : 'bg-slate-200'}`} />
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                    <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">
                         Status: <span className={isReady ? 'text-emerald-500' : 'text-slate-300'}>{isReady ? 'Ready to Submit' : 'Filling Required Fields'}</span>
                     </p>
                 </div>
-                <div className="flex items-center gap-3 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                <div className="flex items-center gap-3 text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">
                     {formData.sdgAlignment.length > 0 && <span>{formData.sdgAlignment.length} SDGs</span>}
                     {formData.allowPledges && (
                         <span className="px-3 py-1.5 bg-emerald-50 text-emerald-700 border border-emerald-100 rounded-xl flex items-center gap-1.5">
@@ -356,7 +356,7 @@ export default function CreateCampaignPage() {
                                     <div className="flex flex-wrap gap-2">
                                         {SDG_GOALS.map(sdg => (
                                             <button key={sdg.id} type="button" onClick={() => toggleSDG(sdg.id)}
-                                                className={`px-3 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all active:scale-95 flex items-center gap-1.5 ${
+                                                className={`px-3 py-2 rounded-xl text-[10px] font-extrabold uppercase tracking-wider transition-all active:scale-95 flex items-center gap-1.5 ${
                                                     formData.sdgAlignment.includes(sdg.id)
                                                         ? `${sdg.color} text-white shadow-md`
                                                         : 'bg-slate-50 border border-slate-100 text-slate-400 hover:text-slate-700 hover:bg-slate-100'
@@ -391,7 +391,7 @@ export default function CreateCampaignPage() {
                                                 <FiRepeat className="text-xl" />
                                             </div>
                                             <div>
-                                                <h3 className="text-base font-black text-slate-900 tracking-tight">Enable Recurring Pledges</h3>
+                                                <h3 className="text-base font-extrabold text-slate-900 tracking-tight">Enable Recurring Pledges</h3>
                                                 <p className="text-[11px] text-slate-500 font-medium mt-1 leading-relaxed max-w-lg">
                                                     When enabled, donors and partners can sign a <strong>pledge agreement</strong> — a commitment to pay
                                                     a set amount on a regular schedule (monthly, quarterly, or yearly). This is <strong>separate from</strong> and
@@ -450,7 +450,7 @@ export default function CreateCampaignPage() {
                                                                 >
                                                                     <span className="text-2xl">{freq.icon}</span>
                                                                     <div>
-                                                                        <p className={`text-sm font-black tracking-tight ${active ? 'text-white' : 'text-slate-800'}`}>{freq.label}</p>
+                                                                        <p className={`text-sm font-extrabold tracking-tight ${active ? 'text-white' : 'text-slate-800'}`}>{freq.label}</p>
                                                                         <p className={`text-[10px] font-bold mt-0.5 ${active ? 'text-emerald-100' : 'text-slate-400'}`}>{freq.desc}</p>
                                                                     </div>
                                                                     {active && <FiCheckCircle className="ml-auto text-emerald-100 text-lg shrink-0" />}
@@ -465,7 +465,7 @@ export default function CreateCampaignPage() {
                                                     <div>
                                                         <FieldLabel required hint="per payment">Minimum Pledge Amount (LKR)</FieldLabel>
                                                         <div className="relative">
-                                                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-black text-xs">LKR</span>
+                                                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-extrabold text-xs">LKR</span>
                                                             <input
                                                                 type="number"
                                                                 name="pledge_minimumAmount"
@@ -503,7 +503,7 @@ export default function CreateCampaignPage() {
                                                     </p>
                                                     <div className="flex flex-wrap gap-2 mb-3">
                                                         {formData.pledgeConfig.suggestedAmounts.map(amt => (
-                                                            <span key={amt} className="flex items-center gap-2 px-4 py-2 bg-emerald-50 border border-emerald-100 text-emerald-700 rounded-xl text-[11px] font-black uppercase tracking-widest">
+                                                            <span key={amt} className="flex items-center gap-2 px-4 py-2 bg-emerald-50 border border-emerald-100 text-emerald-700 rounded-xl text-[11px] font-extrabold uppercase tracking-widest">
                                                                 LKR {amt.toLocaleString()}
                                                                 <button type="button" onClick={() => removeSuggestedAmount(amt)} className="text-emerald-400 hover:text-red-500 transition-colors">
                                                                     <FiX className="text-xs" />
@@ -523,7 +523,7 @@ export default function CreateCampaignPage() {
                                                         <button
                                                             type="button"
                                                             onClick={addSuggestedAmount}
-                                                            className="px-5 py-3 bg-emerald-500 text-white rounded-2xl text-[11px] font-black uppercase tracking-widest hover:bg-emerald-600 transition-all flex items-center gap-2 shrink-0 active:scale-95"
+                                                            className="px-5 py-3 bg-emerald-500 text-white rounded-2xl text-[11px] font-extrabold uppercase tracking-widest hover:bg-emerald-600 transition-all flex items-center gap-2 shrink-0 active:scale-95"
                                                         >
                                                             <FiPlus className="stroke-[2.5]" /> Add
                                                         </button>
@@ -550,7 +550,7 @@ export default function CreateCampaignPage() {
                                                 <div className="bg-white border border-emerald-100 rounded-2xl p-5">
                                                     <div className="flex items-center gap-2 mb-3">
                                                         <FiInfo className="text-emerald-500 text-sm" />
-                                                        <p className="text-[11px] font-black text-emerald-700 uppercase tracking-widest">Pledge Preview</p>
+                                                        <p className="text-[11px] font-extrabold text-emerald-700 uppercase tracking-widest">Pledge Preview</p>
                                                     </div>
                                                     <p className="text-[12px] text-slate-600 font-medium leading-relaxed">
                                                         Donors can pledge from <strong>LKR {(formData.pledgeConfig.minimumAmount || 0).toLocaleString()}</strong>{' '}
@@ -583,7 +583,7 @@ export default function CreateCampaignPage() {
                                                 <div className="w-12 h-12 bg-tf-primary text-white rounded-2xl flex items-center justify-center shadow-xl">
                                                     <FiImage className="text-lg" />
                                                 </div>
-                                                <p className="text-white text-[11px] font-black uppercase tracking-widest">Change Image</p>
+                                                <p className="text-white text-[11px] font-extrabold uppercase tracking-widest">Change Image</p>
                                             </div>
                                         </div>
                                     ) : (
@@ -592,7 +592,7 @@ export default function CreateCampaignPage() {
                                                 <FiImage className="text-2xl" />
                                             </div>
                                             <div>
-                                                <p className="text-sm font-black text-slate-700 group-hover/upload:text-tf-primary transition-colors">Upload Cover Image</p>
+                                                <p className="text-sm font-extrabold text-slate-700 group-hover/upload:text-tf-primary transition-colors">Upload Cover Image</p>
                                                 <p className="text-[10px] text-slate-400 font-bold mt-1 uppercase tracking-widest">PNG, JPG up to 10MB</p>
                                             </div>
                                         </div>
@@ -608,9 +608,9 @@ export default function CreateCampaignPage() {
                                 <div>
                                     <FieldLabel required>Goal Amount</FieldLabel>
                                     <div className="relative">
-                                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-black text-xs">LKR</span>
+                                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-extrabold text-xs">LKR</span>
                                         <input type="number" name="goalAmount" value={formData.goalAmount} onChange={handleChange}
-                                            placeholder="0" className={`${inputCls} pl-14 text-lg font-black text-tf-primary tabular-nums`} required />
+                                            placeholder="0" className={`${inputCls} pl-14 text-lg font-extrabold text-tf-primary tabular-nums`} required />
                                     </div>
                                     {formData.goalAmount && (
                                         <p className="text-[10px] text-slate-400 font-bold mt-2 ml-1">
@@ -635,7 +635,7 @@ export default function CreateCampaignPage() {
                                     </div>
                                     {formData.startDate && formData.endDate && (
                                         <div className="bg-amber-50 border border-amber-100 rounded-xl px-4 py-3">
-                                            <p className="text-[11px] font-black text-amber-700 uppercase tracking-widest">
+                                            <p className="text-[11px] font-extrabold text-amber-700 uppercase tracking-widest">
                                                 {Math.ceil((new Date(formData.endDate) - new Date(formData.startDate)) / (1000 * 60 * 60 * 24))} day campaign window
                                             </p>
                                             <p className="text-[10px] text-amber-600 font-medium mt-0.5">
@@ -653,7 +653,7 @@ export default function CreateCampaignPage() {
                                 <button
                                     type="submit"
                                     disabled={loading || !isReady}
-                                    className="w-full px-8 py-4 bg-slate-900 text-white rounded-2xl text-[11px] font-black uppercase tracking-widest hover:bg-tf-primary transition-all duration-500 shadow-xl disabled:opacity-40 disabled:cursor-not-allowed active:scale-95 flex items-center justify-center gap-3"
+                                    className="w-full px-8 py-4 bg-slate-900 text-white rounded-2xl text-[11px] font-extrabold uppercase tracking-widest hover:bg-tf-primary transition-all duration-500 shadow-xl disabled:opacity-40 disabled:cursor-not-allowed active:scale-95 flex items-center justify-center gap-3"
                                 >
                                     {loading ? (
                                         <>
@@ -671,7 +671,7 @@ export default function CreateCampaignPage() {
                                     )}
                                 </button>
                                 <Link to="/admin/campaign-dashboard"
-                                    className="w-full px-8 py-4 bg-slate-50 border border-slate-100 text-slate-500 rounded-2xl text-[11px] font-black uppercase tracking-widest hover:bg-slate-100 transition-all flex items-center justify-center active:scale-95">
+                                    className="w-full px-8 py-4 bg-slate-50 border border-slate-100 text-slate-500 rounded-2xl text-[11px] font-extrabold uppercase tracking-widest hover:bg-slate-100 transition-all flex items-center justify-center active:scale-95">
                                     Cancel
                                 </Link>
                                 {!isReady && (
@@ -693,7 +693,7 @@ export default function CreateCampaignPage() {
                                 <FiAlertCircle className="text-lg" />
                             </div>
                             <div>
-                                <p className="text-[10px] font-black text-rose-400 uppercase tracking-widest">Error</p>
+                                <p className="text-[10px] font-extrabold text-rose-400 uppercase tracking-widest">Error</p>
                                 <p className="text-sm font-bold text-rose-800 mt-0.5">{error}</p>
                             </div>
                         </motion.div>

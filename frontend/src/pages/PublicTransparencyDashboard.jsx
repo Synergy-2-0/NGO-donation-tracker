@@ -26,8 +26,8 @@ const MetricCard = ({ icon: Icon, label, value, subtext, color = 'orange' }) => 
         <Icon size={28} />
       </div>
       <div className="space-y-2">
-        <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.5em] italic leading-none">{label}</h3>
-        <p className="text-4xl font-black text-slate-950 tracking-tighter italic">{value}</p>
+        <h3 className="text-[10px] font-extrabold text-slate-500 uppercase tracking-[0.5em] leading-none">{label}</h3>
+        <p className="text-4xl font-extrabold text-slate-950 tracking-tighter">{value}</p>
         {subtext && <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest pt-4 border-t border-slate-50 mt-4 leading-none">{subtext}</p>}
       </div>
     </div>
@@ -66,7 +66,7 @@ export default function PublicTransparencyDashboard() {
         <div className="w-16 h-16 bg-tf-primary/10 rounded-full mb-4 flex items-center justify-center border border-tf-primary/20">
           <FiGlobe className="text-tf-primary animate-spin" size={32} />
         </div>
-        <p className="text-slate-400 font-black uppercase text-[10px] tracking-widest italic">Loading Verified Impact Data Hub...</p>
+        <p className="text-slate-400 font-extrabold uppercase text-[10px] tracking-widest">Loading Verified Impact Data Hub...</p>
       </div>
     </div>
   );
@@ -83,15 +83,15 @@ export default function PublicTransparencyDashboard() {
 
         <div className="max-w-7xl mx-auto text-center relative z-10 space-y-10">
           <div className="flex justify-center">
-            <span className="px-6 py-2 rounded-full border border-tf-primary/30 bg-tf-primary/5 text-tf-primary font-black text-[10px] tracking-[0.5em] uppercase mb-6 inline-flex items-center gap-3 italic">
+            <span className="px-6 py-2 rounded-full border border-tf-primary/30 bg-tf-primary/5 text-tf-primary font-extrabold text-[10px] tracking-[0.5em] uppercase mb-6 inline-flex items-center gap-3">
               <div className="w-1.5 h-1.5 rounded-full bg-tf-primary animate-pulse shadow-[0_0_10px_rgba(249,115,22,1)]" />
               Verified Impact Directory HUB
             </span>
           </div>
-          <h1 className="text-6xl lg:text-9xl font-black text-white mb-6 tracking-tighter leading-[0.85] italic uppercase selection:bg-tf-primary">
-            Absolute <br /> <span className="text-tf-primary italic font-serif">Integrity.</span>
+          <h1 className="text-6xl lg:text-9xl font-extrabold text-white mb-6 tracking-tighter leading-[0.85] uppercase selection:bg-tf-primary">
+            Absolute <br /> <span className="text-tf-primary font-extrabold">Integrity.</span>
           </h1>
-          <p className="text-xl text-slate-400 max-w-3xl mx-auto leading-relaxed italic border-t border-white/5 pt-12 mt-12 font-medium">
+          <p className="text-xl text-slate-400 max-w-3xl mx-auto leading-relaxed border-t border-white/5 pt-12 mt-12 font-medium">
             Connect with our community and support verified local projects with absolute clarity and ease. Follow every contribution toward direct community impact Hub.
           </p>
 
@@ -135,7 +135,7 @@ export default function PublicTransparencyDashboard() {
           {/* Map Section */}
           <div className="lg:col-span-2 h-[600px] bg-white rounded-[40px] border border-slate-100 shadow-2xl overflow-hidden relative group">
             <MapboxMap data={mapData} />
-            <div className="absolute top-8 left-8 z-[400] bg-slate-900 text-white px-4 py-2 rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-xl">
+            <div className="absolute top-8 left-8 z-[400] bg-slate-900 text-white px-4 py-2 rounded-2xl text-[10px] font-extrabold uppercase tracking-widest shadow-xl">
               Geospatial Transparency Monitor
             </div>
           </div>
@@ -143,29 +143,29 @@ export default function PublicTransparencyDashboard() {
           {/* Stats Sidebar */}
           <div className="bg-white rounded-[40px] border border-slate-100 shadow-sm p-10">
             <div className="flex items-center justify-between mb-10">
-              <h3 className="font-black text-slate-900 text-xl italic tracking-tighter flex items-center gap-2 uppercase">
+              <h3 className="font-extrabold text-slate-900 text-xl tracking-tighter flex items-center gap-2 uppercase">
                 <FiActivity className="text-tf-primary" /> Donor Ecosystem
               </h3>
-              <div className="flex items-center gap-1 text-[10px] font-black text-emerald-500 bg-emerald-50 px-3 py-1 rounded-full uppercase tracking-widest">
+              <div className="flex items-center gap-1 text-[10px] font-extrabold text-emerald-500 bg-emerald-50 px-3 py-1 rounded-full uppercase tracking-widest">
                 <FiTrendingUp size={10} /> +{donorStats?.donorGrowthRate || 0}%
               </div>
             </div>
 
             <div className="space-y-8">
               <div>
-                <p className="text-[10px] text-slate-400 font-black uppercase tracking-[0.2em] mb-3">Verified Network Members</p>
+                <p className="text-[10px] text-slate-400 font-extrabold uppercase tracking-[0.2em] mb-3">Verified Network Members</p>
                 <div className="flex items-end gap-3">
-                  <p className="text-5xl font-black text-slate-900 italic tracking-tighter tabular-nums">{donorStats?.totalDonors || 0}</p>
+                  <p className="text-5xl font-extrabold text-slate-900 tracking-tighter tabular-nums">{donorStats?.totalDonors || 0}</p>
                   <span className="text-[10px] font-bold text-slate-400 mb-2 uppercase tracking-widest">Growth Vector</span>
                 </div>
               </div>
 
               <div>
-                <p className="text-[10px] text-slate-400 font-black uppercase tracking-[0.2em] mb-4">Strategic Cause Distribution</p>
+                <p className="text-[10px] text-slate-400 font-extrabold uppercase tracking-[0.2em] mb-4">Strategic Cause Distribution</p>
                 <div className="space-y-5">
                   {(donorStats?.topCauses || ['Education', 'Healthcare', 'Environment']).map((cause, idx) => (
                     <div key={idx} className="flex flex-col gap-2">
-                      <div className="flex justify-between text-[11px] font-black text-slate-700 uppercase tracking-widest">
+                      <div className="flex justify-between text-[11px] font-extrabold text-slate-700 uppercase tracking-widest">
                         <span>{cause} Hub</span>
                         <span className="text-tf-primary tabular-nums">{95 - (idx * 15)}% Alignment</span>
                       </div>
@@ -182,8 +182,8 @@ export default function PublicTransparencyDashboard() {
 
               <div className="pt-6 border-t border-slate-50">
                 <div className="p-6 bg-slate-50 rounded-[32px] border border-slate-100 flex flex-col items-center">
-                  <p className="text-[9px] text-slate-400 font-black uppercase tracking-widest mb-2 italic">Average Gift Amount (LKR) Hub</p>
-                  <p className="text-4xl font-black text-tf-primary tabular-nums italic tracking-tighter">{(donorStats?.avgDonationAmount || 0).toLocaleString()}</p>
+                  <p className="text-[9px] text-slate-400 font-extrabold uppercase tracking-widest mb-2">Average Gift Amount (LKR) Hub</p>
+                  <p className="text-4xl font-extrabold text-tf-primary tabular-nums tracking-tighter">{(donorStats?.avgDonationAmount || 0).toLocaleString()}</p>
                 </div>
               </div>
             </div>
@@ -197,7 +197,7 @@ export default function PublicTransparencyDashboard() {
           {/* Trust Leaderboard */}
           <div className="bg-white rounded-[40px] border border-slate-100 shadow-sm p-10">
             <div className="flex items-center justify-between mb-10">
-              <h4 className="font-black text-slate-900 text-xl italic tracking-tighter flex items-center gap-2 uppercase">
+              <h4 className="font-extrabold text-slate-900 text-xl tracking-tighter flex items-center gap-2 uppercase">
                 <FiShield className="text-tf-primary" /> Partner Trust Rankings Hub
               </h4>
               <FiTrendingUp className="text-slate-300" />
@@ -206,19 +206,19 @@ export default function PublicTransparencyDashboard() {
               {(metrics?.leaderboard || []).length > 0 ? metrics.leaderboard.map((ngo, i) => (
                 <div key={i} className="flex items-center justify-between p-5 rounded-[24px] border border-slate-50 hover:bg-slate-50/50 transition-colors group">
                   <div className="flex items-center gap-4">
-                    <span className="text-xs font-black text-slate-200 w-5 tabular-nums">0{i + 1}</span>
+                    <span className="text-xs font-extrabold text-slate-200 w-5 tabular-nums">0{i + 1}</span>
                     <div>
-                      <p className="text-sm font-black text-slate-800 uppercase tracking-tight group-hover:text-tf-primary transition-colors italic">{ngo.name}</p>
-                      <p className="text-[9px] text-slate-400 uppercase font-black tracking-widest mt-0.5">{ngo.level} Status Hub</p>
+                      <p className="text-sm font-extrabold text-slate-800 uppercase tracking-tight group-hover:text-tf-primary transition-colors">{ngo.name}</p>
+                      <p className="text-[9px] text-slate-400 uppercase font-extrabold tracking-widest mt-0.5">{ngo.level} Status Hub</p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-lg font-black text-tf-primary italic tabular-nums">{ngo.score}<span className="text-[10px] ml-0.5">%</span></p>
-                    <p className="text-[8px] text-slate-400 font-black uppercase tracking-widest">Trust Rating Hub</p>
+                    <p className="text-lg font-extrabold text-tf-primary tabular-nums">{ngo.score}<span className="text-[10px] ml-0.5">%</span></p>
+                    <p className="text-[8px] text-slate-400 font-extrabold uppercase tracking-widest">Trust Rating Hub</p>
                   </div>
                 </div>
               )) : (
-                <div className="py-20 text-center text-slate-300 font-black uppercase text-[10px] tracking-widest italic">
+                <div className="py-20 text-center text-slate-300 font-extrabold uppercase text-[10px] tracking-widest">
                   Calculating Reputation Metrics Hub...
                 </div>
               )}
@@ -227,7 +227,7 @@ export default function PublicTransparencyDashboard() {
 
           <div className="bg-white rounded-[40px] border border-slate-100 shadow-sm p-10">
             <div className="flex items-center justify-between mb-10">
-              <h4 className="font-black text-slate-900 text-xl italic tracking-tighter flex items-center gap-2 uppercase">
+              <h4 className="font-extrabold text-slate-900 text-xl tracking-tighter flex items-center gap-2 uppercase">
                 <FiTrendingUp className="text-tf-primary" /> Funding Growth Over Time Hub
               </h4>
               <FiActivity className="text-slate-300" />
@@ -252,14 +252,14 @@ export default function PublicTransparencyDashboard() {
                 </AreaChart>
               </ResponsiveContainer>
             </div>
-            <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest text-center mt-6 italic">Overview of completed community support actions Hub</p>
+            <p className="text-[9px] font-extrabold text-slate-300 uppercase tracking-widest text-center mt-6">Overview of completed community support actions Hub</p>
           </div>
         </div>
 
         <div className="bg-slate-950 rounded-[50px] p-16 text-center space-y-8 relative overflow-hidden group">
           <div className="absolute top-0 right-0 w-80 h-80 bg-tf-primary/10 rounded-full blur-[100px] -mr-40 -mt-40 animate-pulse" />
-          <h3 className="text-4xl font-black text-white italic tracking-tighter selection:bg-tf-primary mt-4">Verified Impact Progress Hub</h3>
-          <p className="text-slate-400 text-sm max-w-2xl mx-auto leading-relaxed italic border-x border-white/5 px-10">
+          <h3 className="text-4xl font-extrabold text-white tracking-tighter selection:bg-tf-primary mt-4">Verified Impact Progress Hub</h3>
+          <p className="text-slate-400 text-sm max-w-2xl mx-auto leading-relaxed border-x border-white/5 px-10">
             Every metric in this dashboard is derived from the live partner records. We provide absolute transparency into the use of charity funds to ensure maximum community impact Hub.
           </p>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto pt-8 border-t border-white/5">
@@ -270,8 +270,8 @@ export default function PublicTransparencyDashboard() {
               { label: 'Directory', val: 'Public' }
             ].map((s, i) => (
               <div key={i}>
-                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">{s.label}</p>
-                <p className="font-black text-tf-primary italic">{s.val}</p>
+                <p className="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest mb-1">{s.label}</p>
+                <p className="font-extrabold text-tf-primary">{s.val}</p>
               </div>
             ))}
           </div>

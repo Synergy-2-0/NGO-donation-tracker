@@ -77,15 +77,15 @@ export default function CampaignProgressSection({ campaignId, campaignStatus }) 
                         </svg>
                     </div>
                     <div className="space-y-1">
-                        <h3 className="text-3xl font-black text-slate-950 tracking-tighter uppercase italic leading-none">Operational Logs</h3>
-                        <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.4em] leading-none italic">Verified Milestone Synchronization</p>
+                        <h3 className="text-3xl font-extrabold text-slate-950 tracking-tighter uppercase  leading-none">Operational Logs</h3>
+                        <p className="text-[10px] font-extrabold text-slate-300 uppercase tracking-[0.4em] leading-none ">Verified Milestone Synchronization</p>
                     </div>
                 </div>
                 
                 {campaignStatus === 'active' && !showForm && (
                     <button
                         onClick={() => setShowForm(true)}
-                        className="px-10 py-5 bg-slate-950 text-white text-[11px] font-black uppercase tracking-[0.4em] rounded-[1.5rem] hover:bg-tf-primary transition-all duration-500 shadow-xl active:scale-95 flex items-center gap-4 group/add"
+                        className="px-10 py-5 bg-slate-950 text-white text-[11px] font-extrabold uppercase tracking-[0.4em] rounded-[1.5rem] hover:bg-tf-primary transition-all duration-500 shadow-xl active:scale-95 flex items-center gap-4 group/add"
                     >
                         <svg className="w-4 h-4 group-hover/add:rotate-90 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" /></svg>
                         Initialize Entry
@@ -103,8 +103,8 @@ export default function CampaignProgressSection({ campaignId, campaignStatus }) 
                                    <svg className="w-5 h-5 text-rose-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                                 </div>
                                 <div className="space-y-1">
-                                   <p className="text-[10px] font-black text-rose-400 uppercase tracking-widest leading-none italic">Log Failure</p>
-                                   <p className="text-[13px] text-rose-700 font-bold tracking-tight italic">{error}</p>
+                                   <p className="text-[10px] font-extrabold text-rose-400 uppercase tracking-widest leading-none ">Log Failure</p>
+                                   <p className="text-[13px] text-rose-700 font-bold tracking-tight ">{error}</p>
                                 </div>
                             </div>
                         )}
@@ -114,8 +114,8 @@ export default function CampaignProgressSection({ campaignId, campaignStatus }) 
                                    <svg className="w-5 h-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                                 </div>
                                 <div className="space-y-1">
-                                   <p className="text-[10px] font-black text-emerald-400 uppercase tracking-widest leading-none italic">Entry Synchronized</p>
-                                   <p className="text-[13px] text-emerald-700 font-bold tracking-tight italic">{success}</p>
+                                   <p className="text-[10px] font-extrabold text-emerald-400 uppercase tracking-widest leading-none ">Entry Synchronized</p>
+                                   <p className="text-[13px] text-emerald-700 font-bold tracking-tight ">{success}</p>
                                 </div>
                             </div>
                         )}
@@ -127,11 +127,11 @@ export default function CampaignProgressSection({ campaignId, campaignStatus }) 
                     <form onSubmit={handleSubmit} className="bg-slate-50 rounded-[3rem] p-12 border border-slate-100 shadow-inner space-y-10 group/form">
                         <div className="flex items-center gap-4 mb-2">
                              <div className="w-2 h-2 rounded-full bg-tf-primary animate-pulse" />
-                             <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] italic">Secure Milestone Initialization</p>
+                             <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-[0.4em] ">Secure Milestone Initialization</p>
                         </div>
 
                         <div className="space-y-4">
-                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] ml-4 italic">Description of Achievement</label>
+                            <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-[0.4em] ml-4 ">Description of Achievement</label>
                             <textarea
                                 name="description"
                                 value={formData.description}
@@ -144,7 +144,7 @@ export default function CampaignProgressSection({ campaignId, campaignStatus }) 
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                             <div className="space-y-4">
-                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] ml-4 italic">Capital Mobilized (LKR)</label>
+                                <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-[0.4em] ml-4 ">Capital Mobilized (LKR)</label>
                                 <div className="relative">
                                     <input
                                         type="number"
@@ -152,13 +152,13 @@ export default function CampaignProgressSection({ campaignId, campaignStatus }) 
                                         value={formData.amountRaised}
                                         onChange={handleChange}
                                         placeholder="0.00"
-                                        className="w-full bg-white border border-slate-100 rounded-3xl px-12 py-5 text-2xl font-black text-tf-primary focus:outline-none focus:border-tf-primary transition-all shadow-inner italic tabular-nums tracking-tighter"
+                                        className="w-full bg-white border border-slate-100 rounded-3xl px-12 py-5 text-2xl font-extrabold text-tf-primary focus:outline-none focus:border-tf-primary transition-all shadow-inner  tabular-nums tracking-tighter"
                                     />
-                                    <span className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-200 font-black text-lg group-hover/form:text-tf-primary/20 transition-colors">¤</span>
+                                    <span className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-200 font-extrabold text-lg group-hover/form:text-tf-primary/20 transition-colors">¤</span>
                                 </div>
                             </div>
                             <div className="space-y-4">
-                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] ml-4 italic">Lives Impacted</label>
+                                <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-[0.4em] ml-4 ">Lives Impacted</label>
                                 <div className="relative">
                                     <input
                                         type="number"
@@ -166,15 +166,15 @@ export default function CampaignProgressSection({ campaignId, campaignStatus }) 
                                         value={formData.beneficiaries}
                                         onChange={handleChange}
                                         placeholder="0"
-                                        className="w-full bg-white border border-slate-100 rounded-3xl px-12 py-5 text-2xl font-black text-indigo-500 focus:outline-none focus:border-indigo-400 transition-all shadow-inner italic tabular-nums tracking-tighter"
+                                        className="w-full bg-white border border-slate-100 rounded-3xl px-12 py-5 text-2xl font-extrabold text-indigo-500 focus:outline-none focus:border-indigo-400 transition-all shadow-inner  tabular-nums tracking-tighter"
                                     />
-                                    <span className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-200 font-black text-lg group-hover/form:text-indigo-400/20 transition-colors">¶</span>
+                                    <span className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-200 font-extrabold text-lg group-hover/form:text-indigo-400/20 transition-colors">¶</span>
                                 </div>
                             </div>
                         </div>
 
                         <div className="space-y-4">
-                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] ml-4 italic">Evidence Repository</label>
+                            <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-[0.4em] ml-4 ">Evidence Repository</label>
                             <label className="relative flex items-center gap-6 px-10 py-6 bg-white border border-dashed border-slate-200 rounded-[2rem] cursor-pointer hover:border-tf-primary hover:bg-tf-primary/5 transition-all duration-500 group/evidence overflow-hidden">
                                 <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center shrink-0 group-hover/evidence:scale-110 group-hover/evidence:bg-white transition-all shadow-inner">
                                     <svg className="w-6 h-6 text-slate-200 group-hover/evidence:text-tf-primary transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -182,10 +182,10 @@ export default function CampaignProgressSection({ campaignId, campaignStatus }) 
                                     </svg>
                                 </div>
                                 <div className="space-y-1">
-                                    <p className="text-[11px] font-black text-slate-900 group-hover/evidence:text-tf-primary transition-colors uppercase tracking-widest leading-none">
+                                    <p className="text-[11px] font-extrabold text-slate-900 group-hover/evidence:text-tf-primary transition-colors uppercase tracking-widest leading-none">
                                         {formData.evidence.length > 0 ? `${formData.evidence.length} Artifacts Prepared` : 'Upload Strategic Evidence'}
                                     </p>
-                                    <p className="text-[9px] text-slate-400 font-black uppercase tracking-widest italic">Images, PDFs, Geo-logs (Limited Support)</p>
+                                    <p className="text-[9px] text-slate-400 font-extrabold uppercase tracking-widest ">Images, PDFs, Geo-logs (Limited Support)</p>
                                 </div>
                                 <input type="file" name="evidence" multiple onChange={handleChange} className="hidden" />
                             </label>
@@ -195,14 +195,14 @@ export default function CampaignProgressSection({ campaignId, campaignStatus }) 
                             <button
                                 type="button"
                                 onClick={() => { setShowForm(false); setError(''); }}
-                                className="px-10 py-5 bg-white border border-slate-100 text-slate-400 text-[10px] font-black uppercase tracking-[0.4em] rounded-[1.5rem] hover:bg-slate-50 hover:text-slate-900 transition-all duration-500 active:scale-95 italic text-center"
+                                className="px-10 py-5 bg-white border border-slate-100 text-slate-400 text-[10px] font-extrabold uppercase tracking-[0.4em] rounded-[1.5rem] hover:bg-slate-50 hover:text-slate-900 transition-all duration-500 active:scale-95  text-center"
                             >
                                 Abort Entry
                             </button>
                             <button
                                 type="submit"
                                 disabled={submitting}
-                                className="px-12 py-5 bg-slate-950 text-white text-[10px] font-black uppercase tracking-[0.5em] rounded-[1.5rem] hover:bg-tf-primary transition-all duration-500 shadow-xl disabled:opacity-50 active:scale-95 flex items-center gap-4"
+                                className="px-12 py-5 bg-slate-950 text-white text-[10px] font-extrabold uppercase tracking-[0.5em] rounded-[1.5rem] hover:bg-tf-primary transition-all duration-500 shadow-xl disabled:opacity-50 active:scale-95 flex items-center gap-4"
                             >
                                 {submitting ? (
                                     <>
@@ -219,7 +219,7 @@ export default function CampaignProgressSection({ campaignId, campaignStatus }) 
                 {loading ? (
                     <div className="py-20 flex flex-col items-center justify-center space-y-6">
                         <div className="w-16 h-16 border-4 border-slate-50 border-t-tf-primary rounded-full animate-spin shadow-inner" />
-                        <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.5em] animate-pulse">Syncing Mission History...</p>
+                        <p className="text-[10px] font-extrabold text-slate-300 uppercase tracking-[0.5em] animate-pulse">Syncing Mission History...</p>
                     </div>
                 ) : logs.length === 0 ? (
                     <div className="py-24 text-center group/empty">
@@ -228,8 +228,8 @@ export default function CampaignProgressSection({ campaignId, campaignStatus }) 
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                             </svg>
                         </div>
-                        <h4 className="text-xl font-bold text-slate-400 tracking-tight italic">Null Progress Detected</h4>
-                        <p className="text-[10px] text-slate-300 font-black uppercase tracking-[0.4em] mt-2 italic">Initial protocol requires active engagement logs.</p>
+                        <h4 className="text-xl font-bold text-slate-400 tracking-tight ">Null Progress Detected</h4>
+                        <p className="text-[10px] text-slate-300 font-extrabold uppercase tracking-[0.4em] mt-2 ">Initial protocol requires active engagement logs.</p>
                     </div>
                 ) : (
                     <div className="relative space-y-10 pl-16">
@@ -249,11 +249,11 @@ export default function CampaignProgressSection({ campaignId, campaignStatus }) 
                                         <div className="flex-1 space-y-3">
                                              <div className="flex items-center gap-3">
                                                  <div className="w-1.5 h-1.5 rounded-full bg-tf-primary" />
-                                                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest tabular-nums italic">
+                                                 <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest tabular-nums ">
                                                      {new Date(log.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
                                                  </p>
                                              </div>
-                                            <p className="text-base text-slate-700 font-bold leading-relaxed italic tracking-tight">{log.description}</p>
+                                            <p className="text-base text-slate-700 font-bold leading-relaxed  tracking-tight">{log.description}</p>
                                         </div>
                                     </div>
 
@@ -261,19 +261,19 @@ export default function CampaignProgressSection({ campaignId, campaignStatus }) 
                                         {log.amountRaised > 0 && (
                                             <div className="px-6 py-2 bg-tf-primary/5 border border-tf-primary/10 rounded-full flex items-center gap-2">
                                                 <span className="w-1 h-1 bg-tf-primary rounded-full shadow-[0_0_5px_rgba(255,138,0,0.8)]" />
-                                                <p className="text-[9px] font-black text-tf-primary uppercase tracking-widest tabular-nums italic">LKR {log.amountRaised.toLocaleString()} Stabilized</p>
+                                                <p className="text-[9px] font-extrabold text-tf-primary uppercase tracking-widest tabular-nums ">LKR {log.amountRaised.toLocaleString()} Stabilized</p>
                                             </div>
                                         )}
                                         {log.beneficiaries > 0 && (
                                             <div className="px-6 py-2 bg-indigo-50 border border-indigo-100 rounded-full flex items-center gap-2">
                                                 <span className="w-1 h-1 bg-indigo-500 rounded-full shadow-[0_0_5px_rgba(99,102,241,0.8)]" />
-                                                <p className="text-[9px] font-black text-indigo-600 uppercase tracking-widest tabular-nums italic">{log.beneficiaries} Lives Impacted</p>
+                                                <p className="text-[9px] font-extrabold text-indigo-600 uppercase tracking-widest tabular-nums ">{log.beneficiaries} Lives Impacted</p>
                                             </div>
                                         )}
                                         {log.evidence?.length > 0 && (
                                             <div className="px-6 py-2 bg-slate-50 border border-slate-100 rounded-full flex items-center gap-2">
                                                 <svg className="w-3 h-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" /></svg>
-                                                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest tabular-nums italic">{log.evidence.length} Protocol Artifacts</p>
+                                                <p className="text-[9px] font-extrabold text-slate-400 uppercase tracking-widest tabular-nums ">{log.evidence.length} Protocol Artifacts</p>
                                             </div>
                                         )}
                                     </div>

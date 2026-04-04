@@ -19,16 +19,16 @@ export default function PublicImpactPage() {
         <div className="max-w-[1400px] mx-auto text-center space-y-12 relative z-10">
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} className="space-y-10">
             <div className="flex justify-center">
-               <span className="px-6 py-2 rounded-full border border-orange-500/30 bg-orange-500/5 text-orange-500 font-black text-[10px] tracking-[0.6em] uppercase mb-6 inline-flex items-center gap-3 italic">
+               <span className="px-6 py-2 rounded-full border border-orange-500/30 bg-orange-500/5 text-orange-500 font-extrabold text-[10px] tracking-[0.6em] uppercase mb-6 inline-flex items-center gap-3 ">
                   <div className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse" />
                   Verified Global Impact Feed
                </span>
             </div>
-            <h1 className="text-6xl md:text-9xl font-black text-white tracking-tighter uppercase italic leading-[0.8] selection:bg-orange-500">
-               Real <br /> <span className="text-tf-primary italic underline underline-offset-8 decoration-white/10">Humanitarian</span> <br /> Outcomes.
+            <h1 className="text-6xl md:text-9xl font-extrabold text-white tracking-tighter uppercase  leading-[0.8] selection:bg-orange-500">
+               Real <br /> <span className="text-tf-primary  underline underline-offset-8 decoration-white/10">Humanitarian</span> <br /> Outcomes.
             </h1>
           </motion.div>
-          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="text-xl text-white/40 font-medium italic leading-relaxed max-w-3xl mx-auto border-t border-white/5 pt-12 mt-12 lowercase tracking-tight">
+          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="text-xl text-white/40 font-medium  leading-relaxed max-w-3xl mx-auto border-t border-white/5 pt-12 mt-12 lowercase tracking-tight">
             every philanthropic asset deployed via transfund is a direct investment in global resilience. we track and verify outcomes with absolute precision.
           </motion.p>
         </div>
@@ -49,8 +49,8 @@ export default function PublicImpactPage() {
                transition={{ delay: i * 0.1 }}
                className="space-y-4 group cursor-crosshair pb-8 lg:pb-0"
             >
-               <div className={`text-5xl md:text-7xl font-display font-bold italic tracking-tighter tabular-nums group-hover:scale-105 transition-transform duration-700 ${stat.color}`}>{stat.value}</div>
-               <div className="text-[10px] font-bold text-slate-300 uppercase tracking-[0.4em] italic">{stat.label}</div>
+               <div className={`text-5xl md:text-7xl font-display font-bold  tracking-tighter tabular-nums group-hover:scale-105 transition-transform duration-700 ${stat.color}`}>{stat.value}</div>
+               <div className="text-[10px] font-bold text-slate-300 uppercase tracking-[0.4em] ">{stat.label}</div>
             </motion.div>
          ))}
       </section>
@@ -76,12 +76,12 @@ export default function PublicImpactPage() {
                    className="bg-white rounded-[3.5rem] p-16 space-y-12 relative overflow-hidden group hover:shadow-4xl transition-all duration-700 border border-slate-100/60"
                  >
                     <div className="space-y-6 flex-1">
-                       <h3 className="text-2xl font-display font-bold italic tracking-tighter text-tf-dark uppercase group-hover:text-tf-primary transition-colors">{item.title}</h3>
-                       <p className="text-slate-500 font-serif font-medium leading-relaxed italic text-sm">{item.desc}</p>
+                       <h3 className="text-2xl font-display font-bold  tracking-tighter text-tf-dark uppercase group-hover:text-tf-primary transition-colors">{item.title}</h3>
+                       <p className="text-slate-500 font-serif font-medium leading-relaxed  text-sm">{item.desc}</p>
                     </div>
                     <div className="pt-10 border-t border-slate-50 flex items-center justify-between">
                        <span className="text-tf-primary font-bold text-[9px] uppercase tracking-[0.3em]">Impact Confirmed</span>
-                       <span className="text-tf-dark font-display font-bold italic tracking-tighter text-xl tabular-nums leading-none">{item.metric}</span>
+                       <span className="text-tf-dark font-display font-bold  tracking-tighter text-xl tabular-nums leading-none">{item.metric}</span>
                     </div>
                  </motion.div>
                ))}

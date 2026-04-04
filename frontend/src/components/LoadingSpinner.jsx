@@ -50,7 +50,7 @@ export default function LoadingSpinner({ message = 'Loading...', size = 'md' }) 
 
       <div className="flex flex-col items-center gap-4">
         <div className="flex flex-col items-center">
-           <p className="text-[10px] font-black uppercase tracking-[0.5em] text-slate-900 italic translate-x-[0.25em]">
+           <p className="text-[10px] font-extrabold uppercase tracking-[0.5em] text-slate-900  translate-x-[0.25em]">
              {message}
            </p>
            <div className="w-12 h-0.5 bg-slate-100 mt-2 relative overflow-hidden rounded-full">
@@ -62,7 +62,7 @@ export default function LoadingSpinner({ message = 'Loading...', size = 'md' }) 
            </div>
         </div>
         
-        <p className="text-[9px] font-bold text-slate-300 uppercase tracking-widest italic opacity-50">
+        <p className="text-[9px] font-bold text-slate-300 uppercase tracking-widest  opacity-50">
           Community Infrastructure Sync Hub
         </p>
       </div>

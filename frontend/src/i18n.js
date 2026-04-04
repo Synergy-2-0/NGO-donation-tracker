@@ -6,12 +6,12 @@ const resources = {
   en: {
     translation: {
       navbar: {
-        dashboard: "Dashboard",
-        campaigns: "Causes",
-        pledges: "My Commitments",
-        history: "Donation History",
-        profile: "My Profile",
-        settings: "Settings",
+        dashboard: "Intelligence Hub",
+        campaigns: "Missions",
+        pledges: "Strategic Pledges",
+        history: "Impact History",
+        profile: "Supporter Profile",
+        settings: "Global Settings",
         logout: "LOGOUT",
         language: "Language",
         overview: "Overview",
@@ -20,9 +20,9 @@ const resources = {
         partnerships: "Partnerships",
         my_agreements: "My Agreements",
         partner_list: "Partner List",
-        account: "Account",
-        donors: "Supporters",
-        donor_list: "Supporter List",
+        account: "Corporate Account",
+        donors: "Support Registry",
+        donor_list: "Institutional Supporter List",
         all_pledges: "All Commitments",
         donor_data: "Supporter Records",
         missions: "Projects",
@@ -57,9 +57,9 @@ const resources = {
         how_it_works: "How it Works",
         impact_hub: "Impact Center",
         partner_list: "Partner List",
-        login: "Login",
-        sign_in: "Sign In",
-        get_started: "Get Started",
+        login: "Authorize",
+        sign_in: "Establish Access",
+        get_started: "Begin Mission",
         discard: "Discard",
         admin_portal: "Admin Panel",
         ngo_dashboard: "Admin Dashboard",
@@ -69,10 +69,10 @@ const resources = {
       sidebar: {
         sections: {
           management: "MANAGEMENT CENTER",
-          partnership_core: "PARTNERSHIPS",
-          intel_ai: "COMMUNITY UPDATES",
-          institutional: "MEMBER",
-          overview: "Overview",
+          partnership_core: "ALLIANCES",
+          intel_ai: "COMMUNITY INTELLIGENCE",
+          institutional: "INSTITUTIONAL MEMBER",
+          overview: "Mission Overview",
           donors: "Supporters",
           missions: "Projects",
           partners: "Organizations",
@@ -107,39 +107,39 @@ const resources = {
         loading: "Loading active causes..."
       },
       dashboard: {
-        welcome: "Welcome back",
-        tagline: "Your contributions are actively supporting verified causes.",
+        welcome: "Philanthropic Overview",
+        tagline: "Your verified strategic capital is driving sustainable change across global humanitarian missions.",
         header: {
-          badge: "SUPPORTER",
-          security: "Your account is fully protected"
+          badge: "CERTIFIED SUPPORTER",
+          security: "Institutional-Grade Security Active"
         },
         stats: {
-           asset_impact: "My Impact",
-           verified_deployments: "Verified Contributions",
-           active_missions: "Active Projects",
-           community_nodes: "Support Locations",
-           strategy_pledges: "My Commitments",
-           recurring_commitments: "Monthly Giving",
-           trust_ranking: "Trust Rating",
-           supporter_integrity: "Account Status",
-           active_campaigns: "Active Partners"
+           asset_impact: "Cumulative Philanthropic Impact",
+           verified_deployments: "Verified Capital Deployments",
+           active_missions: "Active Strategic Missions",
+           community_nodes: "Operational Impact Nodes",
+           strategy_pledges: "Strategic Commitments",
+           recurring_commitments: "Sustainable Recurring Support",
+           trust_ranking: "Institutional Trust Index",
+           supporter_integrity: "Supporter Integrity Status",
+           active_campaigns: "Live Humanitarian Partners"
         },
         timeline: {
-          title: "IMPACT TIMELINE",
-          subtitle: "A history of your contributions and the difference they made.",
-          cycle: "6 MONTH OVERVIEW"
+          title: "IMPACT EXECUTION TIMELINE",
+          subtitle: "Historical record of verified capital deployment and mission results.",
+          cycle: "6-MONTH FISCAL OVERVIEW"
         },
         insights: {
-          title: "Supporter Insights",
-          hub: "COMMUNITY UPDATES",
-          live: "LIVE ANALYSIS",
-          prediction: "FORECASTS",
-          recommendation: "DISCOVER CAUSES",
-          match: "{{percent}}% MATCH"
+          title: "Supporter Intelligence",
+          hub: "ANALYTICS HUB",
+          live: "LIVE MISSION ANALYSIS",
+          prediction: "IMPACT FORECASTS",
+          recommendation: "STRATEGIC MATCHES",
+          match: "{{percent}}% ALLIANCE MATCH"
         },
         allocation: {
-          title: "Support Breakdown",
-          subtitle: "Types of causes you have helped."
+          title: "Capital Allocation Breakdown",
+          subtitle: "Distribution of support across varied humanitarian sectors."
         },
         activity: {
           title: "Recent Impact",
@@ -264,11 +264,11 @@ const resources = {
       },
       home: {
         hero: {
-          badge_verified: "VERIFIED CHARITY PLATFORM",
+          badge_verified: "VERIFIED HUMANITARIAN REGISTRY",
           badge_active: "{{role}} PORTAL ACTIVE",
           title_welcome: "Welcome back,",
-          title_main_1: "Modern Giving.",
-          title_main_2: "Easy Trust.",
+          title_main_1: "Verified Impact.",
+          title_main_2: "Strategic Transparency.",
           subtitle: "Connect with the community and support verified local humanitarian projects with absolute clarity and ease.",
           explore_button: "Browse Causes",
           join_button: "Join Today",
@@ -335,20 +335,20 @@ const resources = {
         }
       },
       partner_dashboard: {
-        welcome: "Community Overview",
-        tagline: "Your verified partnerships and support distribution.",
-        overview_badge: "ORGANIZATION OVERVIEW",
-        verified_badge: "Verified Account",
-        pending_badge: "Account Pending",
-        manage_settings: "Manage Settings",
-        active_agreements: "Active Support Plans",
-        pending_requests: "Reviewing Requests",
-        total_contributions: "Total Support Received",
-        org_health: "Organization Status",
-        partnerships_in_progress: "Support plans in progress",
-        awaiting_review: "Awaiting review",
-        lifetime_total: "Lifetime support total",
-        verification_level: "Trust Level",
+        welcome: "Partner Operational Overview",
+        tagline: "Verified partnership management and mission-critical asset distribution.",
+        overview_badge: "INSTITUTIONAL DASHBOARD",
+        verified_badge: "Verified Institution",
+        pending_badge: "Verification Pending",
+        manage_settings: "Configure Profile",
+        active_agreements: "Live Strategic Alliances",
+        pending_requests: "Reviewing Proposals",
+        total_contributions: "Cumulative Partnership Funding",
+        org_health: "Institutional Integrity",
+        partnerships_in_progress: "Active mission alliances",
+        awaiting_review: "Proposals in review",
+        lifetime_total: "Lifetime support volume",
+        verification_level: "Verification Protocol Level",
         recent_activity: "Recent Updates",
         view_all: "View All Support Plans",
         table: {

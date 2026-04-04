@@ -130,8 +130,8 @@ export default function PartnershipFormModal({ onClose, onSave, initialCampaignI
             <div className="bg-white rounded-[40px] shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col animate-scaleIn">
                 <div className="flex items-center justify-between p-8 border-b border-slate-50 shrink-0">
                     <div>
-                        <p className="text-[10px] font-black uppercase tracking-[.2em] text-slate-400 mb-1">Mission Alliance Proposal</p>
-                        <h3 className="text-2xl font-black text-slate-900 tracking-tight italic">Propose Partnership</h3>
+                        <p className="text-[10px] font-extrabold uppercase tracking-[.2em] text-slate-400 mb-1">Mission Alliance Proposal</p>
+                        <h3 className="text-2xl font-extrabold text-slate-900 tracking-tight ">Propose Partnership</h3>
                     </div>
                     <button onClick={onClose} className="w-12 h-12 flex items-center justify-center bg-slate-50 hover:bg-rose-50 rounded-2xl text-slate-400 hover:text-rose-500 transition-all active:scale-90">
                         <FiX className="text-xl" />
@@ -148,7 +148,7 @@ export default function PartnershipFormModal({ onClose, onSave, initialCampaignI
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         {/* Title Field */ }
                         <div className="md:col-span-2 space-y-2 group">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 group-focus-within:text-tf-primary transition-colors flex items-center gap-1.5">
+                            <label className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 group-focus-within:text-tf-primary transition-colors flex items-center gap-1.5">
                                 <FiFileText /> Agreement Title
                             </label>
                             <input 
@@ -156,13 +156,13 @@ export default function PartnershipFormModal({ onClose, onSave, initialCampaignI
                                 placeholder="e.g. 2024 Educational Support Alliance"
                                 value={form.title}
                                 onChange={e => setForm({...form, title: e.target.value})}
-                                className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 text-base font-black text-slate-800 placeholder:text-slate-300 focus:outline-none focus:ring-4 focus:ring-tf-primary/5 transition-all outline-none italic"
+                                className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 text-base font-extrabold text-slate-800 placeholder:text-slate-300 focus:outline-none focus:ring-4 focus:ring-tf-primary/5 transition-all outline-none "
                             />
                         </div>
 
                         {/* Campaign Selection */}
                         <div className="md:col-span-2 space-y-2 group">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 group-focus-within:text-tf-primary transition-colors flex items-center gap-1.5">
+                            <label className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 group-focus-within:text-tf-primary transition-colors flex items-center gap-1.5">
                                 <FiTarget /> Select Campaign Mission
                             </label>
                             <div className="relative">
@@ -170,7 +170,7 @@ export default function PartnershipFormModal({ onClose, onSave, initialCampaignI
                                     value={form.campaignId}
                                     disabled={!!initialCampaignId || fetching}
                                     onChange={e => setForm({...form, campaignId: e.target.value})}
-                                    className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 text-sm font-black text-slate-800 focus:outline-none focus:ring-4 focus:ring-tf-primary/5 transition-all appearance-none cursor-pointer disabled:opacity-60 outline-none italic"
+                                    className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 text-sm font-extrabold text-slate-800 focus:outline-none focus:ring-4 focus:ring-tf-primary/5 transition-all appearance-none cursor-pointer disabled:opacity-60 outline-none "
                                 >
                                     <option value="">{fetching ? 'Loading missions...' : 'Choose a mission...'}</option>
                                     {campaigns.map(c => (
@@ -185,13 +185,13 @@ export default function PartnershipFormModal({ onClose, onSave, initialCampaignI
 
                         {/* Partnership Type */}
                         <div className="space-y-2 group">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 group-focus-within:text-tf-primary transition-colors flex items-center gap-1.5">
+                            <label className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 group-focus-within:text-tf-primary transition-colors flex items-center gap-1.5">
                                 <FiTag /> Contribution Type
                             </label>
                             <select 
                                 value={form.partnershipType}
                                 onChange={e => setForm({...form, partnershipType: e.target.value})}
-                                className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 text-sm font-black text-slate-800 focus:outline-none focus:ring-4 focus:ring-tf-primary/5 transition-all appearance-none cursor-pointer outline-none italic"
+                                className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 text-sm font-extrabold text-slate-800 focus:outline-none focus:ring-4 focus:ring-tf-primary/5 transition-all appearance-none cursor-pointer outline-none "
                             >
                                 {PARTNERSHIP_TYPES.map(t => <option key={t} value={t}>{t.charAt(0).toUpperCase() + t.slice(1)} Support</option>)}
                             </select>
@@ -199,7 +199,7 @@ export default function PartnershipFormModal({ onClose, onSave, initialCampaignI
 
                         {/* Amount */}
                         <div className="space-y-2 group">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 group-focus-within:text-tf-primary transition-colors flex items-center gap-1.5">
+                            <label className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 group-focus-within:text-tf-primary transition-colors flex items-center gap-1.5">
                                 <FiDollarSign /> Total Commitment (LKR)
                             </label>
                             <input 
@@ -207,33 +207,33 @@ export default function PartnershipFormModal({ onClose, onSave, initialCampaignI
                                 placeholder="e.g. 500000"
                                 value={form.totalValue}
                                 onChange={e => setForm({...form, totalValue: e.target.value})}
-                                className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 text-sm font-black text-slate-800 placeholder:text-slate-300 focus:outline-none focus:ring-4 focus:ring-tf-primary/5 transition-all outline-none italic"
+                                className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 text-sm font-extrabold text-slate-800 placeholder:text-slate-300 focus:outline-none focus:ring-4 focus:ring-tf-primary/5 transition-all outline-none "
                             />
                         </div>
 
                         {/* Start Date */}
                         <div className="space-y-2 group">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 group-focus-within:text-tf-primary transition-colors flex items-center gap-1.5">
+                            <label className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 group-focus-within:text-tf-primary transition-colors flex items-center gap-1.5">
                                 <FiCalendar /> Lifecycle Start
                             </label>
                             <input 
                                 type="date"
                                 value={form.startDate}
                                 onChange={e => setForm({...form, startDate: e.target.value})}
-                                className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 text-sm font-black text-slate-800 focus:outline-none focus:ring-4 focus:ring-tf-primary/5 transition-all outline-none italic"
+                                className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 text-sm font-extrabold text-slate-800 focus:outline-none focus:ring-4 focus:ring-tf-primary/5 transition-all outline-none "
                             />
                         </div>
 
                         {/* End Date */}
                         <div className="space-y-2 group">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 group-focus-within:text-tf-primary transition-colors flex items-center gap-1.5">
+                            <label className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 group-focus-within:text-tf-primary transition-colors flex items-center gap-1.5">
                                 <FiCalendar /> Lifecycle End
                             </label>
                             <input 
                                 type="date"
                                 value={form.endDate}
                                 onChange={e => setForm({...form, endDate: e.target.value})}
-                                className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 text-sm font-black text-slate-800 focus:outline-none focus:ring-4 focus:ring-tf-primary/5 transition-all outline-none italic"
+                                className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 text-sm font-extrabold text-slate-800 focus:outline-none focus:ring-4 focus:ring-tf-primary/5 transition-all outline-none "
                             />
                         </div>
 
@@ -241,8 +241,8 @@ export default function PartnershipFormModal({ onClose, onSave, initialCampaignI
                         <div className="md:col-span-2 pt-4 space-y-6">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <h4 className="text-sm font-black text-slate-900 uppercase tracking-tight italic">Success Steps Roadmap</h4>
-                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest italic mt-1">Fragmentation registry for capital deployment hub.</p>
+                                    <h4 className="text-sm font-extrabold text-slate-900 uppercase tracking-tight ">Success Steps Roadmap</h4>
+                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest  mt-1">Fragmentation registry for capital deployment hub.</p>
                                 </div>
                                 <div className="flex items-center gap-4">
                                     <label className="flex items-center gap-2 cursor-pointer group">
@@ -252,7 +252,7 @@ export default function PartnershipFormModal({ onClose, onSave, initialCampaignI
                                             onChange={(e) => setAutoMilestones(e.target.checked)}
                                             className="w-4 h-4 rounded border-slate-300 text-tf-primary focus:ring-tf-primary"
                                         />
-                                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 group-hover:text-tf-primary transition-colors italic">Auto-Generate</span>
+                                        <span className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 group-hover:text-tf-primary transition-colors ">Auto-Generate</span>
                                     </label>
                                     <button 
                                         type="button" 
@@ -274,7 +274,7 @@ export default function PartnershipFormModal({ onClose, onSave, initialCampaignI
                                                         placeholder="Phase Title (e.g. Phase 1 Initiation)"
                                                         value={ms.title}
                                                         onChange={(e) => updateMilestone(idx, 'title', e.target.value)}
-                                                        className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-xs font-bold text-slate-800 focus:border-tf-primary outline-none transition-all italic"
+                                                        className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-xs font-bold text-slate-800 focus:border-tf-primary outline-none transition-all "
                                                    />
                                                </div>
                                                <div>
@@ -283,7 +283,7 @@ export default function PartnershipFormModal({ onClose, onSave, initialCampaignI
                                                         placeholder="Value (LKR)"
                                                         value={ms.budget}
                                                         onChange={(e) => updateMilestone(idx, 'budget', e.target.value)}
-                                                        className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-xs font-bold text-slate-800 focus:border-tf-primary outline-none transition-all italic"
+                                                        className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-xs font-bold text-slate-800 focus:border-tf-primary outline-none transition-all "
                                                    />
                                                </div>
                                                <div>
@@ -291,7 +291,7 @@ export default function PartnershipFormModal({ onClose, onSave, initialCampaignI
                                                         type="date"
                                                         value={ms.dueDate}
                                                         onChange={(e) => updateMilestone(idx, 'dueDate', e.target.value)}
-                                                        className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-xs font-bold text-slate-800 focus:border-tf-primary outline-none transition-all italic"
+                                                        className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-xs font-bold text-slate-800 focus:border-tf-primary outline-none transition-all "
                                                    />
                                                </div>
                                            </div>
@@ -311,23 +311,23 @@ export default function PartnershipFormModal({ onClose, onSave, initialCampaignI
                             
                             {autoMilestones && previewAuto.length > 0 ? (
                                 <div className="space-y-3">
-                                   <p className="text-[9px] font-black uppercase tracking-[0.2em] text-tf-primary italic px-2 mb-2">Live Institutional Auto-Preview Hub:</p>
+                                   <p className="text-[9px] font-extrabold uppercase tracking-[0.2em] text-tf-primary  px-2 mb-2">Live Institutional Auto-Preview Hub:</p>
                                    {previewAuto.map((p, idx) => (
                                        <div key={idx} className="flex items-center gap-4 p-4 bg-emerald-50/30 border border-emerald-100/50 rounded-2xl group transition-all hover:bg-white hover:shadow-lg">
-                                           <div className="w-8 h-8 rounded-xl bg-tf-primary text-white flex items-center justify-center text-[10px] font-black italic">0{idx+1}</div>
+                                           <div className="w-8 h-8 rounded-xl bg-tf-primary text-white flex items-center justify-center text-[10px] font-extrabold ">0{idx+1}</div>
                                            <div className="flex-1">
-                                                <p className="text-[11px] font-black text-slate-900 italic tracking-tight">{p.title}</p>
-                                                <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest mt-0.5">{new Date(p.dueDate).toLocaleDateString()}</p>
+                                                <p className="text-[11px] font-extrabold text-slate-900  tracking-tight">{p.title}</p>
+                                                <p className="text-[8px] font-extrabold text-slate-400 uppercase tracking-widest mt-0.5">{new Date(p.dueDate).toLocaleDateString()}</p>
                                            </div>
                                            <div className="text-right">
-                                                <p className="text-[11px] font-black text-tf-primary italic tabular-nums">LKR {p.budget.toLocaleString()}</p>
+                                                <p className="text-[11px] font-extrabold text-tf-primary  tabular-nums">LKR {p.budget.toLocaleString()}</p>
                                            </div>
                                        </div>
                                    ))}
                                 </div>
                             ) : autoMilestones && (
                                 <div className="p-8 bg-slate-50/50 border border-dashed border-slate-200 rounded-[2rem] flex items-center justify-center text-center">
-                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-300 italic">Define dates and amount to view auto-roadmap preview Hub.</p>
+                                    <p className="text-[10px] font-extrabold uppercase tracking-widest text-slate-300 ">Define dates and amount to view auto-roadmap preview Hub.</p>
                                 </div>
                             )}
                         </div>
@@ -343,8 +343,8 @@ export default function PartnershipFormModal({ onClose, onSave, initialCampaignI
                                     />
                                 </div>
                                 <div className="flex-1">
-                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2 italic"><FiShield /> Institutional Terms & Protocol</p>
-                                    <p className="text-xs font-bold text-slate-600 mt-1.5 leading-relaxed italic">
+                                    <p className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 flex items-center gap-2 "><FiShield /> Institutional Terms & Protocol</p>
+                                    <p className="text-xs font-bold text-slate-600 mt-1.5 leading-relaxed ">
                                         I confirm that the institutional data provided is accurate and I agree to fulfill the commitments specified in this mission alliance within the fragmented execution phases Hub.
                                     </p>
                                 </div>
@@ -352,7 +352,7 @@ export default function PartnershipFormModal({ onClose, onSave, initialCampaignI
                         </div>
 
                         <div className="md:col-span-2 space-y-2 group">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 group-focus-within:text-tf-primary transition-colors flex items-center gap-1.5">
+                            <label className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 group-focus-within:text-tf-primary transition-colors flex items-center gap-1.5">
                                 <FiFileText /> Strategic Notes
                             </label>
                             <textarea 
@@ -360,17 +360,17 @@ export default function PartnershipFormModal({ onClose, onSave, initialCampaignI
                                 placeholder="Details about this strategic partnership..."
                                 value={form.description}
                                 onChange={e => setForm({...form, description: e.target.value})}
-                                className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 text-sm font-bold text-slate-800 placeholder:text-slate-300 focus:outline-none focus:ring-4 focus:ring-tf-primary/5 transition-all resize-none outline-none italic"
+                                className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 text-sm font-bold text-slate-800 placeholder:text-slate-300 focus:outline-none focus:ring-4 focus:ring-tf-primary/5 transition-all resize-none outline-none "
                             />
                         </div>
                     </div>
                 </form>
 
                 <div className="p-10 border-t border-slate-50 bg-slate-50/50 flex gap-4 shrink-0">
-                    <button type="button" onClick={onClose} className="flex-1 px-8 py-5 bg-white border border-slate-200 text-slate-500 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all shadow-sm">
+                    <button type="button" onClick={onClose} className="flex-1 px-8 py-5 bg-white border border-slate-200 text-slate-500 rounded-2xl text-[10px] font-extrabold uppercase tracking-widest hover:bg-slate-50 transition-all shadow-sm">
                         Cancel Registry
                     </button>
-                    <button onClick={handleSubmit} disabled={fetching || saving} className="flex-[2] px-8 py-5 bg-tf-primary text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] shadow-2xl shadow-tf-primary/30 transition-all flex items-center justify-center gap-3 active:scale-95 disabled:opacity-50 italic">
+                    <button onClick={handleSubmit} disabled={fetching || saving} className="flex-[2] px-8 py-5 bg-tf-primary text-white rounded-2xl text-[10px] font-extrabold uppercase tracking-[0.2em] shadow-2xl shadow-tf-primary/30 transition-all flex items-center justify-center gap-3 active:scale-95 disabled:opacity-50 ">
                         {fetching || saving ? 'Synchronizing...' : 'Submit Mission Proposal'} <FiCheck className="text-lg stroke-[3]" />
                     </button>
                 </div>

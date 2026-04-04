@@ -238,7 +238,7 @@ export default function PartnerOnboardingPage() {
                       <img src="/hand-heart-logo.png" alt="Trustfund" className="w-48 h-auto transition-transform duration-700 group-hover:scale-105 drop-shadow-2xl" />
                   </div>
 
-                  <h2 className="text-4xl font-black leading-[1.1] mb-5 tracking-tight">
+                  <h2 className="text-4xl font-extrabold leading-[1.1] mb-5 tracking-tight">
                       Join the<br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-orange to-brand-red">Impact Network.</span>
                   </h2>
                   <p className="text-slate-400 text-sm leading-relaxed max-w-[260px]">
@@ -283,7 +283,7 @@ export default function PartnerOnboardingPage() {
                  {step === 1 && (
                      <div className="space-y-8 animate-fadeIn">
                          <div className="mb-10">
-                             <h3 className="text-3xl font-black text-slate-900 mb-2 tracking-tight">Configure Identity</h3>
+                             <h3 className="text-3xl font-extrabold text-slate-900 mb-2 tracking-tight">Configure Identity</h3>
                              <p className="text-slate-500 text-sm font-medium">Establish your organizational presence on the platform.</p>
                          </div>
 
@@ -306,7 +306,7 @@ export default function PartnerOnboardingPage() {
                                 <input type="file" className="hidden" accept="image/*" onChange={handleFileUpload} disabled={isUploading} />
                             </label>
                             <div className="flex-1">
-                                <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1.5">Organization Branding</label>
+                                <label className="block text-[10px] font-extrabold text-slate-400 uppercase tracking-[0.2em] mb-1.5">Organization Branding</label>
                                 <p className="text-xs text-slate-500 mb-3 font-medium">Click the avatar to upload your official company logo. Transparent PNG recommended.</p>
                                 {form.logoUrl && <div className="text-[10px] font-mono text-emerald-600 truncate max-w-[200px] bg-emerald-50 px-2 py-1 rounded inline-block">✓ Logo uploaded successfully</div>}
                             </div>
@@ -357,12 +357,12 @@ export default function PartnerOnboardingPage() {
                  {step === 2 && (
                      <div className="space-y-6 animate-fadeIn">
                          <div className="mb-10">
-                             <h3 className="text-3xl font-black text-slate-900 mb-2 tracking-tight">Due Diligence</h3>
+                             <h3 className="text-3xl font-extrabold text-slate-900 mb-2 tracking-tight">Due Diligence</h3>
                              <p className="text-slate-500 text-sm font-medium">Provide your representative data and compliance documents.</p>
                          </div>
 
                          <div className="bg-slate-50/50 p-6 sm:p-8 rounded-[24px] border border-slate-100/50 space-y-6">
-                             <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-3">
+                             <h4 className="text-[10px] font-extrabold text-slate-400 uppercase tracking-[0.2em] flex items-center gap-3">
                                 <span className="w-6 h-px bg-slate-200" /> Primary Contact
                              </h4>
                              <div className="grid grid-cols-2 gap-4">
@@ -384,7 +384,7 @@ export default function PartnerOnboardingPage() {
                          <div className="bg-slate-50/50 p-6 sm:p-8 rounded-[24px] border border-slate-100/50 space-y-6">
                             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                                 <div>
-                                    <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-3 mb-2">
+                                    <h4 className="text-[10px] font-extrabold text-slate-400 uppercase tracking-[0.2em] flex items-center gap-3 mb-2">
                                         <span className="w-6 h-px bg-slate-200" /> Compliance Pipeline
                                     </h4>
                                     <p className="text-xs text-slate-500 font-medium">Please upload your public corporate registry or CSR mandate document (Required for verification).</p>
@@ -428,13 +428,13 @@ export default function PartnerOnboardingPage() {
                      <div className="space-y-6 animate-fadeIn h-full flex flex-col">
                          <div className="mb-10 shrink-0">
                              <p className="text-sm font-bold text-slate-800 flex items-center gap-2"><FiUploadCloud className="text-slate-400" /> Compliance Records</p>
-                             <h3 className="text-3xl font-black text-slate-900 mb-2 tracking-tight">Sustainable Impact Goals.</h3>
+                             <h3 className="text-3xl font-extrabold text-slate-900 mb-2 tracking-tight">Sustainable Impact Goals.</h3>
                              <p className="text-slate-500 text-sm font-medium">Choose the causes and funding preferences that align with your institutional values.</p>
                          </div>
 
                          <div className="space-y-6 overflow-y-auto pr-2 pb-4 scrollbar-thin scrollbar-thumb-slate-200">
                              <div>
-                                <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4 flex items-center gap-3">
+                                <h4 className="text-[10px] font-extrabold text-slate-400 uppercase tracking-[0.2em] mb-4 flex items-center gap-3">
                                    <span className="w-6 h-px bg-slate-200" /> 1. Select Impact focus
                                 </h4>
                                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -451,7 +451,7 @@ export default function PartnerOnboardingPage() {
                                                 }`}
                                             >
                                                 <span className="text-3xl mb-2 filter drop-shadow-sm transition-transform duration-300 group-hover:scale-110">{cat.icon}</span>
-                                                <span className={`text-[10px] uppercase tracking-widest font-black text-center leading-tight ${selected ? 'text-brand-red' : 'text-slate-400'}`}>{cat.label}</span>
+                                                <span className={`text-[10px] uppercase tracking-widest font-extrabold text-center leading-tight ${selected ? 'text-brand-red' : 'text-slate-400'}`}>{cat.label}</span>
                                             </button>
                                         );
                                     })}
@@ -459,7 +459,7 @@ export default function PartnerOnboardingPage() {
                              </div>
 
                              <div className="pt-4">
-                                <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4 flex items-center gap-3">
+                                <h4 className="text-[10px] font-extrabold text-slate-400 uppercase tracking-[0.2em] mb-4 flex items-center gap-3">
                                    <span className="w-6 h-px bg-slate-200" /> 2. Funding Format
                                 </h4>
                                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -481,7 +481,7 @@ export default function PartnerOnboardingPage() {
                                                 }`}
                                             >
                                                 <span className="text-2xl">{type.icon}</span>
-                                                <span className={`text-[10px] font-black uppercase tracking-widest text-left leading-tight ${selected ? 'text-brand-orange' : 'text-slate-400'}`}>{type.label}</span>
+                                                <span className={`text-[10px] font-extrabold uppercase tracking-widest text-left leading-tight ${selected ? 'text-brand-orange' : 'text-slate-400'}`}>{type.label}</span>
                                             </button>
                                         );
                                     })}
@@ -492,11 +492,11 @@ export default function PartnerOnboardingPage() {
                                 <div className="absolute inset-0 opacity-10 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-brand-orange via-brand-red to-transparent"></div>
                                 <div className="relative z-10">
                                     <div className="flex flex-col sm:flex-row justify-between sm:items-center mb-6 gap-4">
-                                        <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-3">
+                                        <h4 className="text-[10px] font-extrabold text-slate-400 uppercase tracking-[0.2em] flex items-center gap-3">
                                             <span className="w-6 h-px bg-slate-700" /> 3. Projected Annual CSR Budget
                                         </h4>
                                         <div className="bg-brand-red/10 border border-brand-red/20 px-4 py-2 rounded-xl">
-                                            <span className="text-brand-red font-mono text-sm font-black tracking-wider">LKR {Number(form.budgetRange.max).toLocaleString()}</span>
+                                            <span className="text-brand-red font-mono text-sm font-extrabold tracking-wider">LKR {Number(form.budgetRange.max).toLocaleString()}</span>
                                         </div>
                                     </div>
                                     <input 
@@ -508,7 +508,7 @@ export default function PartnerOnboardingPage() {
                                         value={form.budgetRange.max}
                                         onChange={(e) => setForm(f => ({...f, budgetRange: {...f.budgetRange, max: Number(e.target.value)}}))}
                                     />
-                                    <div className="flex justify-between mt-3 text-[10px] font-black text-slate-600 uppercase tracking-widest">
+                                    <div className="flex justify-between mt-3 text-[10px] font-extrabold text-slate-600 uppercase tracking-widest">
                                         <span>LKR 50K</span>
                                         <span>LKR 10M+</span>
                                     </div>
@@ -522,17 +522,17 @@ export default function PartnerOnboardingPage() {
              {/* Footer Actions */}
              <div className="pt-6 mt-4 border-t border-slate-100 flex items-center justify-between shrink-0">
                  {step > 1 ? (
-                     <button onClick={() => setStep(prev => prev - 1)} className="px-6 py-3 rounded-xl font-black text-[10px] text-slate-400 hover:bg-slate-100 uppercase tracking-widest transition-colors">
+                     <button onClick={() => setStep(prev => prev - 1)} className="px-6 py-3 rounded-xl font-extrabold text-[10px] text-slate-400 hover:bg-slate-100 uppercase tracking-widest transition-colors">
                          Back
                      </button>
                  ) : <div></div>}
 
                  {step < 3 ? (
-                     <button onClick={handleNext} className="px-8 py-3 bg-slate-900 text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-black transition-all shadow-xl shadow-slate-900/20 active:scale-95">
+                     <button onClick={handleNext} className="px-8 py-3 bg-slate-900 text-white rounded-xl font-extrabold text-[10px] uppercase tracking-widest hover:bg-black transition-all shadow-xl shadow-slate-900/20 active:scale-95">
                          Continue →
                      </button>
                  ) : (
-                     <button onClick={handleFinish} disabled={isSubmitting} className="px-8 py-3 bg-brand-red text-white flex items-center gap-3 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-brand-red/90 transition-all shadow-xl shadow-brand-red/30 disabled:opacity-75 active:scale-95">
+                     <button onClick={handleFinish} disabled={isSubmitting} className="px-8 py-3 bg-brand-red text-white flex items-center gap-3 rounded-xl font-extrabold text-[10px] uppercase tracking-widest hover:bg-brand-red/90 transition-all shadow-xl shadow-brand-red/30 disabled:opacity-75 active:scale-95">
                          {isSubmitting ? 'Finalizing Profile...' : 'Complete & Enter Pipeline'}
                          {!isSubmitting && <FiArrowRight className="text-lg" />}
                      </button>

@@ -69,8 +69,8 @@ export default function CampaignMarketplacePage() {
                 <div className="absolute bottom-0 left-0 w-72 h-72 bg-emerald-500/5 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4" />
                 
                 <div className="relative z-10 max-w-2xl">
-                    <p className="text-[10px] font-black uppercase tracking-[.2em] text-slate-500 mb-2">{t('marketplace.header.badge')}</p>
-                    <h1 className="text-4xl md:text-5xl font-black text-white tracking-tight leading-tight">
+                    <p className="text-[10px] font-extrabold uppercase tracking-[.2em] text-slate-500 mb-2">{t('marketplace.header.badge')}</p>
+                    <h1 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight leading-tight">
                         {t('marketplace.header.title_1')} <span className="text-tf-primary">{t('marketplace.header.title_2')}</span>
                     </h1>
                     <p className="text-slate-400 text-sm md:text-base mt-4 font-medium leading-relaxed">
@@ -96,11 +96,11 @@ export default function CampaignMarketplacePage() {
 
                 {/* SDG Filter */}
                 <div className="w-full md:w-auto flex flex-col gap-2 shrink-0 overflow-hidden">
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Filter by Goal</p>
+                    <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-1">Filter by Goal</p>
                     <div className="flex overflow-x-auto gap-2 pb-2 -mb-2 scrollbar-hide">
                         <button 
                             onClick={() => setSelectedSdg('all')}
-                            className={`px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest whitespace-nowrap transition-all ${
+                            className={`px-5 py-2.5 rounded-xl text-[10px] font-extrabold uppercase tracking-widest whitespace-nowrap transition-all ${
                                 selectedSdg === 'all' 
                                     ? 'bg-slate-900 text-white shadow-lg' 
                                     : 'bg-slate-50 text-slate-500 hover:bg-slate-100 border border-slate-100'
@@ -112,7 +112,7 @@ export default function CampaignMarketplacePage() {
                             <button 
                                 key={sdg}
                                 onClick={() => setSelectedSdg(sdg.toString())}
-                                className={`px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest whitespace-nowrap transition-all ${
+                                className={`px-5 py-2.5 rounded-xl text-[10px] font-extrabold uppercase tracking-widest whitespace-nowrap transition-all ${
                                     selectedSdg === sdg.toString()
                                         ? 'bg-slate-900 text-white shadow-lg' 
                                         : 'bg-slate-50 text-slate-500 hover:bg-slate-100 border border-slate-100'
@@ -137,7 +137,7 @@ export default function CampaignMarketplacePage() {
                         <div className="w-20 h-20 bg-slate-50 rounded-3xl mx-auto flex items-center justify-center text-slate-300 mb-6">
                             <FiTarget size={32} />
                         </div>
-                        <p className="text-slate-900 font-black text-lg">{t('marketplace.no_results')}</p>
+                        <p className="text-slate-900 font-extrabold text-lg">{t('marketplace.no_results')}</p>
                         <p className="text-slate-500 text-sm font-medium mt-2">{t('marketplace.adjust_filters')}</p>
                     </motion.div>
                 ) : (
@@ -163,7 +163,7 @@ export default function CampaignMarketplacePage() {
                                                 <FiGlobe className="text-5xl text-slate-300" />
                                             </div>
                                         )}
-                                        <div className="absolute top-4 left-4 px-3 py-1.5 bg-white/90 backdrop-blur-md rounded-xl text-[9px] font-black uppercase tracking-widest text-slate-900 shadow-sm flex items-center gap-1.5">
+                                        <div className="absolute top-4 left-4 px-3 py-1.5 bg-white/90 backdrop-blur-md rounded-xl text-[9px] font-extrabold uppercase tracking-widest text-slate-900 shadow-sm flex items-center gap-1.5">
                                             <FiMapPin className="text-[10px] text-tf-primary" />
                                             {campaign.location?.city || campaign.location?.country || 'Global'}
                                         </div>
@@ -175,18 +175,18 @@ export default function CampaignMarketplacePage() {
                                         {/* SDGs */}
                                         <div className="flex flex-wrap gap-1.5 mb-4">
                                             {campaign.sdgAlignment && campaign.sdgAlignment.slice(0, 2).map(sdg => (
-                                                <span key={sdg} className="px-2 py-1 bg-slate-50 border border-slate-100 text-slate-500 rounded-lg text-[8px] font-black uppercase tracking-widest truncate max-w-[120px]">
+                                                <span key={sdg} className="px-2 py-1 bg-slate-50 border border-slate-100 text-slate-500 rounded-lg text-[8px] font-extrabold uppercase tracking-widest truncate max-w-[120px]">
                                                     {SDG_TITLES[sdg] || `SDG ${sdg}`}
                                                 </span>
                                             ))}
                                             {campaign.sdgAlignment && campaign.sdgAlignment.length > 2 && (
-                                                <span className="px-2 py-1 bg-slate-50 border border-slate-100 text-slate-400 rounded-lg text-[8px] font-black uppercase tracking-widest">
+                                                <span className="px-2 py-1 bg-slate-50 border border-slate-100 text-slate-400 rounded-lg text-[8px] font-extrabold uppercase tracking-widest">
                                                     +{campaign.sdgAlignment.length - 2}
                                                 </span>
                                             )}
                                         </div>
 
-                                        <h3 className="text-xl font-black text-slate-900 leading-tight mb-2 line-clamp-2 group-hover:text-tf-primary transition-colors">
+                                        <h3 className="text-xl font-extrabold text-slate-900 leading-tight mb-2 line-clamp-2 group-hover:text-tf-primary transition-colors">
                                             {campaign.title}
                                         </h3>
                                         
@@ -198,13 +198,13 @@ export default function CampaignMarketplacePage() {
                                         <div className="mt-auto space-y-4">
                                             <div className="flex justify-between items-end mb-2">
                                                 <div>
-                                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{t('marketplace.raised')}</p>
-                                                    <p className="text-sm font-black text-slate-900">
+                                                    <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-1">{t('marketplace.raised')}</p>
+                                                    <p className="text-sm font-extrabold text-slate-900">
                                                         LKR {(campaign.raisedAmount || 0).toLocaleString()}
                                                     </p>
                                                 </div>
                                                 <div className="text-right">
-                                                    <p className="text-xl font-black text-tf-primary tabular-nums tracking-tight leading-none">
+                                                    <p className="text-xl font-extrabold text-tf-primary tabular-nums tracking-tight leading-none">
                                                         {progress}%
                                                     </p>
                                                 </div>
@@ -226,14 +226,14 @@ export default function CampaignMarketplacePage() {
                                             {user?.role === 'partner' ? (
                                                 <button 
                                                     onClick={() => handleProposePartnership(campaign._id)}
-                                                    className="col-span-2 py-3 bg-slate-900 hover:bg-tf-primary text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 shadow-lg shadow-slate-900/10 flex items-center justify-center gap-2"
+                                                    className="col-span-2 py-3 bg-slate-900 hover:bg-tf-primary text-white rounded-xl text-[10px] font-extrabold uppercase tracking-widest transition-all active:scale-95 shadow-lg shadow-slate-900/10 flex items-center justify-center gap-2"
                                                 >
                                                     <FiBriefcase className="text-sm" /> {t('marketplace.propose_partnership')}
                                                 </button>
                                             ) : user?.role === 'donor' ? (
                                                 <Link 
                                                     to={`/causes/${campaign._id}`}
-                                                    className="col-span-2 py-3 bg-tf-primary hover:bg-orange-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 shadow-lg shadow-tf-primary/20 flex items-center justify-center gap-2"
+                                                    className="col-span-2 py-3 bg-tf-primary hover:bg-orange-600 text-white rounded-xl text-[10px] font-extrabold uppercase tracking-widest transition-all active:scale-95 shadow-lg shadow-tf-primary/20 flex items-center justify-center gap-2"
                                                 >
                                                     <FiHeart className="text-sm" /> {t('marketplace.support_campaign')}
                                                 </Link>
@@ -241,7 +241,7 @@ export default function CampaignMarketplacePage() {
                                             
                                             <Link 
                                                 to={`/causes/${campaign._id}`}
-                                                className={`py-3 bg-slate-50 border border-slate-100 hover:bg-slate-100 text-slate-600 text-[10px] font-black uppercase tracking-widest rounded-xl text-center flex items-center justify-center transition-all ${(!user || (user.role !== 'partner' && user.role !== 'donor')) ? 'col-span-2' : 'col-span-2'}`}
+                                                className={`py-3 bg-slate-50 border border-slate-100 hover:bg-slate-100 text-slate-600 text-[10px] font-extrabold uppercase tracking-widest rounded-xl text-center flex items-center justify-center transition-all ${(!user || (user.role !== 'partner' && user.role !== 'donor')) ? 'col-span-2' : 'col-span-2'}`}
                                             >
                                                 {t('marketplace.view_details')}
                                             </Link>

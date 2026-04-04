@@ -26,15 +26,15 @@ export default function AboutPage() {
             <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} className="space-y-10">
               <div className="flex items-center gap-4">
                  <div className="w-12 h-0.5 bg-tf-primary" />
-                 <p className="text-[10px] font-black text-white/30 uppercase tracking-[0.8em] italic leading-none">Institutional Protocol v1.0</p>
+                 <p className="text-[10px] font-extrabold text-white/30 uppercase tracking-[0.8em]  leading-none">Institutional Protocol v1.0</p>
               </div>
-              <h1 className="text-6xl md:text-9xl font-black text-white tracking-tighter leading-[0.8] italic uppercase">
-                Global <br /> <span className="text-tf-primary italic underline underline-offset-8 decoration-white/10">Architecture.</span>
+              <h1 className="text-6xl md:text-9xl font-extrabold text-white tracking-tighter leading-[0.8]  uppercase">
+                Global <br /> <span className="text-tf-primary  underline underline-offset-8 decoration-white/10">Architecture.</span>
               </h1>
             </motion.div>
             <motion.p 
                initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} 
-               className="text-xl text-white/40 font-medium leading-relaxed max-w-xl italic border-t border-white/5 pt-12 mt-12 lowercase tracking-tight"
+               className="text-xl text-white/40 font-medium leading-relaxed max-w-xl  border-t border-white/5 pt-12 mt-12 lowercase tracking-tight"
             >
               founded on the principles of absolute decentralized transparency and direct humanitarian impact, transfund represents a global shift toward audited benevolence.
             </motion.p>
@@ -47,8 +47,8 @@ export default function AboutPage() {
              <div className="absolute inset-0 bg-tf-primary/20 blur-[150px] rounded-full -z-10" />
              <div className="p-2 border border-white/10 rounded-[4.5rem]">
                 <div className="bg-slate-900/40 backdrop-blur-2xl p-12 rounded-[4rem] space-y-6">
-                   <p className="text-[10px] font-black text-tf-primary uppercase tracking-[0.4em] italic mb-4">Core Operating Vision_</p>
-                   <p className="text-2xl font-black text-white tracking-tighter italic lowercase leading-tight">
+                   <p className="text-[10px] font-extrabold text-tf-primary uppercase tracking-[0.4em]  mb-4">Core Operating Vision_</p>
+                   <p className="text-2xl font-extrabold text-white tracking-tighter  lowercase leading-tight">
                       to synchronize the world's capital with its greatest challenges through verified institutional integrity.
                    </p>
                 </div>
@@ -63,17 +63,17 @@ export default function AboutPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
             <div className="space-y-6">
               <h3 className="text-3xl font-display font-medium uppercase tracking-tight text-tf-dark">The Vision</h3>
-              <p className="text-slate-500 leading-relaxed font-serif font-medium italic">We envision a world where every contribution to a cause is tracked, verified, and celebrated. No more black boxes, no more administrative waste—just pure, audited impact via TransFund.</p>
+              <p className="text-slate-500 leading-relaxed font-serif font-medium ">We envision a world where every contribution to a cause is tracked, verified, and celebrated. No more black boxes, no more administrative waste—just pure, audited impact via TransFund.</p>
             </div>
             <div className="space-y-6">
               <h3 className="text-3xl font-display font-medium uppercase tracking-tight text-tf-dark">The Mission</h3>
-              <p className="text-slate-500 leading-relaxed font-serif font-medium italic">To build the world's most trusted humanitarian operating system, empowering local partners with the capital they need to solve the world's most pressing challenges.</p>
+              <p className="text-slate-500 leading-relaxed font-serif font-medium ">To build the world's most trusted humanitarian operating system, empowering local partners with the capital they need to solve the world's most pressing challenges.</p>
             </div>
           </div>
 
           <div className="bg-tf-dark rounded-[3rem] p-16 md:p-32 text-center space-y-12 relative overflow-hidden group">
              <div className="absolute top-0 right-0 w-64 h-64 bg-tf-primary/10 rounded-full blur-3xl -mr-32 -mt-32 pointer-events-none group-hover:bg-tf-primary/20 transition-all duration-[2s]" />
-             <h2 className="text-4xl md:text-5xl font-display font-bold text-white tracking-tight leading-tight relative z-10 italic">
+             <h2 className="text-4xl md:text-5xl font-display font-bold text-white tracking-tight leading-tight relative z-10 ">
                "Impact is not about what we say, <br /> but what we verify."
              </h2>
              <p className="text-tf-primary font-bold text-[10px] uppercase tracking-[0.5em] mt-8 leading-none">TransFund Founding Principle</p>

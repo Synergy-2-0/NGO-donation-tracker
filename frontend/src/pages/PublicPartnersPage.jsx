@@ -91,7 +91,7 @@ export default function PublicPartnersPage() {
                 initial={{ opacity: 0, y: 30 }} 
                 animate={{ opacity: 1, y: 0 }} 
                 transition={{ delay: 0.2 }}
-                className="text-6xl md:text-8xl font-extrabold text-white tracking-tighter uppercase leading-[0.85] selection:bg-tf-primary font-serif"
+                className="text-6xl md:text-8xl font-extrabold tracking-tighter uppercase leading-[0.85] selection:bg-tf-primary font-bold"
               >
                 Verified <br /> <span className="text-tf-primary uppercase">Partners.</span> Network
               </motion.h1>
@@ -116,8 +116,8 @@ export default function PublicPartnersPage() {
                      <stat.icon size={22} className="text-tf-primary group-hover/stat:text-white" />
                    </div>
                    <div className="space-y-1">
-                      <p className="text-3xl font-black text-white tracking-tighter italic">{stat.val}</p>
-                      <p className="text-[10px] font-bold text-white/30 uppercase tracking-[0.2em] italic">{stat.label}</p>
+                      <p className="text-3xl font-extrabold text-white tracking-tighter ">{stat.val}</p>
+                      <p className="text-[10px] font-bold text-white/30 uppercase tracking-[0.2em] ">{stat.label}</p>
                    </div>
                 </div>
               ))}
@@ -140,7 +140,7 @@ export default function PublicPartnersPage() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search partners and sectors..." 
-                className="w-full bg-slate-50 border border-slate-100 rounded-3xl pl-16 pr-8 py-5 text-sm font-bold text-slate-900 focus:outline-none focus:ring-4 focus:ring-tf-primary/5 focus:bg-white transition-all italic placeholder:text-slate-300"
+                className="w-full bg-slate-50 border border-slate-100 rounded-3xl pl-16 pr-8 py-5 text-sm font-bold text-slate-900 focus:outline-none focus:ring-4 focus:ring-tf-primary/5 focus:bg-white transition-all  placeholder:text-slate-300"
               />
             </div>
             <div className="lg:col-span-6 flex flex-wrap gap-3">
@@ -148,7 +148,7 @@ export default function PublicPartnersPage() {
                  <button 
                   key={f.id}
                   onClick={() => setFilter(f.id)}
-                  className={`px-8 py-4 rounded-full text-[10px] font-black uppercase tracking-[0.25em] transition-all italic ${
+                  className={`px-8 py-4 rounded-full text-[10px] font-extrabold uppercase tracking-[0.25em] transition-all  ${
                     filter === f.id 
                     ? 'bg-tf-primary text-white shadow-xl shadow-tf-primary/30 scale-105' 
                     : 'bg-slate-50 text-slate-400 hover:bg-slate-100'
@@ -180,7 +180,7 @@ export default function PublicPartnersPage() {
                      animate={{ opacity: 1, scale: 1 }}
                      exit={{ opacity: 0, scale: 0.9 }}
                      transition={{ delay: i * 0.05 }}
-                     className="group/card relative bg-white border border-slate-100 rounded-[4rem] p-12 hover:shadow-5xl hover:-translate-y-2 transition-all duration-700 overflow-hidden italic"
+                     className="group/card relative bg-white border border-slate-100 rounded-[4rem] p-12 hover:shadow-5xl hover:-translate-y-2 transition-all duration-700 overflow-hidden "
                    >
                      <div className="absolute top-0 right-0 w-48 h-48 bg-slate-50 rounded-full blur-[80px] -mr-20 -mt-20 group-hover/card:bg-tf-primary/10 transition-colors duration-700" />
                      
@@ -195,10 +195,10 @@ export default function PublicPartnersPage() {
                         </div>
                         
                         <div className="space-y-3">
-                           <p className="text-[10px] font-black text-tf-primary uppercase tracking-[0.4em] mb-2 leading-none">
+                           <p className="text-[10px] font-extrabold text-tf-primary uppercase tracking-[0.4em] mb-2 leading-none">
                              {p.industry || 'Organization Sector'}
                            </p>
-                           <h3 className="text-2xl lg:text-3xl font-black text-slate-950 tracking-tighter leading-[1.1]">
+                           <h3 className="text-2xl lg:text-3xl font-extrabold text-slate-950 tracking-tighter leading-[1.1]">
                              {p.organizationName || p.name}
                            </h3>
                         </div>
@@ -206,22 +206,22 @@ export default function PublicPartnersPage() {
                         <div className="grid grid-cols-2 gap-6 py-8 border-y border-slate-50">
                            <div className="space-y-1">
                               <span className="text-[9px] font-bold text-slate-300 uppercase tracking-widest">Type</span>
-                              <p className="text-xs font-black text-slate-700 leading-none">{p.organizationType || 'Partner'}</p>
+                              <p className="text-xs font-extrabold text-slate-700 leading-none">{p.organizationType || 'Partner'}</p>
                            </div>
                            <div className="space-y-1">
                               <span className="text-[9px] font-bold text-slate-300 uppercase tracking-widest">Location Hub</span>
-                              <p className="text-xs font-black text-slate-700 leading-none">{p.address?.city || 'Verified'}</p>
+                              <p className="text-xs font-extrabold text-slate-700 leading-none">{p.address?.city || 'Verified'}</p>
                            </div>
                         </div>
 
                         <div className="flex items-center justify-between pt-4">
                            <div className="flex -space-x-4">
                               {[1,2,3].map(n => (
-                                <div key={n} className="w-10 h-10 rounded-full border-[3px] border-white bg-slate-100 flex items-center justify-center text-[10px] font-black text-slate-400 italic">
+                                <div key={n} className="w-10 h-10 rounded-full border-[3px] border-white bg-slate-100 flex items-center justify-center text-[10px] font-extrabold text-slate-400 ">
                                   {n}+
                                 </div>
                               ))}
-                              <div className="pl-6 pt-2 text-[9px] font-black text-slate-300 uppercase tracking-widest">Active Projects Hub</div>
+                              <div className="pl-6 pt-2 text-[9px] font-extrabold text-slate-300 uppercase tracking-widest">Active Projects Hub</div>
                            </div>
                            <button 
                              onClick={() => setSelectedPartner(p)}
@@ -247,7 +247,7 @@ export default function PublicPartnersPage() {
                   />
                   <motion.div 
                     initial={{ opacity: 0, scale: 0.9, y: 30 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 30 }}
-                    className="relative bg-white rounded-[40px] w-full max-w-2xl shadow-2xl overflow-hidden p-10 italic"
+                    className="relative bg-white rounded-[40px] w-full max-w-2xl shadow-2xl overflow-hidden p-10 "
                   >
                      <div className="absolute top-0 right-0 w-64 h-64 bg-tf-primary/10 rounded-full blur-[80px] -mr-20 -mt-20 pointer-events-none" />
                      
@@ -257,10 +257,10 @@ export default function PublicPartnersPage() {
                            <PartnerIcon partner={selectedPartner} />
                          </div>
                          <div>
-                            <span className="px-3 py-1 bg-emerald-50 text-emerald-600 text-[9px] font-black uppercase tracking-widest rounded-lg border border-emerald-100 mb-2 inline-block">
+                            <span className="px-3 py-1 bg-emerald-50 text-emerald-600 text-[9px] font-extrabold uppercase tracking-widest rounded-lg border border-emerald-100 mb-2 inline-block">
                               Verified Institutional Contact Hub
                             </span>
-                            <h3 className="text-3xl font-black text-slate-950 tracking-tighter leading-none mb-1">
+                            <h3 className="text-3xl font-extrabold text-slate-950 tracking-tighter leading-none mb-1">
                               {selectedPartner.organizationName || selectedPartner.name}
                             </h3>
                             <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">{selectedPartner.industry || 'Global Partner'}</p>
@@ -273,10 +273,10 @@ export default function PublicPartnersPage() {
 
                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10">
                         <div className="bg-slate-50 rounded-3xl p-6 border border-slate-100 space-y-4">
-                           <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-4 flex items-center gap-2"><FiBriefcase className="text-tf-primary" /> Primary Contact</h4>
+                           <h4 className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-slate-400 mb-4 flex items-center gap-2"><FiBriefcase className="text-tf-primary" /> Primary Contact</h4>
                            <div>
                               <p className="text-[9px] font-bold text-slate-300 uppercase tracking-widest">Full Name</p>
-                              <p className="text-base font-black text-slate-800">{selectedPartner.contactPerson?.name || 'Authorized Representative'}</p>
+                              <p className="text-base font-extrabold text-slate-800">{selectedPartner.contactPerson?.name || 'Authorized Representative'}</p>
                               <p className="text-xs font-medium text-slate-500 mt-0.5">{selectedPartner.contactPerson?.position || 'Operations Officer'}</p>
                            </div>
                            <div className="pt-3 border-t border-slate-200">
@@ -286,10 +286,10 @@ export default function PublicPartnersPage() {
                         </div>
 
                         <div className="bg-slate-900 rounded-3xl p-6 border border-slate-800 text-white space-y-4 shadow-xl">
-                           <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-4 flex items-center gap-2"><FiMapPin className="text-tf-primary" /> Registered Address Hub</h4>
+                           <h4 className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-slate-500 mb-4 flex items-center gap-2"><FiMapPin className="text-tf-primary" /> Registered Address Hub</h4>
                            <div>
                               <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">Base Operations</p>
-                              <p className="text-base font-black text-white">{selectedPartner.address?.city || 'Verified Capital'}</p>
+                              <p className="text-base font-extrabold text-white">{selectedPartner.address?.city || 'Verified Capital'}</p>
                               <p className="text-xs font-medium text-slate-400 mt-0.5">{selectedPartner.address?.country || 'Global Territory'}</p>
                            </div>
                            <div className="pt-3 border-t border-slate-800">
@@ -304,15 +304,15 @@ export default function PublicPartnersPage() {
             </AnimatePresence>
            </>
          ) : (
-           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-48 space-y-10 italic">
+           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-48 space-y-10 ">
               <div className="text-8xl grayscale opacity-20 animate-pulse">📡</div>
               <div className="space-y-4">
-                <p className="text-2xl font-black text-slate-900 tracking-tighter uppercase">No Partners Found</p>
+                <p className="text-2xl font-extrabold text-slate-900 tracking-tighter uppercase">No Partners Found</p>
                 <p className="text-xs font-bold text-slate-300 uppercase tracking-[0.4em] max-w-md mx-auto leading-relaxed">The organization you are looking for may not be registered yet or is currently undergoing our verification process.</p>
               </div>
               <button 
                 onClick={() => {setSearch(''); setFilter('all');}} 
-                className="px-10 py-4 bg-slate-900 text-white rounded-full text-[10px] font-black uppercase tracking-[0.3em]"
+                className="px-10 py-4 bg-slate-900 text-white rounded-full text-[10px] font-extrabold uppercase tracking-[0.3em]"
               >
                 Clear All Filters Hub
               </button>
@@ -326,18 +326,18 @@ export default function PublicPartnersPage() {
             <div className="absolute inset-0 bg-tf-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-[3s] pointer-events-none" />
             <div className="max-w-4xl mx-auto space-y-16 relative z-10">
                <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} className="space-y-8">
-                  <h2 className="text-5xl md:text-8xl font-black text-white italic tracking-tighter uppercase leading-[0.8] selection:bg-tf-primary">
-                    Become a <br /> <span className="text-tf-primary not-italic">Verified</span> <br /> Partner Hub.
+                  <h2 className="text-5xl md:text-8xl font-extrabold text-white  tracking-tighter uppercase leading-[0.8] selection:bg-tf-primary">
+                    Become a <br /> <span className="text-tf-primary not-">Verified</span> <br /> Partner Hub.
                   </h2>
-                  <p className="text-white/40 text-lg leading-relaxed font-medium italic max-w-2xl mx-auto border-t border-white/5 pt-12 mt-12 lowercase tracking-tight">
+                  <p className="text-white/40 text-lg leading-relaxed font-medium  max-w-2xl mx-auto border-t border-white/5 pt-12 mt-12 lowercase tracking-tight">
                     Register your organization to join our community. Verified partners connect with donors and contribute to global impact through transparent reporting. Hub
                   </p>
                </motion.div>
                <div className="pt-10 flex flex-col md:flex-row justify-center gap-6">
-                 <button onClick={() => navigate('/login?tab=signup')} className="px-16 py-8 bg-tf-primary text-white text-[11px] font-black uppercase tracking-[0.5em] rounded-[2.5rem] shadow-4xl shadow-tf-primary/40 hover:bg-white hover:text-slate-950 transition-all hover:scale-105 active:scale-95 italic">
+                 <button onClick={() => navigate('/login?tab=signup')} className="px-16 py-8 bg-tf-primary text-white text-[11px] font-extrabold uppercase tracking-[0.5em] rounded-[2.5rem] shadow-4xl shadow-tf-primary/40 hover:bg-white hover:text-slate-950 transition-all hover:scale-105 active:scale-95 ">
                     Submit Credentials
                  </button>
-                 <button onClick={() => navigate('/transparency')} className="px-16 py-8 bg-white/5 text-white border border-white/10 text-[11px] font-black uppercase tracking-[0.5em] rounded-[2.5rem] hover:bg-white/10 transition-all italic">
+                 <button onClick={() => navigate('/transparency')} className="px-16 py-8 bg-white/5 text-white border border-white/10 text-[11px] font-extrabold uppercase tracking-[0.5em] rounded-[2.5rem] hover:bg-white/10 transition-all ">
                     View Transparency Report Hub
                  </button>
                </div>

@@ -80,7 +80,7 @@ export default function PublicNavbar() {
               <button
                 key={lng}
                 onClick={() => changeLanguage(lng)}
-                className={`w-8 h-8 rounded-full text-[9px] font-black transition-all flex items-center justify-center ${
+                className={`w-8 h-8 rounded-full text-[9px] font-extrabold transition-all flex items-center justify-center ${
                   i18n.language === lng 
                     ? 'bg-tf-primary text-white shadow-lg shadow-tf-primary/20' 
                     : 'text-slate-400 hover:text-tf-primary'
@@ -98,13 +98,13 @@ export default function PublicNavbar() {
             <div className="hidden lg:flex items-center gap-6">
                <button
                  onClick={() => logout()}
-                 className={`text-[9px] font-black text-slate-400 uppercase tracking-widest hover:text-tf-primary transition-colors italic`}
+                 className={`text-[9px] font-extrabold text-slate-400 uppercase tracking-widest hover:text-tf-primary transition-colors `}
                >
                  {t('public_navbar.discard')}
                </button>
                <button
                  onClick={() => navigate('/dashboard')}
-                 className="px-8 py-3 bg-slate-950 hover:bg-tf-primary text-white text-[9px] font-black uppercase tracking-widest rounded-full transition-all shadow-xl italic"
+                 className="px-8 py-3 bg-slate-950 hover:bg-tf-primary text-white text-[9px] font-extrabold uppercase tracking-widest rounded-full transition-all shadow-xl "
                >
                  {getDashboardLabel()}
                </button>
@@ -113,7 +113,7 @@ export default function PublicNavbar() {
             <div className="hidden lg:flex items-center gap-6">
               <button
                 onClick={() => navigate('/login')}
-                className={`text-[9px] font-black uppercase tracking-widest transition-all ${
+                className={`text-[9px] font-extrabold uppercase tracking-widest transition-all ${
                   scrolled || !isHomePage ? 'text-slate-950' : 'text-white'
                 }`}
               >
@@ -121,7 +121,7 @@ export default function PublicNavbar() {
               </button>
               <button
                 onClick={() => navigate('/login?tab=signup')}
-                className="px-8 py-3 bg-tf-primary hover:bg-slate-950 text-white text-[9px] font-black uppercase tracking-widest rounded-full transition-all shadow-xl italic"
+                className="px-8 py-3 bg-tf-primary hover:bg-slate-950 text-white text-[9px] font-extrabold uppercase tracking-widest rounded-full transition-all shadow-xl "
               >
                 {t('public_navbar.get_started')}
               </button>
@@ -155,7 +155,7 @@ export default function PublicNavbar() {
                   key={link.href}
                   to={link.href}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="text-sm font-black text-slate-900 uppercase tracking-[0.2em] italic"
+                  className="text-sm font-extrabold text-slate-900 uppercase tracking-[0.2em] "
                 >
                   {link.label}
                 </Link>
@@ -167,13 +167,13 @@ export default function PublicNavbar() {
                  <div className="flex flex-col gap-4">
                     <button
                       onClick={() => { navigate('/dashboard'); setMobileMenuOpen(false); }}
-                      className="w-full py-5 bg-slate-950 text-white text-[10px] font-black uppercase tracking-widest rounded-2xl italic"
+                      className="w-full py-5 bg-slate-950 text-white text-[10px] font-extrabold uppercase tracking-widest rounded-2xl "
                     >
                       {getDashboardLabel()}
                     </button>
                     <button
                       onClick={() => { logout(); setMobileMenuOpen(false); }}
-                      className="w-full py-5 bg-slate-50 text-slate-400 text-[10px] font-black uppercase tracking-widest rounded-2xl italic"
+                      className="w-full py-5 bg-slate-50 text-slate-400 text-[10px] font-extrabold uppercase tracking-widest rounded-2xl "
                     >
                       {t('public_navbar.discard')}
                     </button>
@@ -182,13 +182,13 @@ export default function PublicNavbar() {
                 <div className="flex flex-col gap-4">
                    <button
                      onClick={() => { navigate('/login'); setMobileMenuOpen(false); }}
-                     className="w-full py-5 bg-slate-50 text-slate-900 text-[10px] font-black uppercase tracking-widest rounded-2xl italic border border-slate-200"
+                     className="w-full py-5 bg-slate-50 text-slate-900 text-[10px] font-extrabold uppercase tracking-widest rounded-2xl  border border-slate-200"
                    >
                      {t('public_navbar.sign_in')}
                    </button>
                    <button
                      onClick={() => { navigate('/login?tab=signup'); setMobileMenuOpen(false); }}
-                     className="w-full py-5 bg-tf-primary text-white text-[10px] font-black uppercase tracking-widest rounded-2xl italic"
+                     className="w-full py-5 bg-tf-primary text-white text-[10px] font-extrabold uppercase tracking-widest rounded-2xl "
                    >
                      {t('public_navbar.get_started')}
                    </button>

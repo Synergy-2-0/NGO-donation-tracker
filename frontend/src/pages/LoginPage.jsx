@@ -185,34 +185,34 @@ export default function LoginPage() {
                    <div className="flex items-center">
                       <img src="/heart-logo c.png" alt="TransFund" className="h-12 w-auto" />
                    </div>
-                   <h2 className="text-5xl md:text-6xl font-black tracking-tighter leading-[1.05] italic uppercase font-display">
+                   <h2 className="text-5xl md:text-6xl font-extrabold tracking-tighter leading-[1.05] uppercase">
                       Empowering <br />
-                      <span className="text-tf-primary italic underline decoration-white/10 underline-offset-8">Humanity</span>
+                      <span className="text-tf-primary underline decoration-white/10 underline-offset-8">Humanity</span>
                    </h2>
-                   <p className="text-slate-400 font-medium text-lg leading-relaxed max-w-sm italic">
+                   <p className="text-slate-400 font-medium text-lg leading-relaxed max-w-sm">
                       Welcome to the TransFund Portal. Join thousands of patrons building a transparent future for global aid.
                    </p>
                 </div>
 
                 <div className="flex gap-10 border-t border-white/5 pt-10">
                    <div className="space-y-1">
-                      <p className="text-3xl font-black text-white italic tabular-nums tracking-tighter font-display">
+                      <p className="text-4xl font-extrabold text-white tabular-nums tracking-tighter">
                         {liveStats.donors > 0 ? liveStats.donors.toLocaleString() : '12K+'}
                       </p>
-                      <p className="text-[10px] font-black text-tf-primary uppercase tracking-widest italic leading-none">Global Supporters Hub</p>
+                      <p className="text-[10px] font-extrabold text-tf-primary uppercase tracking-widest leading-none">Global Supporters Hub</p>
                    </div>
                    <div className="w-px h-12 bg-white/10" />
                    <div className="space-y-1">
-                      <p className="text-3xl font-black text-white italic tabular-nums tracking-tighter font-display">
+                      <p className="text-4xl font-extrabold text-white tabular-nums tracking-tighter">
                         {liveStats.nodes > 0 ? liveStats.nodes.toLocaleString() : '480+'}
                       </p>
-                      <p className="text-[10px] font-black text-tf-primary uppercase tracking-widest italic leading-none">Active Partners Hub</p>
+                      <p className="text-[10px] font-extrabold text-tf-primary uppercase tracking-widest leading-none">Active Partners Hub</p>
                    </div>
                 </div>
 
                 <div className="flex flex-wrap gap-4 pt-4">
                    {['Verified Aid', 'Real-time Impact Hub', 'Verified Security'].map((tag) => (
-                      <span key={tag} className="px-5 py-3 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all italic tracking-tighter shadow-sm">
+                      <span key={tag} className="px-5 py-3 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-extrabold uppercase tracking-widest transition-all tracking-tighter shadow-sm">
                          {tag}
                       </span>
                    ))}
@@ -224,8 +224,8 @@ export default function LoginPage() {
           <div className="w-full lg:w-[500px] p-12 md:p-16 flex flex-col justify-center bg-white">
              <div className="space-y-10">
                 <div className="space-y-4">
-                   <p className="text-tf-primary text-[11px] font-black uppercase tracking-[0.5em] italic leading-none">Secure Access Point</p>
-                   <h1 className="text-4xl font-black text-tf-dark tracking-tighter italic uppercase font-display underline decoration-tf-primary/20 underline-offset-8">Account Portal</h1>
+                   <p className="text-tf-primary text-[11px] font-extrabold uppercase tracking-[0.5em]  leading-none">Secure Access Point</p>
+                   <h1 className="text-4xl font-extrabold text-tf-dark tracking-tighter uppercase underline decoration-tf-primary/20 underline-offset-8">Account Portal</h1>
                 </div>
 
                 {/* Tabs Hub */}
@@ -237,7 +237,7 @@ export default function LoginPage() {
                       <button
                          key={t.id}
                          onClick={() => { setTab(t.id); setError(''); setStep(1); }}
-                         className={`pb-4 text-[12px] font-black uppercase tracking-[0.3em] transition-all relative italic ${
+                         className={`pb-4 text-[12px] font-extrabold uppercase tracking-[0.3em] transition-all relative  ${
                             tab === t.id ? 'text-tf-dark' : 'text-slate-300 hover:text-slate-500'
                          }`}
                       >
@@ -248,7 +248,7 @@ export default function LoginPage() {
                 </div>
 
                 {error && (
-                   <div className="bg-red-50 border border-red-100 text-red-500 text-[10px] font-black uppercase tracking-widest px-6 py-4 rounded-2xl animate-fade-in shadow-sm">
+                   <div className="bg-red-50 border border-red-100 text-red-500 text-[10px] font-extrabold uppercase tracking-widest px-6 py-4 rounded-2xl animate-fade-in shadow-sm">
                       {error}
                    </div>
                 )}
@@ -257,7 +257,7 @@ export default function LoginPage() {
                 {tab === 'signin' ? (
                    <form onSubmit={handleSignIn} className="space-y-8">
                       <div className="space-y-3">
-                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-6">Patron Email</label>
+                         <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-6">Patron Email</label>
                          <input
                             type="email"
                             value={signIn.email}
@@ -268,7 +268,7 @@ export default function LoginPage() {
                          />
                       </div>
                       <div className="space-y-3 relative">
-                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-6">Secure Password</label>
+                         <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-6">Secure Password</label>
                          <input
                             type={showPassword ? "text" : "password"}
                             value={signIn.password}
@@ -292,7 +292,7 @@ export default function LoginPage() {
                       <button
                          type="submit"
                          disabled={loading}
-                         className="w-full bg-tf-dark hover:bg-tf-primary text-white font-black py-7 rounded-full transition-all text-[12px] uppercase tracking-[0.4em] shadow-2xl active:scale-95 mt-4"
+                         className="w-full bg-tf-dark hover:bg-tf-primary text-white font-extrabold py-7 rounded-full transition-all text-[12px] uppercase tracking-[0.4em] shadow-2xl active:scale-95 mt-4"
                       >
                          {loading ? 'Authenticating…' : 'Initialize Session'}
                       </button>
@@ -302,10 +302,10 @@ export default function LoginPage() {
                       <div className="flex items-center gap-8">
                          {[1, 2].map(s => (
                             <div key={s} className="flex items-center gap-4">
-                               <div className={`w-10 h-10 rounded-2xl flex items-center justify-center text-[11px] font-black transition-all ${
+                               <div className={`w-10 h-10 rounded-2xl flex items-center justify-center text-[11px] font-extrabold transition-all ${
                                   step >= s ? 'bg-tf-primary text-white shadow-xl shadow-tf-primary/30 rotate-3' : 'bg-slate-50 text-slate-300 border border-slate-100'
                                }`}>{s}</div>
-                               <p className={`text-[10px] font-black uppercase tracking-widest italic ${step === s ? 'text-tf-dark' : 'text-slate-300'}`}>
+                               <p className={`text-[10px] font-extrabold uppercase tracking-widest  ${step === s ? 'text-tf-dark' : 'text-slate-300'}`}>
                                   {s === 1 ? 'Account' : 'Profile'}
                                </p>
                             </div>
@@ -315,7 +315,7 @@ export default function LoginPage() {
                       {step === 1 ? (
                          <form onSubmit={handleStep1} className="space-y-8">
                             <div className="space-y-3">
-                               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-6">Full Name</label>
+                               <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-6">Full Name</label>
                                <input
                                   type="text"
                                   value={signUp.name}
@@ -328,7 +328,7 @@ export default function LoginPage() {
                                <FieldError msg={fieldErrors.name} />
                             </div>
                             <div className="space-y-3">
-                               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-6">Email Address Hub</label>
+                               <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-6">Email Address Hub</label>
                                <input
                                   type="email"
                                   value={signUp.email}
@@ -341,11 +341,11 @@ export default function LoginPage() {
                                <FieldError msg={fieldErrors.email} />
                             </div>
                             <div className="space-y-3">
-                               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-6">Account Type Hub</label>
+                               <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-6">Account Type Hub</label>
                                <select
                                   value={signUp.role}
                                   onChange={(e) => handleSignUpChange('role', e.target.value)}
-                                  className={inputCls(false) + " appearance-none cursor-pointer pr-12 italic"}
+                                  className={inputCls(false) + " appearance-none cursor-pointer pr-12 "}
                                >
                                   {ROLES.map((r) => (
                                      <option key={r.value} value={r.value}>{r.label.toUpperCase()}</option>
@@ -353,7 +353,7 @@ export default function LoginPage() {
                                </select>
                             </div>
                             <div className="space-y-3 relative">
-                               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-6">Secure Password</label>
+                               <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-6">Secure Password</label>
                                <input
                                   type={showPassword ? "text" : "password"}
                                   value={signUp.password}
@@ -366,7 +366,7 @@ export default function LoginPage() {
                                <FieldError msg={fieldErrors.password} />
                             </div>
                             <div className="space-y-3 relative">
-                               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-6">Confirm Password</label>
+                               <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-6">Confirm Password</label>
                                <input
                                   type={showPassword ? "text" : "password"}
                                   value={signUp.confirmPassword}
@@ -381,7 +381,7 @@ export default function LoginPage() {
                             <button
                                type="submit"
                                disabled={loading}
-                               className="w-full bg-tf-primary hover:bg-tf-dark text-white font-black py-7 rounded-full transition-all text-[12px] uppercase tracking-[0.4em] shadow-2xl active:scale-95"
+                               className="w-full bg-tf-primary hover:bg-tf-dark text-white font-extrabold py-7 rounded-full transition-all text-[12px] uppercase tracking-[0.4em] shadow-2xl active:scale-95"
                             >
                                {loading ? 'Verifying Account Hub…' : 'Next Step Hub →'}
                             </button>
@@ -389,7 +389,7 @@ export default function LoginPage() {
                       ) : (
                          <form onSubmit={handleStep2} className="space-y-8 animate-slide-in">
                             <div className="space-y-3">
-                               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-6">Verified Phone</label>
+                               <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-6">Verified Phone</label>
                                <input
                                   type="tel"
                                   value={signUp.phone}
@@ -402,7 +402,7 @@ export default function LoginPage() {
                             </div>
                             <div className="grid grid-cols-2 gap-6">
                                <div className="space-y-3">
-                                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-6">City Hub</label>
+                                  <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-6">City Hub</label>
                                   <input
                                      type="text"
                                      value={signUp.city}
@@ -412,7 +412,7 @@ export default function LoginPage() {
                                   />
                                </div>
                                <div className="space-y-3">
-                                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-6">Country</label>
+                                  <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-6">Country</label>
                                   <input
                                      type="text"
                                      value={signUp.country}
@@ -423,7 +423,7 @@ export default function LoginPage() {
                                </div>
                             </div>
                             <div className="space-y-3">
-                               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-6">Mission Focus</label>
+                               <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-6">Mission Focus</label>
                                <input
                                   type="text"
                                   value={signUp.preferredCauses}
@@ -436,14 +436,14 @@ export default function LoginPage() {
                                <button
                                   type="button"
                                   onClick={() => setStep(1)}
-                                  className="flex-1 border-2 border-slate-100 text-slate-400 hover:text-tf-dark hover:border-tf-dark font-black py-7 rounded-full text-[11px] uppercase tracking-widest transition-all italic active:scale-95"
+                                  className="flex-1 border-2 border-slate-100 text-slate-400 hover:text-tf-dark hover:border-tf-dark font-extrabold py-7 rounded-full text-[11px] uppercase tracking-widest transition-all  active:scale-95"
                                >
                                   Back Hub
                                 </button>
                                <button
                                   type="submit"
                                   disabled={loading}
-                                  className="flex-[2] bg-tf-primary hover:bg-tf-dark text-white font-black py-7 rounded-full transition-all text-[12px] uppercase tracking-[0.4em] shadow-2xl active:scale-95"
+                                  className="flex-[2] bg-tf-primary hover:bg-tf-dark text-white font-extrabold py-7 rounded-full transition-all text-[12px] uppercase tracking-[0.4em] shadow-2xl active:scale-95"
                                >
                                   {loading ? 'Creating Account Hub…' : 'Complete Signup Hub'}
                                 </button>

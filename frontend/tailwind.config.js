@@ -4,8 +4,9 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
-        display: ['Merriweather', 'serif'],
+        sans: ['Open Sans', 'sans-serif'],
+        display: ['Open Sans', 'sans-serif'],
+        serif: ['Open Sans', 'sans-serif'],
       },
       colors: {
         tf: {

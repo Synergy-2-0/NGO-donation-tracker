@@ -20,16 +20,16 @@ export default function PublicHowItWorksPage() {
         <div className="max-w-[1400px] mx-auto text-center space-y-12 relative z-10">
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} className="space-y-10">
             <div className="flex justify-center">
-               <span className="px-6 py-2 rounded-full border border-orange-500/30 bg-orange-500/5 text-orange-500 font-black text-[10px] tracking-[0.6em] uppercase mb-6 inline-flex items-center gap-3 italic">
+               <span className="px-6 py-2 rounded-full border border-orange-500/30 bg-orange-500/5 text-orange-500 font-extrabold text-[10px] tracking-[0.6em] uppercase mb-6 inline-flex items-center gap-3 ">
                   <div className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse" />
                   Operational Protocol Manual
                </span>
             </div>
-            <h1 className="text-6xl md:text-9xl font-black text-white tracking-tighter uppercase italic leading-[0.8] selection:bg-orange-500">
-               The <br /> <span className="text-tf-primary italic underline underline-offset-8 decoration-white/10">TransFund</span> <br /> Method.
+            <h1 className="text-6xl md:text-9xl font-extrabold text-white tracking-tighter uppercase  leading-[0.8] selection:bg-orange-500">
+               The <br /> <span className="text-tf-primary  underline underline-offset-8 decoration-white/10">TransFund</span> <br /> Method.
             </h1>
           </motion.div>
-          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="text-xl text-white/40 font-medium italic leading-relaxed max-w-3xl mx-auto border-t border-white/5 pt-12 mt-12 lowercase tracking-tight">
+          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="text-xl text-white/40 font-medium  leading-relaxed max-w-3xl mx-auto border-t border-white/5 pt-12 mt-12 lowercase tracking-tight">
             utilizing a verified institutional framework to ensure every humanitarian contribution reaches its intended target with absolute audit-ready integrity.
           </motion.p>
         </div>
@@ -49,12 +49,12 @@ export default function PublicHowItWorksPage() {
              transition={{ delay: i * 0.1 }}
              className="space-y-10 group"
            >
-              <div className="w-20 h-20 bg-tf-secondary rounded-2xl flex items-center justify-center text-4xl italic font-display font-black text-tf-primary shadow-xl group-hover:bg-tf-primary group-hover:text-white transition-all duration-700">
+              <div className="w-20 h-20 bg-tf-secondary rounded-2xl flex items-center justify-center text-4xl  font-display font-extrabold text-tf-primary shadow-xl group-hover:bg-tf-primary group-hover:text-white transition-all duration-700">
                  {item.step}
               </div>
               <div className="space-y-6">
-                 <h3 className="text-3xl font-display font-medium italic text-tf-dark transition-all tracking-tight group-hover:text-tf-primary uppercase">{item.title}</h3>
-                 <p className="text-slate-500 font-serif font-medium leading-relaxed italic text-sm max-w-sm">{item.desc}</p>
+                 <h3 className="text-3xl font-display font-medium  text-tf-dark transition-all tracking-tight group-hover:text-tf-primary uppercase">{item.title}</h3>
+                 <p className="text-slate-500 font-serif font-medium leading-relaxed  text-sm max-w-sm">{item.desc}</p>
               </div>
            </motion.div>
          ))}
@@ -64,7 +64,7 @@ export default function PublicHowItWorksPage() {
       <section className="py-48 px-8 bg-tf-dark text-white relative overflow-hidden text-center">
          <div className="absolute inset-0 bg-tf-primary/5 blur-[150px] rounded-full -m-32 pointer-events-none opacity-40 animate-pulse" />
          <div className="relative z-10 max-w-4xl mx-auto space-y-12">
-            <h2 className="text-5xl md:text-8xl font-display font-bold text-white italic tracking-tighter uppercase leading-[0.85]">
+            <h2 className="text-5xl md:text-8xl font-display font-bold text-white  tracking-tighter uppercase leading-[0.85]">
               "The New <br /> <span className="text-tf-primary">Standard</span> <br /> for Humanitarian Integrity."
             </h2>
             <p className="text-tf-primary font-bold text-[10px] uppercase tracking-[0.8em] leading-none">Transparency Standards v2.4.1</p>

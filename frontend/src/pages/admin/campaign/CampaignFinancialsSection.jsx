@@ -40,8 +40,8 @@ export default function CampaignFinancialsSection({ campaignId }) {
                             <FiDollarSign size={24} />
                         </div>
                         <div>
-                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Total Contributions</p>
-                            <h3 className="text-3xl font-black text-slate-900 tracking-tighter italic">LKR {stats.total.toLocaleString()}</h3>
+                            <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest leading-none mb-1">Total Contributions</p>
+                            <h3 className="text-3xl font-extrabold text-slate-900 tracking-tighter ">LKR {stats.total.toLocaleString()}</h3>
                         </div>
                     </div>
                 </div>
@@ -52,8 +52,8 @@ export default function CampaignFinancialsSection({ campaignId }) {
                             <FiUsers size={24} />
                         </div>
                         <div>
-                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Impact Partners</p>
-                            <h3 className="text-3xl font-black text-slate-900 tracking-tighter italic">{stats.contributors} Donors</h3>
+                            <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest leading-none mb-1">Impact Partners</p>
+                            <h3 className="text-3xl font-extrabold text-slate-900 tracking-tighter ">{stats.contributors} Donors</h3>
                         </div>
                     </div>
                 </div>
@@ -63,8 +63,8 @@ export default function CampaignFinancialsSection({ campaignId }) {
             <div className="bg-white rounded-[3rem] border border-slate-100 shadow-sm overflow-hidden">
                 <div className="px-10 py-8 border-b border-slate-50 flex items-center justify-between">
                     <div>
-                        <h3 className="text-xl font-black text-slate-950 tracking-tight italic">Financial Contributors</h3>
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Audit-ready verification registry</p>
+                        <h3 className="text-xl font-extrabold text-slate-950 tracking-tight ">Financial Contributors</h3>
+                        <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mt-1">Audit-ready verification registry</p>
                     </div>
                 </div>
 
@@ -72,10 +72,10 @@ export default function CampaignFinancialsSection({ campaignId }) {
                     <table className="w-full">
                         <thead>
                             <tr className="bg-slate-50/50 text-left border-b border-slate-100">
-                                <th className="px-10 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest italic">Identity</th>
-                                <th className="px-10 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest italic text-center">Protocol</th>
-                                <th className="px-10 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest italic text-right">Verification</th>
-                                <th className="px-10 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest italic text-right">Liquidity Inbound</th>
+                                <th className="px-10 py-5 text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ">Identity</th>
+                                <th className="px-10 py-5 text-[10px] font-extrabold text-slate-400 uppercase tracking-widest  text-center">Protocol</th>
+                                <th className="px-10 py-5 text-[10px] font-extrabold text-slate-400 uppercase tracking-widest  text-right">Verification</th>
+                                <th className="px-10 py-5 text-[10px] font-extrabold text-slate-400 uppercase tracking-widest  text-right">Liquidity Inbound</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-50">
@@ -83,11 +83,11 @@ export default function CampaignFinancialsSection({ campaignId }) {
                                 <tr key={tx._id} className="hover:bg-slate-50/50 transition-colors group">
                                     <td className="px-10 py-6">
                                         <div className="flex items-center gap-4">
-                                            <div className="w-10 h-10 bg-slate-50 border border-slate-100 rounded-xl flex items-center justify-center text-slate-400 group-hover:bg-tf-primary group-hover:text-white transition-all font-black">
+                                            <div className="w-10 h-10 bg-slate-50 border border-slate-100 rounded-xl flex items-center justify-center text-slate-400 group-hover:bg-tf-primary group-hover:text-white transition-all font-extrabold">
                                                 {tx.donorId?.name?.[0] || '?'}
                                             </div>
                                             <div>
-                                                <p className="text-sm font-black text-slate-950 italic line-clamp-1">{tx.donorId?.name || 'Anonymous Intelligence'}</p>
+                                                <p className="text-sm font-extrabold text-slate-950  line-clamp-1">{tx.donorId?.name || 'Anonymous Intelligence'}</p>
                                                 <p className="text-[10px] text-slate-400 font-bold uppercase tracking-tight flex items-center gap-1.5 mt-0.5">
                                                     <FiClock className="text-tf-primary" /> {new Date(tx.createdAt).toLocaleDateString()}
                                                 </p>
@@ -96,21 +96,21 @@ export default function CampaignFinancialsSection({ campaignId }) {
                                     </td>
                                     <td className="px-10 py-6 text-center">
                                         {tx.paymentType === 'pledge' ? (
-                                            <span className="px-3 py-1 bg-emerald-50 text-emerald-600 rounded-lg text-[9px] font-black uppercase tracking-widest border border-emerald-100 flex items-center justify-center gap-1.5 w-fit mx-auto">
+                                            <span className="px-3 py-1 bg-emerald-50 text-emerald-600 rounded-lg text-[9px] font-extrabold uppercase tracking-widest border border-emerald-100 flex items-center justify-center gap-1.5 w-fit mx-auto">
                                                 <FiRepeat /> Recurring
                                             </span>
                                         ) : (
-                                            <span className="px-3 py-1 bg-slate-50 text-slate-400 rounded-lg text-[9px] font-black uppercase tracking-widest border border-slate-100 w-fit mx-auto">One-Time</span>
+                                            <span className="px-3 py-1 bg-slate-50 text-slate-400 rounded-lg text-[9px] font-extrabold uppercase tracking-widest border border-slate-100 w-fit mx-auto">One-Time</span>
                                         )}
                                     </td>
                                     <td className="px-10 py-6 text-right">
                                         <div className="flex items-center justify-end gap-2">
                                             <FiCheckCircle className="text-emerald-500" />
-                                            <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">#{tx.payHereOrderId || tx._id.slice(-8).toUpperCase()}</span>
+                                            <span className="text-[10px] font-extrabold text-slate-300 uppercase tracking-widest">#{tx.payHereOrderId || tx._id.slice(-8).toUpperCase()}</span>
                                         </div>
                                     </td>
                                     <td className="px-10 py-6 text-right">
-                                        <p className="text-lg font-black text-slate-950 tracking-tighter italic tabular-nums">LKR {Number(tx.amount).toLocaleString()}</p>
+                                        <p className="text-lg font-extrabold text-slate-950 tracking-tighter  tabular-nums">LKR {Number(tx.amount).toLocaleString()}</p>
                                         <p className="text-[9px] font-bold text-emerald-500 uppercase tracking-widest mt-1">Verified Registry</p>
                                     </td>
                                 </tr>
@@ -120,7 +120,7 @@ export default function CampaignFinancialsSection({ campaignId }) {
                                         <div className="w-20 h-20 bg-slate-50 rounded-[2.5rem] flex items-center justify-center mx-auto mb-6 text-slate-200">
                                             <FiUsers size={40} />
                                         </div>
-                                        <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.5em] italic">Awaiting Founding Contributors</p>
+                                        <p className="text-[10px] font-extrabold text-slate-300 uppercase tracking-[0.5em] ">Awaiting Founding Contributors</p>
                                     </td>
                                 </tr>
                             )}

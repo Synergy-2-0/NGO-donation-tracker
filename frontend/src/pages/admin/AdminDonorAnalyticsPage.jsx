@@ -23,14 +23,14 @@ function ImpactCard({ label, value, color, icon, trend }) {
             {icon}
          </div>
          {trend && (
-           <span className="text-[9px] font-black text-emerald-500 bg-emerald-50 px-4 py-2 rounded-full uppercase tracking-widest border border-emerald-100 italic">
+           <span className="text-[9px] font-extrabold text-emerald-500 bg-emerald-50 px-4 py-2 rounded-full uppercase tracking-widest border border-emerald-100 ">
              {trend}
            </span>
          )}
       </div>
       <div className="relative z-10 space-y-2">
-        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic group-hover:text-slate-900 transition-colors uppercase">{label}</p>
-        <p className={`text-3xl font-black tracking-tight text-slate-950 group-hover:text-tf-primary transition-all duration-700 tabular-nums`}>{value ?? '0.00'}</p>
+        <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest  group-hover:text-slate-900 transition-colors uppercase">{label}</p>
+        <p className={`text-3xl font-extrabold tracking-tight text-slate-950 group-hover:text-tf-primary transition-all duration-700 tabular-nums`}>{value ?? '0.00'}</p>
       </div>
     </motion.div>
   );
@@ -79,10 +79,10 @@ export default function AdminDonorAnalyticsPage() {
         
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-10">
           <div className="space-y-6 flex-1">
-            <div className="inline-flex items-center gap-3 px-4 py-1.5 bg-white/5 border border-white/10 rounded-full text-tf-primary text-[10px] font-black uppercase tracking-widest backdrop-blur-md">
+            <div className="inline-flex items-center gap-3 px-4 py-1.5 bg-white/5 border border-white/10 rounded-full text-tf-primary text-[10px] font-extrabold uppercase tracking-widest backdrop-blur-md">
                <FiActivity /> Donor Insights Hub
             </div>
-            <h1 className="text-3xl md:text-5xl font-black text-white tracking-tight leading-tight">
+            <h1 className="text-3xl md:text-5xl font-extrabold text-white tracking-tight leading-tight">
               Impact <span className="text-tf-primary">Analytics</span>
             </h1>
             <p className="text-slate-400 text-lg font-medium leading-relaxed max-w-xl">
@@ -90,12 +90,12 @@ export default function AdminDonorAnalyticsPage() {
             </p>
           </div>
           <div className="shrink-0 flex flex-col gap-4">
-            <button onClick={() => window.print()} className="px-8 py-4 bg-white text-slate-950 text-[10px] font-black uppercase tracking-widest rounded-2xl hover:bg-tf-primary hover:text-white transition-all shadow-xl active:scale-95 flex items-center justify-center gap-3 italic">
+            <button onClick={() => window.print()} className="px-8 py-4 bg-white text-slate-950 text-[10px] font-extrabold uppercase tracking-widest rounded-2xl hover:bg-tf-primary hover:text-white transition-all shadow-xl active:scale-95 flex items-center justify-center gap-3 ">
               Export Growth Report HUB
             </button>
             <div className="flex items-center gap-3 px-4">
                <div className="w-2 h-2 rounded-full bg-tf-primary animate-pulse" />
-               <p className="text-[10px] font-black text-white/30 uppercase tracking-widest">Real-time data synchronization</p>
+               <p className="text-[10px] font-extrabold text-white/30 uppercase tracking-widest">Real-time data synchronization</p>
             </div>
           </div>
         </div>
@@ -119,8 +119,8 @@ export default function AdminDonorAnalyticsPage() {
             <div className="bg-white rounded-[2.5rem] border border-slate-100 p-10 shadow-sm relative overflow-hidden group">
                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
                   <div className="space-y-1">
-                    <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-3 italic underline decoration-tf-primary/30 decoration-4 underline-offset-8">Support Segments</h2>
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">Breakdown of community member groups by activity HUB</p>
+                    <h2 className="text-xl font-extrabold text-slate-900 tracking-tight flex items-center gap-3  underline decoration-tf-primary/30 decoration-4 underline-offset-8">Support Segments</h2>
+                    <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest leading-none">Breakdown of community member groups by activity HUB</p>
                   </div>
                </div>
 
@@ -139,12 +139,12 @@ export default function AdminDonorAnalyticsPage() {
                                   {meta.icon}
                                </div>
                                <div>
-                                  <p className="text-base font-black text-slate-900 transition-colors leading-none mb-1">{meta.label}</p>
-                                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{count} members</p>
+                                  <p className="text-base font-extrabold text-slate-900 transition-colors leading-none mb-1">{meta.label}</p>
+                                  <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">{count} members</p>
                                </div>
                             </div>
                             <div className="text-right">
-                               <p className="text-lg font-black text-slate-950 italic">{pct}%</p>
+                               <p className="text-lg font-extrabold text-slate-950 ">{pct}%</p>
                             </div>
                          </div>
                          <div className="h-2 w-full bg-slate-50 border border-slate-100 rounded-full overflow-hidden shadow-inner p-0.5">
@@ -165,8 +165,8 @@ export default function AdminDonorAnalyticsPage() {
            <div className="bg-white rounded-[2.5rem] border border-slate-100 p-10 shadow-sm relative overflow-hidden">
                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 border-b border-slate-50 pb-8">
                   <div className="space-y-1">
-                    <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-3 italic underline decoration-tf-primary/30 decoration-4 underline-offset-8">Top Community Supporters</h2>
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">Members with highest total impact Hub</p>
+                    <h2 className="text-xl font-extrabold text-slate-900 tracking-tight flex items-center gap-3  underline decoration-tf-primary/30 decoration-4 underline-offset-8">Top Community Supporters</h2>
+                    <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest leading-none">Members with highest total impact Hub</p>
                   </div>
                </div>
 
@@ -182,25 +182,25 @@ export default function AdminDonorAnalyticsPage() {
                           className="flex flex-col md:flex-row md:items-center justify-between p-6 bg-slate-50/50 hover:bg-white border hover:border-slate-100 rounded-2xl transition-all group cursor-pointer"
                         >
                            <div className="flex items-center gap-6">
-                              <span className="text-lg font-black text-slate-200 group-hover:text-tf-primary transition-colors">#{i + 1}</span>
-                              <div className="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center font-black text-sm group-hover:bg-slate-900 group-hover:text-white transition-all">
+                              <span className="text-lg font-extrabold text-slate-200 group-hover:text-tf-primary transition-colors">#{i + 1}</span>
+                              <div className="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center font-extrabold text-sm group-hover:bg-slate-900 group-hover:text-white transition-all">
                                  {d.userId?.name?.[0]}
                               </div>
                               <div>
-                                 <p className="text-base font-black text-slate-900 group-hover:text-tf-primary transition-colors leading-none mb-1.5">{d.userId?.name}</p>
+                                 <p className="text-base font-extrabold text-slate-900 group-hover:text-tf-primary transition-colors leading-none mb-1.5">{d.userId?.name}</p>
                                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{SEGMENT_META[d.segment]?.label || 'Member'}</p>
                               </div>
                            </div>
                            <div className="mt-4 md:mt-0 text-right">
-                              <p className="text-xl font-black text-slate-950 tabular-nums italic group-hover:text-tf-primary transition-colors">LKR {(d.analytics?.totalDonated || 0).toLocaleString()}</p>
-                              <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest italic">Total Given</p>
+                              <p className="text-xl font-extrabold text-slate-950 tabular-nums  group-hover:text-tf-primary transition-colors">LKR {(d.analytics?.totalDonated || 0).toLocaleString()}</p>
+                              <p className="text-[9px] font-extrabold text-slate-300 uppercase tracking-widest ">Total Given</p>
                            </div>
                         </div>
                       ))
                   ) : (
                     <div className="py-20 text-center space-y-6">
                        <FiUsers className="mx-auto text-slate-100" size={60} />
-                       <p className="text-slate-400 font-bold text-xs uppercase tracking-widest italic">No community data synchronized Hub.</p>
+                       <p className="text-slate-400 font-bold text-xs uppercase tracking-widest ">No community data synchronized Hub.</p>
                     </div>
                   )}
                </div>

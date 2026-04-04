@@ -95,12 +95,12 @@ function DonationModal({ campaign, user, onClose, defaultType = 'one-time' }) {
                   </button>
                   <div className="space-y-6">
                      <div className="space-y-2">
-                        <p className="text-[10px] font-black uppercase tracking-[0.4em] text-tf-primary italic">Donation</p>
-                        <h3 className="text-4xl font-black italic tracking-tighter leading-none">
+                        <p className="text-[10px] font-extrabold uppercase tracking-[0.4em] text-tf-primary ">Donation</p>
+                        <h3 className="text-4xl font-extrabold  tracking-tighter leading-none">
                            {type === 'one-time' ? 'One-time Gift' : 'Impact Pledge'}
                         </h3>
                      </div>
-                     <p className="text-base text-white/40 font-medium leading-relaxed italic">
+                     <p className="text-base text-white/40 font-medium leading-relaxed ">
                         {type === 'one-time'
                            ? 'Support this cause directly with a one-time cash donation.'
                            : 'Commit to supporting this cause with a recurring monthly pledge.'}
@@ -108,14 +108,14 @@ function DonationModal({ campaign, user, onClose, defaultType = 'one-time' }) {
                   </div>
                   <div className="p-8 bg-white/5 border border-white/10 rounded-3xl space-y-3">
                      <p className="text-[9px] font-bold text-white/30 uppercase tracking-widest">You are supporting</p>
-                     <p className="text-lg font-black leading-tight italic line-clamp-3">{campaign.title}</p>
+                     <p className="text-lg font-extrabold leading-tight  line-clamp-3">{campaign.title}</p>
                   </div>
                </div>
                <div className="relative z-10 pt-10 border-t border-white/5 flex items-center gap-4">
                   <div className="w-10 h-10 rounded-2xl bg-white/5 flex items-center justify-center text-tf-primary text-xl"><FiShield /></div>
                   <div className="space-y-0.5">
-                     <p className="text-[9px] font-black text-white/30 uppercase tracking-widest leading-none">100% Secure & Verified</p>
-                     <p className="text-[11px] font-black text-white uppercase tracking-widest">Protected by TransFund</p>
+                     <p className="text-[9px] font-extrabold text-white/30 uppercase tracking-widest leading-none">100% Secure & Verified</p>
+                     <p className="text-[11px] font-extrabold text-white uppercase tracking-widest">Protected by TransFund</p>
                   </div>
                </div>
             </div>
@@ -127,21 +127,21 @@ function DonationModal({ campaign, user, onClose, defaultType = 'one-time' }) {
                {/* Amount */}
                <div className="space-y-6">
                   <div>
-                     <h4 className="text-xl font-black text-slate-950 italic tracking-tight uppercase">Donation Amount</h4>
-                     <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest mt-1">Select an amount in LKR</p>
+                     <h4 className="text-xl font-extrabold text-slate-950  tracking-tight uppercase">Donation Amount</h4>
+                     <p className="text-[10px] font-extrabold text-slate-300 uppercase tracking-widest mt-1">Select an amount in LKR</p>
                   </div>
                   <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
                      {(type === 'pledge' ? (campaign.pledgeConfig?.suggestedAmounts?.length ? campaign.pledgeConfig.suggestedAmounts : ['500', '1000', '2500', '5000']) : ['1000', '5000', '10000', '25000']).map((val) => (
                         <button
                            key={val} onClick={() => setAmount(val)}
-                           className={`h-14 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all border-2 ${amount === val ? 'bg-slate-950 text-white border-slate-950 shadow-xl' : 'bg-slate-50 text-slate-400 border-transparent hover:border-tf-primary/30 hover:bg-white hover:text-slate-950'}`}
+                           className={`h-14 rounded-2xl text-[11px] font-extrabold uppercase tracking-widest transition-all border-2 ${amount === val ? 'bg-slate-950 text-white border-slate-950 shadow-xl' : 'bg-slate-50 text-slate-400 border-transparent hover:border-tf-primary/30 hover:bg-white hover:text-slate-950'}`}
                         >
                            {parseFloat(val).toLocaleString()}
                         </button>
                      ))}
                      <button
                         onClick={() => setAmount('custom')}
-                        className={`h-14 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all border-2 ${amount === 'custom' ? 'bg-slate-950 text-white border-slate-950 shadow-xl' : 'bg-slate-50 text-slate-400 border-transparent'}`}
+                        className={`h-14 rounded-2xl text-[11px] font-extrabold uppercase tracking-widest transition-all border-2 ${amount === 'custom' ? 'bg-slate-950 text-white border-slate-950 shadow-xl' : 'bg-slate-50 text-slate-400 border-transparent'}`}
                      >
                         Custom
                      </button>
@@ -150,7 +150,7 @@ function DonationModal({ campaign, user, onClose, defaultType = 'one-time' }) {
                      <input
                         type="number" placeholder="Enter amount (Min LKR 100)"
                         value={customAmount} onChange={(e) => setCustomAmount(e.target.value)}
-                        className="w-full bg-slate-50 border-b-2 border-transparent border-b-slate-100 rounded-2xl px-7 py-5 text-lg font-black text-slate-950 focus:outline-none focus:border-tf-primary"
+                        className="w-full bg-slate-50 border-b-2 border-transparent border-b-slate-100 rounded-2xl px-7 py-5 text-lg font-extrabold text-slate-950 focus:outline-none focus:border-tf-primary"
                      />
                   )}
                </div>
@@ -158,55 +158,55 @@ function DonationModal({ campaign, user, onClose, defaultType = 'one-time' }) {
                {/* Frequency Info */}
                {type === 'pledge' && (
                   <div className="p-8 bg-tf-primary/5 border border-tf-primary/10 rounded-[2rem] space-y-4">
-                     <p className="text-[10px] font-black text-tf-primary uppercase tracking-[0.2em] italic flex items-center gap-2"><FiCalendar /> Frequency</p>
+                     <p className="text-[10px] font-extrabold text-tf-primary uppercase tracking-[0.2em]  flex items-center gap-2"><FiCalendar /> Frequency</p>
                      <div className="flex gap-3">
                         {(campaign.pledgeConfig?.frequencies || ['monthly']).map(f => (
                            <button
                               key={f} onClick={() => setFrequency(f)}
-                              className={`px-7 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${frequency === f ? 'bg-tf-primary text-white shadow-lg' : 'bg-white text-tf-primary border border-tf-primary/10 hover:bg-tf-primary/5'}`}
+                              className={`px-7 py-3 rounded-xl text-[10px] font-extrabold uppercase tracking-widest transition-all ${frequency === f ? 'bg-tf-primary text-white shadow-lg' : 'bg-white text-tf-primary border border-tf-primary/10 hover:bg-tf-primary/5'}`}
                            >
                               {f}
                            </button>
                         ))}
                      </div>
-                     <p className="text-[9px] text-tf-primary/60 font-bold italic leading-relaxed uppercase">Monthly pledges are commitment-based. You will be notified by email for each payment.</p>
+                     <p className="text-[9px] text-tf-primary/60 font-bold  leading-relaxed uppercase">Monthly pledges are commitment-based. You will be notified by email for each payment.</p>
                   </div>
                )}
 
                {/* Donor Info */}
                <div className="space-y-8">
-                  <h4 className="text-xl font-black text-slate-950 italic tracking-tight uppercase border-b border-slate-50 pb-4">Donor Information</h4>
+                  <h4 className="text-xl font-extrabold text-slate-950  tracking-tight uppercase border-b border-slate-50 pb-4">Donor Information</h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                      <div className="space-y-2">
-                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">First Name</label>
+                        <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-1">First Name</label>
                         <input
                            value={donorDetails.firstName} onChange={(e) => setDonorDetails({ ...donorDetails, firstName: e.target.value })}
                            className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-bold" placeholder="First Name"
                         />
                      </div>
                      <div className="space-y-2">
-                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Last Name</label>
+                        <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-1">Last Name</label>
                         <input
                            value={donorDetails.lastName} onChange={(e) => setDonorDetails({ ...donorDetails, lastName: e.target.value })}
                            className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-bold" placeholder="Last Name"
                         />
                      </div>
                      <div className="md:col-span-2 space-y-2">
-                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Email Address</label>
+                        <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-1">Email Address</label>
                         <input
                            value={donorDetails.email} onChange={(e) => setDonorDetails({ ...donorDetails, email: e.target.value })}
                            className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-bold" placeholder="your@email.com"
                         />
                      </div>
                      <div className="space-y-2">
-                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Phone Number</label>
+                        <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-1">Phone Number</label>
                         <input
                            value={donorDetails.phone} onChange={(e) => setDonorDetails({ ...donorDetails, phone: e.target.value })}
                            className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-bold" placeholder="07XXXXXXXX"
                         />
                      </div>
                      <div className="space-y-2">
-                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">City</label>
+                        <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-1">City</label>
                         <input
                            value={donorDetails.city} onChange={(e) => setDonorDetails({ ...donorDetails, city: e.target.value })}
                            className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-bold" placeholder="City"
@@ -219,13 +219,13 @@ function DonationModal({ campaign, user, onClose, defaultType = 'one-time' }) {
                   <button
                      onClick={handlePayment}
                      disabled={!isValid || loading}
-                     className="w-full py-6 bg-slate-950 text-white rounded-[2rem] text-[11px] font-black uppercase tracking-[0.4em] hover:bg-tf-primary transition-all duration-500 shadow-xl active:scale-95 italic flex items-center justify-center gap-3"
+                     className="w-full py-6 bg-slate-950 text-white rounded-[2rem] text-[11px] font-extrabold uppercase tracking-[0.4em] hover:bg-tf-primary transition-all duration-500 shadow-xl active:scale-95  flex items-center justify-center gap-3"
                   >
                      {loading ? 'Processing...' : `Donate LKR ${finalAmount.toLocaleString()} →`}
                   </button>
                   <div className="flex items-center justify-center gap-4 text-slate-300">
                      <FiCheckCircle size={14} className="text-emerald-400" />
-                     <p className="text-[10px] font-black uppercase tracking-widest italic leading-none">Your transaction is secure and private</p>
+                     <p className="text-[10px] font-extrabold uppercase tracking-widest  leading-none">Your transaction is secure and private</p>
                   </div>
                </div>
             </div>
@@ -269,12 +269,12 @@ export default function PublicCampaignDetailPage() {
    if (loading) return <LoadingSpinner message="Searching for cause..." />;
    if (error || !campaign) return (
       <div className="min-h-screen bg-white flex flex-col items-center justify-center p-8 text-center space-y-8">
-         <div className="w-20 h-20 bg-slate-50 rounded-3xl flex items-center justify-center text-slate-200 text-5xl font-black italic shadow-inner">!</div>
+         <div className="w-20 h-20 bg-slate-50 rounded-3xl flex items-center justify-center text-slate-200 text-5xl font-extrabold  shadow-inner">!</div>
          <div className="space-y-4">
-            <h2 className="text-2xl font-black text-slate-950 italic uppercase tracking-tight">Information Missing</h2>
-            <p className="text-[11px] font-black text-slate-400 uppercase tracking-[0.4em] italic leading-none">{error || 'Cause not found'}</p>
+            <h2 className="text-2xl font-extrabold text-slate-950  uppercase tracking-tight">Information Missing</h2>
+            <p className="text-[11px] font-extrabold text-slate-400 uppercase tracking-[0.4em]  leading-none">{error || 'Cause not found'}</p>
          </div>
-         <button onClick={() => navigate('/causes')} className="px-10 py-5 bg-slate-900 text-white rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-tf-primary shadow-xl italic">Back to Causes</button>
+         <button onClick={() => navigate('/causes')} className="px-10 py-5 bg-slate-900 text-white rounded-full text-[10px] font-extrabold uppercase tracking-widest hover:bg-tf-primary shadow-xl ">Back to Causes</button>
       </div>
    );
 
@@ -297,20 +297,20 @@ export default function PublicCampaignDetailPage() {
 
             <div className="relative z-10 max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-16">
                <div className="flex-1 text-left space-y-10">
-                  <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} className="inline-flex items-center gap-3 px-5 py-2 bg-slate-950 text-white rounded-full text-[11px] font-black italic uppercase tracking-[0.2em] shadow-xl border border-white/5">
+                  <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} className="inline-flex items-center gap-3 px-5 py-2 bg-slate-950 text-white rounded-full text-[11px] font-extrabold  uppercase tracking-[0.2em] shadow-xl border border-white/5">
                      <FiAward className="text-tf-primary" size={14} /> Category: {campaign.category || 'Humanitarian'}
                   </motion.div>
                   <div className="space-y-6">
                      <motion.h1
                         initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}
-                        className="text-7xl md:text-8xl lg:text-9xl font-black text-slate-950 tracking-tighter leading-[0.8] italic lowercase"
+                        className="text-7xl md:text-8xl lg:text-9xl font-extrabold text-slate-950 tracking-tighter leading-[0.8]  lowercase"
                      >
                         {campaign.title}
                      </motion.h1>
                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }} className="flex flex-wrap items-center gap-10 pt-10 border-t border-slate-100">
                         <div className="space-y-1">
-                           <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic leading-none mb-1">Impact Location</p>
-                           <p className="text-2xl font-black text-slate-950 tracking-tight italic flex items-center gap-2">
+                           <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest  leading-none mb-1">Impact Location</p>
+                           <p className="text-2xl font-extrabold text-slate-950 tracking-tight  flex items-center gap-2">
                               <FiMapPin className="text-tf-primary" /> 
                               {campaign.location?.city ? `${campaign.location.city}, ` : ''}
                               {campaign.location?.state ? `${campaign.location.state}, ` : ''}
@@ -319,8 +319,8 @@ export default function PublicCampaignDetailPage() {
                         </div>
                         <div className="w-px h-12 bg-slate-100 hidden md:block" />
                         <div className="space-y-1">
-                           <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic leading-none mb-1">Managed By</p>
-                           <p className="text-2xl font-black text-slate-950 tracking-tight italic flex items-center gap-2">
+                           <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest  leading-none mb-1">Managed By</p>
+                           <p className="text-2xl font-extrabold text-slate-950 tracking-tight  flex items-center gap-2">
                               <FiGlobe className="text-tf-primary" /> {campaign.createdBy?.organizationName || 'Verified TransFund Partner'}
                            </p>
                         </div>
@@ -335,18 +335,18 @@ export default function PublicCampaignDetailPage() {
                   <div className="space-y-10 relative z-10">
                      <div className="flex items-end justify-between">
                         <div className="space-y-2">
-                           <p className="text-[11px] font-black text-tf-primary uppercase tracking-[0.4em] italic leading-none">Raised So Far</p>
+                           <p className="text-[11px] font-extrabold text-tf-primary uppercase tracking-[0.4em]  leading-none">Raised So Far</p>
                            <div className="flex items-baseline gap-2">
-                              <span className="text-5xl md:text-6xl font-black text-slate-900 tracking-tighter italic">LKR {(campaign.raisedAmount || 0).toLocaleString()}</span>
+                              <span className="text-5xl md:text-6xl font-extrabold text-slate-900 tracking-tighter ">LKR {(campaign.raisedAmount || 0).toLocaleString()}</span>
                            </div>
                         </div>
                         <div className="bg-slate-950 text-white px-7 py-3.5 rounded-2xl shadow-xl">
-                           <p className="text-2xl font-black text-tf-primary tracking-tighter leading-none italic">{pct}%</p>
+                           <p className="text-2xl font-extrabold text-tf-primary tracking-tighter leading-none ">{pct}%</p>
                         </div>
                      </div>
 
                      <div className="space-y-4">
-                        <div className="flex items-center justify-between text-[13px] font-black text-slate-900 uppercase tracking-widest italic">
+                        <div className="flex items-center justify-between text-[13px] font-extrabold text-slate-900 uppercase tracking-widest ">
                            <span>Funded Progress</span>
                            <span className="text-tf-primary">{campaign.donationsCount || 0} Backers</span>
                         </div>
@@ -358,21 +358,21 @@ export default function PublicCampaignDetailPage() {
                               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent w-full animate-shimmer" />
                            </motion.div>
                         </div>
-                        <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest text-right italic leading-none">Goal: LKR {campaign.goalAmount.toLocaleString()}</p>
+                        <p className="text-[10px] font-extrabold text-slate-300 uppercase tracking-widest text-right  leading-none">Goal: LKR {campaign.goalAmount.toLocaleString()}</p>
                      </div>
 
                      <div className="grid grid-cols-1 gap-4">
                         {campaign.allowPledges ? (
                            <button
                               onClick={() => { setModalType('pledge'); setShowModal(true); }}
-                              className="w-full py-6 bg-slate-950 text-white rounded-2xl text-[11px] font-black uppercase tracking-[0.4em] hover:bg-tf-primary transition-all shadow-xl active:scale-95 italic flex items-center justify-center gap-3"
+                              className="w-full py-6 bg-slate-950 text-white rounded-2xl text-[11px] font-extrabold uppercase tracking-[0.4em] hover:bg-tf-primary transition-all shadow-xl active:scale-95  flex items-center justify-center gap-3"
                            >
                               Monthly Pledge <FiRepeat size={14} className="text-tf-primary" />
                            </button>
                         ) : (
                            <button
                               onClick={() => { setModalType('one-time'); setShowModal(true); }}
-                              className="w-full py-6 bg-slate-950 text-white rounded-2xl text-[11px] font-black uppercase tracking-[0.4em] hover:bg-tf-primary transition-all shadow-xl active:scale-95 italic flex items-center justify-center gap-3"
+                              className="w-full py-6 bg-slate-950 text-white rounded-2xl text-[11px] font-extrabold uppercase tracking-[0.4em] hover:bg-tf-primary transition-all shadow-xl active:scale-95  flex items-center justify-center gap-3"
                            >
                               Donate <FiZap size={14} className="text-tf-primary animate-pulse" />
                            </button>
@@ -381,7 +381,7 @@ export default function PublicCampaignDetailPage() {
 
                      <div className="pt-6 border-t border-slate-50 flex items-center justify-center gap-8 text-slate-400">
                         <FiShield className="text-tf-primary" size={14} />
-                        <span className="text-[10px] font-black uppercase tracking-widest italic leading-none">Verified Transparency</span>
+                        <span className="text-[10px] font-extrabold uppercase tracking-widest  leading-none">Verified Transparency</span>
                      </div>
                   </div>
                </motion.div>
@@ -399,10 +399,10 @@ export default function PublicCampaignDetailPage() {
                <div className="space-y-12">
                   <div className="flex items-center gap-6">
                      <div className="w-12 h-0.5 bg-tf-primary rounded-full shadow-lg" />
-                     <h3 className="text-3xl font-black text-slate-900 italic uppercase tracking-tight">Our Mission</h3>
+                     <h3 className="text-3xl font-extrabold text-slate-900  uppercase tracking-tight">Our Mission</h3>
                   </div>
-                  <div className="text-2xl text-slate-600 leading-relaxed font-medium italic pr-0 md:pr-16 lg:pr-24 space-y-10">
-                     <p className="first-letter:text-8xl first-letter:font-black first-letter:text-tf-primary first-letter:float-left first-letter:mr-5 first-letter:leading-[0.8] first-letter:mt-2">
+                  <div className="text-2xl text-slate-600 leading-relaxed font-medium  pr-0 md:pr-16 lg:pr-24 space-y-10">
+                     <p className="first-letter:text-8xl first-letter:font-extrabold first-letter:text-tf-primary first-letter:float-left first-letter:mr-5 first-letter:leading-[0.8] first-letter:mt-2">
                         {campaign.description}
                      </p>
                      {campaign.createdBy?.mission && <p className="opacity-80">{campaign.createdBy.mission}</p>}
@@ -413,7 +413,7 @@ export default function PublicCampaignDetailPage() {
                <div className="space-y-12">
                   <div className="flex items-center gap-6">
                      <div className="w-12 h-0.5 bg-tf-primary rounded-full shadow-lg" />
-                     <h3 className="text-3xl font-black text-slate-900 italic uppercase tracking-tight">Project Impact</h3>
+                     <h3 className="text-3xl font-extrabold text-slate-900  uppercase tracking-tight">Project Impact</h3>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                      {[
@@ -434,9 +434,9 @@ export default function PublicCampaignDetailPage() {
                         >
                            <div className="w-14 h-14 bg-white text-slate-950 rounded-2xl flex items-center justify-center text-xl shadow-lg mb-8 group-hover:bg-slate-950 group-hover:text-white transition-all duration-500">{item.icon}</div>
                            <div className="space-y-2">
-                              <p className="text-3xl font-black italic tracking-tighter text-slate-950">{item.val}</p>
-                              <h4 className="text-[11px] font-black text-tf-primary italic uppercase tracking-[0.2em] mb-1">{item.t}</h4>
-                              <p className="text-sm font-medium text-slate-400 italic">{item.d}</p>
+                              <p className="text-3xl font-extrabold  tracking-tighter text-slate-950">{item.val}</p>
+                              <h4 className="text-[11px] font-extrabold text-tf-primary  uppercase tracking-[0.2em] mb-1">{item.t}</h4>
+                              <p className="text-sm font-medium text-slate-400 ">{item.d}</p>
                            </div>
                         </motion.div>
                      ))}
@@ -448,11 +448,11 @@ export default function PublicCampaignDetailPage() {
                   <div className="space-y-12">
                      <div className="flex items-center gap-6">
                         <div className="w-12 h-0.5 bg-tf-primary rounded-full shadow-lg" />
-                        <h3 className="text-3xl font-black text-slate-900 italic uppercase tracking-tight">Strategic Partners</h3>
+                        <h3 className="text-3xl font-extrabold text-slate-900  uppercase tracking-tight">Strategic Partners</h3>
                      </div>
                      
                      <div className="space-y-6">
-                        <p className="text-base font-medium text-slate-500 italic max-w-2xl leading-relaxed">
+                        <p className="text-base font-medium text-slate-500  max-w-2xl leading-relaxed">
                            These verified institutional partners have committed strategic capital and operational support to this mission. Their participation ensures higher accountability and field-level impact.
                         </p>
                         
@@ -467,10 +467,10 @@ export default function PublicCampaignDetailPage() {
                                     <FiShield className="text-3xl text-tf-primary group-hover:text-tf-primary" />
                                  </div>
                                  <div className="text-left overflow-hidden space-y-1.5">
-                                    <h5 className="text-2xl font-black text-slate-900 tracking-tighter italic group-hover:text-tf-primary transition-colors truncate leading-none">{p.organizationName}</h5>
+                                    <h5 className="text-2xl font-extrabold text-slate-900 tracking-tighter  group-hover:text-tf-primary transition-colors truncate leading-none">{p.organizationName}</h5>
                                     <div className="flex items-center gap-3">
-                                       <span className="px-3 py-1 bg-emerald-50 text-emerald-600 text-[10px] font-black uppercase rounded-lg border border-emerald-100 italic">Trust Hub {p.trustScore}%</span>
-                                       <span className="text-[10px] font-black text-slate-300 uppercase tracking-[0.2em] truncate">
+                                       <span className="px-3 py-1 bg-emerald-50 text-emerald-600 text-[10px] font-extrabold uppercase rounded-lg border border-emerald-100 ">Trust Hub {p.trustScore}%</span>
+                                       <span className="text-[10px] font-extrabold text-slate-300 uppercase tracking-[0.2em] truncate">
                                           {p.csrFocus?.[0] ? p.csrFocus[0].replace(/_/g, ' ') : 'Strategic Aid'}
                                        </span>
                                     </div>
@@ -492,8 +492,8 @@ export default function PublicCampaignDetailPage() {
                   <div className="absolute top-0 right-0 w-32 h-32 bg-tf-primary/10 rounded-full blur-[80px] -mr-16 -mt-16" />
                   <div className="relative z-10 space-y-10 text-left">
                      <div className="space-y-2">
-                        <p className="text-[10px] font-black text-tf-primary uppercase tracking-[0.4em] italic leading-none">Mission Info</p>
-                        <h4 className="text-3xl font-black italic tracking-tighter">Current Status</h4>
+                        <p className="text-[10px] font-extrabold text-tf-primary uppercase tracking-[0.4em]  leading-none">Mission Info</p>
+                        <h4 className="text-3xl font-extrabold  tracking-tighter">Current Status</h4>
                      </div>
 
                      <div className="space-y-8">
@@ -507,7 +507,7 @@ export default function PublicCampaignDetailPage() {
                               <div className="w-14 h-14 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center text-xl shadow-inner"><div className={stat.color}>{stat.icon}</div></div>
                               <div className="space-y-0.5">
                                  <p className="text-[9px] font-bold text-white/20 uppercase tracking-widest leading-none mb-1">{stat.label}</p>
-                                 <p className={`text-xl font-black tracking-tight italic ${stat.color}`}>{stat.val}</p>
+                                 <p className={`text-xl font-extrabold tracking-tight  ${stat.color}`}>{stat.val}</p>
                               </div>
                            </div>
                         ))}
@@ -515,7 +515,7 @@ export default function PublicCampaignDetailPage() {
 
                      <div className="pt-8 border-t border-white/5 flex items-center gap-4 group cursor-pointer" onClick={() => { setModalType('one-time'); setShowModal(true); }}>
                         <div className="w-2 h-2 rounded-full bg-tf-primary animate-pulse" />
-                        <span className="text-[10px] font-black text-tf-primary uppercase tracking-[0.2em] group-hover:text-white transition-colors italic">Donate to this cause now →</span>
+                        <span className="text-[10px] font-extrabold text-tf-primary uppercase tracking-[0.2em] group-hover:text-white transition-colors ">Donate to this cause now →</span>
                      </div>
                   </div>
                </div>
@@ -523,10 +523,10 @@ export default function PublicCampaignDetailPage() {
                <div className="bg-slate-50 rounded-[3.5rem] p-10 border border-slate-100 flex flex-col items-center text-center space-y-6 group transition-all hover:shadow-2xl">
                   <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-tf-primary text-xl shadow-xl"><FiShield /></div>
                   <div className="space-y-2">
-                     <h4 className="text-sm font-black text-slate-950 italic uppercase tracking-[0.2rem]">Transparent Giving</h4>
-                     <p className="text-[10px] font-bold text-slate-400 leading-relaxed uppercase tracking-tight italic">We use direct reporting tools to ensure every donation is spent exactly where it is needed.</p>
+                     <h4 className="text-sm font-extrabold text-slate-950  uppercase tracking-[0.2rem]">Transparent Giving</h4>
+                     <p className="text-[10px] font-bold text-slate-400 leading-relaxed uppercase tracking-tight ">We use direct reporting tools to ensure every donation is spent exactly where it is needed.</p>
                   </div>
-                  <Link to="/transparency" className="text-[10px] font-black text-tf-primary uppercase tracking-widest hover:text-slate-950 transition-colors italic flex items-center gap-2">View Audit Reports <FiExternalLink size={10} /></Link>
+                  <Link to="/transparency" className="text-[10px] font-extrabold text-tf-primary uppercase tracking-widest hover:text-slate-950 transition-colors  flex items-center gap-2">View Audit Reports <FiExternalLink size={10} /></Link>
                </div>
             </aside>
          </section>

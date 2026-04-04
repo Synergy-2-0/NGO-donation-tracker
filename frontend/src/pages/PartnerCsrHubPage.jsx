@@ -86,24 +86,24 @@ export default function PartnerCsrHubPage() {
                 <div className="space-y-6 flex-1 text-left relative z-10">
                    <div className="inline-flex items-center gap-3 px-4 py-2 bg-white/5 border border-white/10 rounded-full">
                       <FiTarget className="text-tf-primary" />
-                      <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest italic leading-none">Corporate Social Responsibility Hub Sync</span>
+                      <span className="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest  leading-none">Corporate Social Responsibility Hub Sync</span>
                    </div>
-                   <h1 className="text-5xl font-black text-white tracking-tighter italic leading-tight">
+                   <h1 className="text-5xl font-extrabold text-white tracking-tighter  leading-tight">
                      CSR <span className="text-tf-primary">Preferences</span> Hub
                    </h1>
-                   <p className="text-slate-400 text-lg font-medium leading-relaxed max-w-xl italic">
+                   <p className="text-slate-400 text-lg font-medium leading-relaxed max-w-xl ">
                      Configure your organization's mission priority sectors to enhance AI matching and automated collaboration proposals Hub.
                    </p>
                 </div>
                 <div className="w-full lg:w-96 p-8 bg-white/5 backdrop-blur-md rounded-[32px] text-white space-y-8 relative shadow-2xl border border-white/5">
-                   <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 italic">Institutional Asset Accuracy</p>
+                   <p className="text-[10px] font-extrabold uppercase tracking-widest text-slate-500 ">Institutional Asset Accuracy</p>
                    <div className="flex items-center gap-6">
                       <div className="w-16 h-16 rounded-2xl bg-tf-primary/10 border border-tf-primary/20 flex items-center justify-center text-tf-primary text-2xl animate-pulse">
                         <FiPieChart />
                       </div>
                       <div>
-                         <h4 className="text-4xl font-black italic tracking-tight tabular-nums">100<span className="text-tf-primary">%</span></h4>
-                         <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest italic">Verified Network Linkage</p>
+                         <h4 className="text-4xl font-extrabold  tracking-tight tabular-nums">100<span className="text-tf-primary">%</span></h4>
+                         <p className="text-[9px] font-extrabold text-slate-500 uppercase tracking-widest ">Verified Network Linkage</p>
                       </div>
                    </div>
                 </div>
@@ -137,8 +137,8 @@ export default function PartnerCsrHubPage() {
                 <div className="lg:col-span-8 bg-white rounded-[40px] border border-slate-100 p-10 shadow-sm space-y-10 group text-left">
                    <div className="flex items-center justify-between">
                       <div>
-                        <h3 className="text-2xl font-black text-slate-900 tracking-tight italic leading-none">Aligned SDG Pillars</h3>
-                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-2 italic leading-none">Map institutional logic to global goals Hub</p>
+                        <h3 className="text-2xl font-extrabold text-slate-900 tracking-tight  leading-none">Aligned SDG Pillars</h3>
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-2  leading-none">Map institutional logic to global goals Hub</p>
                       </div>
                       <FiLayout className="text-slate-300" />
                    </div>
@@ -157,10 +157,10 @@ export default function PartnerCsrHubPage() {
                                     }`}
                                 >
                                     <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-white ${pillar.color} shadow-lg shrink-0 group-hover/item:scale-110 transition-transform`}>
-                                        <span className="font-black text-xs">{pillar.sdg}</span>
+                                        <span className="font-extrabold text-xs">{pillar.sdg}</span>
                                     </div>
                                     <div className="text-left">
-                                        <p className={`text-xs font-black uppercase tracking-widest ${isActive ? 'text-tf-primary' : 'text-slate-400'}`}>SDG {pillar.sdg}</p>
+                                        <p className={`text-xs font-extrabold uppercase tracking-widest ${isActive ? 'text-tf-primary' : 'text-slate-400'}`}>SDG {pillar.sdg}</p>
                                         <p className={`text-sm font-bold ${isActive ? 'text-white' : 'text-slate-800'}`}>{pillar.label}</p>
                                     </div>
                                     {isActive && <FiCheckCircle className="ml-auto text-tf-primary text-xl" />}
@@ -172,13 +172,13 @@ export default function PartnerCsrHubPage() {
                    {/* Investment Ceilings */}
                    <div className="pt-10 border-t border-slate-50 space-y-8">
                        <div className="flex items-center justify-between">
-                           <h3 className="text-xl font-black text-slate-900 italic tracking-tight">Investment Ceiling</h3>
+                           <h3 className="text-xl font-extrabold text-slate-900  tracking-tight">Investment Ceiling</h3>
                            <FiDollarSign className="text-slate-300" />
                        </div>
                        <div className="space-y-6">
                            <div className="flex justify-between items-end">
-                               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">Max Grant Scale (LKR)</label>
-                               <span className="text-2xl font-black text-slate-900 tracking-tighter">{(form.partnershipPreferences?.budgetRange?.max || 0).toLocaleString()}</span>
+                               <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest leading-none">Max Grant Scale (LKR)</label>
+                               <span className="text-2xl font-extrabold text-slate-900 tracking-tighter">{(form.partnershipPreferences?.budgetRange?.max || 0).toLocaleString()}</span>
                            </div>
                            <input 
                                type="range" 
@@ -202,10 +202,10 @@ export default function PartnerCsrHubPage() {
                 <div className="lg:col-span-4 space-y-10">
                    {/* Entity Profile */}
                    <div className="bg-white rounded-[40px] border border-slate-100 p-10 shadow-sm text-left">
-                      <h3 className="text-lg font-black italic tracking-tight mb-6">Entity Profile Hub</h3>
+                      <h3 className="text-lg font-extrabold  tracking-tight mb-6">Entity Profile Hub</h3>
                       <div className="space-y-6">
                          <div className="space-y-2">
-                            <label className="text-[9px] font-black text-slate-400 uppercase tracking-wider">Corporate Identity</label>
+                            <label className="text-[9px] font-extrabold text-slate-400 uppercase tracking-wider">Corporate Identity</label>
                             <input 
                                value={form.organizationName}
                                onChange={(e) => setForm(prev => ({ ...prev, organizationName: e.target.value }))}
@@ -214,7 +214,7 @@ export default function PartnerCsrHubPage() {
                             />
                          </div>
                          <div className="space-y-2">
-                            <label className="text-[9px] font-black text-slate-400 uppercase tracking-wider">Industry Vector</label>
+                            <label className="text-[9px] font-extrabold text-slate-400 uppercase tracking-wider">Industry Vector</label>
                             <input 
                                value={form.industry}
                                onChange={(e) => setForm(prev => ({ ...prev, industry: e.target.value }))}
@@ -229,7 +229,7 @@ export default function PartnerCsrHubPage() {
                    <button 
                       onClick={handleSave}
                       disabled={loading}
-                      className="w-full py-6 bg-tf-primary text-white rounded-[32px] text-xs font-black uppercase tracking-[0.3em] hover:bg-slate-900 shadow-2xl shadow-tf-primary/20 transition-all flex items-center justify-center gap-3 active:scale-95 group"
+                      className="w-full py-6 bg-tf-primary text-white rounded-[32px] text-xs font-extrabold uppercase tracking-[0.3em] hover:bg-slate-900 shadow-2xl shadow-tf-primary/20 transition-all flex items-center justify-center gap-3 active:scale-95 group"
                    >
                       {loading ? 'SYNCHRONIZING...' : 'SYNCHRONIZE HUB'}
                       <FiGlobe className="text-xl group-hover:rotate-180 transition-transform duration-1000" />

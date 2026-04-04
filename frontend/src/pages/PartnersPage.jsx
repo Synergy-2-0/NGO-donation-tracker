@@ -145,8 +145,8 @@ export default function PartnersPage() {
 
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div>
-            <p className="text-[10px] font-black uppercase tracking-[.2em] text-slate-400 mb-2">Network Directory</p>
-            <h2 className="text-3xl md:text-4xl font-black text-white tracking-tight">
+            <p className="text-[10px] font-extrabold uppercase tracking-[.2em] text-slate-400 mb-2">Network Directory</p>
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white tracking-tight">
               Strategic <span className="text-brand-red">Partners</span>
             </h2>
             <p className="text-slate-400 text-sm mt-2 max-w-xl font-medium">
@@ -156,14 +156,14 @@ export default function PartnersPage() {
           <div className="flex flex-wrap gap-3">
             {canModerate && (
               <Link to="/partners/verification"
-                className="px-5 py-3 bg-white/5 hover:bg-white/10 text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all border border-white/10 flex items-center gap-2">
+                className="px-5 py-3 bg-white/5 hover:bg-white/10 text-white text-[10px] font-extrabold uppercase tracking-widest rounded-xl transition-all border border-white/10 flex items-center gap-2">
                 <FiCheckCircle className="text-sm text-emerald-400" />
                 Vetting Queue
               </Link>
             )}
             {canCreate && (
               <button onClick={() => setShowCreateModal(true)}
-                className="px-6 py-3 bg-brand-red hover:bg-brand-red/90 text-white text-[10px] font-black uppercase tracking-widest rounded-xl shadow-xl shadow-brand-red/20 transition-all flex items-center gap-2 active:scale-95">
+                className="px-6 py-3 bg-brand-red hover:bg-brand-red/90 text-white text-[10px] font-extrabold uppercase tracking-widest rounded-xl shadow-xl shadow-brand-red/20 transition-all flex items-center gap-2 active:scale-95">
                 <FiPlus className="text-sm stroke-[3]" />
                 Register Entity
               </button>
@@ -198,7 +198,7 @@ export default function PartnersPage() {
 
           <div className="lg:col-span-2">
             <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}
-              className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3.5 text-[10px] font-black uppercase tracking-widest focus:outline-none focus:ring-4 focus:ring-brand-red/5">
+              className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3.5 text-[10px] font-extrabold uppercase tracking-widest focus:outline-none focus:ring-4 focus:ring-brand-red/5">
               <option value="all">Every State</option>
               <option value="active">Active</option>
               <option value="inactive">Inactive</option>
@@ -208,7 +208,7 @@ export default function PartnersPage() {
 
           <div className="lg:col-span-2">
             <select value={verificationFilter} onChange={(e) => setVerificationFilter(e.target.value)}
-              className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3.5 text-[10px] font-black uppercase tracking-widest focus:outline-none focus:ring-4 focus:ring-brand-red/5">
+              className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3.5 text-[10px] font-extrabold uppercase tracking-widest focus:outline-none focus:ring-4 focus:ring-brand-red/5">
               <option value="all">Verification</option>
               <option value="pending">Pending</option>
               <option value="verified">Verified</option>
@@ -218,7 +218,7 @@ export default function PartnersPage() {
 
           <div className="lg:col-span-2">
             <select value={readinessFilter} onChange={(e) => setReadinessFilter(e.target.value)}
-              className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3.5 text-[10px] font-black uppercase tracking-widest focus:outline-none focus:ring-4 focus:ring-brand-red/5 font-serif">
+              className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3.5 text-[10px] font-extrabold uppercase tracking-widest focus:outline-none focus:ring-4 focus:ring-brand-red/5 font-serif">
               <option value="all">Readiness</option>
               <option value="Tier 1">Tier 1 (Elite)</option>
               <option value="Tier 2">Tier 2</option>
@@ -245,11 +245,11 @@ export default function PartnersPage() {
             <table className="w-full border-collapse">
               <thead>
                 <tr className="bg-slate-50/50">
-                  <th className="px-8 py-6 text-left text-[10px] font-black uppercase tracking-[.2em] text-slate-400 border-b border-slate-100">Foundational Data</th>
-                  <th className="px-8 py-6 text-left text-[10px] font-black uppercase tracking-[.2em] text-slate-400 border-b border-slate-100">Identity</th>
-                  <th className="px-8 py-6 text-left text-[10px] font-black uppercase tracking-[.2em] text-slate-400 border-b border-slate-100">Capability</th>
-                  <th className="px-8 py-6 text-left text-[10px] font-black uppercase tracking-[.2em] text-slate-400 border-b border-slate-100 text-center">Governance</th>
-                  <th className="px-8 py-6 text-right text-[10px] font-black uppercase tracking-[.2em] text-slate-400 border-b border-slate-100">Impact Ops</th>
+                  <th className="px-8 py-6 text-left text-[10px] font-extrabold uppercase tracking-[.2em] text-slate-400 border-b border-slate-100">Foundational Data</th>
+                  <th className="px-8 py-6 text-left text-[10px] font-extrabold uppercase tracking-[.2em] text-slate-400 border-b border-slate-100">Identity</th>
+                  <th className="px-8 py-6 text-left text-[10px] font-extrabold uppercase tracking-[.2em] text-slate-400 border-b border-slate-100">Capability</th>
+                  <th className="px-8 py-6 text-left text-[10px] font-extrabold uppercase tracking-[.2em] text-slate-400 border-b border-slate-100 text-center">Governance</th>
+                  <th className="px-8 py-6 text-right text-[10px] font-extrabold uppercase tracking-[.2em] text-slate-400 border-b border-slate-100">Impact Ops</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-50">
@@ -261,7 +261,7 @@ export default function PartnersPage() {
                           {partner.logoUrl ? <img src={partner.logoUrl} className="w-full h-full object-cover" /> : <FiBriefcase className="text-slate-400 text-xl" />}
                         </div>
                         <div>
-                          <p className="font-black text-slate-800 tracking-tight leading-none mb-1.5">{partner.organizationName}</p>
+                          <p className="font-extrabold text-slate-800 tracking-tight leading-none mb-1.5">{partner.organizationName}</p>
                           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{partner.industry || 'Entity'}</p>
                         </div>
                       </div>
@@ -274,15 +274,15 @@ export default function PartnersPage() {
                       </div>
                     </td>
                     <td className="px-8 py-6">
-                      <p className="text-sm font-black text-slate-900 tracking-tight">LKR {(partner.capabilities?.financialCapacity || 0).toLocaleString()}</p>
+                      <p className="text-sm font-extrabold text-slate-900 tracking-tight">LKR {(partner.capabilities?.financialCapacity || 0).toLocaleString()}</p>
                       <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Capacity</p>
                     </td>
                     <td className="px-8 py-6">
                        <div className="flex flex-col items-center gap-2">
-                          <span className={`px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border ${verificationBadgeStyle[partner.verificationStatus] || 'bg-slate-50'}`}>
+                          <span className={`px-3 py-1 rounded-lg text-[9px] font-extrabold uppercase tracking-widest border ${verificationBadgeStyle[partner.verificationStatus] || 'bg-slate-50'}`}>
                              {partner.verificationStatus}
                           </span>
-                          <span className={`px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border ${statusBadgeStyle[partner.status] || 'bg-slate-50'}`}>
+                          <span className={`px-3 py-1 rounded-lg text-[9px] font-extrabold uppercase tracking-widest border ${statusBadgeStyle[partner.status] || 'bg-slate-50'}`}>
                              {partner.status}
                           </span>
                        </div>
@@ -306,7 +306,7 @@ export default function PartnersPage() {
                       <div className="w-20 h-20 bg-slate-50 rounded-[28px] flex items-center justify-center mx-auto mb-4 border border-slate-100 text-slate-400">
                         <FiSearch className="text-3xl" />
                       </div>
-                      <p className="text-slate-400 font-black text-sm uppercase tracking-widest">No entities detected.</p>
+                      <p className="text-slate-400 font-extrabold text-sm uppercase tracking-widest">No entities detected.</p>
                     </td>
                   </tr>
                 )}
@@ -326,34 +326,34 @@ export default function PartnersPage() {
                         {partner.logoUrl ? <img src={partner.logoUrl} className="w-full h-full object-cover rounded-2xl" /> : <FiBriefcase className="text-slate-100 text-3xl" />}
                       </div>
                       <div className="flex flex-col gap-1.5 items-end">
-                         <span className={`px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border ${verificationBadgeStyle[partner.verificationStatus] || 'bg-slate-50'}`}>
+                         <span className={`px-3 py-1 rounded-lg text-[9px] font-extrabold uppercase tracking-widest border ${verificationBadgeStyle[partner.verificationStatus] || 'bg-slate-50'}`}>
                            {partner.verificationStatus}
                          </span>
-                         <span className="text-[9px] font-black text-slate-400 uppercase tracking-[.2em] font-serif">
+                         <span className="text-[9px] font-extrabold text-slate-400 uppercase tracking-[.2em] font-serif">
                             Tier {getReadinessTier(calculatePartnerReadiness(partner)).slice(-1)}
                          </span>
                       </div>
                    </div>
 
                    <div>
-                      <h3 className="text-xl font-black text-slate-800 tracking-tight leading-tight group-hover:text-brand-red transition-colors">{partner.organizationName}</h3>
+                      <h3 className="text-xl font-extrabold text-slate-800 tracking-tight leading-tight group-hover:text-brand-red transition-colors">{partner.organizationName}</h3>
                       <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">{partner.industry || 'Institutional Entity'}</p>
                    </div>
 
                    <div className="pt-4 border-t border-slate-50 grid grid-cols-2 gap-4">
                       <div className="space-y-1">
-                         <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Structural</p>
+                         <p className="text-[10px] font-extrabold text-slate-300 uppercase tracking-widest">Structural</p>
                          <p className="text-sm font-bold text-slate-700">{toTitle(partner.organizationType)}</p>
                       </div>
                       <div className="space-y-1">
-                         <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Location</p>
+                         <p className="text-[10px] font-extrabold text-slate-300 uppercase tracking-widest">Location</p>
                          <p className="text-sm font-bold text-slate-700">{partner.address?.city || 'Overseas'}</p>
                       </div>
                    </div>
 
                    <div className="flex items-center justify-between pt-2">
                        <div>
-                          <p className="text-xl font-black text-slate-900 tracking-tighter">LKR {(partner.capabilities?.financialCapacity || 0).toLocaleString()}</p>
+                          <p className="text-xl font-extrabold text-slate-900 tracking-tighter">LKR {(partner.capabilities?.financialCapacity || 0).toLocaleString()}</p>
                           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Liquidity Status</p>
                        </div>
                        <Link to={`/partners/${partner._id}`} className="w-12 h-12 bg-slate-900 flex items-center justify-center rounded-2xl text-white hover:bg-brand-red transition-all shadow-xl shadow-slate-900/20 active:scale-95">
@@ -365,7 +365,7 @@ export default function PartnersPage() {
            )) : (
              <div className="md:col-span-2 lg:col-span-3 py-32 text-center bg-white rounded-[40px] border border-slate-100 shadow-sm">
                 <FiAlertCircle className="text-5xl text-slate-100 mx-auto mb-4" />
-                <p className="text-slate-400 font-black uppercase tracking-widest">Zero Intelligence Detected.</p>
+                <p className="text-slate-400 font-extrabold uppercase tracking-widest">Zero Intelligence Detected.</p>
              </div>
            )}
         </div>
@@ -378,7 +378,7 @@ export default function PartnersPage() {
             <FiChevronLeft />
           </button>
           <div className="flex items-center gap-1.5 px-4 h-12 bg-white rounded-2xl border border-slate-200">
-            <span className="text-sm font-black text-slate-800">{page}</span>
+            <span className="text-sm font-extrabold text-slate-800">{page}</span>
             <span className="text-slate-300 font-bold">/</span>
             <span className="text-sm font-bold text-slate-400">{totalPages}</span>
           </div>

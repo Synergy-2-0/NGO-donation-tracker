@@ -22,7 +22,7 @@ const asMoney = v => `LKR ${Number(v || 0).toLocaleString()}`;
 function InfoRow({ label, value }) {
   return (
     <div className="flex flex-col gap-0.5">
-      <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">{label}</span>
+      <span className="text-[10px] font-extrabold uppercase tracking-widest text-slate-500">{label}</span>
       <span className="text-sm font-semibold text-slate-800">{value || '—'}</span>
     </div>
   );
@@ -36,7 +36,7 @@ function SectionCard({ title, icon, children, className = '' }) {
     >
       <div className="flex items-center gap-3 mb-8">
         <span className="w-10 h-10 bg-slate-950 text-white rounded-2xl flex items-center justify-center text-lg shadow-xl shadow-slate-950/20">{icon}</span>
-        <h3 className="text-xs font-black uppercase tracking-[0.2em] text-slate-900 italic">{title}</h3>
+        <h3 className="text-xs font-extrabold uppercase tracking-[0.2em] text-slate-900 ">{title}</h3>
       </div>
       {children}
     </motion.div>
@@ -83,13 +83,13 @@ export default function NgoProfilePage() {
               </div>
               <div>
                 <div className="flex items-center gap-3 mb-2">
-                  <div className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-[0.2em] border backdrop-blur-xl italic ${vStyle.cls}`}>
+                  <div className={`px-4 py-1.5 rounded-full text-[9px] font-extrabold uppercase tracking-[0.2em] border backdrop-blur-xl  ${vStyle.cls}`}>
                     <span className={`inline-block w-2 h-2 rounded-full mr-2 ${vStyle.dot} animate-pulse`} />
                     {vStyle.label}
                   </div>
-                  <span className="text-[10px] font-bold text-white/40 uppercase tracking-[0.3em] italic">Operational Mission Node</span>
+                  <span className="text-[10px] font-bold text-white/40 uppercase tracking-[0.3em] ">Operational Mission Node</span>
                 </div>
-                <h1 className="text-5xl md:text-7xl font-black text-white tracking-tighter italic leading-none lowercase">
+                <h1 className="text-5xl md:text-7xl font-extrabold text-white tracking-tighter  leading-none lowercase">
                     {ngo?.organizationName || 'Initializing Profile'} <span className="text-tf-primary">.Global</span>
                 </h1>
               </div>
@@ -97,10 +97,10 @@ export default function NgoProfilePage() {
           </div>
 
           <div className="flex gap-4">
-            <Link to="/settings" className="px-10 py-4 bg-white/10 backdrop-blur-xl border border-white/20 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-white hover:text-slate-950 transition-all italic flex items-center gap-3">
+            <Link to="/settings" className="px-10 py-4 bg-white/10 backdrop-blur-xl border border-white/20 text-white rounded-2xl text-[10px] font-extrabold uppercase tracking-[0.2em] hover:bg-white hover:text-slate-950 transition-all  flex items-center gap-3">
               Edit Blueprint <FiActivity />
             </Link>
-            <Link to="/dashboard" className="px-10 py-4 bg-tf-primary text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] shadow-2xl shadow-tf-primary/30 hover:bg-slate-950 transition-all italic flex items-center gap-3">
+            <Link to="/dashboard" className="px-10 py-4 bg-tf-primary text-white rounded-2xl text-[10px] font-extrabold uppercase tracking-[0.2em] shadow-2xl shadow-tf-primary/30 hover:bg-slate-950 transition-all  flex items-center gap-3">
               Command Deck <FiArrowRight />
             </Link>
           </div>
@@ -113,8 +113,8 @@ export default function NgoProfilePage() {
         <SectionCard title="Authorization Required" icon={<FiShield />}>
           <div className="py-20 text-center space-y-6">
             <FiAlertTriangle className="mx-auto text-slate-100" size={80} />
-            <p className="text-slate-400 font-bold text-sm tracking-widest uppercase italic">Operational Blueprints Not Found</p>
-            <Link to="/onboarding/ngo" className="inline-flex py-4 px-10 bg-slate-950 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest italic shadow-xl">Initialize Onboarding Sync →</Link>
+            <p className="text-slate-400 font-bold text-sm tracking-widest uppercase ">Operational Blueprints Not Found</p>
+            <Link to="/onboarding/ngo" className="inline-flex py-4 px-10 bg-slate-950 text-white rounded-2xl text-[10px] font-extrabold uppercase tracking-widest  shadow-xl">Initialize Onboarding Sync →</Link>
           </div>
         </SectionCard>
       ) : (
@@ -128,23 +128,23 @@ export default function NgoProfilePage() {
                   <InfoRow label="Registration ID" value={ngo.registrationNumber} />
                   <InfoRow label="Organizational Mission" value={ngo.mission} />
                   <div>
-                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-3 italic">Sector Focus Nodes</span>
+                    <span className="text-[10px] font-extrabold uppercase tracking-widest text-slate-500 block mb-3 ">Sector Focus Nodes</span>
                     <div className="flex flex-wrap gap-2">
-                       <span className="px-5 py-2 bg-slate-950 text-white text-[9px] font-black uppercase tracking-widest rounded-xl italic">Humanitarian</span>
-                       <span className="px-5 py-2 bg-slate-950 text-white text-[9px] font-black uppercase tracking-widest rounded-xl italic">Development</span>
+                       <span className="px-5 py-2 bg-slate-950 text-white text-[9px] font-extrabold uppercase tracking-widest rounded-xl ">Humanitarian</span>
+                       <span className="px-5 py-2 bg-slate-950 text-white text-[9px] font-extrabold uppercase tracking-widest rounded-xl ">Development</span>
                     </div>
                   </div>
                 </div>
                 <div className="space-y-6 p-6 bg-slate-50 rounded-[2rem] border border-slate-100">
                     <div className="flex items-center justify-between mb-4">
-                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic">Transparency Rating</p>
+                      <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ">Transparency Rating</p>
                       <FiAward className="text-tf-primary text-xl" />
                     </div>
                     <div className="flex items-end gap-3">
-                      <span className="text-6xl font-black text-slate-950 tracking-tighter italic leading-none">{(ngo.trustScore || 85).toFixed(0)}</span>
-                      <span className="text-sm font-black text-tf-primary uppercase tracking-widest mb-1">Impact Score</span>
+                      <span className="text-6xl font-extrabold text-slate-950 tracking-tighter  leading-none">{(ngo.trustScore || 85).toFixed(0)}</span>
+                      <span className="text-sm font-extrabold text-tf-primary uppercase tracking-widest mb-1">Impact Score</span>
                     </div>
-                    <p className="text-[10px] text-slate-400 font-medium italic leading-relaxed">Verified through real-time capital intake & allocation ledger sync. This rating determines global donor tier access.</p>
+                    <p className="text-[10px] text-slate-400 font-medium  leading-relaxed">Verified through real-time capital intake & allocation ledger sync. This rating determines global donor tier access.</p>
                 </div>
               </div>
             </SectionCard>
@@ -157,8 +157,8 @@ export default function NgoProfilePage() {
                     { label: 'Operational Status', val: (ngo.status || 'Active').toUpperCase(), color: 'text-slate-400' }
                   ].map((stat, i) => (
                     <div key={i} className="p-6 bg-white border border-slate-100 rounded-[2rem] shadow-sm group hover:border-tf-primary transition-all text-left">
-                      <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest italic mb-2">{stat.label}</p>
-                      <p className={`text-xl font-black italic tracking-tighter ${stat.color}`}>{stat.val}</p>
+                      <p className="text-[9px] font-extrabold text-slate-300 uppercase tracking-widest  mb-2">{stat.label}</p>
+                      <p className={`text-xl font-extrabold  tracking-tighter ${stat.color}`}>{stat.val}</p>
                     </div>
                   ))}
                 </div>
@@ -186,12 +186,12 @@ export default function NgoProfilePage() {
                    <a key={i} href={doc.url} target="_blank" rel="noreferrer" className="flex items-center justify-between p-4 bg-slate-50 border border-slate-100 rounded-2xl hover:bg-white hover:border-tf-primary transition-all group">
                       <div className="flex items-center gap-3">
                         <FiShield className="text-slate-300 group-hover:text-tf-primary" />
-                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-800">{doc.documentType}</span>
+                        <span className="text-[10px] font-extrabold uppercase tracking-widest text-slate-800">{doc.documentType}</span>
                       </div>
                       <FiExternalLink className="text-slate-300 group-hover:text-tf-primary" />
                    </a>
                  ))}
-                 {!ngo.verificationDocuments?.length && <p className="text-xs text-slate-400 italic text-center py-4">No compliance items indexed.</p>}
+                 {!ngo.verificationDocuments?.length && <p className="text-xs text-slate-400  text-center py-4">No compliance items indexed.</p>}
               </div>
             </SectionCard>
           </div>

@@ -25,8 +25,8 @@ function ProfileStat({ icon, label, value, colorClass = "text-slate-900", iconBg
         <span className="text-xl">{icon}</span>
       </div>
       <div>
-        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{label}</p>
-        <p className={`text-xl font-black tracking-tight ${colorClass}`}>{value}</p>
+        <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-1">{label}</p>
+        <p className={`text-xl font-extrabold tracking-tight ${colorClass}`}>{value}</p>
       </div>
     </div>
   );
@@ -37,7 +37,7 @@ function ProfileField({ label, icon, value, editing, name, formValue, onChange, 
     <div className="space-y-2">
       <div className="flex items-center gap-2 px-1">
         <span className="text-slate-400 text-xs">{icon}</span>
-        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{label}</label>
+        <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">{label}</label>
       </div>
       {editing ? (
         <input
@@ -50,7 +50,7 @@ function ProfileField({ label, icon, value, editing, name, formValue, onChange, 
         />
       ) : (
         <div className="w-full bg-slate-50/50 border border-transparent rounded-2xl px-5 py-3.5 text-sm font-bold text-slate-900">
-          {value || <span className="text-slate-300 italic font-medium">Not specified</span>}
+          {value || <span className="text-slate-300  font-medium">Not specified</span>}
         </div>
       )}
     </div>
@@ -144,7 +144,7 @@ export default function ProfilePage() {
         <div className="relative z-10 p-10 md:p-14 flex flex-col md:flex-row items-center gap-10">
           <div className="relative group shrink-0">
             <div className="w-28 h-28 rounded-full bg-slate-800 border-4 border-white/10 flex items-center justify-center shadow-2xl relative overflow-hidden transition-all duration-700 group-hover:scale-105 group-hover:border-tf-primary/30">
-               <span className="text-3xl text-white font-black tracking-tight opacity-90 group-hover:opacity-100 transition-opacity">
+               <span className="text-3xl text-white font-extrabold tracking-tight opacity-90 group-hover:opacity-100 transition-opacity">
                 {(user?.name || user?.email || 'U')[0].toUpperCase()}
               </span>
             </div>
@@ -155,10 +155,10 @@ export default function ProfilePage() {
 
           <div className="text-center md:text-left flex-1 space-y-3">
             <div className="flex flex-wrap items-center justify-center md:justify-start gap-3">
-               <h1 className="text-2xl md:text-3xl font-black text-white tracking-tight leading-none">
+               <h1 className="text-2xl md:text-3xl font-extrabold text-white tracking-tight leading-none">
                 {user?.name || 'anonymous donor'}
                </h1>
-               <span className="px-3 py-1 bg-white/10 border border-white/10 rounded-full text-[9px] font-black uppercase tracking-widest text-tf-primary backdrop-blur-md shadow-inner">
+               <span className="px-3 py-1 bg-white/10 border border-white/10 rounded-full text-[9px] font-extrabold uppercase tracking-widest text-tf-primary backdrop-blur-md shadow-inner">
                  Verified Donor
                </span>
             </div>
@@ -180,15 +180,15 @@ export default function ProfilePage() {
           {!isNgoOrAdmin && donorProfile && (
             <div className="shrink-0 pt-4 md:pt-0">
                {!editing ? (
-                 <button onClick={() => setEditing(true)} className="flex items-center gap-2 px-6 py-3.5 bg-white text-slate-900 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-tf-primary hover:text-white transition-all shadow-xl active:scale-95 group">
+                 <button onClick={() => setEditing(true)} className="flex items-center gap-2 px-6 py-3.5 bg-white text-slate-900 rounded-xl text-[10px] font-extrabold uppercase tracking-widest hover:bg-tf-primary hover:text-white transition-all shadow-xl active:scale-95 group">
                    <FiEdit3 className="text-lg group-hover:scale-110 transition-transform" /> Edit Profile
                  </button>
                ) : (
                  <div className="flex gap-2">
-                    <button onClick={() => setEditing(false)} className="px-6 py-3.5 bg-white/5 border border-white/10 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-all active:scale-95">
+                    <button onClick={() => setEditing(false)} className="px-6 py-3.5 bg-white/5 border border-white/10 text-white rounded-xl text-[10px] font-extrabold uppercase tracking-widest hover:bg-white/10 transition-all active:scale-95">
                       Cancel
                     </button>
-                    <button onClick={handleSubmit} className="px-6 py-3.5 bg-tf-primary text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-amber-600 transition-all shadow-xl active:scale-95 flex items-center gap-2">
+                    <button onClick={handleSubmit} className="px-6 py-3.5 bg-tf-primary text-white rounded-xl text-[10px] font-extrabold uppercase tracking-widest hover:bg-amber-600 transition-all shadow-xl active:scale-95 flex items-center gap-2">
                       Save Changes
                     </button>
                  </div>
@@ -234,11 +234,11 @@ export default function ProfilePage() {
           <div className="bg-white rounded-[2rem] border border-slate-100 shadow-sm p-10 space-y-10">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-slate-50 pb-8">
                <div className="space-y-1">
-                 <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-3 italic underline decoration-tf-primary/30 decoration-4 underline-offset-8">Account Details</h2>
-                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">Your private community profile information Hub</p>
+                 <h2 className="text-xl font-extrabold text-slate-900 tracking-tight flex items-center gap-3  underline decoration-tf-primary/30 decoration-4 underline-offset-8">Account Details</h2>
+                 <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest leading-none">Your private community profile information Hub</p>
                </div>
                {!isNgoOrAdmin && !editing && (
-                 <button onClick={() => setEditing(true)} className="text-[10px] font-black text-tf-primary uppercase tracking-widest hover:text-slate-900 transition-colors italic">Update Information →</button>
+                 <button onClick={() => setEditing(true)} className="text-[10px] font-extrabold text-tf-primary uppercase tracking-widest hover:text-slate-900 transition-colors ">Update Information →</button>
                )}
             </div>
 
@@ -258,7 +258,7 @@ export default function ProfilePage() {
               <div className="md:col-span-2 space-y-2">
                 <div className="flex items-center gap-2 px-1">
                   <FiMessageSquare className="text-slate-400 text-xs" />
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">About You / My Mission</label>
+                  <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">About You / My Mission</label>
                 </div>
                 {editing ? (
                   <textarea 
@@ -266,14 +266,14 @@ export default function ProfilePage() {
                     className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 text-sm font-bold text-slate-900 focus:outline-none focus:border-tf-primary focus:ring-4 focus:ring-tf-primary/5 transition-all shadow-inner min-h-[120px] resize-none"
                   />
                 ) : (
-                  <div className="w-full bg-slate-50/50 border border-transparent rounded-2xl px-5 py-4 text-sm font-bold text-slate-900 leading-relaxed italic">
-                    {donorProfile?.bio || <span className="text-slate-300 italic font-medium">No bio provided. Tell us about your mission Hub!</span>}
+                  <div className="w-full bg-slate-50/50 border border-transparent rounded-2xl px-5 py-4 text-sm font-bold text-slate-900 leading-relaxed ">
+                    {donorProfile?.bio || <span className="text-slate-300  font-medium">No bio provided. Tell us about your mission Hub!</span>}
                   </div>
                 )}
               </div>
 
               <div className="md:col-span-2 pt-6 border-t border-slate-50">
-                <h3 className="text-[10px] font-black text-slate-900 uppercase tracking-widest mb-8 italic flex items-center gap-3">
+                <h3 className="text-[10px] font-extrabold text-slate-900 uppercase tracking-widest mb-8  flex items-center gap-3">
                   <FiMapPin className="text-tf-primary" /> Physical Address Info
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -296,8 +296,8 @@ export default function ProfilePage() {
 
               {editing && (
                 <div className="md:col-span-2 pt-10 flex gap-4">
-                  <button type="submit" className="flex-1 py-5 bg-slate-950 text-white rounded-2xl text-[11px] font-black uppercase tracking-widest hover:bg-tf-primary transition-all shadow-xl active:scale-95 italic">Save Information Hub</button>
-                  <button type="button" onClick={() => setEditing(false)} className="px-10 py-5 bg-slate-50 text-slate-400 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:text-slate-950 transition-all italic underline decoration-transparent hover:decoration-slate-950 underline-offset-8">Cancel Hub</button>
+                  <button type="submit" className="flex-1 py-5 bg-slate-950 text-white rounded-2xl text-[11px] font-extrabold uppercase tracking-widest hover:bg-tf-primary transition-all shadow-xl active:scale-95 ">Save Information Hub</button>
+                  <button type="button" onClick={() => setEditing(false)} className="px-10 py-5 bg-slate-50 text-slate-400 rounded-2xl text-[10px] font-extrabold uppercase tracking-widest hover:text-slate-950 transition-all  underline decoration-transparent hover:decoration-slate-950 underline-offset-8">Cancel Hub</button>
                 </div>
               )}
             </form>
@@ -313,13 +313,13 @@ export default function ProfilePage() {
                    <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center text-tf-primary">
                       <FiShield className="text-xl" />
                    </div>
-                   <span className="text-[9px] font-black text-white/20 uppercase tracking-widest italic">Verification Level 01</span>
+                   <span className="text-[9px] font-extrabold text-white/20 uppercase tracking-widest ">Verification Level 01</span>
                 </div>
                 <div className="space-y-2">
-                   <h4 className="text-xl font-black italic tracking-tight">Security & Privacy Hub</h4>
-                   <p className="text-xs text-white/50 font-medium leading-relaxed italic italic">Your account information is protected by industry-standard encryption protocols. We never share your private details without consent Hub.</p>
+                   <h4 className="text-xl font-extrabold  tracking-tight">Security & Privacy Hub</h4>
+                   <p className="text-xs text-white/50 font-medium leading-relaxed  ">Your account information is protected by industry-standard encryption protocols. We never share your private details without consent Hub.</p>
                 </div>
-                <button className="text-[10px] font-black text-tf-primary uppercase tracking-widest hover:text-white transition-colors italic">Privacy Settings Hub →</button>
+                <button className="text-[10px] font-extrabold text-tf-primary uppercase tracking-widest hover:text-white transition-colors ">Privacy Settings Hub →</button>
              </div>
           </div>
           
@@ -328,7 +328,7 @@ export default function ProfilePage() {
                 <FiInfo className="text-2xl" />
              </div>
              <div className="max-w-xs space-y-2">
-                <h4 className="text-sm font-black text-slate-400 uppercase tracking-widest">More Features Coming</h4>
+                <h4 className="text-sm font-extrabold text-slate-400 uppercase tracking-widest">More Features Coming</h4>
                 <p className="text-[10px] text-slate-300 font-bold uppercase tracking-widest leading-relaxed">We are currently developing advanced impact reporting and recurring payment management hubs.</p>
              </div>
           </div>
@@ -339,7 +339,7 @@ export default function ProfilePage() {
       <AnimatePresence>
         {success && (
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[100]">
-             <div className="bg-slate-950 text-emerald-400 px-8 py-4 rounded-full shadow-2xl flex items-center gap-3 font-black uppercase tracking-widest text-[10px] border border-white/10 italic">
+             <div className="bg-slate-950 text-emerald-400 px-8 py-4 rounded-full shadow-2xl flex items-center gap-3 font-extrabold uppercase tracking-widest text-[10px] border border-white/10 ">
                 <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_8px_#10b981]" />
                 {success}
              </div>
@@ -347,7 +347,7 @@ export default function ProfilePage() {
         )}
         {localError && (
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[100]">
-             <div className="bg-rose-600 text-white px-8 py-4 rounded-full shadow-2xl flex items-center gap-3 font-black uppercase tracking-widest text-[10px] italic">
+             <div className="bg-rose-600 text-white px-8 py-4 rounded-full shadow-2xl flex items-center gap-3 font-extrabold uppercase tracking-widest text-[10px] ">
                 <FiX />
                 {localError}
              </div>

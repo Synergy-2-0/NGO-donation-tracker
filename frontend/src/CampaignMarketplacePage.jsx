@@ -52,8 +52,8 @@ export default function CampaignMarketplacePage() {
 
                 <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
                     <div>
-                        <p className="text-[10px] font-black uppercase tracking-[.2em] text-slate-400 mb-2">Funding Opportunities</p>
-                        <h2 className="text-3xl md:text-4xl font-black text-white tracking-tight">
+                        <p className="text-[10px] font-extrabold uppercase tracking-[.2em] text-slate-400 mb-2">Funding Opportunities</p>
+                        <h2 className="text-3xl md:text-4xl font-extrabold text-white tracking-tight">
                             Impact <span className="text-brand-red">Marketplace</span>
                         </h2>
                         <p className="text-slate-400 text-sm mt-2 max-w-xl font-medium">
@@ -81,7 +81,7 @@ export default function CampaignMarketplacePage() {
                   />
                </div>
                <div className="flex items-center gap-2 w-full md:w-auto">
-                  <button className="px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-[10px] font-black uppercase tracking-widest text-slate-600 flex items-center gap-2">
+                  <button className="px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-[10px] font-extrabold uppercase tracking-widest text-slate-600 flex items-center gap-2">
                     <FiFilter /> All Domains
                   </button>
                </div>
@@ -92,7 +92,7 @@ export default function CampaignMarketplacePage() {
                     <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mb-4 text-slate-300">
                         <FiTarget className="text-3xl" />
                     </div>
-                    <h3 className="text-xl font-black text-slate-800 mb-2">Zero Operations Detected</h3>
+                    <h3 className="text-xl font-extrabold text-slate-800 mb-2">Zero Operations Detected</h3>
                     <p className="text-slate-500 text-sm font-medium">There are no active missions matching your protocol parameters.</p>
                 </div>
             ) : (
@@ -110,14 +110,14 @@ export default function CampaignMarketplacePage() {
                                             <FiImage className="text-4xl stroke-[1]" />
                                         </div>
                                     )}
-                                    <div className="absolute top-5 right-5 bg-white/95 backdrop-blur-md px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-900 shadow-lg border border-white/50">
+                                    <div className="absolute top-5 right-5 bg-white/95 backdrop-blur-md px-4 py-1.5 rounded-xl text-[10px] font-extrabold uppercase tracking-widest text-slate-900 shadow-lg border border-white/50">
                                         {campaign.category || 'General'}
                                     </div>
                                 </div>
 
                                 <div className="p-8 flex-1 flex flex-col space-y-6">
                                     <div>
-                                        <h3 className="text-xl font-black text-slate-900 leading-tight mb-2 group-hover:text-brand-red transition-colors line-clamp-2">{campaign.title}</h3>
+                                        <h3 className="text-xl font-extrabold text-slate-900 leading-tight mb-2 group-hover:text-brand-red transition-colors line-clamp-2">{campaign.title}</h3>
                                         <p className="text-sm text-slate-500 font-medium leading-relaxed line-clamp-3">
                                             {campaign.description}
                                         </p>
@@ -127,24 +127,24 @@ export default function CampaignMarketplacePage() {
                                         <div className="bg-slate-50 rounded-2xl border border-slate-100 p-4">
                                             <div className="flex justify-between items-end mb-3">
                                                 <div>
-                                                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Inbound Liquidity</p>
-                                                   <p className="text-base font-black text-slate-900 tracking-tighter">LKR {(campaign.currentFunding || 0).toLocaleString()}</p>
+                                                   <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Inbound Liquidity</p>
+                                                   <p className="text-base font-extrabold text-slate-900 tracking-tighter">LKR {(campaign.currentFunding || 0).toLocaleString()}</p>
                                                 </div>
                                                 <div className="text-right">
-                                                   <p className="text-[10px] font-black text-brand-red uppercase tracking-widest">Target Objective</p>
+                                                   <p className="text-[10px] font-extrabold text-brand-red uppercase tracking-widest">Target Objective</p>
                                                    <p className="text-sm font-bold text-slate-600">LKR {(campaign.fundingGoal || 0).toLocaleString()}</p>
                                                 </div>
                                             </div>
                                             <div className="w-full h-2.5 bg-slate-200/50 rounded-full overflow-hidden border border-slate-200/50">
                                                 <div className="h-full bg-gradient-to-r from-brand-orange to-brand-red transition-all duration-1000" style={{ width: `${Math.min(progress, 100)}%` }}></div>
                                             </div>
-                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-2">{Math.min(progress, 100).toFixed(1)}% Accomplished</p>
+                                            <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mt-2">{Math.min(progress, 100).toFixed(1)}% Accomplished</p>
                                         </div>
                                         
                                         {user?.role === 'partner' && (
                                             <button 
                                                 onClick={() => handleProposePartnership(campaign._id)}
-                                                className="w-full flex items-center justify-center gap-2 py-4 bg-slate-900 hover:bg-brand-red text-white rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 shadow-xl shadow-slate-900/10 hover:shadow-brand-red/20"
+                                                className="w-full flex items-center justify-center gap-2 py-4 bg-slate-900 hover:bg-brand-red text-white rounded-2xl text-[10px] font-extrabold uppercase tracking-widest transition-all active:scale-95 shadow-xl shadow-slate-900/10 hover:shadow-brand-red/20"
                                             >
                                                 <FiTarget className="text-sm" /> Propose Alliance Alliance Alliance Partnership
                                             </button>
@@ -152,7 +152,7 @@ export default function CampaignMarketplacePage() {
                                         {user?.role === 'donor' && (
                                             <Link 
                                                 to={`/donations/new?campaign=${campaign._id}`}
-                                                className="w-full flex items-center justify-center gap-2 py-4 bg-brand-red hover:bg-brand-red/90 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 shadow-xl shadow-brand-red/20"
+                                                className="w-full flex items-center justify-center gap-2 py-4 bg-brand-red hover:bg-brand-red/90 text-white rounded-2xl text-[10px] font-extrabold uppercase tracking-widest transition-all active:scale-95 shadow-xl shadow-brand-red/20"
                                             >
                                                 <FiHeart className="text-sm" /> Pledge Liquidity
                                             </Link>

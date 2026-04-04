@@ -20,7 +20,7 @@ const asMoney = v => `LKR ${Number(v || 0).toLocaleString()}`;
 function InfoRow({ label, value }) {
   return (
     <div className="flex flex-col gap-0.5">
-      <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">{label}</span>
+      <span className="text-[10px] font-extrabold uppercase tracking-widest text-slate-500">{label}</span>
       <span className="text-sm font-semibold text-slate-800">{value || '—'}</span>
     </div>
   );
@@ -28,7 +28,7 @@ function InfoRow({ label, value }) {
 
 function TagPill({ value }) {
   return (
-    <span className="px-3 py-1 bg-slate-100 text-slate-600 text-[10px] font-black uppercase tracking-wider rounded-lg border border-slate-200">
+    <span className="px-3 py-1 bg-slate-100 text-slate-600 text-[10px] font-extrabold uppercase tracking-wider rounded-lg border border-slate-200">
       {toTitle(String(value))}
     </span>
   );
@@ -39,7 +39,7 @@ function SectionCard({ title, icon, children, className = '' }) {
     <div className={`bg-white rounded-3xl border border-slate-100 shadow-sm p-7 ${className}`}>
       <div className="flex items-center gap-2.5 mb-6">
         <span className="w-8 h-8 bg-slate-900 text-white rounded-xl flex items-center justify-center text-sm">{icon}</span>
-        <h3 className="text-xs font-black uppercase tracking-widest text-slate-500">{title}</h3>
+        <h3 className="text-xs font-extrabold uppercase tracking-widest text-slate-500">{title}</h3>
       </div>
       {children}
     </div>
@@ -86,8 +86,8 @@ export default function PartnerProfilePage() {
                 : <FiBriefcase className="text-2xl text-white/50" />}
             </div>
             <div>
-              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Partner Profile</p>
-              <h1 className="text-2xl md:text-3xl font-black text-white tracking-tight leading-tight">
+              <p className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 mb-1">Partner Profile</p>
+              <h1 className="text-2xl md:text-3xl font-extrabold text-white tracking-tight leading-tight">
                 {partner?.organizationName || 'My Organization'}
               </h1>
               <p className="text-slate-400 text-sm mt-1">{toTitle(partner?.organizationType || '')} • {partner?.industry || 'Industry not set'}</p>
@@ -97,16 +97,16 @@ export default function PartnerProfilePage() {
           <div className="flex flex-wrap gap-3">
             {partner && (
               <>
-                <span className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest border backdrop-blur-sm ${vStyle.cls}`}>
+                <span className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-extrabold uppercase tracking-widest border backdrop-blur-sm ${vStyle.cls}`}>
                   <span className={`w-2 h-2 rounded-full ${vStyle.dot}`} />
                   {toTitle(partner.verificationStatus || 'pending')}
                 </span>
                 <Link to={`/partners/${partner._id}`}
-                  className="px-5 py-2.5 bg-white/10 hover:bg-white/20 text-white text-xs font-black uppercase tracking-widest rounded-xl border border-white/10 flex items-center gap-2 transition-all">
+                  className="px-5 py-2.5 bg-white/10 hover:bg-white/20 text-white text-xs font-extrabold uppercase tracking-widest rounded-xl border border-white/10 flex items-center gap-2 transition-all">
                   <FiExternalLink /> Full Profile
                 </Link>
                 <Link to="/partner/agreements"
-                  className="px-5 py-2.5 bg-brand-red hover:bg-brand-red/90 text-white text-xs font-black uppercase tracking-widest rounded-xl shadow-[0_8px_24px_rgba(220,38,38,0.3)] flex items-center gap-2 transition-all">
+                  className="px-5 py-2.5 bg-brand-red hover:bg-brand-red/90 text-white text-xs font-extrabold uppercase tracking-widest rounded-xl shadow-[0_8px_24px_rgba(220,38,38,0.3)] flex items-center gap-2 transition-all">
                   <FiFileText /> Partnership Ops
                 </Link>
               </>
@@ -128,10 +128,10 @@ export default function PartnerProfilePage() {
           <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mb-4 text-slate-300">
             <FiBriefcase className="text-3xl" />
           </div>
-          <h3 className="text-xl font-black text-slate-800 mb-2">No Partner Profile Found</h3>
+          <h3 className="text-xl font-extrabold text-slate-800 mb-2">No Partner Profile Found</h3>
           <p className="text-slate-500 text-sm max-w-sm mb-6">Your account doesn't have a partner profile yet. Complete onboarding to create one.</p>
           <Link to="/partners"
-            className="px-6 py-3 bg-slate-900 hover:bg-brand-red text-white text-xs font-black uppercase tracking-widest rounded-xl transition-all flex items-center gap-2">
+            className="px-6 py-3 bg-slate-900 hover:bg-brand-red text-white text-xs font-extrabold uppercase tracking-widest rounded-xl transition-all flex items-center gap-2">
             <FiArrowRight /> Go to Partners
           </Link>
         </div>
@@ -162,13 +162,13 @@ export default function PartnerProfilePage() {
                 <div className="flex items-center gap-3 p-4 bg-slate-50 rounded-2xl border border-slate-100">
                   <span className={`w-2 h-2 rounded-full shrink-0 ${vStyle.dot}`} />
                   <div>
-                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Verification Status</p>
+                    <p className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Verification Status</p>
                     <p className={`text-sm font-bold ${vStyle.cls.split(' ')[1]}`}>{toTitle(partner.verificationStatus)}</p>
                   </div>
                 </div>
                 <InfoRow label="Verified At" value={partner.verifiedAt ? new Date(partner.verifiedAt).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }) : 'Pending'} />
                 <div>
-                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-2">Compliance Documents</span>
+                  <span className="text-[10px] font-extrabold uppercase tracking-widest text-slate-500 block mb-2">Compliance Documents</span>
                   {partner.verificationDocuments?.length > 0 ? (
                     <div className="space-y-2">
                       {partner.verificationDocuments.map((doc, i) => (
@@ -181,7 +181,7 @@ export default function PartnerProfilePage() {
                       ))}
                     </div>
                   ) : (
-                    <p className="text-sm text-slate-400 italic">No documents uploaded</p>
+                    <p className="text-sm text-slate-400 ">No documents uploaded</p>
                   )}
                 </div>
               </div>
@@ -195,14 +195,14 @@ export default function PartnerProfilePage() {
                 <div className="flex flex-wrap gap-2">
                   {partner.csrFocus.map(f => <TagPill key={f} value={f} />)}
                 </div>
-              ) : <p className="text-sm text-slate-400 italic">Not set</p>}
+              ) : <p className="text-sm text-slate-400 ">Not set</p>}
               
               {partner.sdgGoals?.length > 0 && (
                 <div className="mt-5">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-3">SDG Goal Alignment</p>
+                  <p className="text-[10px] font-extrabold uppercase tracking-widest text-slate-500 mb-3">SDG Goal Alignment</p>
                   <div className="flex flex-wrap gap-2">
                     {partner.sdgGoals.map(g => (
-                      <span key={g} className="px-3 py-1 bg-brand-red/5 text-brand-red border border-brand-red/15 text-[10px] font-black uppercase tracking-wider rounded-lg">
+                      <span key={g} className="px-3 py-1 bg-brand-red/5 text-brand-red border border-brand-red/15 text-[10px] font-extrabold uppercase tracking-wider rounded-lg">
                         SDG {g}
                       </span>
                     ))}
@@ -215,21 +215,21 @@ export default function PartnerProfilePage() {
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Min Budget</p>
-                    <p className="text-base font-black text-slate-800">{asMoney(partner.partnershipPreferences?.budgetRange?.min)}</p>
+                    <p className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 mb-1">Min Budget</p>
+                    <p className="text-base font-extrabold text-slate-800">{asMoney(partner.partnershipPreferences?.budgetRange?.min)}</p>
                   </div>
                   <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Max Budget</p>
-                    <p className="text-base font-black text-slate-800">{asMoney(partner.partnershipPreferences?.budgetRange?.max)}</p>
+                    <p className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 mb-1">Max Budget</p>
+                    <p className="text-base font-extrabold text-slate-800">{asMoney(partner.partnershipPreferences?.budgetRange?.max)}</p>
                   </div>
                 </div>
                 <InfoRow label="Preferred Duration" value={toTitle(partner.partnershipPreferences?.duration || '')} />
                 <div>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">Partnership Types</p>
+                  <p className="text-[10px] font-extrabold uppercase tracking-widest text-slate-500 mb-2">Partnership Types</p>
                   <div className="flex flex-wrap gap-2">
                     {partner.partnershipPreferences?.partnershipTypes?.length > 0
                       ? partner.partnershipPreferences.partnershipTypes.map(t => <TagPill key={t} value={t} />)
-                      : <p className="text-sm text-slate-400 italic">Not set</p>}
+                      : <p className="text-sm text-slate-400 ">Not set</p>}
                   </div>
                 </div>
               </div>
@@ -244,8 +244,8 @@ export default function PartnerProfilePage() {
                   { label: 'Contributed', value: asMoney(partner.partnershipHistory?.totalContributed) },
                 ].map(({ label, value }) => (
                   <div key={label} className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">{label}</p>
-                    <p className="text-lg font-black text-slate-800">{value}</p>
+                    <p className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 mb-1">{label}</p>
+                    <p className="text-lg font-extrabold text-slate-800">{value}</p>
                   </div>
                 ))}
               </div>
@@ -257,22 +257,22 @@ export default function PartnerProfilePage() {
             <SectionCard title="Organizational Capabilities" icon={<FiUsers />}>
               <div className="space-y-4">
                 <div className="bg-brand-red/5 border border-brand-red/10 rounded-2xl p-5">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Financial Capacity</p>
-                  <p className="text-xl font-black text-brand-red">{asMoney(partner.capabilities?.financialCapacity)}</p>
+                  <p className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 mb-1">Financial Capacity</p>
+                  <p className="text-xl font-extrabold text-brand-red">{asMoney(partner.capabilities?.financialCapacity)}</p>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 text-center">
-                    <p className="text-2xl font-black text-slate-800">{partner.capabilities?.employeeCount ?? '—'}</p>
-                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mt-1">Employees</p>
+                    <p className="text-2xl font-extrabold text-slate-800">{partner.capabilities?.employeeCount ?? '—'}</p>
+                    <p className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 mt-1">Employees</p>
                   </div>
                   <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 text-center">
-                    <p className="text-2xl font-black text-slate-800">{partner.capabilities?.volunteerHoursAvailable ?? '—'}</p>
-                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mt-1">Vol. Hrs</p>
+                    <p className="text-2xl font-extrabold text-slate-800">{partner.capabilities?.volunteerHoursAvailable ?? '—'}</p>
+                    <p className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 mt-1">Vol. Hrs</p>
                   </div>
                 </div>
                 {partner.capabilities?.skillsAvailable?.length > 0 && (
                   <div>
-                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">Skills Available</p>
+                    <p className="text-[10px] font-extrabold uppercase tracking-widest text-slate-500 mb-2">Skills Available</p>
                     <div className="flex flex-wrap gap-2">
                       {partner.capabilities.skillsAvailable.map(s => <TagPill key={s} value={s} />)}
                     </div>
@@ -285,7 +285,7 @@ export default function PartnerProfilePage() {
             <div className="bg-slate-900 rounded-3xl p-7 relative overflow-hidden">
               <div className="absolute top-0 right-0 w-40 h-40 bg-brand-red/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
               <div className="relative z-10">
-                <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-5">Quick Actions</h3>
+                <h3 className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 mb-5">Quick Actions</h3>
                 <div className="space-y-2">
                   <Link to={`/partners/${partner._id}`}
                     className="flex items-center justify-between p-4 bg-white/5 hover:bg-white/10 border border-white/5 hover:border-white/10 rounded-2xl text-white text-sm font-bold transition-all group">

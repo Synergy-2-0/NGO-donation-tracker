@@ -28,12 +28,12 @@ function MetricCard({ label, value, icon, colorClass, sub, delay = 0 }) {
           <div className={`w-12 h-12 rounded-2xl ${colorClass.replace('bg-', 'text-')} bg-opacity-10 flex items-center justify-center text-xl`}>
             {icon}
           </div>
-          <span className="text-[9px] font-black text-slate-300 uppercase tracking-widest italic leading-none group-hover:text-slate-500 transition-colors">{t('ngo_dashboard.registry_node')}</span>
+          <span className="text-[9px] font-extrabold text-slate-300 uppercase tracking-widest leading-none group-hover:text-slate-500 transition-colors">{t('ngo_dashboard.registry_node')}</span>
         </div>
         <div>
-          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 italic">{label}</p>
-          <h4 className="text-2xl font-black text-slate-900 tracking-tight italic tabular-nums">{value}</h4>
-          {sub && <p className="text-[9px] font-bold text-slate-400 mt-2 italic">{sub}</p>}
+          <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-1">{label}</p>
+          <h4 className="text-2xl font-extrabold text-slate-900 tracking-tight tabular-nums">{value}</h4>
+          {sub && <p className="text-[9px] font-bold text-slate-400 mt-2">{sub}</p>}
         </div>
       </div>
     </motion.div>
@@ -94,48 +94,48 @@ export default function NgoAdminDashboardPage() {
                     <div className="space-y-6 flex-1">
                         <div className="inline-flex items-center gap-4">
                            {financeSummary?.status !== 'approved' ? (
-                             <span className="flex items-center gap-2 px-4 py-1.5 bg-rose-500/10 border border-rose-500/20 rounded-full text-rose-500 text-[10px] font-black uppercase tracking-widest backdrop-blur-md italic">
+                             <span className="flex items-center gap-2 px-4 py-1.5 bg-rose-500/10 border border-rose-500/20 rounded-full text-rose-500 text-[10px] font-extrabold uppercase tracking-widest backdrop-blur-md">
                                 <FiShield className="text-sm shrink-0" /> {t('ngo_dashboard.verification_badge')}
                              </span>
                            ) : (
-                             <span className="flex items-center gap-2 px-4 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-emerald-500 text-[10px] font-black uppercase tracking-widest backdrop-blur-md italic">
+                             <span className="flex items-center gap-2 px-4 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-emerald-500 text-[10px] font-extrabold uppercase tracking-widest backdrop-blur-md">
                                 <FiShield className="text-sm shrink-0" /> MISSION AUTHORIZED
                              </span>
                            )}
-                           <span className="text-[10px] font-black text-white/30 uppercase tracking-[0.5em] italic">{t('ngo_dashboard.control_center')}</span>
+                           <span className="text-[10px] font-extrabold text-white/30 uppercase tracking-[0.5em]">{t('ngo_dashboard.control_center')}</span>
                         </div>
                         
                         <div className="space-y-2">
-                           <h1 className="text-5xl md:text-6xl font-black text-white tracking-tighter italic leading-none">
-                              {t('ngo_dashboard.welcome')}, <span className="text-tf-primary not-italic">{user?.name?.split(' ')[0]}</span>
+                           <h1 className="text-5xl md:text-6xl font-extrabold text-white tracking-tighter leading-none">
+                              {t('ngo_dashboard.welcome')}, <span className="text-tf-primary">{user?.name?.split(' ')[0]}</span>
                            </h1>
-                           <p className="text-white/50 text-base md:text-lg font-medium italic max-w-xl leading-relaxed">
+                           <p className="text-white/50 text-base md:text-lg font-medium max-w-xl leading-relaxed">
                               {t('ngo_dashboard.tagline')}
                            </p>
                         </div>
 
                         <div className="flex flex-wrap gap-4 pt-4">
-                           <button onClick={() => navigate('/admin/campaigns/create')} className="px-8 py-3.5 bg-tf-primary hover:bg-orange-500 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg active:scale-95 flex items-center gap-3 italic">
+                           <button onClick={() => navigate('/admin/campaigns/create')} className="px-8 py-3.5 bg-tf-primary hover:bg-orange-500 text-white rounded-2xl text-[10px] font-extrabold uppercase tracking-widest transition-all shadow-lg active:scale-95 flex items-center gap-3">
                               <FiPlus className="text-lg" /> CREATE CAMPAIGN HUB
                            </button>
-                           <button onClick={() => navigate('/admin/finance')} className="px-8 py-3.5 bg-white/5 hover:bg-white/10 border border-white/10 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-3 italic">
+                           <button onClick={() => navigate('/admin/finance')} className="px-8 py-3.5 bg-white/5 hover:bg-white/10 border border-white/10 text-white rounded-2xl text-[10px] font-extrabold uppercase tracking-widest transition-all flex items-center gap-3">
                               <FiActivity className="text-lg" /> {t('ngo_dashboard.locked_sync')}
                            </button>
                         </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4 lg:w-[450px]">
-                        <div className="bg-white/5 backdrop-blur-2xl border border-white/10 p-8 rounded-[2rem] space-y-2 group hover:bg-white/10 transition-all shadow-2xl relative overflow-hidden italic">
+                        <div className="bg-white/5 backdrop-blur-2xl border border-white/10 p-8 rounded-[2rem] space-y-2 group hover:bg-white/10 transition-all shadow-2xl relative overflow-hidden">
                            <div className="absolute top-0 right-0 w-20 h-20 bg-tf-primary/10 blur-2xl -mr-10 -mt-10" />
-                           <p className="text-[9px] font-black text-white/30 uppercase tracking-widest italic">{t('ngo_dashboard.treasury_analytics')}</p>
-                           <h4 className="text-2xl font-black text-white italic tabular-nums leading-none">LKR {(financeSummary?.availableFunds || 0).toLocaleString()}</h4>
+                           <p className="text-[9px] font-extrabold text-white/30 uppercase tracking-widest">{t('ngo_dashboard.treasury_analytics')}</p>
+                           <h4 className="text-2xl font-extrabold text-white tabular-nums leading-none">LKR {(financeSummary?.availableFunds || 0).toLocaleString()}</h4>
                            <div className="w-full h-1 bg-white/5 rounded-full mt-4 overflow-hidden">
                               <motion.div initial={{ width: 0 }} animate={{ width: '75%' }} className="h-full bg-tf-primary" />
                            </div>
                         </div>
-                        <div className="bg-white/5 backdrop-blur-2xl border border-white/10 p-8 rounded-[2rem] space-y-2 group hover:bg-white/10 transition-all shadow-2xl italic">
-                           <p className="text-[9px] font-black text-white/30 uppercase tracking-widest italic">{t('ngo_dashboard.active_projects')}</p>
-                           <h4 className="text-2xl font-black text-white italic tabular-nums leading-none">{campaigns.filter(c => c.status === 'active').length}</h4>
+                        <div className="bg-white/5 backdrop-blur-2xl border border-white/10 p-8 rounded-[2rem] space-y-2 group hover:bg-white/10 transition-all shadow-2xl">
+                           <p className="text-[9px] font-extrabold text-white/30 uppercase tracking-widest">{t('ngo_dashboard.active_projects')}</p>
+                           <h4 className="text-2xl font-extrabold text-white tabular-nums leading-none">{campaigns.filter(c => c.status === 'active').length}</h4>
                            <div className="flex -space-x-2 mt-4">
                               {[1,2,3].map(i => <div key={i} className="w-6 h-6 rounded-full border-2 border-slate-900 bg-slate-800" />)}
                               <div className="w-6 h-6 rounded-full border-2 border-slate-900 bg-tf-primary flex items-center justify-center text-[8px] font-bold text-white tracking-widest">+</div>
@@ -164,11 +164,11 @@ export default function NgoAdminDashboardPage() {
                                     <FiActivity className="text-xl" />
                                 </div>
                                 <div>
-                                    <h3 className="text-lg font-black text-slate-900 tracking-tight">Financial Activity Pulse</h3>
+                                    <h3 className="text-lg font-extrabold text-slate-900 tracking-tight">Financial Activity Pulse</h3>
                                     <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Real-time contribution resonance</p>
                                 </div>
                             </div>
-                            <Link to="/finance/transactions" className="px-6 py-2.5 bg-slate-50 text-slate-600 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-slate-900 hover:text-white transition-all shadow-sm">Audit Ledger</Link>
+                            <Link to="/finance/transactions" className="px-6 py-2.5 bg-slate-50 text-slate-600 rounded-xl text-[9px] font-extrabold uppercase tracking-widest hover:bg-slate-900 hover:text-white transition-all shadow-sm">Audit Ledger</Link>
                         </div>
                         
                         <div className="divide-y divide-slate-50 text-left">
@@ -179,23 +179,23 @@ export default function NgoAdminDashboardPage() {
                                             <FiDollarSign className="text-lg" />
                                         </div>
                                         <div className="text-left">
-                                            <p className="text-sm font-black text-slate-950 group-hover:text-tf-primary transition-colors italic leading-none mb-1">{ra.description || 'Campaign Contribution'}</p>
+                                            <p className="text-sm font-extrabold text-slate-950 group-hover:text-tf-primary transition-colors leading-none mb-1">{ra.description || 'Campaign Contribution'}</p>
                                             <div className="flex items-center gap-3">
-                                                <span className="text-[10px] font-black text-tf-primary uppercase tracking-widest italic">{ra.type === 'income' ? 'Contribution' : 'Allocation'}</span>
+                                                <span className="text-[10px] font-extrabold text-tf-primary uppercase tracking-widest">{ra.type === 'income' ? 'Contribution' : 'Allocation'}</span>
                                                 <span className="w-1 h-1 bg-slate-300 rounded-full" />
                                                 <span className="text-[10px] font-bold text-slate-300 uppercase tracking-widest">{new Date(ra.date).toLocaleDateString()}</span>
                                             </div>
                                         </div>
                                     </div>
                                     <div className="text-right">
-                                        <p className="text-sm font-black text-slate-950 italic tabular-nums leading-none">{ra.type === 'income' ? '+' : '-'}LKR {ra.amount.toLocaleString()}</p>
+                                        <p className="text-sm font-extrabold text-slate-950 tabular-nums leading-none">{ra.type === 'income' ? '+' : '-'}LKR {ra.amount.toLocaleString()}</p>
                                         <p className="text-[9px] font-bold text-emerald-500 uppercase tracking-widest">Verified</p>
                                     </div>
                                 </div>
                             )) : (
                                 <div className="p-20 text-center space-y-4">
                                     <FiActivity className="mx-auto text-slate-100" size={60} />
-                                    <p className="text-slate-300 font-bold text-xs uppercase tracking-widest italic">Awaiting financial synchronization.</p>
+                                    <p className="text-slate-300 font-bold text-xs uppercase tracking-widest">Awaiting financial synchronization.</p>
                                 </div>
                             )}
                         </div>
@@ -208,11 +208,11 @@ export default function NgoAdminDashboardPage() {
                                     <FiUsers className="text-xl" />
                                 </div>
                                 <div className="text-left">
-                                    <h3 className="text-lg font-black text-slate-900 tracking-tight">Partner Agreements Hub</h3>
+                                    <h3 className="text-lg font-extrabold text-slate-900 tracking-tight">Partner Agreements Hub</h3>
                                     <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Formal community partner registry</p>
                                 </div>
                             </div>
-                            <Link to="/partner/agreements" className="px-6 py-2.5 bg-slate-50 text-slate-600 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-slate-900 hover:text-white transition-all shadow-sm">View Archive</Link>
+                            <Link to="/partner/agreements" className="px-6 py-2.5 bg-slate-50 text-slate-600 rounded-xl text-[9px] font-extrabold uppercase tracking-widest hover:bg-slate-900 hover:text-white transition-all shadow-sm">View Archive</Link>
                         </div>
                         
                         <div className="divide-y divide-slate-50">
@@ -223,9 +223,9 @@ export default function NgoAdminDashboardPage() {
                                             <FiFileText className="text-xl" />
                                         </div>
                                         <div className="text-left">
-                                            <p className="text-base font-black text-slate-950 group-hover:text-tf-primary transition-colors italic leading-none mb-1">{a.title || 'Institutional Partnership'}</p>
+                                            <p className="text-base font-extrabold text-slate-950 group-hover:text-tf-primary transition-colors leading-none mb-1">{a.title || 'Institutional Partnership'}</p>
                                             <div className="flex items-center gap-3">
-                                                <span className="text-[10px] font-black text-tf-primary uppercase tracking-widest italic">{(a.agreementType || 'Mission').toUpperCase()}</span>
+                                                <span className="text-[10px] font-extrabold text-tf-primary uppercase tracking-widest">{(a.agreementType || 'Mission').toUpperCase()}</span>
                                                 <span className="w-1 h-1 bg-slate-300 rounded-full" />
                                                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{a.status}</span>
                                             </div>
@@ -236,7 +236,7 @@ export default function NgoAdminDashboardPage() {
                             )) : (
                                 <div className="p-20 text-center space-y-4">
                                     <FiGlobe className="mx-auto text-slate-100" size={60} />
-                                    <p className="text-slate-300 font-bold text-xs uppercase tracking-widest italic">No agreements found.</p>
+                                    <p className="text-slate-300 font-bold text-xs uppercase tracking-widest">No agreements found.</p>
                                 </div>
                             )}
                         </div>
@@ -248,7 +248,7 @@ export default function NgoAdminDashboardPage() {
                     <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm p-10 space-y-10 group/projects overflow-hidden relative">
                         <div className="absolute top-0 right-0 w-32 h-32 bg-tf-primary/5 rounded-full blur-3xl -mr-16 -mt-16" />
                         <div className="flex items-center justify-between relative z-10">
-                            <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic leading-none">Project Funding Status</h3>
+                            <h3 className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest leading-none">Project Funding Status</h3>
                             <FiTarget className="text-tf-primary" />
                         </div>
                         
@@ -257,10 +257,10 @@ export default function NgoAdminDashboardPage() {
                                 <div key={c._id} className="space-y-4 group/item">
                                     <div className="flex justify-between items-end">
                                         <div className="space-y-1 max-w-[70%]">
-                                           <h4 className="text-sm font-black text-slate-900 group-hover/item:text-tf-primary transition-colors leading-tight italic truncate">{c.title}</h4>
+                                           <h4 className="text-sm font-extrabold text-slate-900 group-hover/item:text-tf-primary transition-colors leading-tight truncate">{c.title}</h4>
                                            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{c.category || 'Humanitarian'}</p>
                                         </div>
-                                        <span className="text-lg font-black text-slate-950 italic tabular-nums group-hover/item:text-tf-primary transition-colors">{Math.round((c.raisedAmount / c.goalAmount) * 100)}%</span>
+                                        <span className="text-lg font-extrabold text-slate-950 tabular-nums group-hover/item:text-tf-primary transition-colors">{Math.round((c.raisedAmount / c.goalAmount) * 100)}%</span>
                                     </div>
                                     <div className="h-2 w-full bg-slate-50 border border-slate-100 rounded-full overflow-hidden shadow-inner p-0.5">
                                         <motion.div 
@@ -274,13 +274,13 @@ export default function NgoAdminDashboardPage() {
                             )) : (
                                 <div className="py-20 text-center space-y-4">
                                     <FiInfo className="mx-auto text-slate-100" size={40} />
-                                    <p className="text-slate-300 font-bold text-[9px] uppercase tracking-widest italic">Awaiting project data synchronization Hub.</p>
+                                    <p className="text-slate-300 font-bold text-[9px] uppercase tracking-widest">Awaiting project data synchronization Hub.</p>
                                 </div>
                             )}
                         </div>
 
                         <div className="pt-10 border-t border-slate-50 relative z-10">
-                           <Link to="/admin/campaign-dashboard" className="w-full py-4 bg-slate-900 hover:bg-tf-primary text-white text-[10px] font-black uppercase tracking-widest rounded-2xl flex items-center justify-center gap-3 transition-all active:scale-95 italic shadow-xl shadow-slate-900/10">
+                           <Link to="/admin/campaign-dashboard" className="w-full py-4 bg-slate-900 hover:bg-tf-primary text-white text-[10px] font-extrabold uppercase tracking-widest rounded-2xl flex items-center justify-center gap-3 transition-all active:scale-95 shadow-xl shadow-slate-900/10">
                               Manage Projects <FiActivity className="text-sm" />
                            </Link>
                         </div>
@@ -291,13 +291,13 @@ export default function NgoAdminDashboardPage() {
                         <div className="absolute top-0 right-0 w-32 h-32 bg-tf-primary/10 rounded-full blur-3xl -mr-16 -mt-16" />
                         <div className="relative z-10 space-y-6">
                            <div className="flex items-center justify-between">
-                              <h4 className="text-[10px] font-black text-tf-primary uppercase tracking-widest italic flex items-center gap-2">
+                              <h4 className="text-[10px] font-extrabold text-tf-primary uppercase tracking-widest flex items-center gap-2">
                                 <FiPieChart /> Funding Allocation
                               </h4>
                               <div className="w-2 h-2 bg-emerald-500 rounded-full shadow-[0_0_10px_#10b981] animate-pulse" />
                            </div>
-                           <p className="text-xs font-medium text-white/50 leading-relaxed italic">System information showing distribution of donor contributions across all active projects Hub.</p>
-                           <button className="text-[10px] font-black text-tf-primary uppercase tracking-widest hover:text-white transition-colors italic">Analyze Flow Reports →</button>
+                           <p className="text-xs font-medium text-white/50 leading-relaxed">System information showing distribution of donor contributions across all active projects Hub.</p>
+                           <button className="text-[10px] font-extrabold text-tf-primary uppercase tracking-widest hover:text-white transition-colors">Analyze Flow Reports →</button>
                         </div>
                     </div>
                 </div>

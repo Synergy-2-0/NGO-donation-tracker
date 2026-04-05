@@ -2,9 +2,6 @@ name: transfund-donation-tracker
 region: nyc
 services:
   - name: api
-    github:
-      deploy_on_push: true
-      repo: NGO-donation-tracker
     source_dir: backend
     environment_slug: node-js
     instance_count: 1
@@ -23,9 +20,6 @@ services:
         scope: RUN_TIME
 static_sites:
   - name: web-frontend
-    github:
-      deploy_on_push: true
-      repo: NGO-donation-tracker
     source_dir: frontend
     build_command: npm run build
     output_dir: dist

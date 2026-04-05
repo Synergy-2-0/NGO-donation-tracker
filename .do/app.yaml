@@ -1,0 +1,35 @@
+name: transfund-donation-tracker
+region: nyc
+services:
+  - name: api
+    github:
+      deploy_on_push: true
+      repo: NGO-donation-tracker
+    source_dir: backend
+    environment_slug: node-js
+    instance_count: 1
+    instance_size_slug: basic-xxs
+    http_port: 3000
+    build_command: npm install
+    run_command: npm start
+    envs:
+      - key: NODE_ENV
+        value: production
+      - key: MONGO_URI
+        scope: RUN_TIME
+      - key: JWT_SECRET
+        scope: RUN_TIME
+      - key: OPENROUTER_API_KEY
+        scope: RUN_TIME
+static_sites:
+  - name: web-frontend
+    github:
+      deploy_on_push: true
+      repo: NGO-donation-tracker
+    source_dir: frontend
+    build_command: npm run build
+    output_dir: dist
+    envs:
+      - key: VITE_API_URL
+        scope: BUILD_TIME
+        value: ${api.PUBLIC_URL}

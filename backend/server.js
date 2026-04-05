@@ -29,7 +29,6 @@ const allowedOrigins = process.env.ALLOWED_ORIGINS
 
 app.use(cors({
   origin: function (origin, callback) {
-    // allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
     if (allowedOrigins.indexOf(origin) !== -1 || origin.includes('localhost') || origin.includes('127.0.0.1')) {
       return callback(null, true);
@@ -55,7 +54,6 @@ app.use("/api/finance", financeRoutes);
 app.use('/api/public', transparencyRoutes);
 app.use('/api/geo', geoRoutes);
 app.use('/api/ai', aiRoutes);
-// Prioritize finance sub-routes Hub
 app.use('/api/ngos/finance', ngoFinanceRoutes);
 app.use('/api/ngos', ngoRoutes);
 

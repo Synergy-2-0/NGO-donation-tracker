@@ -20,7 +20,7 @@ const inputCls = "w-full bg-slate-50 border border-slate-100 rounded-2xl px-8 py
 
 
 function PledgeModal({ pledge, onClose, onSave, loading }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const defaultForm = {
     amount: '',
     frequency: 'one-time',
@@ -162,7 +162,7 @@ function PledgeModal({ pledge, onClose, onSave, loading }) {
 export default function PledgesPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { donorProfile, pledges, transactions, loading, fetchProfile, fetchTransactions, fetchPledges, createPledge, updatePledge, deletePledge } = useDonor();
   const [modal, setModal] = useState({ open: false, data: null });
   const [localError, setLocalError] = useState('');
@@ -333,7 +333,7 @@ export default function PledgesPage() {
                   <div className="absolute top-0 right-0 w-32 h-32 bg-tf-primary/5 blur-[50px] -mr-16 -mt-16 group-hover:bg-tf-primary/10 transition-colors" />
                   <div className="space-y-8 relative z-10 flex-1 flex flex-col">
                     <div className="flex justify-between items-start">
-                       <span className={`px-6 py-2.5 rounded-2xl text-[9px] font-extrabold uppercase tracking-[0.3em] border transition-all shadow-sm ${statusBadgeStyle[pledge.status] || 'bg-slate-50 text-slate-400 border-slate-100'}`}>
+                       <span className={`px-6 py-2.5 rounded-2xl text-[10px] font-extrabold border transition-all shadow-sm ${statusBadgeStyle[pledge.status] || 'bg-slate-50 text-slate-400 border-slate-100'}`}>
                           {t(`pledges_page.status.${pledge.status}`)}
                        </span>
                        <p className="text-[10px] font-extrabold text-slate-300 font-mono tracking-widest uppercase">ID: {pledge._id.slice(-6)} HUB</p>
@@ -360,7 +360,7 @@ export default function PledgesPage() {
                        <p className="text-[9px] font-extrabold text-slate-300 uppercase tracking-[0.3em] leading-none">{t('pledges_page.card.next_support')}</p>
                        <p className={`text-[13px] font-extrabold flex items-center gap-2 ${pledge.status === 'pending' ? 'text-amber-600' : 'text-slate-900'}`}>
                           <svg className="w-4 h-4 text-tf-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                          {nextDueDate ? nextDueDate.toLocaleDateString(t('i18n.language'), {month: 'long', day: 'numeric', year: 'numeric'}) : (pledge.status === 'active' ? 'Payment Due' : 'Completed Plan')}
+                          {nextDueDate ? nextDueDate.toLocaleDateString(i18n.language, {month: 'long', day: 'numeric', year: 'numeric'}) : (pledge.status === 'active' ? 'Payment Due' : 'Completed Plan')}
                        </p>
                     </div>
 

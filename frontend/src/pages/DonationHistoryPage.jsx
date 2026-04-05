@@ -188,7 +188,7 @@ export default function DonationHistoryPage() {
                      </div>
                      <div className="space-y-3">
                         <div className="flex items-center gap-4">
-                           <span className={`px-5 py-2 rounded-2xl text-[9px] font-extrabold uppercase tracking-[0.2em] border shadow-sm transition-all group-hover:scale-105 ${statusBadgeStyle[tx.status] || 'bg-slate-50 text-slate-400'}`}>
+                           <span className={`px-5 py-2 rounded-2xl text-[10px] font-extrabold border shadow-sm transition-all group-hover:scale-105 ${statusBadgeStyle[tx.status] || 'bg-slate-50 text-slate-400'}`}>
                               {tx.status ? t(`pledges_page.status.${tx.status}`) : t('donation_history.card.status_verified')}
                            </span>
                            <p className="text-[10px] font-extrabold text-slate-300 font-mono tracking-[0.2em] uppercase ">{t('donation_history.card.ref_id')} {tx._id.slice(-8).toUpperCase()}</p>

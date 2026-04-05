@@ -67,7 +67,7 @@ export default function NgoAdminDashboardPage() {
 
     const stats = useMemo(() => {
         const activeCount = campaigns.filter(c => c.status === 'active').length;
-        const totalRaised = campaigns.reduce((sum, c) => sum + (c.raisedAmount || 0), 0);
+        const totalRaised = financeSummary?.totalRaised || campaigns.reduce((sum, c) => sum + (c.raisedAmount || 0), 0);
         
         return [
             { label: t('ngo_dashboard.active_projects'), value: activeCount, icon: <FiTarget />, colorClass: 'bg-tf-primary', sub: t('ngo_dashboard.verified_missions') },

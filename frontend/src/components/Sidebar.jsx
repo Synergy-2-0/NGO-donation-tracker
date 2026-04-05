@@ -235,7 +235,6 @@ export default function Sidebar() {
       section: t('navbar.partners'),
       items: [
         { to: '/partners', label: t('navbar.partner_list'), icon: <FiUsers /> },
-        { to: '/partners/verification', label: t('navbar.pending_access'), icon: <FiShield /> },
         { to: '/partner/agreements', label: t('navbar.active_agreements'), icon: <LuScale3D /> },
         { to: '/settings', label: t('navbar.security_hub'), icon: <FiShield /> },
       ],

@@ -57,6 +57,7 @@ const ngoSchema = new mongoose.Schema({
   },
   lastAuditDate: Date,
   totalFundsRaised: { type: Number, default: 0 },
+  availableFunds: { type: Number, default: 0 },
   totalBeneficiaries: { type: Number, default: 0 },
   isPublic: { type: Boolean, default: true }
 }, { timestamps: true });

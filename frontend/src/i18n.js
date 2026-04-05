@@ -212,7 +212,7 @@ const resources = {
         verification_badge: "PENDING VERIFICATION",
         control_center: "CONTROL CENTER",
         tagline: "Your organization's profile is currently being verified.",
-        locked_: "SYSTEM STATUS",
+        locked_sync: "Audit Ledger",
         treasury_analytics: "FINANCIAL OVERVIEW",
         active_projects: "ACTIVE PROJECTS",
         trust_rating: "TRUST RATING",
@@ -224,7 +224,7 @@ const resources = {
         allocated_projects: "Project Funds",
         view_all_missions: "View All Projects",
         ongoing_operations: "Current Services",
-       _campaigns: "Refresh Projects",
+        sync_campaigns: "Refresh Projects",
         active_campaigns: {
           title: "Active Projects",
           subtitle: "Real-time tracking of your verified initiatives."
@@ -585,10 +585,11 @@ const resources = {
           payments_unit: "Payments"
         },
         status: {
-          active: "ACTIVE",
-          fulfilled: "FULFILLED",
-          cancelled: "CANCELLED",
-          pending: "PENDING"
+          active: "Active Support",
+          fulfilled: "Fully Contributed",
+          completed: "Verified Contribution",
+          cancelled: "Cancelled",
+          pending: "Processing"
         }
       },
       donation_history: {
@@ -830,7 +831,7 @@ const resources = {
         verification_badge: "සත්‍යාපනය වෙමින් පවතින මධ්‍යස්ථානය",
         control_center: "ආයතනික පාලන මධ්‍යස්ථානය",
         tagline: "ඔබේ ආයතනය දැනට උසස් මට්ටමේ විගණනයකට භාජනය වෙමින් පවතී.",
-        locked_: "සීමිත සමමුහුර්තකරණය ආරම්භ කරන්න",
+        locked_sync: "සීමිත සමමුහුර්තකරණය ආරම්භ කරන්න",
         treasury_analytics: "භාණ්ඩාගාර විශ්ලේෂණ",
         active_projects: "ක්‍රියාකාරී ව්‍යාපෘති",
         trust_rating: "විශ්වාසනීය ශ්‍රේණිගත කිරීම",
@@ -842,7 +843,7 @@ const resources = {
         allocated_projects: "පවරන ලද ව්‍යාපෘති",
         view_all_missions: "සියලුම මෙහෙයුම් බලන්න",
         ongoing_operations: "පවතින මෙහෙයුම්",
-       _campaigns: "ව්‍යාපාර සමමුහුර්ත කරන්න",
+        sync_campaigns: "ව්‍යාපාර සමමුහුර්ත කරන්න",
         active_campaigns: {
           title: "සක්‍රීය ව්‍යාපාර",
           subtitle: "ඔබේ සත්‍යාපිත මානුෂීය මුලපිරීම් පිළිබඳ තත්‍ය කාලීන නිරීක්ෂණය."
@@ -1203,10 +1204,11 @@ const resources = {
           payments_unit: "ගෙවීම්"
         },
         status: {
-          active: "සක්‍රීයයි",
+          active: "සක්‍රීය සහාය",
           fulfilled: "සම්පූර්ණයි",
+          completed: "සත්‍යාපිත දායකත්වය",
           cancelled: "අවලංගුයි",
-          pending: "අනුමැතිය අපේක්ෂිතයි"
+          pending: "සැකසෙමින් පවතී"
         }
       },
       donation_history: {
@@ -1412,7 +1414,7 @@ const resources = {
         verification_badge: "சரிபார்ப்பு நிலுவையில் உள்ளது",
         control_center: "நிறுவன கட்டுப்பாட்டு மையம்",
         tagline: "உங்கள் நிறுவனம் தற்போது உயர்தர தணிக்கைக்கு உட்பட்டுள்ளது.",
-        locked_: "பூட்டப்பட்ட ஒத்திசைவைத் தொடங்கு",
+        locked_sync: "பூட்டப்பட்ட ஒத்திசைவைத் தொடங்கு",
         treasury_analytics: "கருவூல பகுப்பாய்வு",
         active_projects: "செயலில் உள்ள திட்டங்கள்",
         trust_rating: "நம்பிக்கை மதிப்பீடு",
@@ -1421,7 +1423,29 @@ const resources = {
         verified_missions: "சரிபார்க்கப்பட்ட பணிகள்",
         transparency_score: "சரிபார்க்கப்பட்ட வெளிப்படைத்தன்மை",
         cumulative_intake: "மொத்த வருவாய்",
-        allocated_projects: "திட்டங்களுக்கு ஒதுக்கப்பட்டது"
+        allocated_projects: "திட்டங்களுக்கு ஒதுக்கப்பட்டது",
+        view_all_missions: "அனைத்து பணிகளையும் காண்க",
+        ongoing_operations: "தற்போதைய செயல்பாடுகள்",
+        sync_campaigns: "பிரச்சாரங்களை ஒத்திசைக்கவும்",
+        active_campaigns: {
+          title: "செயலில் உள்ள திட்டங்கள்",
+          subtitle: "உங்கள் சரிபார்க்கப்பட்ட முயற்சிகளின் நிகழ்நேர கண்காணிப்பு."
+        },
+        registry_node: "பதிவு எண்",
+        goal_performance: "இலக்கு செயல்திறன்",
+        mission_active: "பணி செயலில் உள்ளது",
+        view_analytics: "பகுப்பாய்வுகளைக் காண்க",
+        partnership_proposals: {
+          title: "கூட்டுறவு முன்மொழிவுகள்",
+          subtitle: "தற்போது மதிப்பாய்வில் உள்ள சாத்தியமான ஒத்துழைப்புகள்."
+        },
+        partner_hub: "பங்குதாரர் மையம்",
+        proposal_id: "முன்மொழிவு ஐடி",
+        partner_name: "நிறுவனத்தின் பெயர்",
+        verification_state: "சரிபார்ப்பு நிலை",
+        view_agreement: "ஒப்பந்தத்தைக் காண்க",
+        awaiting_missions: "தொடங்குவதற்கு உங்கள் முதல் பணியைத் தொடங்கவும்.",
+        awaiting_partnerships: "தற்போது கூட்டுறவு கோரிக்கைகள் எதுவுமில்லை."
       },
       finance: {
         registry_title: "NGO நிதி பதிவேடு",

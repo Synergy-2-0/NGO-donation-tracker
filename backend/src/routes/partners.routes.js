@@ -1,6 +1,6 @@
 import express from 'express';
 import * as ctrl from '../controllers/partners.controller.js';
-import { authenticate } from '../middlewares/auth.middleware.js';
+import { authenticate, optionalAuthenticate } from '../middlewares/auth.middleware.js';
 import { authorizeRoles } from '../middlewares/role.middleware.js';
 import { validateRequest } from '../middlewares/validate.middleware.js';
 import { createPartnerSchema, updatePartnerSchema } from '../validators/partner.validator.js';
@@ -50,10 +50,10 @@ router.post('/upload-document', authenticate, upload.single('document'), async (
     });
   }
 });
-router.get('/', authenticate, ctrl.getPartners);
+router.get('/', optionalAuthenticate, ctrl.getPartners);
 router.get('/me/profile', authenticate, ctrl.getMyPartnerProfile);
-router.get('/:id/impact', authenticate, ctrl.getPartnerImpact);
-router.get('/:id', authenticate, ctrl.getPartner);
+router.get('/:id/impact', optionalAuthenticate, ctrl.getPartnerImpact);
+router.get('/:id', optionalAuthenticate, ctrl.getPartner);
 router.put('/:id', authenticate, validateRequest(updatePartnerSchema), ctrl.updatePartner);
 router.patch('/:id/approve', authenticate, authorizeRoles('admin', 'ngo-admin'), ctrl.approvePartner);
 router.delete('/:id', authenticate, ctrl.deletePartner);

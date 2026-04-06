@@ -1,7 +1,10 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { OAuth2Client } from 'google-auth-library';
 import * as userRepo from '../repository/user.repository.js';
 import * as donorRepo from '../repository/donor.repository.js';
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 const JWT_EXPIRES = process.env.JWT_EXPIRES_IN || '1d';
 
@@ -56,6 +59,36 @@ export const loginUser = async (email, password) => {
 
   const token = signToken(user);
   return { token, user };
+};
+
+export const googleAuthUser = async (credential) => {
+  const ticket = await client.verifyIdToken({
+    idToken: credential,
+    audience: process.env.GOOGLE_CLIENT_ID,
+  });
+  const payload = ticket.getPayload();
+  const { sub: googleId, email, name } = payload;
+
+  let user = await userRepo.findUserByGoogleId(googleId);
+  let isNewUser = false;
+
+  if (!user) {
+    // Check if user exists by email (prior registration without Google)
+    user = await userRepo.findUserByEmail(email);
+    if (user) {
+      // Link Google account to existing user
+      user = await userRepo.updateUser(user._id, { googleId });
+    } else {
+      // Create new user record
+      user = await userRepo.createUser({ name, email, googleId, role: 'donor' });
+      isNewUser = true;
+      // Auto-provision a basic donor profile
+      await donorRepo.create({ userId: user._id });
+    }
+  }
+
+  const token = signToken(user);
+  return { token, user, isNewUser };
 };
 
 export const getUsers = async (filters = {}) => {

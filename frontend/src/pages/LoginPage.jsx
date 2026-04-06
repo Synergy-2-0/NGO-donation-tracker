@@ -44,14 +44,17 @@ function validateProfile(signUp) {
   return errs;
 }
 
+import { GoogleLogin } from '@react-oauth/google';
+
 export default function LoginPage() {
-  const { login, register, loading } = useAuth();
+  const { login, googleLogin, register, updateProfile, loading } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [tab, setTab] = useState('signin');
   const [step, setStep] = useState(1);
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [isGoogleUser, setIsGoogleUser] = useState(false);
 
   useEffect(() => {
     const t = searchParams.get('tab');
@@ -100,13 +103,33 @@ export default function LoginPage() {
     }
   };
 
+  const handleGoogleSuccess = async (response) => {
+    setError('');
+    try {
+      const data = await googleLogin(response.credential);
+      if (data.isNewUser) {
+        setTab('signup');
+        setStep(1);
+        setIsGoogleUser(true);
+        setSignUp((prev) => ({
+          ...prev,
+          name: data.user.name,
+          email: data.user.email,
+        }));
+      } else {
+        navigate('/dashboard');
+      }
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
   const submitSignUp = async () => {
     setError('');
     try {
-      await register({
+      const payload = {
         name: signUp.name.trim(),
         email: signUp.email,
-        password: signUp.password,
         role: signUp.role,
         phone: signUp.phone.trim() || undefined,
         city: signUp.city.trim() || undefined,
@@ -115,7 +138,14 @@ export default function LoginPage() {
           ? signUp.preferredCauses.split(',').map((s) => s.trim()).filter(Boolean)
           : [],
         bio: signUp.bio.trim() || undefined,
-      });
+      };
+
+      if (isGoogleUser) {
+        await updateProfile(payload);
+      } else {
+        payload.password = signUp.password;
+        await register(payload);
+      }
       navigate('/dashboard');
     } catch (err) {
       setError(err.message);
@@ -126,10 +156,16 @@ export default function LoginPage() {
   const handleStep1 = (e) => {
     e.preventDefault();
     setError('');
-    const errs = validateAccount(signUp);
+    
+    let errs = {};
+    if (!isGoogleUser) {
+      errs = validateAccount(signUp);
+      setTouched({ name: true, email: true, password: true, confirmPassword: true });
+    }
+    
     setFieldErrors(errs);
-    setTouched({ name: true, email: true, password: true, confirmPassword: true });
     if (Object.keys(errs).length > 0) return;
+    
     if (signUp.role === 'donor') {
       setStep(2);
     } else {
@@ -236,7 +272,7 @@ export default function LoginPage() {
                    ].map((t) => (
                       <button
                          key={t.id}
-                         onClick={() => { setTab(t.id); setError(''); setStep(1); }}
+                         onClick={() => { setTab(t.id); setError(''); setStep(1); setIsGoogleUser(false); }}
                          className={`pb-4 text-[12px] font-extrabold uppercase tracking-[0.3em] transition-all relative  ${
                             tab === t.id ? 'text-tf-dark' : 'text-slate-300 hover:text-slate-500'
                          }`}
@@ -255,48 +291,67 @@ export default function LoginPage() {
 
                 {/* --- Sign In Form --- */}
                 {tab === 'signin' ? (
-                   <form onSubmit={handleSignIn} className="space-y-8">
-                      <div className="space-y-3">
-                         <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-6">Patron Email</label>
-                         <input
-                            type="email"
-                            value={signIn.email}
-                            onChange={(e) => setSignIn((f) => ({ ...f, email: e.target.value }))}
-                            required
-                            placeholder="patron@transfund.org"
-                            className={inputCls(false)}
-                         />
-                      </div>
-                      <div className="space-y-3 relative">
-                         <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-6">Secure Password</label>
-                         <input
-                            type={showPassword ? "text" : "password"}
-                            value={signIn.password}
-                            onChange={(e) => setSignIn((f) => ({ ...f, password: e.target.value }))}
-                            required
-                            placeholder="••••••••"
-                            className={inputCls(false)}
-                         />
-                         <button 
-                            type="button" 
-                            onClick={() => setShowPassword(!showPassword)}
-                            className="absolute right-6 top-[52px] text-slate-300 hover:text-tf-primary transition-colors"
-                         >
-                            {showPassword ? (
-                               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeWidth={2.5} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeWidth={2.5} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
-                            ) : (
-                               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeWidth={2.5} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.046m4.51-4.51A9.959 9.959 0 0112 5c4.478 0 8.268 2.943 9.542 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21m-2.101-2.101L3 3m11 8a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" /></svg>
-                            )}
-                         </button>
-                      </div>
-                      <button
-                         type="submit"
-                         disabled={loading}
-                         className="w-full bg-tf-dark hover:bg-tf-primary text-white font-extrabold py-7 rounded-full transition-all text-[12px] uppercase tracking-[0.4em] shadow-2xl active:scale-95 mt-4"
-                      >
-                         {loading ? 'Authenticating…' : 'Initialize Session'}
-                      </button>
-                   </form>
+                   <div className="space-y-8">
+                     <form onSubmit={handleSignIn} className="space-y-8">
+                        <div className="space-y-3">
+                           <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-6">Patron Email</label>
+                           <input
+                              type="email"
+                              value={signIn.email}
+                              onChange={(e) => setSignIn((f) => ({ ...f, email: e.target.value }))}
+                              required
+                              placeholder="patron@transfund.org"
+                              className={inputCls(false)}
+                           />
+                        </div>
+                        <div className="space-y-3 relative">
+                           <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-6">Secure Password</label>
+                           <input
+                              type={showPassword ? "text" : "password"}
+                              value={signIn.password}
+                              onChange={(e) => setSignIn((f) => ({ ...f, password: e.target.value }))}
+                              required
+                              placeholder="••••••••"
+                              className={inputCls(false)}
+                           />
+                           <button 
+                              type="button" 
+                              onClick={() => setShowPassword(!showPassword)}
+                              className="absolute right-6 top-[52px] text-slate-300 hover:text-tf-primary transition-colors"
+                           >
+                              {showPassword ? (
+                                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeWidth={2.5} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeWidth={2.5} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                              ) : (
+                                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeWidth={2.5} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.046m4.51-4.51A9.959 9.959 0 0112 5c4.478 0 8.268 2.943 9.542 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21m-2.101-2.101L3 3m11 8a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" /></svg>
+                              )}
+                           </button>
+                        </div>
+                        <button
+                           type="submit"
+                           disabled={loading}
+                           className="w-full bg-tf-dark hover:bg-tf-primary text-white font-extrabold py-7 rounded-full transition-all text-[12px] uppercase tracking-[0.4em] shadow-2xl active:scale-95 mt-4"
+                        >
+                           {loading ? 'Authenticating…' : 'Initialize Session'}
+                        </button>
+                     </form>
+                     
+                     <div className="relative py-4">
+                        <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-slate-100"></div></div>
+                        <div className="relative flex justify-center text-[10px] font-extrabold uppercase tracking-widest"><span className="bg-white px-4 text-slate-300">Or Continue With</span></div>
+                     </div>
+
+                     <div className="flex justify-center">
+                        <GoogleLogin 
+                           onSuccess={handleGoogleSuccess} 
+                           onError={() => setError('Google Authentication Failed')}
+                           useOneTap
+                           theme="outline"
+                           shape="pill"
+                           size="large"
+                           width="100%"
+                        />
+                     </div>
+                   </div>
                 ) : (
                    <div className="space-y-10">
                       <div className="flex items-center gap-8">
@@ -312,34 +367,67 @@ export default function LoginPage() {
                          ))}
                       </div>
 
+                      {!isGoogleUser && step === 1 && (
+                         <div className="space-y-8">
+                           <div className="flex justify-center mb-4">
+                              <GoogleLogin 
+                                 onSuccess={handleGoogleSuccess} 
+                                 onError={() => setError('Google Authentication Failed')}
+                                 theme="filled_blue"
+                                 shape="pill"
+                                 size="large"
+                                 width="100%"
+                                 text="signup_with"
+                              />
+                           </div>
+                           <div className="relative">
+                              <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-slate-100"></div></div>
+                              <div className="relative flex justify-center text-[10px] font-extrabold uppercase tracking-widest"><span className="bg-white px-4 text-slate-300">Or use email</span></div>
+                           </div>
+                         </div>
+                      )}
+
                       {step === 1 ? (
                          <form onSubmit={handleStep1} className="space-y-8">
-                            <div className="space-y-3">
-                               <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-6">Full Name</label>
-                               <input
-                                  type="text"
-                                  value={signUp.name}
-                                  onChange={(e) => handleSignUpChange('name', e.target.value)}
-                                  onBlur={() => touch('name')}
-                                  required
-                                  placeholder="John Doe"
-                                  className={inputCls(fieldErrors.name)}
-                                />
-                               <FieldError msg={fieldErrors.name} />
-                            </div>
-                            <div className="space-y-3">
-                               <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-6">Email Address Hub</label>
-                               <input
-                                  type="email"
-                                  value={signUp.email}
-                                  onChange={(e) => handleSignUpChange('email', e.target.value)}
-                                  onBlur={() => touch('email')}
-                                  required
-                                  placeholder="email@example.com"
-                                  className={inputCls(fieldErrors.email)}
-                                />
-                               <FieldError msg={fieldErrors.email} />
-                            </div>
+                            {isGoogleUser && (
+                               <div className="bg-tf-primary/5 p-6 rounded-2xl border border-tf-primary/10">
+                                  <p className="text-[10px] font-extrabold text-tf-primary uppercase tracking-widest leading-relaxed">
+                                     Google Hub Active: Welcome {signUp.name}! Please finalize your account settings below.
+                                  </p>
+                               </div>
+                            )}
+
+                            {!isGoogleUser && (
+                               <>
+                                 <div className="space-y-3">
+                                    <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-6">Full Name</label>
+                                    <input
+                                       type="text"
+                                       value={signUp.name}
+                                       onChange={(e) => handleSignUpChange('name', e.target.value)}
+                                       onBlur={() => touch('name')}
+                                       required
+                                       placeholder="John Doe"
+                                       className={inputCls(fieldErrors.name)}
+                                     />
+                                    <FieldError msg={fieldErrors.name} />
+                                 </div>
+                                 <div className="space-y-3">
+                                    <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-6">Email Address Hub</label>
+                                    <input
+                                       type="email"
+                                       value={signUp.email}
+                                       onChange={(e) => handleSignUpChange('email', e.target.value)}
+                                       onBlur={() => touch('email')}
+                                       required
+                                       placeholder="email@example.com"
+                                       className={inputCls(fieldErrors.email)}
+                                     />
+                                    <FieldError msg={fieldErrors.email} />
+                                 </div>
+                               </>
+                            )}
+
                             <div className="space-y-3">
                                <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-6">Account Type Hub</label>
                                <select
@@ -352,38 +440,43 @@ export default function LoginPage() {
                                   ))}
                                </select>
                             </div>
-                            <div className="space-y-3 relative">
-                               <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-6">Secure Password</label>
-                               <input
-                                  type={showPassword ? "text" : "password"}
-                                  value={signUp.password}
-                                  onChange={(e) => handleSignUpChange('password', e.target.value)}
-                                  onBlur={() => touch('password')}
-                                  required
-                                  placeholder="••••••••"
-                                  className={inputCls(fieldErrors.password)}
-                                />
-                               <FieldError msg={fieldErrors.password} />
-                            </div>
-                            <div className="space-y-3 relative">
-                               <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-6">Confirm Password</label>
-                               <input
-                                  type={showPassword ? "text" : "password"}
-                                  value={signUp.confirmPassword}
-                                  onChange={(e) => handleSignUpChange('confirmPassword', e.target.value)}
-                                  onBlur={() => touch('confirmPassword')}
-                                  required
-                                  placeholder="••••••••"
-                                  className={inputCls(fieldErrors.confirmPassword)}
-                                />
-                               <FieldError msg={fieldErrors.confirmPassword} />
-                            </div>
+
+                            {!isGoogleUser && (
+                               <>
+                                 <div className="space-y-3 relative">
+                                    <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-6">Secure Password</label>
+                                    <input
+                                       type={showPassword ? "text" : "password"}
+                                       value={signUp.password}
+                                       onChange={(e) => handleSignUpChange('password', e.target.value)}
+                                       onBlur={() => touch('password')}
+                                       required
+                                       placeholder="••••••••"
+                                       className={inputCls(fieldErrors.password)}
+                                     />
+                                    <FieldError msg={fieldErrors.password} />
+                                 </div>
+                                 <div className="space-y-3 relative">
+                                    <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-6">Confirm Password</label>
+                                    <input
+                                       type={showPassword ? "text" : "password"}
+                                       value={signUp.confirmPassword}
+                                       onChange={(e) => handleSignUpChange('confirmPassword', e.target.value)}
+                                       onBlur={() => touch('confirmPassword')}
+                                       required
+                                       placeholder="••••••••"
+                                       className={inputCls(fieldErrors.confirmPassword)}
+                                     />
+                                    <FieldError msg={fieldErrors.confirmPassword} />
+                                 </div>
+                               </>
+                            )}
                             <button
                                type="submit"
                                disabled={loading}
                                className="w-full bg-tf-primary hover:bg-tf-dark text-white font-extrabold py-7 rounded-full transition-all text-[12px] uppercase tracking-[0.4em] shadow-2xl active:scale-95"
                             >
-                               {loading ? 'Verifying Account Hub…' : 'Next Step Hub →'}
+                               {loading ? 'Verifying Account Hub…' : (isGoogleUser ? 'Continue Setup →' : 'Next Step Hub →')}
                             </button>
                          </form>
                       ) : (
@@ -445,7 +538,7 @@ export default function LoginPage() {
                                   disabled={loading}
                                   className="flex-[2] bg-tf-primary hover:bg-tf-dark text-white font-extrabold py-7 rounded-full transition-all text-[12px] uppercase tracking-[0.4em] shadow-2xl active:scale-95"
                                >
-                                  {loading ? 'Creating Account Hub…' : 'Complete Signup Hub'}
+                                  {loading ? 'Finalizing Profile…' : 'Complete Setup Hub'}
                                 </button>
                             </div>
                          </form>

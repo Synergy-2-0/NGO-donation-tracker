@@ -1,12 +1,21 @@
-import { createContext, useCallback, useContext, useMemo, useState } from 'react';
+import { createContext, useCallback, useContext, useMemo, useState, useEffect } from 'react';
 import api from '../api/axios';
+import { useAuth } from './AuthContext';
 
 const AdminNgoContext = createContext(null);
 
 export function AdminNgoProvider({ children }) {
+  const { user } = useAuth();
   const [ngos, setNgos] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  useEffect(() => {
+    if (!user) {
+      setNgos([]);
+      setError(null);
+    }
+  }, [user]);
 
   const fetchNgos = useCallback(async (filter = {}) => {
     setLoading(true);

@@ -114,6 +114,59 @@ npx playwright test
 
 ---
 
+## ☁️ Deployment Report
+
+### **Unified Platform Deployment (DigitalOcean)**
+- **Platform**: DigitalOcean App Platform
+- **Region**: BLR1 (Bangalore)
+- **Architecture**: Multi-component App (Web Service + Static Site)
+- **Deployment Strategy**: 
+  1. Automated CI/CD via GitHub (Branch: `staging`).
+  2. **Backend**: Node.js Web Service running on port 3000.
+  3. **Frontend**: React Static Site with optimized build command.
+  4. **Domain Management**: Unified domain `trustfund.axisdatatech.com` with SSL/TLS.
+- **Critical Environment Variables**:
+  - `MONGO_URI`, `JWT_SECRET`, `OPENROUTER_API_KEY`, `CLOUDINARY_URL`, `PAYHERE_SECRET`.
+- **Live URLs**:
+  - **Main Application**: [https://trustfund.axisdatatech.com](https://trustfund.axisdatatech.com)
+  - **RESTful API Endpoint**: [https://trustfund.axisdatatech.com/api](https://trustfund.axisdatatech.com/api)
+
+---
+
+## 🧪 Testing Instruction Report
+
+TransFund implements a triple-tier testing strategy to ensure reliability and performance.
+
+### **1. Unit Testing (Jest)**
+Validates individual services and core logic in isolation.
+- **Run Command**: `cd backend && npm run test:unit`
+- **Coverage**: Donor Service, Campaign Service, Transaction Service, Partner Service.
+
+### **2. Integration Testing (Jest/Supertest)**
+Ensures API endpoints correctly communicate with the MongoDB database.
+- **Run Command**: `cd backend && npm run test:int`
+- **Coverage**: Auth flows, Campaign lifecycle, Partner approvals.
+
+### **3. Performance Testing (Artillery.io)**
+Evaluates API stability and latency under high concurrent load.
+- **Setup**: Ensure the backend server is running locally on port 3000.
+- **Run Command**: `cd backend && npm run test:perf`
+- **Expectation**: Server should handle up to 50 concurrent virtual users with < 200ms latency.
+
+### **4. End-to-End Testing (Playwright)**
+Simulates real user journeys across the frontend and backend.
+- **Run Command**: `cd backend && npx playwright test`
+
+---
+
+## 📖 API Documentation
+A detailed API breakdown for **Postman** testing is available in the [API_DOCUMENTATION.md](./API_DOCUMENTATION.md) file.
+- **Methods**: GET, POST, PUT, PATCH, DELETE
+- **Auth**: JWT Bearer Tokens
+- **Base URL**: `http://localhost:3000/api`
+
+---
+
 ## 💎 Design Language
 TransFund uses a professional **Deep Slate/Impact Orange** palette with **Open Sans** typography to ensure accessibility and project authority.
 

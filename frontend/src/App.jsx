@@ -104,202 +104,208 @@ function AdminRoute({ children }) {
   return children;
 }
 
+import { GoogleOAuthProvider } from '@react-oauth/google';
+
 export default function App() {
+  const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com';
+
   return (
-    <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-      <AuthProvider>
-        <FinanceProvider>
-          <PartnerOperationsProvider>
-            <DonorProvider>
-              <PartnerProvider>
-                <AdminDonorProvider>
-                  <AdminNgoProvider>
-                    <AdminCampaignProvider>
-                <Routes>
-                    {/* Public Routes */}
-                    <Route path="/" element={<HomePage />} />
-                    <Route path="/about" element={<AboutPage />} />
-                  <Route path="/login" element={<LoginPage />} />
+    <GoogleOAuthProvider clientId={googleClientId}>
+      <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+        <AuthProvider>
+          <FinanceProvider>
+            <PartnerOperationsProvider>
+              <DonorProvider>
+                <PartnerProvider>
+                  <AdminDonorProvider>
+                    <AdminNgoProvider>
+                      <AdminCampaignProvider>
+                  <Routes>
+                      {/* Public Routes */}
+                      <Route path="/" element={<HomePage />} />
+                      <Route path="/about" element={<AboutPage />} />
+                    <Route path="/login" element={<LoginPage />} />
 
-                  {/* Partner Onboarding (No Layout) */}
-                  <Route 
-                    path="/onboarding/partner" 
-                    element={
-                      <ProtectedRoute>
-                        <PartnerOnboardingPage />
-                      </ProtectedRoute>
-                    } 
-                  />
-                  <Route 
-                    path="/onboarding/ngo" 
-                    element={
-                      <ProtectedRoute>
-                        <NgoOnboardingPage />
-                      </ProtectedRoute>
-                    } 
-                  />
-                  <Route 
-                    path="/partner/pending-approval" 
-                    element={
-                      <ProtectedRoute>
-                        <PartnerPendingApprovalPage />
-                      </ProtectedRoute>
-                    } 
-                  />
-                  <Route path="/how-it-works" element={<PublicHowItWorksPage />} />
-                  <Route path="/impact" element={<PublicImpactPage />} />
-                  <Route path="/causes" element={<PublicCausesPage />} />
-                  <Route path="/causes/:id" element={<PublicCampaignDetailPage />} />
-                  <Route path="/partners/list" element={<PublicPartnersPage />} />
-                  <Route path="/transparency" element={<PublicTransparencyDashboard />} />
+                    {/* Partner Onboarding (No Layout) */}
+                    <Route 
+                      path="/onboarding/partner" 
+                      element={
+                        <ProtectedRoute>
+                          <PartnerOnboardingPage />
+                        </ProtectedRoute>
+                      } 
+                    />
+                    <Route 
+                      path="/onboarding/ngo" 
+                      element={
+                        <ProtectedRoute>
+                          <NgoOnboardingPage />
+                        </ProtectedRoute>
+                      } 
+                    />
+                    <Route 
+                      path="/partner/pending-approval" 
+                      element={
+                        <ProtectedRoute>
+                          <PartnerPendingApprovalPage />
+                        </ProtectedRoute>
+                      } 
+                    />
+                    <Route path="/how-it-works" element={<PublicHowItWorksPage />} />
+                    <Route path="/impact" element={<PublicImpactPage />} />
+                    <Route path="/causes" element={<PublicCausesPage />} />
+                    <Route path="/causes/:id" element={<PublicCampaignDetailPage />} />
+                    <Route path="/partners/list" element={<PublicPartnersPage />} />
+                    <Route path="/transparency" element={<PublicTransparencyDashboard />} />
 
-                  {/* Dashboard / Protected Routes */}
-                  <Route
-                    path="/*"
-                    element={
-                      <ProtectedRoute>
-                        <PartnerOnboardingGuard>
-                          <NgoOnboardingGuard>
-                            <Layout />
-                          </NgoOnboardingGuard>
-                        </PartnerOnboardingGuard>
-                      </ProtectedRoute>
-                    }
-                  >
-                    <Route path="dashboard" element={<RoleBasedDashboard />} />
-                    <Route path="profile" element={<RoleBasedProfile />} />
-                    <Route path="pledges" element={<RoleBasedPledges />} />
-                    <Route path="donations" element={<RoleBasedDonations />} />
-                    <Route path="settings" element={<SettingsPage />} />
-                    
-                    <Route path="marketplace" element={<CampaignMarketplacePage />} />
+                    {/* Dashboard / Protected Routes */}
+                    <Route
+                      path="/*"
+                      element={
+                        <ProtectedRoute>
+                          <PartnerOnboardingGuard>
+                            <NgoOnboardingGuard>
+                              <Layout />
+                            </NgoOnboardingGuard>
+                          </PartnerOnboardingGuard>
+                        </ProtectedRoute>
+                      }
+                    >
+                      <Route path="dashboard" element={<RoleBasedDashboard />} />
+                      <Route path="profile" element={<RoleBasedProfile />} />
+                      <Route path="pledges" element={<RoleBasedPledges />} />
+                      <Route path="donations" element={<RoleBasedDonations />} />
+                      <Route path="settings" element={<SettingsPage />} />
+                      
+                      <Route path="marketplace" element={<CampaignMarketplacePage />} />
 
-                    <Route path="payment/success" element={<PaymentSuccessPage />} />
-                    <Route path="payment/cancel" element={<PaymentCancelPage />} />
+                      <Route path="payment/success" element={<PaymentSuccessPage />} />
+                      <Route path="payment/cancel" element={<PaymentCancelPage />} />
 
-                    <Route
-                      path="partners"
-                      element={
-                        <RoleProtectedRoute roles={['partner', 'admin', 'ngo-admin']}>
-                          <PartnersPage />
-                        </RoleProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="partners/verification"
-                      element={
-                        <RoleProtectedRoute roles={['admin', 'ngo-admin', 'partner']}>
-                          <PartnerVerificationPage />
-                        </RoleProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="partners/:id"
-                      element={
-                        <RoleProtectedRoute roles={['partner', 'admin']}>
-                          <PartnerDetailsPage />
-                        </RoleProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="partners/:id/impact"
-                      element={
-                        <RoleProtectedRoute roles={['partner', 'admin']}>
-                          <PartnerImpactPage />
-                        </RoleProtectedRoute>
-                      }
-                    />
-
-                    {/* Finance Routes */}
-                    <Route
-                      path="finance/dashboard"
-                      element={
-                        <RoleProtectedRoute roles={['ngo-admin', 'partner', 'admin', 'donor']}>
-                          <RoleBasedFinanceDashboard />
-                        </RoleProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="finance/transactions"
-                      element={
-                        <RoleProtectedRoute roles={['ngo-admin', 'partner', 'admin', 'donor']}>
-                          <RoleBasedTransactions />
-                        </RoleProtectedRoute>
-                      }
-                    />
-
-                    <Route
-                      path="partner/agreements"
-                      element={
-                        <RoleProtectedRoute roles={['partner', 'admin', 'ngo-admin']}>
-                          <PartnerAgreementsPage />
-                        </RoleProtectedRoute>
-                      }
-                    />
                       <Route
-                        path="partner/agreements/:id/milestones"
+                        path="partners"
                         element={
                           <RoleProtectedRoute roles={['partner', 'admin', 'ngo-admin']}>
-                            <AgreementMilestonesPage />
+                            <PartnersPage />
                           </RoleProtectedRoute>
                         }
                       />
                       <Route
-                        path="partner/milestones/:id?"
+                        path="partners/verification"
+                        element={
+                          <RoleProtectedRoute roles={['admin', 'ngo-admin', 'partner']}>
+                            <PartnerVerificationPage />
+                          </RoleProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="partners/:id"
+                        element={
+                          <RoleProtectedRoute roles={['partner', 'admin']}>
+                            <PartnerDetailsPage />
+                          </RoleProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="partners/:id/impact"
+                        element={
+                          <RoleProtectedRoute roles={['partner', 'admin']}>
+                            <PartnerImpactPage />
+                          </RoleProtectedRoute>
+                        }
+                      />
+
+                      {/* Finance Routes */}
+                      <Route
+                        path="finance/dashboard"
+                        element={
+                          <RoleProtectedRoute roles={['ngo-admin', 'partner', 'admin', 'donor']}>
+                            <RoleBasedFinanceDashboard />
+                          </RoleProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="finance/transactions"
+                        element={
+                          <RoleProtectedRoute roles={['ngo-admin', 'partner', 'admin', 'donor']}>
+                            <RoleBasedTransactions />
+                          </RoleProtectedRoute>
+                        }
+                      />
+
+                      <Route
+                        path="partner/agreements"
                         element={
                           <RoleProtectedRoute roles={['partner', 'admin', 'ngo-admin']}>
-                            <AgreementMilestonesPage />
+                            <PartnerAgreementsPage />
                           </RoleProtectedRoute>
                         }
+                      />
+                        <Route
+                          path="partner/agreements/:id/milestones"
+                          element={
+                            <RoleProtectedRoute roles={['partner', 'admin', 'ngo-admin']}>
+                              <AgreementMilestonesPage />
+                            </RoleProtectedRoute>
+                          }
+                        />
+                        <Route
+                          path="partner/milestones/:id?"
+                          element={
+                            <RoleProtectedRoute roles={['partner', 'admin', 'ngo-admin']}>
+                              <AgreementMilestonesPage />
+                            </RoleProtectedRoute>
+                          }
+                        />
+                        <Route
+                          path="partner/ai-match"
+                          element={
+                            <RoleProtectedRoute roles={['partner']}>
+                              <PartnerAiMatchPage />
+                            </RoleProtectedRoute>
+                          }
+                        />
+                        <Route
+                          path="partner/csr-hub"
+                          element={
+                            <RoleProtectedRoute roles={['partner']}>
+                              <PartnerCsrHubPage />
+                            </RoleProtectedRoute>
+                          }
+                        />
+
+                      {/* Admin donor routes */}
+                      <Route path="admin/donors" element={<AdminRoute><AdminDonorListPage /></AdminRoute>} />
+                      <Route path="admin/donors/pledges" element={<AdminRoute><AdminDonorPledgesPage /></AdminRoute>} />
+                      <Route path="admin/donors/:id" element={<AdminRoute><AdminDonorProfilePage /></AdminRoute>} />
+                      <Route path="admin/donor-analytics" element={<AdminRoute><AdminDonorAnalyticsPage /></AdminRoute>} />
+
+                      {/* Admin campaign routes */}
+                      <Route
+                        path="admin/campaign-dashboard"
+                        element={<AdminRoute><AdminCampaignProvider><CampaignDashboardPage /></AdminCampaignProvider></AdminRoute>}
                       />
                       <Route
-                        path="partner/ai-match"
-                        element={
-                          <RoleProtectedRoute roles={['partner']}>
-                            <PartnerAiMatchPage />
-                          </RoleProtectedRoute>
-                        }
+                        path="admin/campaigns/create"
+                        element={<AdminRoute><AdminCampaignProvider><CreateCampaignPage /></AdminCampaignProvider></AdminRoute>}
                       />
                       <Route
-                        path="partner/csr-hub"
-                        element={
-                          <RoleProtectedRoute roles={['partner']}>
-                            <PartnerCsrHubPage />
-                          </RoleProtectedRoute>
-                        }
+                        path="admin/campaigns/:id"
+                        element={<AdminRoute><CampaignDetailPage /></AdminRoute>}
                       />
+                    </Route>
 
-                    {/* Admin donor routes */}
-                    <Route path="admin/donors" element={<AdminRoute><AdminDonorListPage /></AdminRoute>} />
-                    <Route path="admin/donors/pledges" element={<AdminRoute><AdminDonorPledgesPage /></AdminRoute>} />
-                    <Route path="admin/donors/:id" element={<AdminRoute><AdminDonorProfilePage /></AdminRoute>} />
-                    <Route path="admin/donor-analytics" element={<AdminRoute><AdminDonorAnalyticsPage /></AdminRoute>} />
-
-                    {/* Admin campaign routes */}
-                    <Route
-                      path="admin/campaign-dashboard"
-                      element={<AdminRoute><AdminCampaignProvider><CampaignDashboardPage /></AdminCampaignProvider></AdminRoute>}
-                    />
-                    <Route
-                      path="admin/campaigns/create"
-                      element={<AdminRoute><AdminCampaignProvider><CreateCampaignPage /></AdminCampaignProvider></AdminRoute>}
-                    />
-                    <Route
-                      path="admin/campaigns/:id"
-                      element={<AdminRoute><CampaignDetailPage /></AdminRoute>}
-                    />
-                  </Route>
-
-                  <Route path="*" element={<Navigate to="/" replace />} />
-                  </Routes>
-                    </AdminCampaignProvider>
-                  </AdminNgoProvider>
-                </AdminDonorProvider>
-              </PartnerProvider>
-            </DonorProvider>
-          </PartnerOperationsProvider>
-        </FinanceProvider>
-      </AuthProvider>
-    </BrowserRouter>
+                    <Route path="*" element={<Navigate to="/" replace />} />
+                    </Routes>
+                      </AdminCampaignProvider>
+                    </AdminNgoProvider>
+                  </AdminDonorProvider>
+                </PartnerProvider>
+              </DonorProvider>
+            </PartnerOperationsProvider>
+          </FinanceProvider>
+        </AuthProvider>
+      </BrowserRouter>
+    </GoogleOAuthProvider>
   );
 }

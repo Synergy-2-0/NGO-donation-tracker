@@ -1,9 +1,11 @@
-import { createContext, useContext, useState, useCallback } from 'react';
+import { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import api from '../api/axios';
+import { useAuth } from './AuthContext';
 
 const AdminDonorContext = createContext(null);
 
 export function AdminDonorProvider({ children }) {
+  const { user } = useAuth();
   const [donors, setDonors] = useState([]);
   const [pledges, setPledges] = useState([]);
   const [donorAnalytics, setDonorAnalytics] = useState(null);
@@ -11,6 +13,18 @@ export function AdminDonorProvider({ children }) {
   const [interactions, setInteractions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  // Clear data on session change Hub Hub
+  useEffect(() => {
+    if (!user) {
+      setDonors([]);
+      setPledges([]);
+      setDonorAnalytics(null);
+      setSegments(null);
+      setInteractions([]);
+      setError(null);
+    }
+  }, [user]);
 
   // ── Donors ──────────────────────────────────────────────────
   const fetchDonors = useCallback(async (params = {}) => {

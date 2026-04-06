@@ -39,6 +39,31 @@ export function AuthProvider({ children }) {
     }
   };
 
+  const googleLogin = async (credential) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const { data } = await api.post('/api/users/google-auth', { credential });
+      const jwt = data.token;
+      const userData = data.user;
+      if (!jwt) throw new Error('Google authentication failed.');
+      
+      // Even for new users, we set the token so they can call "updateMe"
+      localStorage.setItem('token', jwt);
+      localStorage.setItem('user', JSON.stringify(userData));
+      setToken(jwt);
+      setUser(userData);
+      
+      return data;
+    } catch (err) {
+      const message = err.response?.data?.message || err.message || 'Google login failed.';
+      setError(message);
+      throw new Error(message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const register = async (payload) => {
     setLoading(true);
     setError(null);
@@ -101,7 +126,7 @@ export function AuthProvider({ children }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, token, loading, error, login, register, logout, updateProfile, updatePassword, isAuthenticated: !!token }}
+      value={{ user, token, loading, error, login, googleLogin, register, logout, updateProfile, updatePassword, isAuthenticated: !!token }}
     >
       {children}
     </AuthContext.Provider>

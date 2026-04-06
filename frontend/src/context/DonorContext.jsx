@@ -1,15 +1,28 @@
-import { createContext, useContext, useState, useCallback } from 'react';
+import { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import api from '../api/axios';
+import { useAuth } from './AuthContext';
 
 const DonorContext = createContext(null);
 
 export function DonorProvider({ children }) {
+  const { user } = useAuth();
   const [donorProfile, setDonorProfile] = useState(null);
   const [pledges, setPledges] = useState([]);
   const [analytics, setAnalytics] = useState(null);
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  // Clear state on logout or identity change Hub
+  useEffect(() => {
+    if (!user) {
+      setDonorProfile(null);
+      setPledges([]);
+      setAnalytics(null);
+      setTransactions([]);
+      setError(null);
+    }
+  }, [user]);
 
   // ── Profile ────────────────────────────────────────────────
   const fetchProfile = useCallback(async () => {

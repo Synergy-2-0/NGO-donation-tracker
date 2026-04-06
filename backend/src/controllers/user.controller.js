@@ -19,6 +19,15 @@ export const login = async (req,res) => {
     }
 };
 
+export const googleAuth = async (req, res) => {
+    try {
+        const data = await userService.googleAuthUser(req.body.credential);
+        res.json(data);
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
+};
+
 export const getAll = async (req,res) => {
     const users = await userService.getUsers({});
     res.json(users);

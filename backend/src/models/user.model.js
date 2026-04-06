@@ -12,7 +12,15 @@ const userSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        required: true
+        // Optional because Google login doesn't have a password
+        required: function() {
+            return !this.googleId;
+        }
+    },
+    googleId: {
+        type: String,
+        unique: true,
+        sparse: true
     },
     role: {
         type: String,

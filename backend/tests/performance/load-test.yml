@@ -1,0 +1,35 @@
+config:
+  target: "http://localhost:3000"
+  phases:
+    - duration: 20
+      arrivalRate: 5
+      name: Warm up phase
+    - duration: 40
+      arrivalRate: 5
+      rampTo: 50
+      name: Ramp up load
+    - duration: 60
+      arrivalRate: 50
+      name: Sustained load
+  defaults:
+    headers:
+      Content-Type: "application/json"
+
+scenarios:
+  - name: "Public API Flow (Transparency & Campaigns)"
+    flow:
+      - get:
+          url: "/api/public/stats"
+      - get:
+          url: "/api/campaigns"
+      - get:
+          url: "/api/partners"
+      - think: 1
+      - get:
+          url: "/api/public/transparency-highlights"
+
+  - name: "AI Insight Flow"
+    flow:
+      - get:
+          url: "/api/ai/donor-insights"
+          # Note: This will likely fail with 401 without JWT, which is good for testing error handling latency

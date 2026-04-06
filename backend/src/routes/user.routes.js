@@ -7,6 +7,7 @@ const router = express.Router();
 
 router.post('/register', userController.register);
 router.post('/login', userController.login);
+router.post('/google-auth', userController.googleAuth);
 
 // Authenticated user settings
 router.put('/me', authenticate, userController.updateMe);

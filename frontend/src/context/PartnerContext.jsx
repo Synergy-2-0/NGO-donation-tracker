@@ -1,14 +1,26 @@
-import { createContext, useCallback, useContext, useState } from 'react';
+import { createContext, useCallback, useContext, useState, useEffect } from 'react';
 import api from '../api/axios';
+import { useAuth } from './AuthContext';
 
 const PartnerContext = createContext(null);
 
 export function PartnerProvider({ children }) {
+  const { user } = useAuth();
   const [partners, setPartners] = useState([]);
   const [currentPartner, setCurrentPartner] = useState(null);
   const [impactData, setImpactData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  // Reset state on logout Hub Hub Hub
+  useEffect(() => {
+    if (!user) {
+      setPartners([]);
+      setCurrentPartner(null);
+      setImpactData(null);
+      setError(null);
+    }
+  }, [user]);
 
   const fetchPartners = useCallback(async (params = {}) => {
     setLoading(true);

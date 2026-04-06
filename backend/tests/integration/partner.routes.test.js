@@ -1,5 +1,4 @@
-import pkg from '@jest/globals';
-const { jest } = pkg;
+import { jest, expect, describe, test, beforeEach } from '@jest/globals';
 import request from 'supertest';
 import jwt from 'jsonwebtoken';
 
@@ -127,7 +126,7 @@ describe('Partner Routes - Endpoint Tests', () => {
     expect(response.status).toBe(200);
     expect(partnerServiceMock.getPartners).toHaveBeenCalledWith(
       expect.objectContaining({ status: 'active' }),
-      true
+      expect.objectContaining({ role: 'admin' })
     );
   });
 
@@ -139,7 +138,7 @@ describe('Partner Routes - Endpoint Tests', () => {
       .set('Authorization', `Bearer ${makeToken('donor')}`);
 
     expect(response.status).toBe(200);
-    expect(partnerServiceMock.getPartners).toHaveBeenCalledWith({}, false);
+    expect(partnerServiceMock.getPartners).toHaveBeenCalledWith({}, expect.objectContaining({ role: 'donor' }));
   });
 
   test('GET /api/partners/:id/impact resolves impact route (not shadowed by :id)', async () => {

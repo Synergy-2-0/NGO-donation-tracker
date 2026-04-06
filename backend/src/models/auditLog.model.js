@@ -14,12 +14,11 @@ const auditLogSchema = new mongoose.Schema(
         action: {
             type: String,
             required: true,
-            enum: ["create", "update", "delete", "archive"],
+            enum: ["create", "update", "delete", "archive", "status_update"],
         },
         changedBy: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
-            required: true,
         },
         changedByRole: {
             type: String,

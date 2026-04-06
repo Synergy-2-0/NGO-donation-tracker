@@ -1,5 +1,4 @@
-import pkg from '@jest/globals';
-const { jest } = pkg;
+import { jest, expect, describe, test, beforeEach } from '@jest/globals';
 
 const partnerRepositoryMock = {
   create: jest.fn(),
@@ -86,7 +85,7 @@ describe('Partner Service - Unit Tests', () => {
   test('getPartners returns public list for non-admin', async () => {
     partnerRepositoryMock.findPublic.mockResolvedValue([{ _id: 'p1' }]);
 
-    const result = await partnerService.getPartners({}, false);
+    const result = await partnerService.getPartners({}, { role: 'donor' });
 
     expect(partnerRepositoryMock.findPublic).toHaveBeenCalled();
     expect(partnerRepositoryMock.findAll).not.toHaveBeenCalled();
@@ -96,7 +95,7 @@ describe('Partner Service - Unit Tests', () => {
   test('getPartners returns full list for admin', async () => {
     partnerRepositoryMock.findAll.mockResolvedValue([{ _id: 'p2' }]);
 
-    const result = await partnerService.getPartners({ status: 'active' }, true);
+    const result = await partnerService.getPartners({ status: 'active' }, { role: 'admin' });
 
     expect(partnerRepositoryMock.findAll).toHaveBeenCalledWith({ status: 'active' });
     expect(result).toEqual([{ _id: 'p2' }]);

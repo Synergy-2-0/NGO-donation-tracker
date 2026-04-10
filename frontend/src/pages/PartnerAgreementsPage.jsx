@@ -75,12 +75,24 @@ export default function PartnerAgreementsPage() {
 
   const onAccept = async (id) => {
     try {
-        // Formalize the agreement (Signing phase)
         await acceptAgreement(id);
-        
         setSuccess(t('institutional_agreements.success.formalized'));
+        if (user?.role === 'partner') fetchMyPartnerAgreements();
+        else fetchAllAgreements();
     } catch (err) {
         setError(err.response?.data?.message || t('institutional_agreements.error.sign'));
+    }
+  };
+
+  const onUpdateStatus = async (agreementId, status) => {
+    try {
+      await updateAgreementStatus(agreementId, status);
+      setSuccess(`Agreement transitioned to ${status} state.`);
+      if (user?.role === 'partner') fetchMyPartnerAgreements();
+      else fetchAllAgreements();
+      setTimeout(() => setSuccess(''), 3000);
+    } catch (err) {
+      setError('Failed to update agreement status.');
     }
   };
 
@@ -88,6 +100,8 @@ export default function PartnerAgreementsPage() {
     try {
         await approveAgreement(id);
         setSuccess(t('institutional_agreements.success.activated'));
+        if (user?.role === 'partner') fetchMyPartnerAgreements();
+        else fetchAllAgreements();
     } catch (err) {
         setError(err.response?.data?.message || t('institutional_agreements.error.activate'));
     }
@@ -264,21 +278,32 @@ export default function PartnerAgreementsPage() {
                                             <FiLayers size={16} />
                                         </button>
                                         
+                                        {/* NGO Admin Actions */}
+                                        {isAdmin && a.status === 'draft' && (
+                                            <button 
+                                                onClick={() => onUpdateStatus(a._id, 'pending')}
+                                                className="px-6 py-3 bg-slate-900 text-white rounded-xl text-[9px] font-extrabold uppercase tracking-widest hover:bg-tf-primary transition-all shadow-lg "
+                                            >
+                                                Send Proposal
+                                            </button>
+                                        )}
+
+                                        {isAdmin && (a.status === 'pending' || a.status === 'signed') && (
+                                            <button 
+                                                onClick={() => onApprove(a._id)}
+                                                className="px-6 py-3 bg-tf-primary text-white rounded-xl text-[9px] font-extrabold uppercase tracking-widest hover:bg-orange-600 transition-all shadow-lg "
+                                            >
+                                                {t('institutional_agreements.activate')}
+                                            </button>
+                                        )}
+
+                                        {/* Partner Actions */}
                                         {user?.role === 'partner' && a.status === 'pending' && (
                                             <button 
                                                 onClick={() => onAccept(a._id)}
                                                 className="px-6 py-3.5 bg-slate-900 text-white rounded-xl text-[9px] font-extrabold uppercase tracking-[0.2em] hover:bg-tf-primary transition-all shadow-xl shadow-slate-900/10 active:scale-95  transition-all"
                                             >
                                                 {t('institutional_agreements.formalize')}
-                                            </button>
-                                        )}
-
-                                        {isAdmin && a.status === 'pending' && (
-                                            <button 
-                                                onClick={() => onApprove(a._id)}
-                                                className="px-6 py-3 bg-tf-primary text-white rounded-xl text-[9px] font-extrabold uppercase tracking-widest hover:bg-orange-600 transition-all shadow-lg "
-                                            >
-                                                {t('institutional_agreements.activate')}
                                             </button>
                                         )}
 

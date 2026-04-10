@@ -157,6 +157,10 @@ export default function App() {
                     <Route path="/causes/:id" element={<PublicCampaignDetailPage />} />
                     <Route path="/partners/list" element={<PublicPartnersPage />} />
                     <Route path="/transparency" element={<PublicTransparencyDashboard />} />
+                    
+                    {/* Payment Status (Public) */}
+                    <Route path="/payment/success" element={<PaymentSuccessPage />} />
+                    <Route path="/payment/cancel" element={<PaymentCancelPage />} />
 
                     {/* Dashboard / Protected Routes */}
                     <Route
@@ -178,9 +182,6 @@ export default function App() {
                       <Route path="settings" element={<SettingsPage />} />
                       
                       <Route path="marketplace" element={<CampaignMarketplacePage />} />
-
-                      <Route path="payment/success" element={<PaymentSuccessPage />} />
-                      <Route path="payment/cancel" element={<PaymentCancelPage />} />
 
                       <Route
                         path="partners"

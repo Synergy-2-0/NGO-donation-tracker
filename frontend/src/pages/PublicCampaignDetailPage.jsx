@@ -62,7 +62,7 @@ function DonationModal({ campaign, user, onClose, defaultType = 'one-time' }) {
          if (data.success && data.paymentData) {
             const form = document.createElement('form');
             form.method = 'POST';
-            form.action = 'https://sandbox.payhere.lk/pay/checkout';
+            form.action = data.checkoutUrl || 'https://sandbox.payhere.lk/pay/checkout';
             Object.keys(data.paymentData).forEach(key => {
                const input = document.createElement('input');
                input.type = 'hidden';

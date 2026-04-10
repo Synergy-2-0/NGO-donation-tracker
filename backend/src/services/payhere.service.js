@@ -109,9 +109,14 @@ export const initPayHerePayment = async (paymentData) => {
         type: paymentData.type || "one-time",
     });
 
+    const checkoutUrl = process.env.PAYHERE_MODE === "production"
+        ? "https://www.payhere.lk/pay/checkout"
+        : "https://sandbox.payhere.lk/pay/checkout";
+
     // Return PayHere payment initialization data
     return {
         transactionId: transaction._id,
+        checkoutUrl: checkoutUrl,
         paymentData: {
             merchant_id: merchantId,
             return_url: `${process.env.FRONTEND_URL || 'http://localhost:5173'}/payment/success?order_id=${orderId}&transaction_id=${transaction._id}`,

@@ -59,16 +59,31 @@ export default function GeospatialMap({ data }) {
             }).addTo(mapInstance.current);
 
             marker.bindPopup(`
-                <div class="p-2 font-sans text-slate-800">
-                    <h3 class="font-bold text-sm">${name}</h3>
-                    <p class="text-[10px] text-slate-500 uppercase tracking-tighter">${city}</p>
-                    <div class="mt-2 text-[10px] border-t border-slate-100 pt-2">
-                        <span class="font-semibold text-slate-400">MISSION:</span> ${focus}<br/>
-                        <span class="font-semibold text-slate-400">TRUST SCORE:</span> 
-                        <span class="text-orange-600 font-bold">${trustScore}%</span>
+                <div class="p-4 font-sans bg-white text-slate-900 rounded-2xl border border-slate-100 min-w-[200px] shadow-2xl">
+                    <div class="flex items-center gap-2 mb-3">
+                        <div class="w-1.5 h-1.5 rounded-full bg-tf-primary animate-pulse shadow-[0_0_8px_rgba(249,115,22,0.5)]"></div>
+                        <span class="text-[8px] font-black uppercase tracking-[0.2em] text-slate-400">${feature.properties.type}</span>
+                    </div>
+                    <h3 class="font-black text-lg leading-tight mb-1 text-slate-900">${name}</h3>
+                    <p class="text-[10px] text-slate-500 uppercase font-bold tracking-widest mb-4 flex items-center gap-1">
+                        <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                        ${city}
+                    </p>
+                    <div class="space-y-3 pt-3 border-t border-slate-50">
+                        <div>
+                            <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Impact Sector</p>
+                            <p class="text-[10px] text-slate-600 font-medium">${focus}</p>
+                        </div>
+                        <div class="flex justify-between items-center bg-tf-primary/5 p-2.5 rounded-xl border border-tf-primary/10">
+                            <span class="text-[9px] font-black text-slate-500 uppercase tracking-widest">Trust Index</span>
+                            <span class="text-tf-primary font-black text-sm tabular-nums">${trustScore}%</span>
+                        </div>
                     </div>
                 </div>
-            `);
+            `, {
+                closeButton: false,
+                className: 'custom-popup'
+            });
         });
     }
 

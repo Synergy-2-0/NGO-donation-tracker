@@ -82,6 +82,28 @@
   }
 }
 
+/* Leaflet Custom Popup Styling */
+.leaflet-popup-content-wrapper {
+  background: transparent !important;
+  color: white !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+.leaflet-popup-content {
+  margin: 0 !important;
+  width: auto !important;
+}
+
+.leaflet-popup-tip {
+  background: #ffffff !important;
+  border: 1px solid rgba(0,0,0,0.05);
+}
+
+.custom-popup .leaflet-popup-content-wrapper {
+  border-radius: 20px;
+}
+
 /* commit by Lahiru Jayawardhana - 0 */
 /* commit by Sakith Liyanage - 0 */
 /* commit by Luqman Booso - 0 */

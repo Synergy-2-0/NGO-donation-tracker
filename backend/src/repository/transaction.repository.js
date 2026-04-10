@@ -21,10 +21,67 @@ export const findById = async (id) => {
 };
 
 export const findByNgoId = async (ngoId) => {
-    return await Transaction.find({ ngoId, archived: false })
-        .populate("donorId", "name email")
-        .populate("campaignId", "title")
-        .sort({ createdAt: -1 });
+    const id = typeof ngoId === 'string' ? new mongoose.Types.ObjectId(ngoId) : ngoId;
+    
+    // Aggregating Remaining Balance for each Contribution Hub
+    return await Transaction.aggregate([
+        { $match: { ngoId: id, status: "completed", archived: false } },
+        {
+            $lookup: {
+                from: "fundallocations",
+                localField: "_id",
+                foreignField: "transactionId",
+                as: "allocations"
+            }
+        },
+        {
+            $addFields: {
+                totalAllocated: { $sum: "$allocations.amount" }
+            }
+        },
+        {
+            $addFields: {
+                remainingAmount: { $subtract: ["$amount", "$totalAllocated"] }
+            }
+        },
+        { $match: { remainingAmount: { $gt: 0 } } },
+        {
+            $lookup: {
+                from: "users",
+                localField: "donorId",
+                foreignField: "_id",
+                as: "donor"
+            }
+        },
+        {
+            $lookup: {
+                from: "campaigns",
+                localField: "campaignId",
+                foreignField: "_id",
+                as: "campaign"
+            }
+        },
+        { $unwind: { path: "$donor", preserveNullAndEmptyArrays: true } },
+        { $unwind: { path: "$campaign", preserveNullAndEmptyArrays: true } },
+        { 
+            $project: {
+                _id: 1,
+                amount: 1,
+                remainingAmount: 1,
+                totalAllocated: 1,
+                createdAt: 1,
+                status: 1,
+                type: 1,
+                currency: 1,
+                notes: 1,
+                "donorId._id": "$donor._id",
+                "donorId.name": "$donor.name",
+                "campaignId._id": "$campaign._id",
+                "campaignId.title": "$campaign.title"
+            }
+        },
+        { $sort: { createdAt: -1 } }
+    ]);
 };
 
 export const findByDonorId = async (donorId) => {

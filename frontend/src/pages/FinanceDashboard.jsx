@@ -74,7 +74,7 @@ export default function FinanceDashboard() {
     }
 
     if (allocationData.description.length < 5) {
-      setLocalError("Deployment description must be at least 5 characters for compliance Hub Sync!");
+      setLocalError("Deployment description must be at least 5 characters for record integrity.");
       return;
     }
 
@@ -88,8 +88,9 @@ export default function FinanceDashboard() {
       setShowModal(false);
       setAllocationData({ transactionId: '', category: 'education', amount: '', description: '' });
       fetchSummary(ngoProfile._id);
+      fetchTransactions(ngoProfile._id);
     } catch (err) {
-      setLocalError(err.response?.data?.message || 'Transaction synchronization failed.');
+      setLocalError(err.response?.data?.message || 'Transaction recording failed.');
     } finally {
       setSubmitting(false);
     }
@@ -520,123 +521,125 @@ export default function FinanceDashboard() {
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="relative bg-white rounded-3xl w-full max-w-2xl shadow-[0_32px_64px_-16px_rgba(0,0,0,0.3)] overflow-hidden"
+              className="relative bg-white rounded-[40px] w-full max-w-2xl shadow-[0_32px_64px_-16px_rgba(0,0,0,0.3)] overflow-hidden flex flex-col max-h-[90vh]"
             >
-              <div className="p-10 border-b border-slate-50 bg-slate-50/50 relative">
-                <h3 className="text-4xl font-extrabold text-slate-900 tracking-tighter  leading-none">{t('finance.allocate_capital')}</h3>
-                <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mt-2 flex items-center gap-2 ">
-                  <FiPlus className="text-orange-500" /> Professional Resource Orchestration Hub sync
+              <div className="p-12 border-b border-slate-50 bg-white relative shrink-0">
+                <h3 className="text-3xl font-black text-slate-900 tracking-tighter  leading-none">Distribute Funds</h3>
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mt-4 flex items-center gap-2 ">
+                   Secure Resource Allocation Registry
                 </p>
                 <button
                   onClick={() => setShowModal(false)}
-                  className="absolute top-10 right-10 text-slate-400 hover:text-slate-900 transition-colors shadow-sm"
+                  className="absolute top-12 right-12 text-slate-300 hover:text-slate-900 transition-colors"
                 >
-                  <FiActivity size={24} />
+                  <FiPlus size={24} className="rotate-45" />
                 </button>
               </div>
 
-              {localError && (
-                <div className="mx-10 mt-6 p-4 bg-rose-50 border border-rose-100 rounded-2xl flex items-center gap-4 animate-shake">
-                  <FiAlertCircle className="text-rose-500" size={20} />
-                  <p className="text-xs font-bold text-rose-700 ">{localError}</p>
-                </div>
-              )}
+              <div className="overflow-y-auto flex-1 custom-scrollbar">
+                {localError && (
+                  <div className="mx-12 mt-8 p-5 bg-rose-50 border border-rose-100 rounded-[2rem] flex items-center gap-4 animate-shake">
+                    <FiLayers className="text-rose-500" size={20} />
+                    <p className="text-xs font-bold text-rose-700 ">{localError}</p>
+                  </div>
+                )}
 
-              <form onSubmit={handleAllocate} className="p-10 space-y-8">
-                <div className="space-y-3">
-                  <label className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 ml-1 ">Source Capital Stream</label>
-                  <div className="relative">
-                    <select
-                      required
-                      value={allocationData.transactionId}
-                      onChange={(e) => setAllocationData({ ...allocationData, transactionId: e.target.value })}
-                      className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-5 text-sm font-bold appearance-none focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all cursor-pointer "
-                    >
-                      <option value="">Select a verified income source Hub...</option>
-                      {availableTransactions.map(t => (
-                        <option key={t._id} value={t._id}>
-                          {t.donorId?.name || 'Anonymous'} - {t.campaignId?.title ? `[${t.campaignId.title}]` : '[General]'} - LKR {t.amount.toLocaleString()} ({new Date(t.createdAt).toLocaleDateString()})
-                        </option>
-                      ))}
-                    </select>
-                    <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-slate-300">
-                      <FiLayers size={18} />
+                <form onSubmit={handleAllocate} className="p-12 pt-8 space-y-10">
+                  <div className="space-y-4">
+                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1 ">Source Funding Stream</label>
+                    <div className="relative">
+                      <select
+                        required
+                        value={allocationData.transactionId}
+                        onChange={(e) => setAllocationData({ ...allocationData, transactionId: e.target.value })}
+                        className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-5 text-sm font-bold appearance-none focus:outline-none focus:ring-2 focus:ring-tf-primary/20 focus:border-tf-primary transition-all cursor-pointer shadow-inner"
+                      >
+                        <option value="">Select a verified income source...</option>
+                        {availableTransactions.map(t => (
+                          <option key={t._id} value={t._id}>
+                            {t.donorId?.name || 'Anonymous Donor'} — {t.campaignId?.title || 'General Fund'} — [Available: Rs. {(t.remainingAmount || t.amount).toLocaleString()}]
+                          </option>
+                        ))}
+                      </select>
+                      <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-slate-300">
+                        <FiLayers size={18} />
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <div className="space-y-3">
-                    <label className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 ml-1 ">Mission Sector</label>
-                    <select
-                      required
-                      value={allocationData.category}
-                      onChange={(e) => setAllocationData({ ...allocationData, category: e.target.value })}
-                      className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-5 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all "
-                    >
-                      <option value="education">Education Hub</option>
-                      <option value="healthcare">Healthcare Hub</option>
-                      <option value="infrastructure">Infrastructure Hub</option>
-                      <option value="food">Food Hub</option>
-                      <option value="clothing">Clothing Hub</option>
-                      <option value="emergency-relief">Emergency Relief Hub</option>
-                      <option value="administrative">Operations / Admin Hub</option>
-                      <option value="other">Special Operations Hub</option>
-                    </select>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div className="space-y-4">
+                      <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1 ">Impact Sector</label>
+                      <select
+                        required
+                        value={allocationData.category}
+                        onChange={(e) => setAllocationData({ ...allocationData, category: e.target.value })}
+                        className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-5 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-tf-primary/20 focus:border-tf-primary transition-all shadow-inner"
+                      >
+                        <option value="education">Education</option>
+                        <option value="healthcare">Healthcare</option>
+                        <option value="infrastructure">Infrastructure</option>
+                        <option value="food">Food & Nutrition</option>
+                        <option value="clothing">Essential Clothing</option>
+                        <option value="emergency-relief">Emergency Relief</option>
+                        <option value="administrative">Operations / Admin</option>
+                        <option value="other">Other Operations</option>
+                      </select>
+                    </div>
+
+                    <div className="space-y-4">
+                      <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1 ">Allocation Amount (LKR)</label>
+                      <input
+                        type="number"
+                        required
+                        min="1"
+                        placeholder="e.g. 50,000"
+                        value={allocationData.amount}
+                        onChange={(e) => setAllocationData({ ...allocationData, amount: e.target.value })}
+                        className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-5 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-tf-primary/20 focus:border-tf-primary transition-all tabular-nums shadow-inner"
+                      />
+                    </div>
                   </div>
 
-                  <div className="space-y-3">
-                    <label className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 ml-1 ">Capital Amount (LKR)</label>
-                    <input
-                      type="number"
+                  <div className="space-y-4">
+                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1 ">Justification / Roadmap</label>
+                    <textarea
                       required
-                      min="1"
-                      placeholder="e.g. 25000"
-                      value={allocationData.amount}
-                      onChange={(e) => setAllocationData({ ...allocationData, amount: e.target.value })}
-                      className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-5 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all tabular-nums "
+                      placeholder="Briefly describe the purpose of this allocation for audit records..."
+                      value={allocationData.description}
+                      onChange={(e) => setAllocationData({ ...allocationData, description: e.target.value })}
+                      rows="4"
+                      className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-5 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-tf-primary/20 focus:border-tf-primary transition-all resize-none shadow-inner"
                     />
                   </div>
-                </div>
 
-                <div className="space-y-3">
-                  <label className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 ml-1 ">Strategic Justification / Purpose</label>
-                  <textarea
-                    required
-                    placeholder="Provide a detailed roadmap for this deployment Hub..."
-                    value={allocationData.description}
-                    onChange={(e) => setAllocationData({ ...allocationData, description: e.target.value })}
-                    rows="4"
-                    className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-5 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all resize-none "
-                  />
-                </div>
-
-                <div className="pt-6 flex gap-6">
-                  <button
-                    type="button"
-                    onClick={() => setShowModal(false)}
-                    className="flex-1 py-5 bg-slate-50 text-slate-500 text-[10px] font-extrabold uppercase tracking-widest rounded-2xl hover:bg-slate-100 transition-all  border border-slate-100"
-                  >
-                    Abort Deployment
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={submitting}
-                    className="flex-1 py-5 bg-slate-900 text-white text-[10px] font-extrabold uppercase tracking-widest rounded-2xl hover:bg-orange-600 transition-all shadow-xl shadow-slate-900/10  disabled:opacity-50 flex items-center justify-center gap-3"
-                  >
-                    {submitting ? (
-                      <>
-                        <LoadingSpinner size="sm" />
-                        <span>Synchronizing Hub...</span>
-                      </>
-                    ) : (
-                      <>
-                        <span>Finalize Hub Deployment →</span>
-                      </>
-                    )}
-                  </button>
-                </div>
-              </form>
+                  <div className="pt-8 flex gap-6">
+                    <button
+                      type="button"
+                      onClick={() => setShowModal(false)}
+                      className="flex-1 py-5 bg-slate-50 text-slate-500 text-[10px] font-black uppercase tracking-widest rounded-3xl hover:bg-slate-100 transition-all border border-slate-100"
+                    >
+                      Discard Changes
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={submitting}
+                      className="flex-1 py-5 bg-slate-900 text-white text-[10px] font-black uppercase tracking-widest rounded-3xl hover:bg-tf-primary transition-all shadow-2xl shadow-slate-900/10 disabled:opacity-50 flex items-center justify-center gap-3"
+                    >
+                      {submitting ? (
+                        <>
+                          <LoadingSpinner size="sm" inline={true} />
+                          <span>Verifying...</span>
+                        </>
+                      ) : (
+                        <>
+                          <span>Confirm Distribution →</span>
+                        </>
+                      ) }
+                    </button>
+                  </div>
+                </form>
+              </div>
             </motion.div>
           </div>
         )}

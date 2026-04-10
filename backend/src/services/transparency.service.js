@@ -45,25 +45,46 @@ class TransparencyService {
   }
 
   async getImpactMetrics() {
-    // Aggregation of Mission Critical Impact Hub
-    const [partners, campaigns, completedMilestones] = await Promise.all([
+    // Comprehensive Impact Aggregation
+    const [partners, campaigns, completedMilestones, transactionStats] = await Promise.all([
       partnerRepository.findPublic(),
       Campaign.find({ isDeleted: false }),
-      Milestone.countDocuments({ status: 'completed' })
+      Milestone.countDocuments({ status: 'completed' }),
+      Transaction.aggregate([
+        { $match: { status: 'completed', archived: false } },
+        { $group: { _id: null, total: { $sum: '$amount' } } }
+      ])
     ]);
 
-    const totalFundsAllocated = partners.reduce(
+    // Sum of Partner Contributions
+    const partnerFunds = partners.reduce(
       (s, p) => s + (p.partnershipHistory?.totalContributed || 0), 0
     );
+
+    // Sum of Public Donations
+    const publicFunds = transactionStats[0]?.total || 0;
+
+    // Total Monetary Reach
+    const totalFundsAllocated = partnerFunds + publicFunds;
 
     const totalBeneficiaries = campaigns.reduce(
       (s, c) => s + (c.reachedBeneficiaries || 0), 0
     );
 
+    const recentMilestones = await Milestone.find({ status: 'completed' })
+      .sort({ completedAt: -1 })
+      .limit(5)
+      .populate('campaignId');
+
     return {
       totalFundsAllocated,
       totalBeneficiaries: totalBeneficiaries || 0,
       milestonesCompleted: completedMilestones,
+      recentMilestones: recentMilestones.map(m => ({
+        title: m.title,
+        campaign: m.campaignId?.title || 'General Platform',
+        date: m.completedAt || m.updatedAt
+      })),
       verifiedPartners: partners.length,
       globalReachCities: [...new Set(partners.map(p => p.address?.city).filter(Boolean))].length
     };
@@ -147,22 +168,35 @@ class TransparencyService {
       return acc;
     }, {});
     
-    const partnerFeatures = partners.map(p => ({
-      type: 'Feature',
-      properties: {
-        name: p.organizationName,
-        type: 'Institutional Partner Hub',
-        city: p.address?.city || 'Verified Hub',
-        focus: p.csrFocus?.join(', ') || 'Global Impact Hub',
-        trustScore: p.trustScore || 85
-      },
-      geometry: p.address?.coordinates
-    })).filter(f => f.geometry);
+    const partnerFeatures = partners.map(p => {
+      // Ensure coordinates are in [lng, lat] format for GeoJSON
+      const coords = p.address?.coordinates?.coordinates || p.address?.coordinates;
+      if (!Array.isArray(coords) || coords.length < 2) return null;
+
+      return {
+        type: 'Feature',
+        properties: {
+          name: p.organizationName,
+          type: 'Institutional Partner Hub',
+          city: p.address?.city || 'Verified Hub',
+          focus: (p.csrFocus || []).join(', ') || 'Global Impact Hub',
+          trustScore: p.trustScore || 85
+        },
+        geometry: {
+          type: 'Point',
+          coordinates: coords
+        }
+      };
+    }).filter(Boolean);
 
     const campaignFeatures = campaigns.map(c => {
       const creatorId = c.createdBy?._id || c.createdBy;
       const score = ngoMap[creatorId?.toString()] || 0;
       
+      // Handle the nested coordinates structure in the Campaign model
+      const coords = c.location?.coordinates?.coordinates || c.location?.coordinates;
+      if (!Array.isArray(coords) || coords.length < 2) return null;
+
       return {
         type: 'Feature',
         properties: {
@@ -170,11 +204,14 @@ class TransparencyService {
           type: 'Active Social Mission Hub',
           city: c.location?.city || 'Global Hub',
           focus: c.description?.slice(0, 70) + '...',
-          trustScore: score || 75 // Default 75 if NGO not found but campaign is active
+          trustScore: score || 75
         },
-        geometry: c.location?.coordinates?.coordinates ? c.location.coordinates : null
+        geometry: {
+          type: 'Point',
+          coordinates: coords
+        }
       };
-    }).filter(f => f.geometry && Array.isArray(f.geometry.coordinates) && f.geometry.coordinates.length >= 2);
+    }).filter(Boolean);
 
     return {
       type: 'FeatureCollection',

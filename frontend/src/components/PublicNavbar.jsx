@@ -33,6 +33,8 @@ export default function PublicNavbar() {
 
   const isHomePage = location.pathname === '/';
   const logoSrc = (scrolled || !isHomePage) ? '/heart-logo d.png' : '/heart-logo c.png';
+  const navTextColor = (scrolled || !isHomePage) ? 'text-slate-900' : 'text-white';
+  const navBgColor = (scrolled || !isHomePage) ? 'bg-white shadow-2xl py-4' : 'bg-transparent';
 
   const getDashboardLabel = () => {
     if (!user) return t('public_navbar.login');
@@ -44,9 +46,7 @@ export default function PublicNavbar() {
 
   return (
     <nav 
-      className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-700 px-6 md:px-12 py-5 ${
-        scrolled || !isHomePage ? 'bg-white shadow-2xl py-4' : 'bg-transparent'
-      }`}
+      className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-700 px-6 md:px-12 py-5 ${navBgColor}`}
     >
       <div className="max-w-[1600px] mx-auto flex items-center justify-between gap-8">
         
@@ -61,9 +61,7 @@ export default function PublicNavbar() {
             <Link
               key={link.href}
               to={link.href}
-              className={`text-[10px] font-extrabold uppercase tracking-[0.3em] transition-all hover:text-tf-primary whitespace-nowrap ${
-                scrolled || !isHomePage ? 'text-slate-900' : 'text-white'
-              }`}
+              className={`text-[10px] font-extrabold uppercase tracking-[0.3em] transition-all hover:text-tf-primary whitespace-nowrap ${navTextColor}`}
             >
               {link.label}
             </Link>
@@ -113,9 +111,7 @@ export default function PublicNavbar() {
             <div className="hidden lg:flex items-center gap-6">
               <button
                 onClick={() => navigate('/login')}
-                className={`text-[9px] font-extrabold uppercase tracking-widest transition-all ${
-                  scrolled || !isHomePage ? 'text-slate-950' : 'text-white'
-                }`}
+                className={`text-[9px] font-extrabold uppercase tracking-widest transition-all ${navTextColor}`}
               >
                 {t('public_navbar.sign_in')}
               </button>

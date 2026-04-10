@@ -4,9 +4,9 @@ import { authenticate } from '../middlewares/auth.middleware.js';
 import { authorizeRoles } from '../middlewares/role.middleware.js';
 import { validateRequest } from '../middlewares/validate.middleware.js';
 import {
-	createMilestoneSchema,
-	milestoneQuerySchema,
-	updateMilestoneSchema,
+  createMilestoneSchema,
+  milestoneQuerySchema,
+  updateMilestoneSchema,
 } from '../validators/milestone.validator.js';
 
 import upload from '../middlewares/upload.middleware.js';
@@ -19,7 +19,10 @@ router.post('/upload-evidence', authenticate, upload.single('evidence'), async (
     if (!req.file) {
       return res.status(400).json({ message: 'No evidence file uploaded' });
     }
-    const fileUrl = `${req.protocol}://${req.get('host')}/public/uploads/${req.file.filename}`;
+    const fileUrl = req.file.path || req.file.secure_url || req.file.url || null;
+    if (!fileUrl) {
+      return res.status(500).json({ message: 'Upload completed, but no file URL was returned' });
+    }
     console.log('Milestone evidence uploaded:', fileUrl);
     res.json({ url: fileUrl });
   } catch (error) {

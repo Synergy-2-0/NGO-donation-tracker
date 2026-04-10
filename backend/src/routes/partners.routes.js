@@ -14,16 +14,18 @@ router.post('/upload-logo', authenticate, upload.single('logo'), async (req, res
     if (!req.file) {
       return res.status(400).json({ message: 'No file uploaded' });
     }
-    
-    // Construct absolute URL for the frontend
-    const fileUrl = `${req.protocol}://${req.get('host')}/public/uploads/${req.file.filename}`;
-    
+
+    const fileUrl = req.file.path || req.file.secure_url || req.file.url || null;
+    if (!fileUrl) {
+      return res.status(500).json({ message: 'Upload completed, but no file URL was returned' });
+    }
+
     console.log('Logo uploaded successfully:', fileUrl);
     res.json({ url: fileUrl });
   } catch (error) {
     console.error('LOGO UPLOAD ERROR:', error);
-    res.status(500).json({ 
-      message: 'Logo upload failed', 
+    res.status(500).json({
+      message: 'Logo upload failed',
       details: error.message || error
     });
   }
@@ -34,15 +36,18 @@ router.post('/upload-document', authenticate, upload.single('document'), async (
     if (!req.file) {
       return res.status(400).json({ message: 'No document uploaded' });
     }
-    
-    const fileUrl = `${req.protocol}://${req.get('host')}/public/uploads/${req.file.filename}`;
-    
+
+    const fileUrl = req.file.path || req.file.secure_url || req.file.url || null;
+    if (!fileUrl) {
+      return res.status(500).json({ message: 'Upload completed, but no file URL was returned' });
+    }
+
     console.log('Document uploaded successfully:', fileUrl);
     res.json({ url: fileUrl });
   } catch (error) {
     console.error('DOCUMENT UPLOAD ERROR:', error);
-    res.status(500).json({ 
-      message: 'Document upload failed', 
+    res.status(500).json({
+      message: 'Document upload failed',
       details: error.message || error
     });
   }

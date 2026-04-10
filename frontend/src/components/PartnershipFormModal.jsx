@@ -57,16 +57,27 @@ export default function PartnershipFormModal({ onClose, onSave, initialCampaignI
             { title: 'Final Review & Handover', fraction: 0.9, valShare: 0.3 }
         ];
 
-        return phases.map(p => {
+        let allocated = 0;
+        const result = phases.map((p, i) => {
             const stepDate = new Date(start);
             stepDate.setDate(stepDate.getDate() + Math.floor(diffDays * p.fraction));
+            
+            let budget = Math.floor(totalVal * p.valShare);
+            // On last milestone, take the remaining balance to ensure sum matches exactly
+            if (i === phases.length - 1) {
+                budget = totalVal - allocated;
+            } else {
+                allocated += budget;
+            }
+
             return {
                 title: p.title,
-                budget: Math.floor(totalVal * p.valShare),
+                budget,
                 dueDate: stepDate.toISOString().split('T')[0],
                 status: 'pending'
             };
         });
+        return result;
     };
 
     const addMilestone = () => {
@@ -88,8 +99,9 @@ export default function PartnershipFormModal({ onClose, onSave, initialCampaignI
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!form.campaignId) return setError('Please select a campaign mission.');
-        if (!form.title.trim()) return setError('Please enter a title for this agreement.');
+        if (form.title.trim().length < 5) return setError('Agreement title must be at least 5 characters long.');
         if (!form.startDate || !form.endDate) return setError('Please select both start and end dates.');
+        if (new Date(form.endDate) <= new Date(form.startDate)) return setError('Lifecycle End must be after Lifecycle Start.');
         if (!form.totalValue || Number(form.totalValue) <= 0) return setError('Please enter a valid amount.');
         
         setError('');
@@ -100,6 +112,14 @@ export default function PartnershipFormModal({ onClose, onSave, initialCampaignI
             budget: Number(m.budget) || 0,
             status: m.status || 'pending'
         }));
+
+        // Validate milestones total equals agreement total
+        const milestonesTotal = finalMilestones.reduce((sum, m) => sum + m.budget, 0);
+        const agreementTotal = Number(String(form.totalValue || '0').replace(/,/g, ''));
+        
+        if (milestonesTotal !== agreementTotal) {
+            return setError(`The sum of roadmap steps (LKR ${milestonesTotal.toLocaleString()}) must equal the total commitment (LKR ${agreementTotal.toLocaleString()}).`);
+        }
 
         const payload = {
             campaignId: form.campaignId,
@@ -118,7 +138,12 @@ export default function PartnershipFormModal({ onClose, onSave, initialCampaignI
         try {
             await onSave(payload);
         } catch (err) {
-            setError(err.message || 'Proposal initialization failure Hub.');
+            const backendError = err.response?.data;
+            if (backendError?.errors?.[0]?.message) {
+                setError(`${backendError.message}: ${backendError.errors[0].message}`);
+            } else {
+                setError(backendError?.message || err.message || 'Proposal initialization failure Hub.');
+            }
             setSaving(false);
         }
     };
@@ -140,7 +165,7 @@ export default function PartnershipFormModal({ onClose, onSave, initialCampaignI
 
                 <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-8 space-y-10 scrollbar-none">
                     {error && (
-                        <div className="bg-rose-50 border border-rose-200 text-rose-700 px-4 py-3 rounded-2xl text-xs font-bold flex items-center gap-2">
+                        <div className="bg-red-50 border border-red-100 text-red-600 px-5 py-4 rounded-2xl text-[11px] font-extrabold uppercase tracking-widest flex items-center gap-3 animate-shake">
                            <FiInfo className="shrink-0" /> {error}
                         </div>
                     )}
@@ -232,6 +257,7 @@ export default function PartnershipFormModal({ onClose, onSave, initialCampaignI
                             <input 
                                 type="date"
                                 value={form.endDate}
+                                min={form.startDate}
                                 onChange={e => setForm({...form, endDate: e.target.value})}
                                 className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 text-sm font-extrabold text-slate-800 focus:outline-none focus:ring-4 focus:ring-tf-primary/5 transition-all outline-none "
                             />
@@ -375,6 +401,16 @@ export default function PartnershipFormModal({ onClose, onSave, initialCampaignI
                     </button>
                 </div>
             </div>
+            <style>{`
+                @keyframes shake {
+                    0%, 100% { transform: translateX(0); }
+                    25% { transform: translateX(-4px); }
+                    75% { transform: translateX(4px); }
+                }
+                .animate-shake {
+                    animation: shake 0.2s ease-in-out 0s 2;
+                }
+            `}</style>
         </div>
     );
 }

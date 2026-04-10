@@ -61,6 +61,15 @@ app.get('/', (req, res) => {
   res.status(200).send('NGO Donation Tracker API is running');
 });
 
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error('[Global Error Handler]:', err);
+  res.status(err.status || 500).json({
+    message: err.message || 'Internal Server Error',
+    error: process.env.NODE_ENV === 'development' ? err : {}
+  });
+});
+
 app.listen(port, () => {
   console.log(`Server is listening on port ${port}`);
   initReminderJob();

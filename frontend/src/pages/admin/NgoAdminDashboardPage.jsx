@@ -66,7 +66,7 @@ export default function NgoAdminDashboardPage() {
     }, [fetchCampaigns, fetchAllAgreements, fetchNgoMetrics, fetchNgoLedger]);
 
     const stats = useMemo(() => {
-        const activeCount = campaigns.filter(c => c.status === 'active').length;
+        const activeCount = campaigns.filter(c => ['active', 'pending', 'draft'].includes(c.status)).length;
         const totalRaised = financeSummary?.totalRaised || campaigns.reduce((sum, c) => sum + (c.raisedAmount || 0), 0);
         
         return [
@@ -135,7 +135,7 @@ export default function NgoAdminDashboardPage() {
                         </div>
                         <div className="bg-white/5 backdrop-blur-2xl border border-white/10 p-8 rounded-[2rem] space-y-2 group hover:bg-white/10 transition-all shadow-2xl">
                            <p className="text-[9px] font-extrabold text-white/30 uppercase tracking-widest">{t('ngo_dashboard.active_projects')}</p>
-                           <h4 className="text-2xl font-extrabold text-white tabular-nums leading-none">{campaigns.filter(c => c.status === 'active').length}</h4>
+                           <h4 className="text-2xl font-extrabold text-white tabular-nums leading-none">{campaigns.filter(c => ['active', 'pending', 'draft'].includes(c.status)).length}</h4>
                            <div className="flex -space-x-2 mt-4">
                               {[1,2,3].map(i => <div key={i} className="w-6 h-6 rounded-full border-2 border-slate-900 bg-slate-800" />)}
                               <div className="w-6 h-6 rounded-full border-2 border-slate-900 bg-tf-primary flex items-center justify-center text-[8px] font-bold text-white tracking-widest">+</div>

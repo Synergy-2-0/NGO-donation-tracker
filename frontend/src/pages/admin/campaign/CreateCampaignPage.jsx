@@ -64,6 +64,30 @@ const PLEDGE_FREQUENCIES = [
 
 const SUGGESTED_AMOUNTS_DEFAULTS = [500, 1000, 2500, 5000];
 
+const SRI_LANKAN_LOCATIONS = [
+    { city: 'Colombo',      state: 'Western Province',     lat: 6.9271, lng: 79.8612 },
+    { city: 'Kandy',        state: 'Central Province',     lat: 7.2906, lng: 80.6337 },
+    { city: 'Galle',        state: 'Southern Province',    lat: 6.0535, lng: 80.2210 },
+    { city: 'Jaffna',       state: 'Northern Province',    lat: 9.6615, lng: 80.0255 },
+    { city: 'Negombo',      state: 'Western Province',     lat: 7.2008, lng: 79.8737 },
+    { city: 'Anuradhapura', state: 'North Central Province', lat: 8.3114, lng: 80.4037 },
+    { city: 'Trincomalee',  state: 'Eastern Province',     lat: 8.5711, lng: 81.2335 },
+    { city: 'Batticaloa',   state: 'Eastern Province',     lat: 7.7170, lng: 81.7010 },
+    { city: 'Matara',       state: 'Southern Province',    lat: 5.9449, lng: 80.5487 },
+    { city: 'Ratnapura',    state: 'Sabaragamuwa Province', lat: 6.6828, lng: 80.3992 },
+    { city: 'Kurunegala',   state: 'North Western Province', lat: 7.4817, lng: 80.3609 },
+    { city: 'Badulla',      state: 'Uva Province',         lat: 6.9934, lng: 81.0550 },
+    { city: 'Nuwara Eliya', state: 'Central Province',     lat: 6.9497, lng: 80.7891 },
+    { city: 'Kalutara',     state: 'Western Province',     lat: 6.5854, lng: 79.9607 },
+    { city: 'Hambantota',   state: 'Southern Province',    lat: 6.1246, lng: 81.1185 },
+];
+
+const PROVINCES = [
+    'Western Province', 'Central Province', 'Southern Province', 
+    'Northern Province', 'Eastern Province', 'North Western Province', 
+    'North Central Province', 'Uva Province', 'Sabaragamuwa Province'
+];
+
 function SectionCard({ icon, title, subtitle, accentColor = 'group-hover:bg-tf-primary', children }) {
     return (
         <div className="bg-white rounded-[2rem] border border-slate-100 shadow-sm overflow-hidden p-8 space-y-6 relative group hover:shadow-xl transition-all duration-700">
@@ -178,17 +202,39 @@ export default function CreateCampaignPage() {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        if (['city', 'state', 'country'].includes(name)) {
+        if (name === 'city') {
+            const loc = SRI_LANKAN_LOCATIONS.find(l => l.city === value);
+            if (loc) {
+                setFormData(prev => ({
+                    ...prev,
+                    location: {
+                        ...prev.location,
+                        city: loc.city,
+                        state: loc.state,
+                        coordinates: {
+                            ...prev.location.coordinates,
+                            coordinates: [loc.lng, loc.lat]
+                        }
+                    }
+                }));
+            } else {
+                setFormData(prev => ({ ...prev, location: { ...prev.location, city: value } }));
+            }
+        } else if (name === 'state' || name === 'country') {
             setFormData(prev => ({ ...prev, location: { ...prev.location, [name]: value } }));
         } else if (['lat', 'lng'].includes(name)) {
+            const val = parseFloat(value) || 0;
             setFormData(prev => ({
                 ...prev,
                 location: {
                     ...prev.location,
-                    coordinates: [
-                        name === 'lng' ? parseFloat(value) : prev.location.coordinates[0],
-                        name === 'lat' ? parseFloat(value) : prev.location.coordinates[1],
-                    ],
+                    coordinates: {
+                        ...prev.location.coordinates,
+                        coordinates: [
+                            name === 'lng' ? val : prev.location.coordinates.coordinates[0],
+                            name === 'lat' ? val : prev.location.coordinates.coordinates[1],
+                        ]
+                    }
                 },
             }));
         } else if (name.startsWith('pledge_')) {
@@ -204,6 +250,12 @@ export default function CreateCampaignPage() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        
+        // Manual Validation
+        if (new Date(formData.endDate) <= new Date(formData.startDate)) {
+            return setError('End date must be at least one day after the start date.');
+        }
+
         setLoading(true);
         setError('');
         try {
@@ -319,29 +371,40 @@ export default function CreateCampaignPage() {
                             <SectionCard icon={<FiMapPin className="text-xl" />} title="Location & Coverage" subtitle="Where this campaign operates" accentColor="group-hover:bg-indigo-500">
                                 <div className="space-y-5">
                                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                        {[
-                                            { name: 'city',    label: 'City', placeholder: 'e.g. Colombo' },
-                                            { name: 'state',   label: 'Province / State', placeholder: 'e.g. Western Province' },
-                                            { name: 'country', label: 'Country', placeholder: 'Sri Lanka' },
-                                        ].map(f => (
-                                            <div key={f.name}>
-                                                <FieldLabel>{f.label}</FieldLabel>
-                                                <input type="text" name={f.name} value={formData.location[f.name]}
-                                                    onChange={handleChange} placeholder={f.placeholder} className={inputCls} />
-                                            </div>
-                                        ))}
+                                        <div>
+                                            <FieldLabel required>City</FieldLabel>
+                                            <select name="city" value={formData.location.city} onChange={handleChange} className={inputCls} required>
+                                                <option value="">Select City</option>
+                                                {SRI_LANKAN_LOCATIONS.map(l => (
+                                                    <option key={l.city} value={l.city}>{l.city}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <FieldLabel required>Province / State</FieldLabel>
+                                            <select name="state" value={formData.location.state} onChange={handleChange} className={inputCls} required>
+                                                <option value="">Select Province</option>
+                                                {PROVINCES.map(p => (
+                                                    <option key={p} value={p}>{p}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <FieldLabel>Country</FieldLabel>
+                                            <input type="text" name="country" value={formData.location.country} readOnly className={`${inputCls} opacity-60`} />
+                                        </div>
                                     </div>
                                     <div className="grid grid-cols-2 gap-4 pt-2 border-t border-slate-50">
                                         <div>
                                             <FieldLabel>Longitude</FieldLabel>
                                             <input type="number" name="lng" step="0.0001"
-                                                value={formData.location.coordinates[0] || ''}
+                                                value={formData.location.coordinates.coordinates[0] || ''}
                                                 onChange={handleChange} placeholder="e.g. 79.8612" className={inputCls} />
                                         </div>
                                         <div>
                                             <FieldLabel>Latitude</FieldLabel>
                                             <input type="number" name="lat" step="0.0001"
-                                                value={formData.location.coordinates[1] || ''}
+                                                value={formData.location.coordinates.coordinates[1] || ''}
                                                 onChange={handleChange} placeholder="e.g. 6.9271" className={inputCls} />
                                         </div>
                                     </div>

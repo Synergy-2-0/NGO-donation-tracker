@@ -142,6 +142,23 @@ class AgreementService {
     }
 
     const updated = await agreementRepository.update(id, data);
+    
+    // Auto-complete Hub Hub Logic
+    if (updated.status === 'active') {
+        const hasInitial = updated.initialMilestones && updated.initialMilestones.length > 0;
+        const initialDone = !hasInitial || updated.initialMilestones.every(m => m.status === 'completed');
+        
+        // If there are also external milestones in the collection Hub
+        const { default: milestoneRepository } = await import('../repository/milestone.repository.js');
+        const externalMilestones = await milestoneRepository.findByAgreement(id);
+        const externalDone = externalMilestones.length === 0 || externalMilestones.every(m => m.status === 'completed');
+
+        if (initialDone && externalDone && (hasInitial || externalMilestones.length > 0)) {
+            await agreementRepository.update(id, { status: 'completed' });
+            updated.status = 'completed';
+        }
+    }
+
     const partnerId = agreement.partnerId?._id || agreement.partnerId;
     this._recalcPartnerHistory(partnerId.toString());
     return updated;
@@ -252,8 +269,8 @@ class AgreementService {
 
     const agreement = await agreementRepository.findById(id);
     if (!agreement) throw new Error('Agreement not found');
-    if (agreement.status !== 'pending') {
-      throw new Error('Only pending agreements can be approved');
+    if (agreement.status !== 'pending' && agreement.status !== 'signed') {
+      throw new Error('Only pending or signed agreements can be activated Hub.');
     }
 
     const updated = await agreementRepository.update(id, {

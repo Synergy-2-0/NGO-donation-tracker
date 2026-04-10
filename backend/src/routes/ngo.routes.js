@@ -9,9 +9,11 @@ const router = express.Router();
 router.post('/upload-logo', authenticate, upload.single('logo'), async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ message: 'No file uploaded' });
-    const fileUrl = `${req.protocol}://${req.get('host')}/public/uploads/${req.file.filename}`;
+    const fileUrl = req.file.path || req.file.secure_url || req.file.url || null;
+    if (!fileUrl) return res.status(500).json({ message: 'Upload completed, but no file URL was returned' });
     res.json({ url: fileUrl });
   } catch (error) {
+    console.error('NGO LOGO UPLOAD ERROR:', error);
     res.status(500).json({ message: 'Upload failed', error: error.message });
   }
 });
@@ -19,9 +21,11 @@ router.post('/upload-logo', authenticate, upload.single('logo'), async (req, res
 router.post('/upload-document', authenticate, upload.single('document'), async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ message: 'No document uploaded' });
-    const fileUrl = `${req.protocol}://${req.get('host')}/public/uploads/${req.file.filename}`;
+    const fileUrl = req.file.path || req.file.secure_url || req.file.url || null;
+    if (!fileUrl) return res.status(500).json({ message: 'Upload completed, but no file URL was returned' });
     res.json({ url: fileUrl });
   } catch (error) {
+    console.error('NGO DOC UPLOAD ERROR:', error);
     res.status(500).json({ message: 'Document upload failed', error: error.message });
   }
 });

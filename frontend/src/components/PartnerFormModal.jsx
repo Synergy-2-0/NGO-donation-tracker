@@ -140,6 +140,13 @@ export default function PartnerFormModal({ partner, loading, onClose, onSave }) 
         organizationName: form.organizationName.trim(),
         industry: form.industry.trim(),
         sdgGoals: parseSdgGoals(form.sdgGoalsText),
+        address: {
+            ...form.address,
+            coordinates: (form.address.longitude && form.address.latitude) ? {
+                type: 'Point',
+                coordinates: [Number(form.address.longitude), Number(form.address.latitude)]
+            } : undefined
+        },
         partnershipPreferences: {
             ...form.partnershipPreferences,
             budgetRange: {

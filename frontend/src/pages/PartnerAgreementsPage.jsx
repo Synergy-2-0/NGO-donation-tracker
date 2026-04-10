@@ -73,14 +73,34 @@ export default function PartnerAgreementsPage() {
     }
   }, [fetchPartnerProfile, fetchMyPartnerAgreements, fetchAllAgreements, location.state, user?.role, isAdmin, t]);
 
-  const onAccept = async (id) => {
+  const [confirmingAgreement, setConfirmingAgreement] = useState(null);
+
+  const onAccept = (id) => {
+    setConfirmingAgreement(id);
+  };
+
+  const confirmFormalize = async () => {
+    if (!confirmingAgreement) return;
     try {
-        // Formalize the agreement (Signing phase)
-        await acceptAgreement(id);
-        
+        await acceptAgreement(confirmingAgreement);
         setSuccess(t('institutional_agreements.success.formalized'));
+        setConfirmingAgreement(null);
+        if (user?.role === 'partner') fetchMyPartnerAgreements();
+        else fetchAllAgreements();
     } catch (err) {
         setError(err.response?.data?.message || t('institutional_agreements.error.sign'));
+    }
+  };
+
+  const onUpdateStatus = async (agreementId, status) => {
+    try {
+      await updateAgreementStatus(agreementId, status);
+      setSuccess(`Agreement transitioned to ${status} state.`);
+      if (user?.role === 'partner') fetchMyPartnerAgreements();
+      else fetchAllAgreements();
+      setTimeout(() => setSuccess(''), 3000);
+    } catch (err) {
+      setError('Failed to update agreement status.');
     }
   };
 
@@ -88,6 +108,8 @@ export default function PartnerAgreementsPage() {
     try {
         await approveAgreement(id);
         setSuccess(t('institutional_agreements.success.activated'));
+        if (user?.role === 'partner') fetchMyPartnerAgreements();
+        else fetchAllAgreements();
     } catch (err) {
         setError(err.response?.data?.message || t('institutional_agreements.error.activate'));
     }
@@ -264,21 +286,32 @@ export default function PartnerAgreementsPage() {
                                             <FiLayers size={16} />
                                         </button>
                                         
+                                        {/* NGO Admin Actions */}
+                                        {isAdmin && a.status === 'draft' && (
+                                            <button 
+                                                onClick={() => onUpdateStatus(a._id, 'pending')}
+                                                className="px-6 py-3 bg-slate-900 text-white rounded-xl text-[9px] font-extrabold uppercase tracking-widest hover:bg-tf-primary transition-all shadow-lg "
+                                            >
+                                                Send Proposal
+                                            </button>
+                                        )}
+
+                                        {isAdmin && (a.status === 'pending' || a.status === 'signed') && (
+                                            <button 
+                                                onClick={() => onApprove(a._id)}
+                                                className="px-6 py-3 bg-tf-primary text-white rounded-xl text-[9px] font-extrabold uppercase tracking-widest hover:bg-orange-600 transition-all shadow-lg "
+                                            >
+                                                {t('institutional_agreements.activate')}
+                                            </button>
+                                        )}
+
+                                        {/* Partner Actions */}
                                         {user?.role === 'partner' && a.status === 'pending' && (
                                             <button 
                                                 onClick={() => onAccept(a._id)}
                                                 className="px-6 py-3.5 bg-slate-900 text-white rounded-xl text-[9px] font-extrabold uppercase tracking-[0.2em] hover:bg-tf-primary transition-all shadow-xl shadow-slate-900/10 active:scale-95  transition-all"
                                             >
                                                 {t('institutional_agreements.formalize')}
-                                            </button>
-                                        )}
-
-                                        {isAdmin && a.status === 'pending' && (
-                                            <button 
-                                                onClick={() => onApprove(a._id)}
-                                                className="px-6 py-3 bg-tf-primary text-white rounded-xl text-[9px] font-extrabold uppercase tracking-widest hover:bg-orange-600 transition-all shadow-lg "
-                                            >
-                                                {t('institutional_agreements.activate')}
                                             </button>
                                         )}
 
@@ -319,6 +352,67 @@ export default function PartnerAgreementsPage() {
           initialCampaignId={location.state?.prefillCampaignId}
         />
       )}
+
+      {/* Digital Signature Confirmation Modal */}
+      <AnimatePresence>
+        {confirmingAgreement && (
+          <div className="fixed inset-0 z-[150] flex items-center justify-center p-6 bg-slate-900/60 backdrop-blur-xl ">
+            <motion.div 
+               initial={{ opacity: 0, scale: 0.9, y: 30 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 30 }}
+               className="bg-white rounded-[3rem] w-full max-w-lg shadow-2xl overflow-hidden border border-white/20 "
+            >
+              <div className="p-10 bg-slate-900 text-white relative text-center ">
+                 <div className="absolute top-0 inset-x-0 h-32 bg-tf-primary/20 blur-3xl rounded-full -mt-16 " />
+                 <div className="relative z-10 space-y-4">
+                    <div className="w-20 h-20 bg-tf-primary rounded-[2rem] flex items-center justify-center shadow-2xl shadow-tf-primary/30 mx-auto ">
+                        <FiShield size={32} />
+                    </div>
+                    <div>
+                        <h3 className="text-2xl font-extrabold tracking-tighter leading-none mb-1 ">Institutional Signature</h3>
+                        <p className="text-[10px] uppercase font-extrabold tracking-widest text-white/40 ">Legal Authorization Required</p>
+                    </div>
+                 </div>
+              </div>
+
+              <div className="p-10 space-y-8 text-center ">
+                 <p className="text-sm font-bold text-slate-600 leading-relaxed ">
+                    By clicking <span className="text-slate-950">"Authorize & Sign"</span>, you are providing a legally binding digital signature to this partnership agreement. You confirm that you have reviewed the roadmap, fiscal allocations, and terms of service.
+                 </p>
+
+                 <div className="p-6 bg-slate-50 border border-slate-100 rounded-3xl space-y-3 text-left">
+                    <div className="flex items-center gap-3">
+                        <FiCheckCircle className="text-tf-primary" />
+                        <span className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Roadmap Authorization</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                        <FiCheckCircle className="text-tf-primary" />
+                        <span className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Financial Commitment Registry</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                        <FiCheckCircle className="text-tf-primary" />
+                        <span className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Operational Strategic Protocol</span>
+                    </div>
+                 </div>
+
+                 <div className="flex gap-4">
+                    <button 
+                        onClick={() => setConfirmingAgreement(null)}
+                        className="flex-1 py-4 bg-white border border-slate-200 text-slate-500 rounded-2xl text-[10px] font-extrabold uppercase tracking-widest hover:bg-slate-50 transition-all "
+                    >
+                        Decline
+                    </button>
+                    <button 
+                        onClick={confirmFormalize}
+                        className="flex-[1.5] py-4 bg-sf-dark bg-slate-900 text-white rounded-2xl text-[10px] font-extrabold uppercase tracking-widest hover:bg-tf-primary transition-all shadow-xl shadow-slate-900/10 "
+                    >
+                        Authorize & Sign
+                    </button>
+                 </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

@@ -321,6 +321,13 @@ export default function AgreementMilestonesPage() {
         <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-12">
             <div className="space-y-6 flex-1">
                 <div className="flex items-center gap-4">
+                    <button 
+                        onClick={() => navigate('/partner/agreements')}
+                        className="w-10 h-10 flex items-center justify-center bg-white/10 hover:bg-white/20 text-white rounded-xl transition-all active:scale-95 group/back"
+                        title="Return to Agreements"
+                    >
+                        <FiArrowLeft className="group-hover/back:-translate-x-1 transition-transform" />
+                    </button>
                     <span className="flex items-center gap-2 px-3 py-1 bg-tf-primary/10 border border-tf-primary/20 rounded-full text-tf-primary text-[10px] font-extrabold uppercase tracking-widest backdrop-blur-sm ">
                         <FiTarget className="text-sm" /> {t('milestones.header_badge')}
                     </span>

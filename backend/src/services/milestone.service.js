@@ -93,10 +93,17 @@ class MilestoneService {
     if (updated.status === 'completed') {
         const agreementId = updated.agreementId?._id || updated.agreementId;
         if (agreementId) {
-            const allMilestones = await milestoneRepository.findByAgreement(agreementId);
-            const allDone = allMilestones.length > 0 && allMilestones.every(m => m.status === 'completed');
-            if (allDone) {
-                await agreementRepository.update(agreementId, { status: 'completed' });
+            const agreement = await agreementRepository.findById(agreementId);
+            if (agreement && agreement.status === 'active') {
+                const hasInitial = agreement.initialMilestones && agreement.initialMilestones.length > 0;
+                const initialDone = !hasInitial || agreement.initialMilestones.every(m => m.status === 'completed');
+
+                const allMilestones = await milestoneRepository.findByAgreement(agreementId);
+                const externalDone = allMilestones.length === 0 || allMilestones.every(m => m.status === 'completed');
+
+                if (initialDone && externalDone && (hasInitial || allMilestones.length > 0)) {
+                    await agreementRepository.update(agreementId, { status: 'completed' });
+                }
             }
         }
     }

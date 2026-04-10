@@ -7,17 +7,31 @@ const isDevMode = process.env.NODE_ENV !== "production";
  * Generate MD5 hash for PayHere
  */
 const generateHash = (merchantId, orderId, amount, currency, merchantSecret) => {
-    // PayHere requires exactly 2 decimal places for the amount in the hash
-    const formattedAmount = parseFloat(amount).toFixed(2);
-    
-    // Trim to avoid whitespace issues from .env
+    // Clean values Hub
     const mid = merchantId.toString().trim();
     const msec = merchantSecret.toString().trim();
+    const cleanOrderId = orderId.toString().trim();
+    const cleanCurrency = currency.toString().trim().toUpperCase();
+    
+    // PayHere requires exactly 2 decimal places (e.g., 1000.00)
+    const formattedAmount = parseFloat(amount).toFixed(2);
     
     const secretHash = crypto.createHash("md5").update(msec).digest("hex").toUpperCase();
-    const hashString = `${mid}${orderId}${formattedAmount}${currency}${secretHash}`;
+    const hashString = `${mid}${cleanOrderId}${formattedAmount}${cleanCurrency}${secretHash}`;
     
-    return crypto.createHash("md5").update(hashString).digest("hex").toUpperCase();
+    const finalHash = crypto.createHash("md5").update(hashString).digest("hex").toUpperCase();
+    
+    if (process.env.NODE_ENV !== 'production') {
+        console.log(`PayHere Hash Debug Hub: mid=${mid}, oid=${cleanOrderId}, amt=${formattedAmount}, curr=${cleanCurrency}, hash=${finalHash}`);
+    }
+    
+    return finalHash;
+};
+
+const cleanUrl = (url) => {
+    if (!url) return '';
+    // Remove trailing slashes to avoid double-slashes in joined paths
+    return url.replace(/\/+$/, '');
 };
 
 /**
@@ -119,9 +133,9 @@ export const initPayHerePayment = async (paymentData) => {
         checkoutUrl: checkoutUrl,
         paymentData: {
             merchant_id: merchantId,
-            return_url: `${process.env.FRONTEND_URL || 'http://localhost:5173'}/payment/success?order_id=${orderId}&transaction_id=${transaction._id}`,
-            cancel_url: `${process.env.FRONTEND_URL || 'http://localhost:5173'}/payment/cancel`,
-            notify_url: `${process.env.BACKEND_URL || 'http://localhost:3001'}/api/finance/payhere/callback`,
+            return_url: `${cleanUrl(process.env.FRONTEND_URL) || 'http://localhost:5173'}/payment/success?order_id=${orderId}&transaction_id=${transaction._id}`,
+            cancel_url: `${cleanUrl(process.env.FRONTEND_URL) || 'http://localhost:5173'}/payment/cancel`,
+            notify_url: `${cleanUrl(process.env.BACKEND_URL) || 'http://localhost:3001'}/api/finance/payhere/callback`,
             order_id: orderId,
             items: "MissionGift",
             currency,

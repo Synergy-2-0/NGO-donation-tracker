@@ -88,6 +88,19 @@ class MilestoneService {
 
     const updated = await milestoneRepository.update(id, data);
     if (!updated) throw new Error('Milestone not found');
+
+    // Auto-complete Agreement Logic Hub
+    if (updated.status === 'completed') {
+        const agreementId = updated.agreementId?._id || updated.agreementId;
+        if (agreementId) {
+            const allMilestones = await milestoneRepository.findByAgreement(agreementId);
+            const allDone = allMilestones.length > 0 && allMilestones.every(m => m.status === 'completed');
+            if (allDone) {
+                await agreementRepository.update(agreementId, { status: 'completed' });
+            }
+        }
+    }
+
     return updated;
   }
 

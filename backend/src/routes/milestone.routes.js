@@ -20,8 +20,10 @@ router.post('/upload-evidence', authenticate, upload.single('evidence'), async (
       return res.status(400).json({ message: 'No evidence file uploaded' });
     }
     const fileUrl = `${req.protocol}://${req.get('host')}/public/uploads/${req.file.filename}`;
+    console.log('Milestone evidence uploaded:', fileUrl);
     res.json({ url: fileUrl });
   } catch (error) {
+    console.error('MILESTONE UPLOAD ERROR:', error);
     res.status(500).json({ message: 'Evidence upload failed', details: error.message });
   }
 });

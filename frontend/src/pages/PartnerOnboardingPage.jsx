@@ -135,17 +135,25 @@ export default function PartnerOnboardingPage() {
     }
   };
 
-  const handleNext = () => {
-      setError('');
+  const isStepValid = () => {
       if (step === 1) {
-          if (!form.organizationName || !form.industry) {
-              return setError("Please fill in your organization's name and industry to continue.");
-          }
+          return form.organizationName.trim() !== '' && form.industry !== '';
       }
       if (step === 2) {
-          if (!form.contactPerson.phone) {
-              return setError("A contact phone number is required for verification updates.");
-          }
+          return form.contactPerson.phone.trim() !== '' && form.verificationDocuments[0]?.url !== '';
+      }
+      if (step === 3) {
+          return form.csrFocus.length > 0;
+      }
+      return true;
+  };
+
+  const handleNext = () => {
+      setError('');
+      if (!isStepValid()) {
+          if (step === 1) setError("Please fill in your organization's name and industry to continue.");
+          if (step === 2) setError("A contact phone number and verification document are required.");
+          return;
       }
       setStep(prev => prev + 1);
   };
@@ -528,11 +536,19 @@ export default function PartnerOnboardingPage() {
                  ) : <div></div>}
 
                  {step < 3 ? (
-                     <button onClick={handleNext} className="px-8 py-3 bg-slate-900 text-white rounded-xl font-extrabold text-[10px] uppercase tracking-widest hover:bg-black transition-all shadow-xl shadow-slate-900/20 active:scale-95">
-                         Continue →
+                     <button 
+                        onClick={handleNext} 
+                        disabled={!isStepValid() || isUploading || isUploadingDoc}
+                        className="px-8 py-3 bg-slate-900 text-white rounded-xl font-extrabold text-[10px] uppercase tracking-widest hover:bg-black transition-all shadow-xl shadow-slate-900/20 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100"
+                     >
+                         {isUploading || isUploadingDoc ? 'Uploading...' : 'Continue →'}
                      </button>
                  ) : (
-                     <button onClick={handleFinish} disabled={isSubmitting} className="px-8 py-3 bg-brand-red text-white flex items-center gap-3 rounded-xl font-extrabold text-[10px] uppercase tracking-widest hover:bg-brand-red/90 transition-all shadow-xl shadow-brand-red/30 disabled:opacity-75 active:scale-95">
+                     <button 
+                        onClick={handleFinish} 
+                        disabled={isSubmitting || !isStepValid()} 
+                        className="px-8 py-3 bg-brand-red text-white flex items-center gap-3 rounded-xl font-extrabold text-[10px] uppercase tracking-widest hover:bg-brand-red/90 transition-all shadow-xl shadow-brand-red/30 disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100 active:scale-95"
+                     >
                          {isSubmitting ? 'Finalizing Profile...' : 'Complete & Enter Pipeline'}
                          {!isSubmitting && <FiArrowRight className="text-lg" />}
                      </button>

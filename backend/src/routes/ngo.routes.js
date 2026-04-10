@@ -12,6 +12,7 @@ router.post('/upload-logo', authenticate, upload.single('logo'), async (req, res
     const fileUrl = `${req.protocol}://${req.get('host')}/public/uploads/${req.file.filename}`;
     res.json({ url: fileUrl });
   } catch (error) {
+    console.error('NGO LOGO UPLOAD ERROR:', error);
     res.status(500).json({ message: 'Upload failed', error: error.message });
   }
 });
@@ -22,6 +23,7 @@ router.post('/upload-document', authenticate, upload.single('document'), async (
     const fileUrl = `${req.protocol}://${req.get('host')}/public/uploads/${req.file.filename}`;
     res.json({ url: fileUrl });
   } catch (error) {
+    console.error('NGO DOC UPLOAD ERROR:', error);
     res.status(500).json({ message: 'Document upload failed', error: error.message });
   }
 });

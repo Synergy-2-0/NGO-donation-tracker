@@ -250,8 +250,8 @@ export default function CampaignDetailPage() {
                                     disabled={isLocked}
                                     onClick={() => setEditing(true)}
                                     className={`px-5 py-2.5 text-[10px] font-extrabold uppercase tracking-widest rounded-xl flex items-center gap-2 transition-all ${isLocked
-                                            ? 'bg-white/5 text-slate-600 cursor-not-allowed border border-white/5'
-                                            : 'bg-white text-slate-900 hover:bg-tf-primary hover:text-white shadow-lg active:scale-95'
+                                        ? 'bg-white/5 text-slate-600 cursor-not-allowed border border-white/5'
+                                        : 'bg-white text-slate-900 hover:bg-tf-primary hover:text-white shadow-lg active:scale-95'
                                         }`}
                                 >
                                     <FiEdit3 className="stroke-[2.5]" />
@@ -375,8 +375,8 @@ export default function CampaignDetailPage() {
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id)}
                             className={`px-5 py-2.5 rounded-xl text-[10px] font-extrabold uppercase tracking-widest flex items-center gap-2 transition-all ${activeTab === tab.id
-                                    ? 'bg-slate-900 text-white shadow-lg'
-                                    : 'text-slate-400 hover:text-slate-700'
+                                ? 'bg-slate-900 text-white shadow-lg'
+                                : 'text-slate-400 hover:text-slate-700'
                                 }`}
                         >
                             {tab.icon} {tab.label}
@@ -668,7 +668,18 @@ export default function CampaignDetailPage() {
                 {/* ── PROGRESS TAB ─────────────────────────────────────────── */}
                 {activeTab === 'progress' && (
                     <motion.div key="progress" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
-                        <CampaignProgressSection campaignId={id} campaignStatus={campaign.status} />
+                        <CampaignProgressSection
+                            campaignId={id}
+                            campaignStatus={campaign.status}
+                            onCampaignUpdated={async () => {
+                                const refreshed = await fetchCampaignById(id);
+                                setCampaign(refreshed);
+
+                                if (refreshed.status === 'completed') {
+                                    setActiveTab('report');
+                                }
+                            }}
+                        />
                     </motion.div>
                 )}
 

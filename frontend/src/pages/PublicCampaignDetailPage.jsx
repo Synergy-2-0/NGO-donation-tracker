@@ -22,11 +22,26 @@ function DonationModal({ campaign, user, onClose, defaultType = 'one-time' }) {
       firstName: user?.name?.split(' ')[0] || '',
       lastName: user?.name?.split(' ').slice(1).join(' ') || '',
       email: user?.email || '',
-      phone: '',
+      phone: user?.phone || '',
       address: '',
       city: 'Colombo',
       country: 'Sri Lanka'
    });
+
+   useEffect(() => {
+      // Fetch donor's extended profile to prefill the phone number if available
+      if (user && user._id) {
+         api.get('/api/donors/me')
+            .then(res => {
+               if (res.data && res.data.phone) {
+                  setDonorDetails(prev => ({ ...prev, phone: res.data.phone }));
+               }
+            })
+            .catch(err => {
+               // Silently ignore if donor profile is not yet created
+            });
+      }
+   }, [user]);
 
    const finalAmount = amount === 'custom' ? parseFloat(customAmount) || 0 : parseFloat(amount);
    const isValid = finalAmount >= 100 && donorDetails.email && donorDetails.firstName && donorDetails.phone;

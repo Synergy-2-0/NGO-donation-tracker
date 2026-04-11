@@ -1,9 +1,14 @@
 import axios from 'axios';
 
 // In development the Vite proxy forwards /api/* to the backend, avoiding CORS.
-// In production set VITE_API_URL to the hosted backend URL.
+// In production set VITE_API_URL to the hosted backend origin, not an /api path.
+const normalizeBaseUrl = (value) => {
+  if (!value) return '';
+  return value.replace(/\/?api\/?$/, '').replace(/\/$/, '');
+};
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL ?? '',
+  baseURL: normalizeBaseUrl(import.meta.env.VITE_API_URL ?? ''),
 });
 
 api.interceptors.request.use((config) => {

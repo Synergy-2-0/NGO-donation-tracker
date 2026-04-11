@@ -34,10 +34,11 @@ class MilestoneService {
 
     // Role-based scoping
     if (user.role === 'partner') {
-      // If no specific agreement/campaign requested, filter by createdBy to see their own records
-      // Or find all their agreements and filter (simpler check: createdBy if they managed the milestones)
       if (!agreementId && !campaignId) {
-        filters.createdBy = user.id;
+        // Find all agreements for this partner
+        const partnerAgreements = await agreementRepository.findByPartnerId(user.partnerId || user.id);
+        const agreementIds = partnerAgreements.map(a => a._id);
+        filters.agreementId = { $in: agreementIds };
       }
     } else if (!['admin', 'ngo-admin'].includes(user.role)) {
        // Regular donors shouldn't see all milestones without a specific campaign context

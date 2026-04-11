@@ -31,6 +31,7 @@ export default function AgreementMilestonesPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const {
+    agreements,
     currentAgreement,
     milestones,
     loading,
@@ -80,35 +81,43 @@ export default function AgreementMilestonesPage() {
 
   const visibleMilestones = useMemo(() => {
     // 1. Identify primary milestones from the registry Hub
-    let source = milestones || [];
+    let source = Array.isArray(milestones) ? milestones.map(m => ({ ...m, isEmbedded: false })) : [];
     
     // 2. If viewing a specific mission, hub-filter by its clean identifier
     if (cleanId) {
         source = source.filter(m => {
-            // Embedded milestones don't have an agreementId because they ARE part of the currentAgreement
-            if (!m.agreementId) return true; 
             const mId = (m.agreementId?._id || m.agreementId)?.toString();
             return mId === cleanId.toString();
         });
+
+        // Merge embedded milestones for the current specific agreement
+        if (currentAgreement) {
+            const embedded = (currentAgreement.initialMilestones || 
+                             currentAgreement.milestones || 
+                             currentAgreement.initial_milestones || 
+                             []).map(ms => ({ ...ms, agreementId: currentAgreement, isEmbedded: true }));
+            const newEmbedded = embedded.filter(em => !em._id || !source.find(s => s._id === em._id));
+            source = [...source, ...newEmbedded];
+        }
+    } else {
+        // GLOBAL VIEW: Merge embedded milestones from ALL active agreements
+        if (Array.isArray(agreements)) {
+            agreements.forEach(agreement => {
+                const embedded = (agreement.initialMilestones || agreement.milestones || agreement.initial_milestones || [])
+                  .map(ms => ({ ...ms, agreementId: agreement, isEmbedded: true }));
+                
+                const newEmbedded = embedded.filter(em => !em._id || !source.find(s => s._id === em._id));
+                source = [...source, ...newEmbedded];
+            });
+        }
     }
 
-    // 3. Merge embedded milestones Hub Hub Hub
-    if (cleanId && currentAgreement) {
-        const embedded = currentAgreement.initialMilestones || 
-                         currentAgreement.milestones || 
-                         currentAgreement.initial_milestones || 
-                         [];
-        // Filter out any embedded milestones that might somehow already be in source by _id (if ever synced)
-        const newEmbedded = embedded.filter(em => !em._id || !source.find(s => s._id === em._id));
-        source = [...source, ...newEmbedded];
-    }
-
-    let filtered = Array.isArray(source) ? [...source] : [];
+    let filtered = [...source];
     if (statusFilter !== 'all') {
         filtered = filtered.filter((item) => (item.status || 'pending') === statusFilter);
     }
     return filtered.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
-  }, [milestones, currentAgreement?.milestones, currentAgreement?.initialMilestones, statusFilter, cleanId]);
+  }, [milestones, currentAgreement, agreements, statusFilter, cleanId]);
 
   const groupedData = useMemo(() => {
     if (id) return [{ id: 'current', title: '', milestones: visibleMilestones }];
@@ -164,8 +173,22 @@ export default function AgreementMilestonesPage() {
     try {
       const payload = { ...form, budget: Number(form.budget) || 0 };
       if (editing) {
-        await updateMilestone(editing._id, payload);
-        setSuccess('Milestone protocol updated successfully.');
+        if (editing.isEmbedded && editing.agreementId) {
+            const agreement = editing.agreementId;
+            const updatedInitialMilestones = (agreement.initialMilestones || []).map(m => 
+                m._id === editing._id ? { ...m, ...payload } : m
+            );
+            await updateAgreement(agreement._id, { 
+                campaignId: agreement.campaignId?._id || agreement.campaignId,
+                initialMilestones: updatedInitialMilestones 
+            });
+            if (id && agreement._id === id.replace(/,+$/, '')) fetchAgreementById(id.replace(/,+$/, '')).catch(() => {});
+            else if (user?.role === 'partner') fetchMyPartnerAgreements();
+            setSuccess('Institutional protocol updated via agreement node.');
+        } else {
+            await updateMilestone(editing._id, payload);
+            setSuccess('Milestone protocol updated successfully.');
+        }
       } else {
         await createMilestone({ ...payload, agreementId: id });
         setSuccess('New mission milestone authorized and deployed.');
@@ -186,16 +209,18 @@ export default function AgreementMilestonesPage() {
       const data = await uploadMilestoneEvidence(file);
       
       if (data && data.url) {
-          if (!milestone.agreementId && activeMission) {
+          if (milestone.isEmbedded && milestone.agreementId) {
                // Update embedded milestone
-               const updatedInitialMilestones = (activeMission.initialMilestones || []).map(m => 
+               const agreement = milestone.agreementId;
+               const updatedInitialMilestones = (agreement.initialMilestones || []).map(m => 
                    m._id === milestone._id ? { ...m, evidence: { url: data.url, uploadedAt: new Date() } } : m
                );
-               await updateAgreement(activeMission._id, { 
-                   campaignId: activeMission.campaignId?._id || activeMission.campaignId,
+               await updateAgreement(agreement._id, { 
+                   campaignId: agreement.campaignId?._id || agreement.campaignId,
                    initialMilestones: updatedInitialMilestones 
                });
-               fetchAgreementById(activeMission._id).catch(() => {});
+               if (id && agreement._id === id.replace(/,+$/, '')) fetchAgreementById(id.replace(/,+$/, '')).catch(() => {});
+               else if (user?.role === 'partner') fetchMyPartnerAgreements();
           } else {
                // Update real milestone
                await updateMilestone(milestone._id, { evidence: { url: data.url, uploadedAt: new Date() } });
@@ -210,10 +235,13 @@ export default function AgreementMilestonesPage() {
     }
   };
 
-  const handleDelete = async (mid) => {
+  const handleDelete = async (milestone) => {
+    if (milestone.isEmbedded) {
+        return setError('Institutional protocol nodes cannot be terminated. They are core mission requirements.');
+    }
     if (!window.confirm('Are you sure you want to terminate this node?')) return;
     try {
-        await deleteMilestone(mid);
+        await deleteMilestone(milestone._id);
         setSuccess('Node terminated successfully.');
         setTimeout(() => setSuccess(''), 3000);
     } catch (err) {
@@ -224,16 +252,18 @@ export default function AgreementMilestonesPage() {
   const handleMarkExecuting = async (milestone) => {
     if (!window.confirm('Mark this node as ready for execution?')) return;
     try {
-        if (!milestone.agreementId && activeMission) {
+        if (milestone.isEmbedded && milestone.agreementId) {
             // It's an embedded milestone!
-            const updatedInitialMilestones = (activeMission.initialMilestones || []).map(m => 
+            const agreement = milestone.agreementId;
+            const updatedInitialMilestones = (agreement.initialMilestones || []).map(m => 
                 m._id === milestone._id ? { ...m, status: 'in-progress' } : m
             );
-            await updateAgreement(activeMission._id, { 
-                campaignId: activeMission.campaignId?._id || activeMission.campaignId,
+            await updateAgreement(agreement._id, { 
+                campaignId: agreement.campaignId?._id || agreement.campaignId,
                 initialMilestones: updatedInitialMilestones 
             });
-            fetchAgreementById(activeMission._id).catch(() => {});
+            if (id && agreement._id === id.replace(/,+$/, '')) fetchAgreementById(id.replace(/,+$/, '')).catch(() => {});
+            else if (user?.role === 'partner') fetchMyPartnerAgreements();
         } else {
             await updateMilestone(milestone._id, { status: 'in-progress' });
         }
@@ -276,12 +306,13 @@ export default function AgreementMilestonesPage() {
          const { data } = await api.post('/api/finance/payhere/init', payload);
          if (data.success && data.paymentData) {
             // Optimistically formalize the completed status for the sandbox lifecycle Hub
-            if (!milestone.agreementId && activeMission) {
-                const updatedInitialMilestones = (activeMission.initialMilestones || []).map(m => 
+            if (milestone.isEmbedded && milestone.agreementId) {
+                const agreement = milestone.agreementId;
+                const updatedInitialMilestones = (agreement.initialMilestones || []).map(m => 
                     m._id === milestone._id ? { ...m, status: 'completed' } : m
                 );
-                await updateAgreement(activeMission._id, { 
-                    campaignId: activeMission.campaignId?._id || activeMission.campaignId,
+                await updateAgreement(agreement._id, { 
+                    campaignId: agreement.campaignId?._id || agreement.campaignId,
                     initialMilestones: updatedInitialMilestones 
                 });
             } else {
@@ -510,7 +541,7 @@ export default function AgreementMilestonesPage() {
                                   <button onClick={() => openEdit(item)} className="w-9 h-9 flex items-center justify-center bg-slate-50 text-slate-400 rounded-lg hover:text-tf-primary hover:bg-slate-100 transition-colors">
                                     <FiEdit2 size={14} />
                                   </button>
-                                  <button onClick={() => handleDelete(item._id)} className="w-9 h-9 flex items-center justify-center bg-slate-50 text-slate-400 rounded-lg hover:text-rose-500 hover:bg-rose-50 transition-colors">
+                                  <button onClick={() => handleDelete(item)} className="w-9 h-9 flex items-center justify-center bg-slate-50 text-slate-400 rounded-lg hover:text-rose-500 hover:bg-rose-50 transition-colors">
                                     <FiTrash2 size={14} />
                                   </button>
                                 </>

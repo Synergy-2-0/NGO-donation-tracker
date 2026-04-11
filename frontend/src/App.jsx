@@ -243,14 +243,6 @@ export default function App() {
                         }
                       />
                         <Route
-                          path="partner/agreements/:id/milestones"
-                          element={
-                            <RoleProtectedRoute roles={['partner', 'admin', 'ngo-admin']}>
-                              <AgreementMilestonesPage />
-                            </RoleProtectedRoute>
-                          }
-                        />
-                        <Route
                           path="partner/milestones/:id?"
                           element={
                             <RoleProtectedRoute roles={['partner', 'admin', 'ngo-admin']}>

@@ -29,7 +29,7 @@ const extractLogs = (payload) => {
     return [];
 };
 
-export default function CampaignProgressSection({ campaignId, campaignStatus }) {
+export default function CampaignProgressSection({ campaignId, campaignStatus, onCampaignUpdated }) {
     const [logs, setLogs] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showForm, setShowForm] = useState(false);
@@ -83,6 +83,9 @@ export default function CampaignProgressSection({ campaignId, campaignStatus }) 
             setLogs((prev) => [normalizeProgressLog(res.data), ...prev]);
             setFormData({ description: '', amountRaised: '', beneficiaries: '', evidence: [] });
             setShowForm(false);
+            if (onCampaignUpdated) {
+                await onCampaignUpdated();
+            }
             setSuccess('Progress log added.');
             setTimeout(() => setSuccess(''), 3000);
         } catch (err) {

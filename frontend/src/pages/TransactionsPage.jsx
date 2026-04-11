@@ -66,17 +66,17 @@ export default function TransactionsPage() {
     <div className="max-w-7xl mx-auto space-y-8 pb-32 pt-6">
       
       {/* Header Registry Frame */}
-      <div className="relative overflow-hidden bg-slate-950 rounded-[48px] p-10 md:p-14 shadow-2xl">
+      <div className="relative overflow-hidden bg-slate-950 rounded-[32px] p-8 md:p-10 shadow-2xl">
         <div className="absolute top-0 right-0 w-full h-full bg-gradient-to-tr from-orange-600/10 to-transparent pointer-events-none" />
         <div className="absolute -top-20 -right-20 w-96 h-96 bg-orange-500 blur-[120px] opacity-20 rounded-full" />
         
-        <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-10">
+        <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
           <div className="space-y-4">
             <div className="inline-flex items-center gap-3 px-4 py-2 bg-white/5 rounded-full border border-white/10 backdrop-blur-sm">
               <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
               <span className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-slate-400">Transaction Intelligence Hub</span>
             </div>
-            <h2 className="text-4xl md:text-6xl font-extrabold text-white tracking-tighter leading-none ">
+            <h2 className="text-3xl md:text-5xl font-extrabold text-white tracking-tighter leading-none ">
               Transaction <span className="text-orange-500">Audit</span>
             </h2>
             <p className="text-slate-400 text-lg max-w-2xl font-medium leading-relaxed">
@@ -118,22 +118,22 @@ export default function TransactionsPage() {
           <table className="w-full text-left">
             <thead>
               <tr className="text-[10px] text-slate-400 uppercase tracking-widest font-extrabold border-b border-slate-50 bg-slate-50/50">
-                <th className="px-10 py-8">Identity Hash</th>
-                <th className="px-10 py-8">Inbound Mission</th>
-                <th className="px-10 py-8">Ledger Timeline</th>
-                <th className="px-10 py-8">Capital Sync</th>
-                <th className="px-10 py-8 text-center" width="200">Governance</th>
-                <th className="px-10 py-8 text-right">Ops</th>
+                <th className="px-6 py-5">Identity Hash</th>
+                <th className="px-6 py-5">Inbound Mission</th>
+                <th className="px-6 py-5">Ledger Timeline</th>
+                <th className="px-6 py-5">Capital Sync</th>
+                <th className="px-6 py-5 text-center" width="200">Governance</th>
+                <th className="px-6 py-5 text-right">Ops</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
               {filtered.length > 0 ? (
                 filtered.map((tx) => (
                   <tr key={tx._id} className="group hover:bg-slate-50/50 transition-colors">
-                    <td className="px-10 py-10">
-                        <div className="flex items-center gap-5">
-                           <div className="w-12 h-12 bg-slate-50 border border-slate-100 rounded-2xl flex items-center justify-center text-slate-400 group-hover:bg-slate-900 group-hover:text-orange-500 group-hover:border-slate-900 transition-all group-hover:scale-105 shadow-sm">
-                              <FiHash size={20} />
+                    <td className="px-6 py-6">
+                        <div className="flex items-center gap-4">
+                           <div className="w-10 h-10 bg-slate-50 border border-slate-100 rounded-xl flex items-center justify-center text-slate-400 group-hover:bg-slate-900 group-hover:text-orange-500 group-hover:border-slate-900 transition-all group-hover:scale-105 shadow-sm">
+                              <FiHash size={16} />
                            </div>
                            <div>
                               <p className="font-mono text-sm text-slate-900 font-extrabold tracking-tighter">
@@ -143,7 +143,7 @@ export default function TransactionsPage() {
                            </div>
                         </div>
                     </td>
-                    <td className="px-10 py-10">
+                    <td className="px-6 py-6">
                         <div className="space-y-2">
                            <p className="text-base font-extrabold text-slate-950 line-clamp-1 ">{tx.campaignId?.title || 'General Treasury Funds'}</p>
                            <div className="flex items-center gap-2">
@@ -154,7 +154,7 @@ export default function TransactionsPage() {
                            </div>
                         </div>
                     </td>
-                    <td className="px-10 py-10">
+                    <td className="px-6 py-6">
                         <div className="space-y-1">
                            <p className="text-sm font-extrabold text-slate-900 tabular-nums">
                              {new Date(tx.createdAt).toLocaleDateString(undefined, {month: 'short', day: 'numeric', year: 'numeric'})}
@@ -165,7 +165,7 @@ export default function TransactionsPage() {
                            </div>
                         </div>
                     </td>
-                    <td className="px-10 py-10">
+                    <td className="px-6 py-6">
                         <p className="text-lg font-extrabold text-slate-950 tabular-nums leading-none mb-1">
                             {tx.currency} {Number(tx.amount).toLocaleString()}
                         </p>
@@ -173,14 +173,14 @@ export default function TransactionsPage() {
                            <FiCheckCircle size={10} /> Verified Reserve
                         </p>
                     </td>
-                    <td className="px-10 py-10">
+                    <td className="px-6 py-6">
                         <div className="flex justify-center">
                           <span className={`px-5 py-2 rounded-2xl text-[9px] font-extrabold uppercase tracking-widest border shadow-sm transition-all group-hover:shadow-md ${statusBadgeStyle[tx.status] || 'bg-slate-50 text-slate-400'}`}>
                             {tx.status} Hub
                           </span>
                         </div>
                     </td>
-                    <td className="px-10 py-10 text-right">
+                    <td className="px-6 py-6 text-right">
                         <button 
                           onClick={() => openDetails(tx)}
                           className="px-6 py-4 bg-slate-50 border border-slate-100 text-slate-400 rounded-3xl hover:bg-slate-900 hover:text-white hover:border-slate-900 transition-all active:scale-95 shadow-sm hover:shadow-xl hover:shadow-slate-900/20 flex items-center gap-3 text-[10px] font-extrabold uppercase tracking-widest group/btn ml-auto"

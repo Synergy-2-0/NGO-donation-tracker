@@ -77,20 +77,15 @@ export default function AgreementMilestonesPage() {
     completed: { label: t('milestones.filter_completed'), classes: 'bg-emerald-50 text-emerald-600 border-emerald-200', icon: <FiCheckCircle className="text-xl text-emerald-500" /> },
   };
 
-  const activeMission = id ? currentAgreement : null;
-
-  const visibleMilestones = useMemo(() => {
-    // 1. Identify primary milestones from the registry Hub
+  const allMilestones = useMemo(() => {
     let source = Array.isArray(milestones) ? milestones.map(m => ({ ...m, isEmbedded: false })) : [];
     
-    // 2. If viewing a specific mission, hub-filter by its clean identifier
     if (cleanId) {
         source = source.filter(m => {
             const mId = (m.agreementId?._id || m.agreementId)?.toString();
             return mId === cleanId.toString();
         });
 
-        // Merge embedded milestones for the current specific agreement
         if (currentAgreement) {
             const embedded = (currentAgreement.initialMilestones || 
                              currentAgreement.milestones || 
@@ -100,7 +95,6 @@ export default function AgreementMilestonesPage() {
             source = [...source, ...newEmbedded];
         }
     } else {
-        // GLOBAL VIEW: Merge embedded milestones from ALL active agreements
         if (Array.isArray(agreements)) {
             agreements.forEach(agreement => {
                 const embedded = (agreement.initialMilestones || agreement.milestones || agreement.initial_milestones || [])
@@ -111,13 +105,16 @@ export default function AgreementMilestonesPage() {
             });
         }
     }
+    return source;
+  }, [milestones, currentAgreement, agreements, cleanId]);
 
-    let filtered = [...source];
+  const visibleMilestones = useMemo(() => {
+    let filtered = [...allMilestones];
     if (statusFilter !== 'all') {
         filtered = filtered.filter((item) => (item.status || 'pending') === statusFilter);
     }
     return filtered.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
-  }, [milestones, currentAgreement, agreements, statusFilter, cleanId]);
+  }, [allMilestones, statusFilter]);
 
   const groupedData = useMemo(() => {
     if (id) return [{ id: 'current', title: '', milestones: visibleMilestones }];
@@ -138,10 +135,10 @@ export default function AgreementMilestonesPage() {
   }, [visibleMilestones, id]);
 
   const progress = useMemo(() => {
-    if (!milestones.length) return 0;
-    const completedCount = milestones.filter((item) => item.status === 'completed').length;
-    return Math.round((completedCount / milestones.length) * 100);
-  }, [milestones]);
+    if (!allMilestones.length) return 0;
+    const completedCount = allMilestones.filter((item) => item.status === 'completed').length;
+    return Math.round((completedCount / allMilestones.length) * 100);
+  }, [allMilestones]);
 
   const openEdit = (item) => {
     setEditing(item);

@@ -23,6 +23,12 @@ const port = process.env.PORT || 3000;
 
 app.use('/public', express.static('public'));
 
+// Request Logger for Production Debugging
+app.use((req, res, next) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+  next();
+});
+
 const allowedOrigins = process.env.ALLOWED_ORIGINS
   ? process.env.ALLOWED_ORIGINS.split(',').map(s => s.trim())
   : ['http://localhost:5173', 'http://localhost:3000', 'https://trustfund.axisdatatech.com'];
@@ -44,18 +50,18 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use('/api/partners', router);
-app.use("/api/users", userRoutes);
-app.use("/api/campaigns", campaignRoutes);
-app.use('/api/agreements', agreementRoutes);
-app.use('/api/milestones', milestoneRoutes);
-app.use("/api/donors", donorRoutes);
-app.use("/api/finance", financeRoutes);
-app.use('/api/public', transparencyRoutes);
-app.use('/api/geo', geoRoutes);
-app.use('/api/ai', aiRoutes);
-app.use('/api/ngos/finance', ngoFinanceRoutes);
-app.use('/api/ngos', ngoRoutes);
+app.use(['/api/partners', '/partners'], router);
+app.use(["/api/users", "/users"], userRoutes);
+app.use(["/api/campaigns", "/campaigns"], campaignRoutes);
+app.use(['/api/agreements', '/agreements'], agreementRoutes);
+app.use(['/api/milestones', '/milestones'], milestoneRoutes);
+app.use(["/api/donors", "/donors"], donorRoutes);
+app.use(["/api/finance", "/finance"], financeRoutes);
+app.use(['/api/public', '/public'], transparencyRoutes);
+app.use(['/api/geo', '/geo'], geoRoutes);
+app.use(['/api/ai', '/ai'], aiRoutes);
+app.use(['/api/ngos/finance', '/ngos/finance'], ngoFinanceRoutes);
+app.use(['/api/ngos', '/ngos'], ngoRoutes);
 
 app.get('/', (req, res) => {
   res.status(200).send('NGO Donation Tracker API is running');

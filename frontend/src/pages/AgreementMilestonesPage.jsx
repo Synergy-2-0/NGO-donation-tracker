@@ -310,25 +310,12 @@ export default function AgreementMilestonesPage() {
         city: 'Colombo',
         country: 'Sri Lanka',
         type: 'one-time',
-        frequency: null
+        frequency: null,
+        notes: JSON.stringify({ milestoneId: milestone._id, isEmbedded: milestone.isEmbedded, agreementId: milestone.agreementId?._id || milestone.agreementId })
       };
 
       const { data } = await api.post('/api/finance/payhere/init', payload);
       if (data.success && data.paymentData) {
-        // Optimistically formalize the completed status for the sandbox lifecycle Hub
-        if (milestone.isEmbedded && milestone.agreementId) {
-          const agreement = milestone.agreementId;
-          const updatedInitialMilestones = (agreement.initialMilestones || []).map(m =>
-            m._id === milestone._id ? { ...m, status: 'completed' } : m
-          );
-          await updateAgreement(agreement._id, {
-            campaignId: agreement.campaignId?._id || agreement.campaignId,
-            initialMilestones: updatedInitialMilestones
-          });
-        } else {
-          await updateMilestone(milestone._id, { status: 'completed' });
-        }
-
         const form = document.createElement('form');
         form.method = 'POST';
         form.action = data.checkoutUrl || 'https://sandbox.payhere.lk/pay/checkout';
@@ -340,6 +327,12 @@ export default function AgreementMilestonesPage() {
           form.appendChild(input);
         });
         document.body.appendChild(form);
+        // Store milestone context so the success page can update status
+        sessionStorage.setItem('pendingMilestoneUpdate', JSON.stringify({
+          milestoneId: milestone._id,
+          isEmbedded: milestone.isEmbedded,
+          agreementId: milestone.agreementId?._id || milestone.agreementId
+        }));
         form.submit();
       }
     } catch (err) {

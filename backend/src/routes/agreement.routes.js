@@ -21,5 +21,7 @@ router.patch('/:id/status', authenticate, validateRequest(updateAgreementStatusS
 router.patch('/:id/approve', authenticate, authorizeRoles('admin', 'ngo-admin'), ctrl.approveAgreement);
 router.patch('/:id/accept', authenticate, authorizeRoles('partner'), ctrl.acceptAgreement);
 router.delete('/:id', authenticate, ctrl.deleteAgreement);
+// Dedicated lightweight endpoint to update a single embedded milestone status
+router.patch('/:id/milestones/:milestoneId/status', authenticate, ctrl.patchMilestoneStatus);
 
 export default router;

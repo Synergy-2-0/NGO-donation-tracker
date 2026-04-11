@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { useSearchParams, Link } from 'react-router-dom';
+import { useSearchParams, Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   FiCheckCircle, FiDownload, FiShare2, FiHeart, FiArrowRight, 
@@ -10,29 +10,54 @@ import LoadingSpinner from '../components/LoadingSpinner';
 
 const PaymentSuccessPage = () => {
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const [finalizing, setFinalizing] = useState(false);
   const transactionId = searchParams.get('transaction_id');
   const [transaction, setTransaction] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isVisible, setIsVisible] = useState(false);
   const receiptRef = useRef(null);
 
+  const finalizeMilestoneLocally = async () => {
+    const raw = sessionStorage.getItem('pendingMilestoneUpdate');
+    if (!raw) return;
+    try {
+        const notes = JSON.parse(raw);
+        if (!notes.milestoneId) return;
+
+        console.log('[MilestoneSync] Finalizing:', notes);
+
+        if (notes.isEmbedded && notes.agreementId) {
+            const res = await api.patch(
+                `/api/agreements/${notes.agreementId}/milestones/${notes.milestoneId}/status`,
+                { status: 'completed' }
+            );
+            console.log('[MilestoneSync] PATCH result:', res.data);
+        } else {
+            await api.put(`/api/milestones/${notes.milestoneId}`, { status: 'completed' });
+        }
+        // Clear after successful update
+        sessionStorage.removeItem('pendingMilestoneUpdate');
+    } catch(err) {
+        console.error('[MilestoneSync] Error:', err.response?.data || err.message);
+    }
+  };
+
   useEffect(() => {
     setIsVisible(true);
-    
-    // Strategic Data Extraction Hub
+
     const tid = searchParams.get('transaction_id');
     const oid = searchParams.get('order_id');
 
     if (tid) {
       // Step 1: Institutional Verification Hub
-      api.post(`/api/finance/payhere/verify/${tid}`)
+        api.post(`/api/finance/payhere/verify/${tid}`)
         .then((verificationRes) => {
-          // If the verification payload contains the full transaction, use it Hub
           if (verificationRes.data?.transaction) {
              setTransaction(verificationRes.data.transaction);
              setLoading(false);
+             finalizeMilestoneLocally();
           } else {
-             // Fallback: Synchronize from the primary ledger Hub
              return api.get(`/api/finance/transactions/${tid}`);
           }
         })
@@ -40,6 +65,7 @@ const PaymentSuccessPage = () => {
           if (res) {
              setTransaction(res.data);
              setLoading(false);
+             finalizeMilestoneLocally();
           }
         })
         .catch(err => {
@@ -154,12 +180,23 @@ const PaymentSuccessPage = () => {
                 >
                   <FiPrinter size={16} /> Receipt
                 </button>
-                <Link 
-                  to="/dashboard"
-                  className="w-full py-4 bg-slate-900 hover:bg-tf-primary text-white rounded-2xl text-[10px] font-extrabold uppercase tracking-widest transition-all flex items-center justify-center gap-3 active:scale-95 shadow-xl shadow-slate-900/10"
+                <button 
+                  disabled={finalizing}
+                  onClick={async () => {
+                      setFinalizing(true);
+                      try {
+                          await finalizeMilestoneLocally();
+                      } catch(e) {
+                          console.error(e);
+                      } finally {
+                          setFinalizing(false);
+                      }
+                      navigate('/dashboard');
+                  }}
+                  className="w-full py-4 bg-slate-900 hover:bg-tf-primary text-white rounded-2xl text-[10px] font-extrabold uppercase tracking-widest transition-all flex items-center justify-center gap-3 active:scale-95 shadow-xl shadow-slate-900/10 disabled:opacity-70 disabled:cursor-wait"
                 >
-                  Dashboard <FiArrowRight size={16} />
-                </Link>
+                  {finalizing ? 'Syncing...' : <> Dashboard <FiArrowRight size={16} /> </>}
+                </button>
             </div>
           </div>
 

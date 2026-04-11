@@ -110,7 +110,6 @@ export const initPayHerePayment = async (paymentData) => {
         }
     }
 
-    // Create pending transaction
     const transaction = await transactionService.createTransaction({
         donorId,
         ngoId: resolvedNgoId,
@@ -121,6 +120,7 @@ export const initPayHerePayment = async (paymentData) => {
         orderId: orderId,
         paymentMethod: "PayHere",
         type: paymentData.type || "one-time",
+        notes: paymentData.notes
     });
 
     const checkoutUrl = process.env.PAYHERE_MODE === "production"

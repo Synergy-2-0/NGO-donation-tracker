@@ -152,7 +152,7 @@ export const completeDonation = async (transactionId, paymentId, status = "compl
                 });
 
                 // --- PLEDGE ACTIVATION ---
-                // If this is a pledge transaction, find the pending pledge for this campaign and activate it
+                // ...
                 if (transaction.type === 'pledge') {
                     const pledgeIndex = donor.pledges.findIndex(p => 
                         p.status === 'pending' && 
@@ -165,6 +165,47 @@ export const completeDonation = async (transactionId, paymentId, status = "compl
                         await donor.save();
                     }
                 }
+            }
+        }
+
+        // --- MILESTONE ACTIVATION ---
+        if (transaction.notes) {
+            try {
+                const notesData = JSON.parse(transaction.notes);
+                if (notesData.milestoneId) {
+                    if (notesData.isEmbedded && notesData.agreementId) {
+                        const mongoose = (await import('mongoose')).default;
+                        const Agreement = (await import('../models/agreement.model.js')).default;
+                        
+                        const agId = String(notesData.agreementId);
+                        const mId = String(notesData.milestoneId);
+                        
+                        let agreementIdObj = mongoose.isValidObjectId(agId) ? new mongoose.Types.ObjectId(agId) : agId;
+                        let milestoneIdObj = mongoose.isValidObjectId(mId) ? new mongoose.Types.ObjectId(mId) : mId;
+
+                        const r1 = await Agreement.collection.updateOne(
+                            { _id: agreementIdObj, "initialMilestones._id": milestoneIdObj },
+                            { $set: { "initialMilestones.$.status": "completed" } }
+                        );
+                        
+                        if (r1.modifiedCount === 0) {
+                            const ag = await Agreement.findById(agreementIdObj);
+                            if (ag && ag.initialMilestones) {
+                                const mIdx = ag.initialMilestones.findIndex(m => String(m._id) === mId);
+                                if (mIdx !== -1) {
+                                    ag.initialMilestones[mIdx].status = 'completed';
+                                    ag.markModified('initialMilestones');
+                                    await ag.save({ validateBeforeSave: false });
+                                }
+                            }
+                        }
+                    } else {
+                        const Milestone = (await import('../models/milestone.model.js')).default;
+                        await Milestone.findByIdAndUpdate(notesData.milestoneId, { status: 'completed' });
+                    }
+                }
+            } catch (e) {
+                console.error("Failed to parse transaction notes for milestone update:", e);
             }
         }
 

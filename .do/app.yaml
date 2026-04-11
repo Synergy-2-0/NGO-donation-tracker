@@ -9,6 +9,9 @@ services:
     http_port: 3000
     build_command: npm install
     run_command: npm start
+    routes:
+      - path: /api
+      - path: /public
     envs:
       - key: NODE_ENV
         value: production

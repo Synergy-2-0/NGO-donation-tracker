@@ -348,7 +348,7 @@ export default function LoginPage() {
                            theme="outline"
                            shape="pill"
                            size="large"
-                           width="100%"
+                           width="400"
                         />
                      </div>
                    </div>
@@ -376,7 +376,7 @@ export default function LoginPage() {
                                  theme="filled_blue"
                                  shape="pill"
                                  size="large"
-                                 width="100%"
+                                 width="400"
                                  text="signup_with"
                               />
                            </div>

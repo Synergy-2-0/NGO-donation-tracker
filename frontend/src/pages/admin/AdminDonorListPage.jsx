@@ -150,8 +150,7 @@ export default function AdminDonorListPage() {
                     <th className="px-6 pb-4 text-center font-extrabold">Status</th>
                     <th className="px-6 pb-4 text-right font-extrabold">Manage</th>
                   </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-50">
+                </thead><tbody className="divide-y divide-slate-50">
                   {paginated.length > 0 ? paginated.map((donor, idx) => (
                     <motion.tr 
                       initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.03 }}

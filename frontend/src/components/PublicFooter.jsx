@@ -19,7 +19,12 @@ export default function PublicFooter() {
           <div className="flex gap-4">
             {['twitter', 'facebook', 'linkedin', 'instagram'].map((social) => (
               <a key={social} href="#" className="w-10 h-10 bg-white/5 hover:bg-tf-primary transition-all rounded-full flex items-center justify-center group border border-white/5">
-                 <img src={`https://cdn.simpleicons.org/${social}/ffffff`} alt={social} className="w-4 h-4 opacity-40 group-hover:opacity-100 transition-opacity" />
+                 <img 
+                   src={`https://cdn.simpleicons.org/${social}/ffffff`} 
+                   alt={social} 
+                   className="w-4 h-4 opacity-40 group-hover:opacity-100 transition-opacity"
+                   crossOrigin="anonymous"
+                 />
               </a>
             ))}
           </div>

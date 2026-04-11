@@ -251,8 +251,7 @@ export default function PartnersPage() {
                   <th className="px-8 py-6 text-left text-[10px] font-extrabold uppercase tracking-[.2em] text-slate-400 border-b border-slate-100 text-center">Governance</th>
                   <th className="px-8 py-6 text-right text-[10px] font-extrabold uppercase tracking-[.2em] text-slate-400 border-b border-slate-100">Impact Ops</th>
                 </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-50">
+              </thead><tbody className="divide-y divide-slate-50">
                 {pagedPartners.length > 0 ? pagedPartners.map((partner) => (
                   <tr key={partner._id} className="group hover:bg-slate-50/50 transition-colors">
                     <td className="px-8 py-6">

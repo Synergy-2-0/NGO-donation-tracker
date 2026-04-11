@@ -183,8 +183,7 @@ export default function AdminDashboardPage() {
                     <th className="px-10 py-5 text-left text-[9px] font-extrabold text-slate-400 uppercase tracking-widest font-extrabold">Total Giving</th>
                     <th className="px-10 py-5 text-right text-[9px] font-extrabold text-slate-400 uppercase tracking-widest font-extrabold">Actions</th>
                   </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-50">
+                </thead><tbody className="divide-y divide-slate-50">
                   {donors.slice(0, 5).map(donor => (
                     <tr key={donor._id} className="hover:bg-slate-50/30 transition-all group/row">
                       <td className="px-10 py-6">

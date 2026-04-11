@@ -125,8 +125,7 @@ export default function TransactionsPage() {
                 <th className="px-6 py-5 text-center" width="200">Governance</th>
                 <th className="px-6 py-5 text-right">Ops</th>
               </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-50">
+            </thead><tbody className="divide-y divide-slate-50">
               {filtered.length > 0 ? (
                 filtered.map((tx) => (
                   <tr key={tx._id} className="group hover:bg-slate-50/50 transition-colors">

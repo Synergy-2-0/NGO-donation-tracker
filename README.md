@@ -147,27 +147,13 @@ TransFund is deployed on **DigitalOcean App Platform** as a unified multi-compon
 
 ## 🧪 Testing Instruction Report
 
-TransFund implements a triple-tier testing strategy to ensure reliability and performance.
+The full testing instructions are documented in  [TESTING_INSTRUCTION.md](./docs/TESTING_INSTRUCTION.md)  file.
 
-### **1. Unit Testing (Jest)**
-Validates individual services and core logic in isolation.
-- **Run Command**: `cd backend && npm run test:unit`
-- **Coverage**: Donor Service, Campaign Service, Transaction Service, Partner Service.
-
-### **2. Integration Testing (Jest/Supertest)**
-Ensures API endpoints correctly communicate with the MongoDB database.
-- **Run Command**: `cd backend && npm run test:int`
-- **Coverage**: Auth flows, Campaign lifecycle, Partner approvals.
-
-### **3. Performance Testing (Artillery.io)**
-Evaluates API stability and latency under high concurrent load.
-- **Setup**: Ensure the backend server is running locally on port 3000.
-- **Run Command**: `cd backend && npm run test:perf`
-- **Expectation**: Server should handle up to 50 concurrent virtual users with < 200ms latency.
-
-### **4. End-to-End Testing (Playwright)**
-Simulates real user journeys across the frontend and backend.
-- **Run Command**: `cd backend && npx playwright test`
+That report includes:
+- How to run unit tests
+- Integration testing setup and execution
+- Performance testing setup and execution
+- Testing environment configuration details
 
 ---
 

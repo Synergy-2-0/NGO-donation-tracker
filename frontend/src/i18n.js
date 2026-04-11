@@ -42,7 +42,7 @@ const resources = {
         milestone_registry: "Impact Progress",
         corporate_profile: "Organization Profile",
         ai_matchmaker: "Matchmaking",
-        csr_hub: "Community",
+        csr_hub: "Impact Alignment",
         roles: {
           admin: "Admin",
           ngo_admin: "Administrator",

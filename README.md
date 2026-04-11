@@ -116,20 +116,32 @@ npx playwright test
 
 ## ☁️ Deployment Report
 
-### **Unified Platform Deployment (DigitalOcean)**
-- **Platform**: DigitalOcean App Platform
-- **Region**: BLR1 (Bangalore)
-- **Architecture**: Multi-component App (Web Service + Static Site)
-- **Deployment Strategy**: 
-  1. Automated CI/CD via GitHub (Branch: `staging`).
-  2. **Backend**: Node.js Web Service running on port 3000.
-  3. **Frontend**: React Static Site with optimized build command.
-  4. **Domain Management**: Unified domain `trustfund.axisdatatech.com` with SSL/TLS.
-- **Critical Environment Variables**:
-  - `MONGO_URI`, `JWT_SECRET`, `OPENROUTER_API_KEY`, `CLOUDINARY_URL`, `PAYHERE_SECRET`.
-- **Live URLs**:
-  - **Main Application**: [https://trustfund.axisdatatech.com](https://trustfund.axisdatatech.com)
-  - **RESTful API Endpoint**: [https://trustfund.axisdatatech.com/api](https://trustfund.axisdatatech.com/api)
+TransFund is deployed on **DigitalOcean App Platform** as a unified multi-component application, served under a single custom domain with automatic SSL/TLS.
+
+| | Details |
+|---|---|
+| **Platform** | DigitalOcean App Platform |
+| **Region** | BLR1 — Bangalore, India |
+| **Architecture** | Web Service (Backend) + Static Site (Frontend) |
+| **CI/CD** | Auto-deploy on push to `staging` branch via GitHub |
+| **Monthly Cost** | $5.00 / month |
+
+### 🔗 Live URLs
+
+| Resource | URL |
+|---|---|
+| 🌐 **Frontend App** | [https://trustfund.axisdatatech.com](https://trustfund.axisdatatech.com) |
+| 🔌 **REST API** | [https://trustfund.axisdatatech.com/api](https://trustfund.axisdatatech.com/api) |
+| 🔵 **DigitalOcean URL** | [https://trustfund-qoxqw.ondigitalocean.app](https://trustfund-qoxqw.ondigitalocean.app) |
+
+### 🔑 Key Environment Variables (no secrets exposed)
+
+`MONGO_URI` · `JWT_SECRET` · `PAYHERE_MERCHANT_ID` · `PAYHERE_MERCHANT_SECRET` · `PAYHERE_MODE` · `CLOUDINARY_URL` · `OPENROUTER_API_KEY` · `FRONTEND_URL` · `BACKEND_URL` · `VITE_API_URL` · `VITE_MAPBOX_TOKEN`
+
+### 📄 Full Deployment Documentation
+
+> For step-by-step setup instructions, routing configuration, environment variable reference, architecture diagram, and deployment screenshots, see:
+> **[📖 DEPLOYMENT.md](./docs/deployment/DEPLOYMENT.md)**
 
 ---
 

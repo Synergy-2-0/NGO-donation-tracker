@@ -24,7 +24,7 @@ const port = process.env.PORT || 3000;
 app.use('/public', express.static('public'));
 
 const allowedOrigins = process.env.ALLOWED_ORIGINS
-  ? process.env.ALLOWED_ORIGINS.split(',')
+  ? process.env.ALLOWED_ORIGINS.split(',').map(s => s.trim())
   : ['http://localhost:5173', 'http://localhost:3000', 'https://trustfund.axisdatatech.com'];
 
 app.use(cors({

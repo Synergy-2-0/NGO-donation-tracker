@@ -4,7 +4,9 @@ import axios from 'axios';
 // In production set VITE_API_URL to the hosted backend origin, not an /api path.
 const normalizeBaseUrl = (value) => {
   if (!value) return '';
-  return value.replace(/\/?api\/?$/, '').replace(/\/$/, '');
+  // If multiple URLs are provided (comma-separated), pick the first one and trim it.
+  const firstUrl = value.split(',')[0].trim();
+  return firstUrl.replace(/\/?api\/?$/, '').replace(/\/$/, '');
 };
 
 const api = axios.create({

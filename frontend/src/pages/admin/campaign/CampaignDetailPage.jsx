@@ -18,23 +18,23 @@ import {
 
 // ─── Status config ───────────────────────────────────────────────────────────
 const statusConfig = {
-    draft:     { label: 'Draft',     cls: 'bg-slate-100 text-slate-600 border-slate-200',             icon: <FiClock  /> },
-    active:    { label: 'Active',    cls: 'bg-emerald-50 text-emerald-600 border-emerald-200',        icon: <FiActivity /> },
-    completed: { label: 'Completed', cls: 'bg-indigo-50  text-indigo-600  border-indigo-200',         icon: <FiCheckCircle /> },
-    archived:  { label: 'Archived',  cls: 'bg-rose-50    text-rose-600    border-rose-200',           icon: <FiArchive /> },
+    draft: { label: 'Draft', cls: 'bg-slate-100 text-slate-600 border-slate-200', icon: <FiClock /> },
+    active: { label: 'Active', cls: 'bg-emerald-50 text-emerald-600 border-emerald-200', icon: <FiActivity /> },
+    completed: { label: 'Completed', cls: 'bg-indigo-50  text-indigo-600  border-indigo-200', icon: <FiCheckCircle /> },
+    archived: { label: 'Archived', cls: 'bg-rose-50    text-rose-600    border-rose-200', icon: <FiArchive /> },
 };
 
 const SDG_COLORS = {
-    1:'#E5243B',2:'#DDA63A',3:'#4C9F38',4:'#C5192D',5:'#FF3A21',
-    6:'#26BDE2',7:'#FCC30B',8:'#A21942',9:'#FD6925',10:'#DD1367',
-    11:'#FD9D24',12:'#BF8B2E',13:'#3F7E44',14:'#0A97D9',15:'#56C02B',
-    16:'#00689D',17:'#19486A',
+    1: '#E5243B', 2: '#DDA63A', 3: '#4C9F38', 4: '#C5192D', 5: '#FF3A21',
+    6: '#26BDE2', 7: '#FCC30B', 8: '#A21942', 9: '#FD6925', 10: '#DD1367',
+    11: '#FD9D24', 12: '#BF8B2E', 13: '#3F7E44', 14: '#0A97D9', 15: '#56C02B',
+    16: '#00689D', 17: '#19486A',
 };
 const SDG_TITLES = {
-    1:'No Poverty',2:'Zero Hunger',3:'Good Health',4:'Quality Education',5:'Gender Equality',
-    6:'Clean Water',7:'Affordable Energy',8:'Decent Work',9:'Industry & Innovation',10:'Reduced Inequality',
-    11:'Sustainable Cities',12:'Responsible Consumption',13:'Climate Action',14:'Life Below Water',
-    15:'Life on Land',16:'Peace & Justice',17:'Partnerships',
+    1: 'No Poverty', 2: 'Zero Hunger', 3: 'Good Health', 4: 'Quality Education', 5: 'Gender Equality',
+    6: 'Clean Water', 7: 'Affordable Energy', 8: 'Decent Work', 9: 'Industry & Innovation', 10: 'Reduced Inequality',
+    11: 'Sustainable Cities', 12: 'Responsible Consumption', 13: 'Climate Action', 14: 'Life Below Water',
+    15: 'Life on Land', 16: 'Peace & Justice', 17: 'Partnerships',
 };
 
 function StatusBadge({ status }) {
@@ -175,7 +175,7 @@ export default function CampaignDetailPage() {
 
     const tabs = [
         { id: 'overview', label: 'Overview', icon: <FiFileText className="text-xs" /> },
-        ...(campaign.status !== 'draft' ? [{ id: 'financials', label: 'Financial Breakdown', icon: <FiDollarSign className="text-xs" /> }] : []),
+        { id: 'financials', label: 'Financial Breakdown', icon: <FiDollarSign className="text-xs" /> },
         ...(campaign.status === 'active' ? [{ id: 'progress', label: 'Progress & Milestones', icon: <FiBarChart2 className="text-xs" /> }] : []),
         ...(campaign.status === 'completed' ? [{ id: 'report', label: 'Impact Report', icon: <FiTrendingUp className="text-xs" /> }] : []),
     ];
@@ -249,11 +249,10 @@ export default function CampaignDetailPage() {
                                 <button
                                     disabled={isLocked}
                                     onClick={() => setEditing(true)}
-                                    className={`px-5 py-2.5 text-[10px] font-extrabold uppercase tracking-widest rounded-xl flex items-center gap-2 transition-all ${
-                                        isLocked
+                                    className={`px-5 py-2.5 text-[10px] font-extrabold uppercase tracking-widest rounded-xl flex items-center gap-2 transition-all ${isLocked
                                             ? 'bg-white/5 text-slate-600 cursor-not-allowed border border-white/5'
                                             : 'bg-white text-slate-900 hover:bg-tf-primary hover:text-white shadow-lg active:scale-95'
-                                    }`}
+                                        }`}
                                 >
                                     <FiEdit3 className="stroke-[2.5]" />
                                     {isLocked ? 'Locked' : 'Edit Campaign'}
@@ -375,11 +374,10 @@ export default function CampaignDetailPage() {
                         <button
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id)}
-                            className={`px-5 py-2.5 rounded-xl text-[10px] font-extrabold uppercase tracking-widest flex items-center gap-2 transition-all ${
-                                activeTab === tab.id
+                            className={`px-5 py-2.5 rounded-xl text-[10px] font-extrabold uppercase tracking-widest flex items-center gap-2 transition-all ${activeTab === tab.id
                                     ? 'bg-slate-900 text-white shadow-lg'
                                     : 'text-slate-400 hover:text-slate-700'
-                            }`}
+                                }`}
                         >
                             {tab.icon} {tab.label}
                         </button>

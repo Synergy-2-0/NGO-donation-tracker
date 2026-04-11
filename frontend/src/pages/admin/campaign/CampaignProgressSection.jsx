@@ -1,5 +1,33 @@
 import { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
 import api from '../../../api/axios';
+
+const normalizeEvidence = (value) => {
+    if (Array.isArray(value)) return value.filter(Boolean);
+    if (!value) return [];
+    if (typeof value === 'string') return [value];
+    if (typeof value === 'object') {
+        if (value.url) return [value.url];
+        if (Array.isArray(value.urls)) return value.urls.filter(Boolean);
+    }
+    return [];
+};
+
+const normalizeProgressLog = (log) => ({
+    ...log,
+    description: log?.description || log?.details || log?.note || '',
+    amountRaised: Number(log?.amountRaised ?? log?.amount ?? log?.fundsRaised ?? 0),
+    beneficiaries: Number(log?.beneficiaries ?? log?.beneficiaryCount ?? 0),
+    evidence: normalizeEvidence(log?.evidence),
+});
+
+const extractLogs = (payload) => {
+    if (Array.isArray(payload)) return payload;
+    if (Array.isArray(payload?.logs)) return payload.logs;
+    if (Array.isArray(payload?.progress)) return payload.progress;
+    if (Array.isArray(payload?.data)) return payload.data;
+    return [];
+};
 
 export default function CampaignProgressSection({ campaignId, campaignStatus }) {
     const [logs, setLogs] = useState([]);
@@ -19,7 +47,10 @@ export default function CampaignProgressSection({ campaignId, campaignStatus }) 
     useEffect(() => {
         api.get(`/api/campaigns/${campaignId}/progress`)
             .then((res) => {
-                setLogs(Array.isArray(res.data) ? res.data : []);
+                const normalized = extractLogs(res.data)
+                    .map(normalizeProgressLog)
+                    .sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+                setLogs(normalized);
             })
             .catch(() => setError('Failed to load progress logs.'))
             .finally(() => setLoading(false));
@@ -49,7 +80,7 @@ export default function CampaignProgressSection({ campaignId, campaignStatus }) 
                 headers: { 'Content-Type': 'multipart/form-data' },
             });
 
-            setLogs((prev) => [res.data, ...prev]);
+            setLogs((prev) => [normalizeProgressLog(res.data), ...prev]);
             setFormData({ description: '', amountRaised: '', beneficiaries: '', evidence: [] });
             setShowForm(false);
             setSuccess('Progress log added.');
@@ -67,7 +98,7 @@ export default function CampaignProgressSection({ campaignId, campaignStatus }) 
     return (
         <div className="bg-white rounded-[4rem] border border-slate-100 shadow-sm overflow-hidden p-12 space-y-12 relative group transition-all hover:shadow-2xl">
             <div className="absolute top-0 right-0 w-64 h-64 bg-slate-50 blur-[100px] -mr-32 -mt-32 pointer-events-none" />
-            
+
             {/* Log Header Interface */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 relative z-10">
                 <div className="flex items-center gap-6">
@@ -81,7 +112,7 @@ export default function CampaignProgressSection({ campaignId, campaignStatus }) 
                         <p className="text-[10px] font-extrabold text-slate-300 uppercase tracking-[0.4em] leading-none ">Verified Milestone Synchronization</p>
                     </div>
                 </div>
-                
+
                 {campaignStatus === 'active' && !showForm && (
                     <button
                         onClick={() => setShowForm(true)}
@@ -100,22 +131,22 @@ export default function CampaignProgressSection({ campaignId, campaignStatus }) 
                         {error && (
                             <div className="flex items-center gap-4 px-10 py-6 bg-rose-50 border border-rose-100 rounded-[2rem] shadow-sm">
                                 <div className="w-10 h-10 bg-rose-500/10 rounded-full flex items-center justify-center shrink-0">
-                                   <svg className="w-5 h-5 text-rose-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                    <svg className="w-5 h-5 text-rose-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                                 </div>
                                 <div className="space-y-1">
-                                   <p className="text-[10px] font-extrabold text-rose-400 uppercase tracking-widest leading-none ">Log Failure</p>
-                                   <p className="text-[13px] text-rose-700 font-bold tracking-tight ">{error}</p>
+                                    <p className="text-[10px] font-extrabold text-rose-400 uppercase tracking-widest leading-none ">Log Failure</p>
+                                    <p className="text-[13px] text-rose-700 font-bold tracking-tight ">{error}</p>
                                 </div>
                             </div>
                         )}
                         {success && (
                             <div className="flex items-center gap-4 px-10 py-6 bg-emerald-50 border border-emerald-100 rounded-[2rem] shadow-sm">
                                 <div className="w-10 h-10 bg-emerald-500/10 rounded-full flex items-center justify-center shrink-0">
-                                   <svg className="w-5 h-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                    <svg className="w-5 h-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                                 </div>
                                 <div className="space-y-1">
-                                   <p className="text-[10px] font-extrabold text-emerald-400 uppercase tracking-widest leading-none ">Entry Synchronized</p>
-                                   <p className="text-[13px] text-emerald-700 font-bold tracking-tight ">{success}</p>
+                                    <p className="text-[10px] font-extrabold text-emerald-400 uppercase tracking-widest leading-none ">Entry Synchronized</p>
+                                    <p className="text-[13px] text-emerald-700 font-bold tracking-tight ">{success}</p>
                                 </div>
                             </div>
                         )}
@@ -126,8 +157,8 @@ export default function CampaignProgressSection({ campaignId, campaignStatus }) 
                 {showForm && (
                     <form onSubmit={handleSubmit} className="bg-slate-50 rounded-[3rem] p-12 border border-slate-100 shadow-inner space-y-10 group/form">
                         <div className="flex items-center gap-4 mb-2">
-                             <div className="w-2 h-2 rounded-full bg-tf-primary animate-pulse" />
-                             <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-[0.4em] ">Secure Milestone Initialization</p>
+                            <div className="w-2 h-2 rounded-full bg-tf-primary animate-pulse" />
+                            <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-[0.4em] ">Secure Milestone Initialization</p>
                         </div>
 
                         <div className="space-y-4">
@@ -238,21 +269,21 @@ export default function CampaignProgressSection({ campaignId, campaignStatus }) 
                             <div key={log._id ?? i} className="relative group/log">
                                 <div className="absolute left-[-56px] top-6 w-12 h-px bg-slate-100 group-hover/log:bg-tf-primary/20 transition-colors" />
                                 <div className="absolute left-[-56px] top-5 w-4 h-4 rounded-full bg-white border-4 border-slate-100 group-hover/log:border-tf-primary transition-all duration-500 shadow-sm z-10" />
-                                
-                                <motion.div 
+
+                                <motion.div
                                     whileHover={{ x: 10 }}
                                     className="bg-white border border-slate-100 rounded-[2.5rem] p-10 hover:shadow-2xl hover:border-tf-primary/10 transition-all duration-700 space-y-8 relative overflow-hidden"
                                 >
                                     <div className="absolute top-0 right-0 w-32 h-32 bg-tf-primary/5 blur-[50px] -mr-16 -mt-16 pointer-events-none opacity-0 group-hover/log:opacity-100 transition-opacity" />
-                                    
+
                                     <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 overflow-hidden">
                                         <div className="flex-1 space-y-3">
-                                             <div className="flex items-center gap-3">
-                                                 <div className="w-1.5 h-1.5 rounded-full bg-tf-primary" />
-                                                 <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest tabular-nums ">
-                                                     {new Date(log.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
-                                                 </p>
-                                             </div>
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-1.5 h-1.5 rounded-full bg-tf-primary" />
+                                                <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest tabular-nums ">
+                                                    {new Date(log.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                                                </p>
+                                            </div>
                                             <p className="text-base text-slate-700 font-bold leading-relaxed  tracking-tight">{log.description}</p>
                                         </div>
                                     </div>

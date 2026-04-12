@@ -47,7 +47,6 @@ To create a high-trust philanthropic ecosystem through:
 - **Database**: MongoDB + Mongoose (Atomic Transactions)
 - **Intelligence**: Integrated AI heuristic service (OpenRouter/Gemini) for impact analytics.
 - **Security**: JWT Identity Hub + bcryptjs encryption.
-- **Testing**: Playwright End-to-End Suite for API and UI consistency.
 
 ### Frontend (The Interface)
 - **Library**: React + Vite (Optimized production bundling)
@@ -64,8 +63,6 @@ To create a high-trust philanthropic ecosystem through:
 NGO-donation-tracker/
 ├── backend/             # Node.js Express Server & E2E Tests
 │   ├── src/             # API Core (Services, Repositories, Controllers)
-│   ├── tests/           # Playwright Test Suite (.spec.js)
-│   └── playwright.config.js # Global Testing Configuration
 ├── frontend/            # React Client
 │   ├── src/             # UI Components (Pages, Context, Hooks)
 │   └── vite.config.js   # Proxy & Build optimization
@@ -97,12 +94,6 @@ npm install
 npm run dev
 ```
 
-### 4. Running Tests
-```bash
-cd backend
-npx playwright install
-npx playwright test
-```
 
 ---
 
@@ -110,7 +101,6 @@ npx playwright test
 - **Role-Based Access Control (RBAC)**: Strict separation of privileges (Donor, NGO, Admin, Corporate).
 - **Trust Scores**: Calculated dynamically via the ratio of `Received Funds` vs `Allocated Impact`.
 - **Audit Logs**: Immutable registry of all financial movements and status transitions.
-- **CI/CD Integration**: Automated Playwright validation on every deployment pipeline.
 
 ---
 
